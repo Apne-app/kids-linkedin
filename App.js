@@ -30,6 +30,8 @@ const Stack = createStackNavigator();
 
 import SignupScreen from './screens/SignupScreen'
 import LoginScreen from './screens/LoginScreen'
+import NotificationScreen from './screens/NotificationScreen'
+import SearchScreen from './screens/SearchScreen'
 
 const App: () => React$Node = () => {
 
@@ -40,6 +42,8 @@ const App: () => React$Node = () => {
   return (
     <NavigationContainer ref={containerRef} >
       <Stack.Navigator>
+        <Stack.Screen options={{ headerShown: false }} name="Search" component={SearchScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Notifications" component={NotificationScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Sign Up" component={SignupScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       </Stack.Navigator>
