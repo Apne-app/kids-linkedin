@@ -34,11 +34,11 @@ const PostScreen = () => {
     const [text, setText] = React.useState('');
     return (
         <View>
-            <Header>
+            <Header style={{ backgroundColor: '#91d7ff', borderColor: '#91d7ff', borderWidth: 0.7, flexDirection: 'row' }}>
                 <Left />
                 <Left />
                 <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Poppins-Regular' }}>Start Post</Title>
+                    <Title style={{ fontFamily: 'Poppins-Regular', color: "#000" }}>Start Post</Title>
                 </Body>
                 <Right />
             </Header>

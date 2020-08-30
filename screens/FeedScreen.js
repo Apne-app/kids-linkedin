@@ -6,8 +6,22 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
-import { StreamApp, FlatFeed } from 'react-native-activity-feed';
+import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox } from 'react-native-activity-feed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+const CustomActivity = (props) => {
+  return (
+    <Activity
+      {...props}
+      Footer={
+        <View>
+        <LikeButton {...props} />
+        </View>
+      }
+    />
+  );
+};
+
 var width = Dimensions.get('screen').width;
 const fontConfig = {
     default: {
@@ -61,7 +75,7 @@ const FeedScreen = ({navigation, route}) => {
                     appId="89658"
                     token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoidXNlci1vbmUifQ.hEnluC7g7xO1lsg833pSj1uCPzHrfkR6VujaqaTr2fo"
                 >
-                    <FlatFeed />
+                    <FlatFeed Activity={CustomActivity} options={{withOwnReactions: true}} />
                 </StreamApp>
             </SafeAreaView>
         </SafeAreaProvider>

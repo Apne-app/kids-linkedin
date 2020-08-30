@@ -1,20 +1,58 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
+import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
+
+var width = Dimensions.get('screen').width;
+const fontConfig = {
+    default: {
+        regular: {
+            fontFamily: 'Poppins-Regular',
+            fontWeight: 'normal',
+        },
+        medium: {
+            fontFamily: 'Poppins-Regular',
+            fontWeight: 'normal',
+        },
+        light: {
+            fontFamily: 'Poppins-Regular',
+            fontWeight: 'normal',
+        },
+        thin: {
+            fontFamily: 'Poppins-Regular',
+            fontWeight: 'normal',
+        },
+    },
+};
+
+const theme = {
+    ...DefaultTheme,
+    fonts: configureFonts(fontConfig),
+};
 
 
 const SearchScreen = ({ route, navigation }) => {
 
     return (
       <Container>
-        <Header>
-          <Body style={{margin: 10}}>
-            <Item rounded>
-            <Icon active name='search' />
-            <Input style={{color: "#fff", height: 40}} placeholder='Icon Textbox'/>
-          </Item>
-          </Body>
-        </Header>
+        <Header style={{ backgroundColor: '#91d7ff', borderColor: '#91d7ff', borderWidth: 0.7, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={()=>navigation.openDrawer()}>
+                <Image source={require('../assets/link.png')} style={{ width: 35, height: 35, borderRadius: 0, marginTop: 12, marginRight:10 }} />
+                </TouchableOpacity>
+                {/* <Searchbar
+                    placeholder="Search"
+                    // onChangeText={onChangeSearch}
+                    // value={searchQuery}
+                    style={{width:width-40}}
+                /> */}
+                <Searchbar
+                    theme={theme}
+                    placeholder={'Search'}
+                    style={{ color: '#91d7ff', backgroundColor: 'white', height:30, paddingTop: 0, width:width-100, marginTop:14 }}
+                // onChangeText={text => setText(text)}
+                />
+                <Icon type="Feather" name="message-square" style={{ width: 35, height: 35, borderRadius: 0, marginTop: 14, marginLeft:10 }} />
+            </Header>
           <Content style={styles.container}>
           <Separator bordered style={{height: 50}}>
             <Text style={{fontSize: 18}}>Suggested Friends</Text>
