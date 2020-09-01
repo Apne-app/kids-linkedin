@@ -62,11 +62,11 @@ const SignupScreen = ({ route, navigation }) => {
             style={{ marginTop: 20, backgroundColor: 'white' }}
           // onChangeText={text => setText(text)}
           />
-          <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 0, height: 50, elevation: 6 }} onPress={() => navigation.navigate('Signup', {})} >
+          <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 0, height: 50, elevation: 6 }} onPress={() => navigation.navigate('Signup', {})} onPress={() => navigation.navigate('Home', {})} >
             <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>LOG IN</Text>
           </Button>
           <Text style={{ fontFamily: 'Poppins-SemiBold', textAlign: 'center', marginTop: 20 }}> ----------- OR -----------</Text>
-          <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 0, elevation: 10 }}>
+          <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 0, elevation: 10 }} onPress={() => navigation.navigate('Home', {})} >
             <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
             <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Log In with LinkedIn</Text>
           </Button>
