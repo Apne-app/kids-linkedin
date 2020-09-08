@@ -1,84 +1,151 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
-/* eslint-disable */
-import * as React from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity } from 'react-native'
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar, List, Button, Menu, Divider, Provider } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Thumbnail, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
-var width = Dimensions.get('screen').width;
-const fontConfig = {
-    default: {
-        regular: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        medium: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        light: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        thin: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-    },
-};
+//*This is an Example of Grid Image Gallery in React Native*/
+import React, { Component } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+  PermissionsAndroid,
+  Modal,
+} from 'react-native';
+import { Container, Header, Tab, Tabs, ScrollableTab } from 'native-base';
+import CameraRoll from "@react-native-community/cameraroll";
+import { RNCamera } from 'react-native-camera';
+import Camera from "../components/Camera"
+var height = Dimensions.get('screen').height;
+// import FastImage from 'react-native-fast-image';
 
-const theme = {
-    ...DefaultTheme,
-    fonts: configureFonts(fontConfig),
-};
-const PostScreen = () => {
-    const [text, setText] = React.useState('');
-    return (
-        <View>
-            <Header style={{ backgroundColor: '#91d7ff', borderColor: '#91d7ff', borderWidth: 0.7, flexDirection: 'row' }}>
-                <Left />
-                <Left />
-                <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Poppins-Regular', color: "#000" }}>Start Post</Title>
-                </Body>
-                <Right />
-            </Header>
-            <Header style={{ backgroundColor: 'white', borderColor: '#91d7ff', borderWidth: 0.7, flexDirection: 'row' }}>
-                <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                    <Image source={require('../assets/link.png')} style={{ width: 35, height: 35, borderRadius: 0, marginTop: 12, marginRight: 10, left: -width / 2.5 }} />
+const PostScreen = () =>  {
+
+    const [gallery, setGallery] = React.useState([]);
+
+    React.useEffect(() => {
+
+        const func = async () => {
+            try {
+                const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                {
+                    'title': 'Access Storage',
+                    'message': 'Access Storage for the pictures'
+                }
+                )
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("You can use read from the storage");
+
+                 CameraRoll.getPhotos({
+                    first: 20,
+                    assetType: 'All',
+                    })
+                    .then(r => {
+                    setGallery([ ...r.edges ]);
+                    console.log(r.edges[0].node.image.uri);
+                    })
+                    .catch((err) => {
+                        //Error Loading 
+                        console.log(err);
+                });
+
+                } else {
+                console.log("Storage permission denied")
+                }
+            } catch (err) {
+                console.warn(err)
+            }
+        }
+        func();
+    }, [])
+
+  
+
+   
+      return (
+        <Container style={styles.container}>
+        
+          <Tabs renderTabBar={()=> <ScrollableTab />}>
+          <Tab heading="Gallery">
+            <View style={{width: "100%", height: height*0.4}}>
+             <Image
+                    style={{height: height*0.4}}
+                    resizeMode="cover"
+
+                    source={{
+                      uri: "https://lh3.googleusercontent.com/R-_Cm5tTFp8CD4gVcEn1ddjSeaGjwkCnSMgTUhYIz5hXH-8Bcflf8JD5TWaQ0gpSIvG2kfPxGxE=w544-h544-l90-rj",
+                    }}
+                  />
+            </View>
+            <FlatList
+            data={gallery}
+            renderItem={({ item }) => (
+              <View style={{ flex: 1, flexDirection: 'column', margin: 1 }}>
+                <TouchableOpacity
+                  key={item.id}
+                  style={{ flex: 1 }}
+                  onPress={() => {
+                    console.log(item);
+                  }}>
+                  {/*console.log(item.node.image.uri)*/}
+                  <Image
+                    style={styles.image}
+                    source={{
+                      uri: "https://lh3.googleusercontent.com/R-_Cm5tTFp8CD4gVcEn1ddjSeaGjwkCnSMgTUhYIz5hXH-8Bcflf8JD5TWaQ0gpSIvG2kfPxGxE=w544-h544-l90-rj",
+                    }}
+                  />
                 </TouchableOpacity>
-            </Header>
-            <View style={{ alignItems: 'center' }}>
-                <TextInput
-                    theme={theme}
-                    placeholder={'What do you want to share with the world today?'}
-                    value={text}
-                    style={{ width: width - 20, textAlign: 'center', marginTop: 20, backgroundColor: 'white' }}
-                    onChangeText={text => setText(text)}
-                    multiline={true}
-                    numberOfLines={11}
-                />
-            </View>
-            <View style={{ flexDirection: 'column', padding: 20, backgroundColor: 'white', marginTop: 10, width: width - 20, alignSelf:'center' }}>
-            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 18 }}>Attach:</Text>
-                <View style={{ flexDirection: 'row' }}>
-                    <Icon type="Feather" name="image" style={{ color: 'black', marginRight: 20 }} />
-                    <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 18 }}>Image</Text>
-                </View>
-                <View style={{ flexDirection: 'row', marginTop:10 }}>
-                    <Icon type="Feather" name="video" style={{ color: 'black', marginRight: 20 }} />
-                    <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 18 }}>Video</Text>
-                </View>
-                <View style={{ flexDirection: 'row', marginTop:10 }}>
-                    <Icon type="Feather" name="award" style={{ color: 'black', marginRight: 20 }} />
-                    <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 18 }}>Achievement</Text>
-                </View>
-                <View style={{ flexDirection: 'row', marginTop:10 }}>
-                    <Icon type="Feather" name="briefcase" style={{ color: 'black', marginRight: 20 }} />
-                    <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 18 }}>Service</Text>
-                </View>
-            </View>
-        </View>
-    );
-};
+              </View>
+            )}
+            //Setting the number of column
+            numColumns={3}
+            keyExtractor={(item, index) => index.toString()}
+          />
+          </Tab>
+          <Tab heading="Picture">
+            <Camera />
+          </Tab>
+          <Tab heading="Video">
+            
+          </Tab>
+        </Tabs>
+          
+        </Container>
+      );
+    
+  
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // marginTop: 30,
+  },
+  image: {
+    height: 120,
+    width: '100%',
+  },
+  fullImageStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '98%',
+    resizeMode: 'contain',
+  },
+  modelStyle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  closeButtonStyle: {
+    width: 25,
+    height: 25,
+    top: 9,
+    right: 9,
+    position: 'absolute',
+  },
+});
 
 export default PostScreen;

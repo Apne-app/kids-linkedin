@@ -3,7 +3,10 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOp
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 
+
+var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
+
 const fontConfig = {
     default: {
         regular: {
@@ -35,23 +38,15 @@ const SearchScreen = ({ route, navigation }) => {
 
     return (
       <Container>
-        <Header style={{ backgroundColor: '#91d7ff', borderColor: '#91d7ff', borderWidth: 0.7, flexDirection: 'row' }}>
-                <TouchableOpacity onPress={()=>navigation.openDrawer()}>
-                <Image source={require('../assets/link.png')} style={{ width: 35, height: 35, borderRadius: 0, marginTop: 12, marginRight:10 }} />
-                </TouchableOpacity>
-                {/* <Searchbar
-                    placeholder="Search"
-                    // onChangeText={onChangeSearch}
-                    // value={searchQuery}
-                    style={{width:width-40}}
-                /> */}
-                <Searchbar
-                    theme={theme}
-                    placeholder={'Search'}
-                    style={{ color: '#91d7ff', backgroundColor: 'white', height:30, paddingTop: 0, width:width-100, marginTop:14 }}
-                // onChangeText={text => setText(text)}
-                />
-                <Icon type="Feather" name="message-square" style={{ width: 35, height: 35, borderRadius: 0, marginTop: 14, marginLeft:10 }} />
+        <Header noShadow style={{ backgroundColor: '#fff',  flexDirection: 'row', height: height*0.09, borderBottomWidth: 0 }}>
+                <Content>
+                <Form>
+                  <Item floatingLabel>
+                    <Input placeholder="Explore"  placeholderTextSize={500} />
+                    <Icon active name='search' />
+                  </Item>
+                </Form>
+                </Content>
             </Header>
           <Content style={styles.container}>
           <Separator bordered style={{height: 50}}>

@@ -8,6 +8,12 @@ target 'kids' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
+
+  pod 'RNFastImage', :path => '../node_modules/react-native-fast-image'
+
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing
