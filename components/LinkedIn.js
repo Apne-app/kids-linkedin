@@ -17,23 +17,55 @@ const styles = StyleSheet.create({
  
 const LinkedIn = ({navigation}) => {
 
+    let a, b;
+    let i = 0;
+    // const [token, setToken] = React.useState('');
 
-    const [token, setToken] = React.useState('');
+    const [linkedinInfo, setLinkedInfo] = React.useState({
+      fname:'',
+      lname: '',
+      email: '',
+    })
     
-    async function getInfo() {
-      await 
+    async function getInfo(token) {
+      // console.log(token);
+      // await 
+      axios.get("https://api.linkedin.com/v2/me/?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))", { headers: { 'Authorization': "Bearer " + token } })
+      .then(response => {
+        // console.log(response.data);
+          a = response.data.firstName.localized.en_US;
+          b = response.data.lastName.localized.en_US;
+      })
+      .then(() => {
         axios.get(
-          "api.linkedin.com/v2/me?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))",
-          {
-            Authorization: "Bearer " + token
-          }
-        )
+          "https://api.linkedin.com/v2/clientAwareMemberHandles?q=members&projection=(elements*(primary,type,handle~))", { headers: { 'Authorization': "Bearer " + token } })
         .then(response => {
           // setInfo(response.data);
           // setLoading(false);
-          console.log(response);
+          console.log(response.data.elements[0]['handle~'].emailAddress);
+            c =  response.data.elements[0]['handle~'].emailAddress,
+            axios.get('http://104.199.146.206:5000/authLinkedin/' + c + '/' + b + '/' + a)
+              .then((response) => {
+                console.log(response.data)
+            })
+            .catch(err => console.log(err))
         })
         .catch(error => console.log(error));
+      })
+      .then(() => console.log(linkedinInfo))
+      .catch(err => {
+        console.log(err)
+        if(!i)
+        {
+          i++;
+          // setInterval(() => {
+          //   getInfo();
+          // }, 2000);
+        }  
+      })
+
+      // console.log(linkedinInfo);
+
     }
 
   const linkedRef = React.createRef();
@@ -44,9 +76,9 @@ const LinkedIn = ({navigation}) => {
             clientSecret="wcQBhM67qpbi6yqY"
             redirectUri="https://www.apne.app/"
             onSuccess={(data) => {
-                setToken(data.access_token);
-                // getInfo();
-                navigation.navigate('Home', {});
+                // setToken(data.access_token);
+                getInfo(data.access_token);
+                // navigation.navigate('Home', {});
             }}
             // permissions={['r_liteprofile']}
             renderButton={() => 

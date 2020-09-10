@@ -47,7 +47,7 @@ const LoginScreen = ({ route, navigation }) => {
   return (
     <Container style={styles.container}>
       <Content >
-        <View style={{ flex: 1, marginBottom: 15, marginTop:height/12}}>
+        <View style={{ flex: 1, marginBottom: 15}}>
           <Image
             style={styles.tinyLogo}
             source={require('../assets/link.png')}
