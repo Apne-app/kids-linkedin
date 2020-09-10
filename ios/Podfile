@@ -12,9 +12,10 @@ target 'kids' do
 
   pod 'RNFastImage', :path => '../node_modules/react-native-fast-image'
 
-  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
   pod 'RNSha256', :path => '../node_modules/react-native-sha256'
+
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
   target 'kidsTests' do
     inherit! :complete

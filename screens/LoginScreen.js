@@ -71,7 +71,6 @@ const LoginScreen = ({ route, navigation }) => {
           <SignUpForm navigation={navigation} />
         }
       </Content>
-      <Text style={{position:'absolute', bottom:30, fontFamily:'Poppins-Regular', alignSelf:"center", fontSize:15}}>How does it work?</Text>
     </Container>
   );
 }
