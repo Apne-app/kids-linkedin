@@ -3,9 +3,13 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
+import LoginForm from  '../components/Login';
+import SignUpForm from  '../components/SignUp';
 var height = Dimensions.get('screen').height;
-const SignupScreen = ({ route, navigation }) => {
+
+
+const LoginScreen = ({ route, navigation }) => {
   const fontConfig = {
     default: {
       regular: {
@@ -31,47 +35,43 @@ const SignupScreen = ({ route, navigation }) => {
     ...DefaultTheme,
     fonts: configureFonts(fontConfig),
   };
+
+  const [activeform, setActiveForm] = React.useState(1);
+
+  const [login, setLogin] = React.useState({
+    username: '',
+    password: '',
+    viewPass: false
+  })
+
   return (
-    <Container>
-      <View>
-      <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold',marginTop: 40, fontSize: 20, marginLeft: 20}}>Welcome Back!</Text>
-      <Icon onPress={()=>navigation.navigate('Intro', {})} type="Feather" name="x-square" style={{ color: 'black', marginTop: -40, fontSize: 30, marginRight: 20, textAlign:'right' }} />
-      </View>
-      <Content style={styles.container}>
-        <View style={{ flex: 1, }}>
+    <Container style={styles.container}>
+      <Content >
+        <View style={{ flex: 1, marginBottom: 15, marginTop:height/12}}>
           <Image
             style={styles.tinyLogo}
             source={require('../assets/link.png')}
           />
         </View>
-        <Form bordered style={styles.form}>
-          <TextInput
-            mode={'outlined'}
-            theme={theme}
-            label="Work mail-id"
-            selectionColor={'#91d7ff'}
-            underlineColor={'#91d7ff'}
-            underlineColorAndroid={'#91d7ff'}
-            style={{ color: '#91d7ff', backgroundColor: 'white' }}
-          // onChangeText={text => setText(text)}
-          />
-          <TextInput
-            mode={'outlined'}
-            theme={theme}
-            label="Password"
-            style={{ marginTop: 20, backgroundColor: 'white' }}
-          // onChangeText={text => setText(text)}
-          />
-          <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 0, height: 50, elevation: 6 }} onPress={() => navigation.navigate('Signup', {})} onPress={() => navigation.navigate('Home', {})} >
-            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>LOG IN</Text>
-          </Button>
-          <Text style={{ fontFamily: 'Poppins-SemiBold', textAlign: 'center', marginTop: 20 }}> ----------- OR -----------</Text>
-          <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 0, elevation: 10 }} onPress={() => navigation.navigate('Home', {})} >
-            <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
-            <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Log In with LinkedIn</Text>
-          </Button>
-        </Form>
+        <View style={{flexDirection:"row"}}>
+         <Button transparent style={{flex: 2, flexDirection: 'column'}} onPress={() => setActiveForm(!activeform)}>
+           <Text style={{textAlign: 'right', fontSize: 20, fontFamily:'Poppins-Regular', color:  activeform ?  "#000" : "#A9A9A9"}}>Login</Text>
+           <View style={{borderWidth: 4, borderColor: "#357feb", borderRadius: 4, opacity: activeform ? 1 : 0}} />
+         </Button>
+         <Button transparent style={{flex: 2, flexDirection: 'column'}} onPress={() => setActiveForm(!activeform)}>
+          <Text style={{textAlign: 'right', fontSize: 20, fontFamily:'Poppins-Regular', color:  !activeform ?  "#000" : "#A9A9A9"}}>Sign Up</Text>
+           <View style={{borderWidth: 4, borderColor: "#357feb", borderRadius: 4, opacity: !activeform ? 1 : 0}} />
+         </Button>
+         <View style={{flex: 1}} />
+         <View style={{flex: 1}} />
+        </View>
+        {
+          activeform ?
+          <LoginForm navigation={navigation} />:
+          <SignUpForm navigation={navigation} />
+        }
       </Content>
+      <Text style={{position:'absolute', bottom:30, fontFamily:'Poppins-Regular', alignSelf:"center", fontSize:15}}>How does it work?</Text>
     </Container>
   );
 }
@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     padding: 40,
-    marginTop: 40
+    // marginTop: 40,
+    backgroundColor: "#f9f9f9",
   },
   form: {
     marginTop: 40,
@@ -100,4 +101,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default SignupScreen;
+export default LoginScreen;

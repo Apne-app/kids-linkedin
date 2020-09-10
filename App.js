@@ -7,7 +7,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SignupScreen from './screens/SignupScreen'
 import LoginScreen from './screens/LoginScreen'
 import NotificationScreen from './screens/NotificationScreen'
 import SearchScreen from './screens/SearchScreen'
@@ -49,10 +48,9 @@ const App = () => {
   return (
     <NavigationContainer ref={containerRef}>
       <Stack.Navigator>
+      <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Home" component={Drawer} />
-      <Stack.Screen options={{ headerShown: false }} name="Signup" component={SignupScreen} />
-      <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
