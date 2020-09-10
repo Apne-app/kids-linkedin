@@ -14,8 +14,6 @@ import {
 } from 'react-native';
 import { Container, Header, Tab, Tabs, ScrollableTab } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
-import { RNCamera } from 'react-native-camera';
-import Camera from "../components/Camera"
 var height = Dimensions.get('screen').height;
 // import FastImage from 'react-native-fast-image';
 
