@@ -83,9 +83,9 @@ const LinkedIn = ({navigation}) => {
             // permissions={['r_liteprofile']}
             renderButton={() => 
             (
-                <Button block style={{backgroundColor: "#fff", marginVertical: 15, height: 60, marginTop: height*0.03, flexDirection: 'row'}} onPress={() => linkedRef.current && linkedRef.current.open()}>
-                    <Thumbnail source={require('../assets/linkedin.png')} style={{height: 35, width: 35}} />
-                    <Text style={{color: "#000", fontSize: 20}}>  LinkedIn</Text>
+                <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 25, height: 50, }} onPress={() => linkedRef.current && linkedRef.current.open()} >
+                  <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
+                  <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Login with LinkedIn</Text>
                 </Button>
             )
             }

@@ -60,11 +60,11 @@ const LoginForm = ({ navigation }) => {
     <View style={styles.form}>
       <Form>
         <Label style={{ fontFamily: 'Poppins-Regular' }}>Work Mail-ID</Label>
-        <Item style={{ marginTop: 12, marginBottom: 12 }}>
+        <Item rounded style={{ marginTop: 12, marginBottom: 12, backgroundColor: "#fff" }}>
           <Input placeholder='manoj@google.com' value={login.email} onChangeText={(txt) => setLogin({ ...login, email: txt })} style={{ paddingLeft: 30, height: 60 }} />
         </Item>
         <Label style={{ fontFamily: 'Poppins-Regular' }}>Password</Label>
-        <Item style={{ marginTop: 12}}>
+        <Item rounded style={{ marginTop: 12, backgroundColor: "#fff"}}>
           <Input  placeholder='*************' secureTextEntry={!login.viewPass} value={login.password} onChangeText={(txt) => setLogin({ ...login, password: txt })} style={{ paddingLeft: 30, height: 60, borderRadius:2, }} />
           {
             !login.viewPass ?
@@ -74,7 +74,7 @@ const LoginForm = ({ navigation }) => {
         </Item>
       </Form>
       <Text style={{ textAlign: 'right', color: 'rgba(56, 56, 56, 0.8)', fontFamily: 'Poppins-Regular', marginTop:10 }}>Forgot Password?</Text>
-      <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 0, height: 50,  }} onPress={() => {loginApi()}}>
+      <Button rounded block dark  style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 25, height: 50,  }} onPress={() => {loginApi()}}>
         <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>LOG IN</Text>
       </Button>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop:20 }}>
