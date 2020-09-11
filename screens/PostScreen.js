@@ -102,7 +102,6 @@ const PostScreen = () =>  {
           />
           </Tab>
           <Tab heading="Picture">
-            <Camera />
           </Tab>
           <Tab heading="Video">
             

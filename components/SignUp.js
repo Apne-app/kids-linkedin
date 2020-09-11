@@ -57,11 +57,11 @@ const SignUpForm = ({ navigation }) => {
     <View style={styles.form}>
       <Form>
         <Label style={{ fontFamily: 'Poppins-Regular' }}>Work Mail-Id</Label>
-        <Item style={{ marginTop: 12, marginBottom: 12 }}>
+        <Item rounded style={{ marginTop: 12, marginBottom: 12, backgroundColor: "#fff" }}>
           <Input placeholder='manoj@google.com' value={signup.email} onChangeText={(txt) => setSignup({ ...signup, email: txt })} style={{ paddingLeft: 30, height: 60 }} />
         </Item>
         <Label style={{ fontFamily: 'Poppins-Regular' }}>Password</Label>
-        <Item style={{ marginTop: 12 }}>
+        <Item rounded style={{ marginTop: 12, backgroundColor: "#fff" }}>
           <Input placeholder='*******' secureTextEntry={!signup.viewPass} value={signup.password} onChangeText={(txt) => setSignup({ ...signup, password: txt })} style={{ paddingLeft: 30, height: 60 }} />
           {
             !signup.viewPass ?
@@ -71,7 +71,7 @@ const SignUpForm = ({ navigation }) => {
         </Item>
       </Form>
       <Text style={{ textAlign: 'right', color: 'rgba(56, 56, 56, 0.8)', fontFamily: 'Poppins-Regular', marginTop: 10 }}>Forgot Password?</Text>
-      <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 0, height: 50, elevation: 6 }} onPress={() => { loginApi() }}>
+      <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 25, height: 50, }} onPress={() => { loginApi() }}>
         <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>SIGN UP</Text>
       </Button>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
@@ -79,7 +79,7 @@ const SignUpForm = ({ navigation }) => {
         <Text style={{ flex: 1, textAlign: 'center' }} >Or</Text>
         <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "rgba(56, 56, 56, 0.8);" }} />
       </View>
-      <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 0, elevation: 10,  height: 50, }} onPress={() => navigation.navigate('Home', {})} >
+      <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 25, height: 50, }} onPress={() => navigation.navigate('Home', {})} >
         <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
         <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Signup with LinkedIn</Text>
       </Button>
