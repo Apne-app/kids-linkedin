@@ -1,16 +1,13 @@
 'use strict';
 import React, { PureComponent } from 'react';
-import { AppRegistry, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AppRegistry, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 
-export default class Camera extends PureComponent {
-    constructor(props) {
-    super(props);
-    this.state = {
-      cameraType: RNCamera.Constants.Type.back,
-      mirrorMode: false
-    };
-  }
+var height = Dimensions.get('screen').height;
+var width = Dimensions.get('screen').width;
+
+export default class ExampleApp extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
@@ -18,45 +15,39 @@ export default class Camera extends PureComponent {
           ref={ref => {
             this.camera = ref;
           }}
-          type={this.state.cameraType}
           style={styles.preview}
-        //   type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
+          type={RNCamera.Constants.Type.back}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          // style={{flex: 1,}}
           androidCameraPermissionOptions={{
             title: 'Permission to use camera',
             message: 'We need your permission to use your camera',
             buttonPositive: 'Ok',
             buttonNegative: 'Cancel',
           }}
+          androidRecordAudioPermissionOptions={{
+            title: 'Permission to use audio recording',
+            message: 'We need your permission to use your audio',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
         />
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={this.changeCameraType.bind(this)} style={styles.capture}>
-            <Text style={{ fontSize: 14 }}> SNAP </Text>
+          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
+            <Icon type="Entype" name="camera" />
           </TouchableOpacity>
         </View>
       </View>
     );
   }
 
-  changeCameraType() {
-    if (this.state.cameraType === RNCamera.Constants.Type.back) {
-      this.setState({
-        cameraType: RNCamera.Constants.Type.front,
-        mirrorMode: true
-      });
-    } else {
-      this.setState({
-        cameraType: RNCamera.Constants.Type.back,
-        mirrorMode: false
-      });
-    }
-  }
-
   takePicture = async () => {
     if (this.camera) {
       const options = { quality: 0.5, base64: true };
       const data = await this.camera.takePictureAsync(options);
+      this.props.navigation.navigate('Preview', {'img': data.uri});
       console.log(data.uri);
+
     }
   };
 }
@@ -66,6 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: 'black',
+    // width: width;
   },
   preview: {
     flex: 1,
@@ -75,8 +67,9 @@ const styles = StyleSheet.create({
   capture: {
     flex: 0,
     backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
+    borderRadius: 30,
+    // height: 0,
+    padding: 10,
     paddingHorizontal: 20,
     alignSelf: 'center',
     margin: 20,

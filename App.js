@@ -15,6 +15,7 @@ import IntroScreen from './screens/IntroScreen'
 import PostScreen from './screens/PostScreen'
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
+import ImagePreview from './screens/ImagePreview'
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -52,6 +53,7 @@ const App = () => {
       <Stack.Screen options={{ headerShown: false }} name="Home" component={Drawer} />
       <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
+      <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
       </Stack.Navigator>
     </NavigationContainer>
   );

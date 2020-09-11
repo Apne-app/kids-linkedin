@@ -14,10 +14,12 @@ import {
 } from 'react-native';
 import { Container, Header, Tab, Tabs, ScrollableTab } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
+import Camera from '../components/Camera'
 var height = Dimensions.get('screen').height;
+var width = Dimensions.get('screen').width;
 // import FastImage from 'react-native-fast-image';
 
-const PostScreen = () =>  {
+const PostScreen = ({navigation}) =>  {
 
     const [gallery, setGallery] = React.useState([]);
 
@@ -65,8 +67,8 @@ const PostScreen = () =>  {
         <Container style={styles.container}>
         
           <Tabs renderTabBar={()=> <ScrollableTab />}>
-          <Tab heading="Gallery">
-            <View style={{width: "100%", height: height*0.4}}>
+          <Tab heading="Gallery" style={{width: width}}>
+            <View style={{width: width, height: height*0.4}}>
              <Image
                     style={{height: height*0.4}}
                     resizeMode="cover"
@@ -90,7 +92,7 @@ const PostScreen = () =>  {
                   <Image
                     style={styles.image}
                     source={{
-                      uri: "https://lh3.googleusercontent.com/R-_Cm5tTFp8CD4gVcEn1ddjSeaGjwkCnSMgTUhYIz5hXH-8Bcflf8JD5TWaQ0gpSIvG2kfPxGxE=w544-h544-l90-rj",
+                      uri: item.node.image.uri,
                     }}
                   />
                 </TouchableOpacity>
@@ -102,6 +104,7 @@ const PostScreen = () =>  {
           />
           </Tab>
           <Tab heading="Picture">
+              <Camera navigation = {navigation} />
           </Tab>
           <Tab heading="Video">
             
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 120,
-    width: '100%',
+    width: 120,
   },
   fullImageStyle: {
     justifyContent: 'center',

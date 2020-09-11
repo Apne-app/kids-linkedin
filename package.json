@@ -22,6 +22,7 @@
     "react": "16.13.1",
     "react-native": "0.63.2",
     "react-native-activity-feed": "^0.9.1",
+    "react-native-camera": "^2.5.0",
     "react-native-fast-image": "^8.3.2",
     "react-native-gesture-handler": "^1.7.0",
     "react-native-linkedin": "^2.1.1",

@@ -133,6 +133,8 @@ android {
         applicationId "com.kids"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        missingDimensionStrategy 'react-native-camera', 'general'
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
     }
