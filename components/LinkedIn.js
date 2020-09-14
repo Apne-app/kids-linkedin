@@ -1,3 +1,5 @@
+/* eslint-disable eslint-comments/no-unlimited-disable */
+/* eslint-disable */
 import React from 'react'
 import { StyleSheet, View, Text, Dimensions } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
@@ -83,9 +85,9 @@ const LinkedIn = ({navigation}) => {
             // permissions={['r_liteprofile']}
             renderButton={() => 
             (
-                <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 25, height: 50, }} onPress={() => linkedRef.current && linkedRef.current.open()} >
+                <Button block  iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 10, height: 60, }} onPress={() => linkedRef.current && linkedRef.current.open()} >
                   <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
-                  <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Login with LinkedIn</Text>
+                  <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Proceed with LinkedIn</Text>
                 </Button>
             )
             }
