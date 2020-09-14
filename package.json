@@ -33,6 +33,8 @@
     "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "^2.10.1",
     "react-native-sha256": "^1.3.6",
+    "react-native-simple-animations": "^0.2.2",
+    "react-native-spinner-button": "^1.0.3",
     "react-native-webview": "^8.0.0"
   },
   "devDependencies": {
