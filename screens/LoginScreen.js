@@ -55,20 +55,49 @@ const LoginScreen = ({ route, navigation }) => {
   const [placeholder, setplaceholder] = useState('manoj@google.com');
   const api = () => {
     if (type == 'email') {
+      axios.get('http://104.199.146.206:5000/email/' + email + '/')
+        .then((response) => {
+          console.log(response.data)
+          if (response.data === 'yes') {
+            setscreen('Welcome back! Enter your password');
+            setplaceholder('*********')
+            settype('existing_password')
+            setLoading(false)
+          }
+          else {
+            setscreen("Hi there! You don't seem to have an account with us. Add a password to change that right now!");
+            setplaceholder('*********')
+            settype('new_password')
+            setLoading(false)
+          }
+        })
+    }
+    else if (type == 'new_password') {
       sha256(password)
         .then((hash) => {
-          console.log(hash)
           axios.get('http://104.199.146.206:5000/signup/' + email + '/' + hash + '/none/')
             .then((response) => {
-              console.log(response.data)
-              if (response.data === 'User already exists') {
-                setscreen('Welcome back! Enter your password');
-                setplaceholder('*********')
-                settype('password')
-                setLoading(false)
+              if (response.data == 'success') {
+                navigation.navigate('Home')
               }
             })
         })
+
+    }
+    else {
+      sha256(password)
+        .then((hash) => {
+          axios.get('http://104.199.146.206:5000/login/' + email + '/' + hash + '/none/')
+            .then((response) => {
+              if (response.data == 'success') {
+                navigation.navigate('Home')
+              }
+              else{
+                setscreen(response.data)
+              }
+            })
+        })
+
     }
   }
   return (
@@ -82,10 +111,10 @@ const LoginScreen = ({ route, navigation }) => {
         </View>
         <View>
           <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 18, textAlign: 'center', marginTop: 20, marginBottom: 20 }}>{screen}</Text>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 18, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 20 }}>{screen}</Text>
           </SimpleAnimation>
-          {type=='email'?<TextInput value={email} placeholderTextColor={'grey'} textContentType={'emailAddress'} placeholder={placeholder} onChangeText={(text) => setemail(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderColor: 'green', borderWidth: 1 }}></TextInput>:
-          <TextInput value={password} passwordRules={'required: upper; required: lower; required: digit; minlength: 8'} placeholderTextColor={'grey'} secureTextEntry={'true'} textContentType={'password'} placeholder={placeholder} onChangeText={(text) => setpassword(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderWidth: 1 }}></TextInput>}
+          {type == 'email' ? <TextInput value={email} placeholderTextColor={'grey'} textContentType={'emailAddress'} placeholder={placeholder} onChangeText={(text) => setemail(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderColor: 'green', borderWidth: 1 }}></TextInput> :
+            <TextInput value={password} placeholderTextColor={'grey'} secureTextEntry={'true'} textContentType={'password'} placeholder={placeholder} onChangeText={(text) => setpassword(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderWidth: 1 }}></TextInput>}
           <View style={{ alignSelf: 'center' }}>
             <SpinnerButton
               buttonStyle={styles.buttonStyle}
@@ -102,7 +131,7 @@ const LoginScreen = ({ route, navigation }) => {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
             <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "rgba(56, 56, 56, 0.8);" }} />
-            <Text style={{ flex: 1, textAlign: 'center', fontFamily:'Poppins-Regular' }} >Or</Text>
+            <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'Poppins-Regular' }} >Or</Text>
             <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "rgba(56, 56, 56, 0.8);" }} />
           </View>
           <LinkedIn navigation={navigation} />
