@@ -2,7 +2,7 @@
 /* eslint-disable */
 import React from 'react';
 import { Text, Image, TouchableOpacity } from 'react-native';
-import { StatusUpdateForm, StreamApp } from 'react-native-activity-feed';
+import { StatusUpdateForm, StreamApp, UploadImage } from 'react-native-activity-feed';
 const PostScreen = () => {
   const activity = {
     actor: {
@@ -22,8 +22,7 @@ const PostScreen = () => {
       appId={'90935'}
       token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ'}
     >
-      <StatusUpdateForm
-      />
+      <StatusUpdateForm />
     </StreamApp>
   );
 }

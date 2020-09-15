@@ -18,7 +18,11 @@ import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
 import CameraScreen from './screens/CameraScreen'
 import ChildScreen from './screens/ChildScreen'
+<<<<<<< HEAD
 import ScanScreen from './screens/ScanScreen'
+=======
+import SinglePostScreen from './screens/SinglePost'
+>>>>>>> 201ee8708d79247eaa48794a565e9e5c068df185
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -56,6 +60,7 @@ const App = () => {
       <Stack.Navigator>
       <Stack.Screen options={{ headerShown: false }} name="Home" component={Drawer} />
       <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
+      <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
