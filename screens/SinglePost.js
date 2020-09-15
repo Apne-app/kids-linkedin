@@ -13,29 +13,10 @@ import {
     CommentList,
     LikeList,
 } from 'react-native-activity-feed';
-import RepostList from '../components/RepostList';
-import type { UserResponse } from '../types';
 import { NavigationScreen, StreamApp } from 'react-native-activity-feed';
 import ReplyIcon from '../images/icons/reply.png';
-
-// type Props = {|
-//     navigation: NavigationScreen,
-// |};
-
 export default function SinglePostScreen({ navigation, route }) {
-    //   static navigationOptions = ({ navigation }: Props) => ({
-    //         title: 'POST DETAIL',
-    //         headerLeft: (
-    //             <View style={{ paddingLeft: 15 }}>
-    //                 <BackButton pressed={() => navigation.goBack()} blue />
-    //             </View>
-    //         ),
-    //         headerTitleStyle: {
-    //             fontWeight: '500',
-    //             fontSize: 13,
-    //         },
-    //     });
-    // console.log(route)
+
     const activity = route.params.activity.activity
     const feedGroup = route.params.activity.feedGroup
     const userId = '47id'
@@ -69,7 +50,7 @@ export default function SinglePostScreen({ navigation, route }) {
                                     </View>
                                 }
                             />
-                            <CommentList activityId={props.activity} />
+                            <CommentList infiniteScroll activityId={props.activity.id} />
 
                             <View style={styles.sectionHeader} />
                             <View style={styles.likesContainer}>
@@ -86,14 +67,12 @@ export default function SinglePostScreen({ navigation, route }) {
                             <CommentBox
                                 onSubmit={(text) =>
                                     props.onAddReaction('comment', activity, {
-                                        data: { text: text },
+                                        data: { text: 'hello' },
                                     })
                                 }
-                                avatarProps={{
-                                    source: (userData: UserResponse) =>
-                                        userData.data.profileImage,
-                                }}
-                                styles={{ container: { height: 78 } }}
+                                noAvatar
+                                textInputProps={{ placeholder: 'Add a comment....', height: 45, marginTop: 10, marginLeft: -1, placeholderTextColor: 'grey', }}
+                                styles={{ container: { height: 80, elevation: 0, color: 'black' } }}
                             />
                         );
                     }}

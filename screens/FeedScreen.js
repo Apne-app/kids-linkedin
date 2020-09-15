@@ -1,12 +1,12 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
-import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton } from 'react-native-activity-feed';
+import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList } from 'react-native-activity-feed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/reply.png';
 var height = Dimensions.get('screen').height;
@@ -80,22 +80,26 @@ const CustomActivity = (props) => {
                             labelPlural="comments"
                             counts={props.activity.reaction_counts}
                             kind="comment"
-                            onPress={() => props.navigation.navigate('SinglePost', {activity:props})}
+                            onPress={() => props.navigation.navigate('SinglePost', { activity: props })}
                         />
                         <Icon onPress={() => onShare()} name="share-google" type="EvilIcons" style={{ fontSize: 28, marginLeft: 15 }} />
-                        <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: 15 }} />
+                        <Icon onPress={() => {
+                            Linking.openURL('whatsapp://send?text=check').then((data) => {
+                                console.log('WhatsApp Opened');
+                            }).catch(() => {
+                                alert('Make sure Whatsapp installed on your device');
+                            });
+                        }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: 15 }} />
                     </View>
                     <CommentBox
                         onSubmit={(text) =>
-                            props.onAddReaction('comment', props.activity, {
-                                data: { text: text },
+                            props.onAddReaction('comment', props.activity.id, {
+                                data: { 'text': text },
                             })
                         }
-                        // avatarProps={{
-                        //     source: (userData: UserResponse) =>
-                        //         userData.data.profileImage,
-                        // }}
-                        styles={{ container: { height: 78 } }}
+                        noAvatar
+                        textInputProps={{ placeholder: 'Add a comment....', height: 45, marginTop: 10, marginLeft: -1, placeholderTextColor: 'grey', }}
+                        styles={{ container: { maxHeight: 45, elevation: 0, color: 'black' } }}
                     />
                 </View>
             }

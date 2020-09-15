@@ -112,8 +112,9 @@ const ProfileScreen = ({ navigation, route }) => {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                upload(response.uri);
-                // client.user('49id').u;
+                // upload(response.uri);
+                // profileImage: 'https://randomuser.me/api/portraits/men/11.jpg'
+                client.user('49id').update({ name:'Bhargava Macha', profileImage: 'https://randomuser.me/api/portraits/men/11.jpg' });
                 setavatarSource(response.uri);
             }
         });
