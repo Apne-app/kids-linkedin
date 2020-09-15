@@ -49,12 +49,6 @@ const PostFolder = ({ route, navigation }) => {
         'age': 20,
         'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
       },
-      {
-        'name': 'Shashwat ',
-        'added': 1,
-        'age': 20,
-        'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/73472702_2546600495460139_1094134431800623104_o.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=sZpIUgPO6fYAX9_oNE_&_nc_oc=AQlgdIn0oK_RmjPhHfnZ3Xqwi0U9-O2Kq30XhR_SekdNtiJz2a3t3siRjDuqzJJAKptXqSqcBrvMq8h9iPc_8hdf&_nc_ht=scontent.famd5-1.fna&oh=ea5012f402e51b50f8870fa9ed02cf43&oe=5F802DC5'
-      },
     ])
 
     // console.log(navigation);
