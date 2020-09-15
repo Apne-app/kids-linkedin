@@ -1,6 +1,6 @@
 
 import React, {useState, useRef} from 'react';
-import {Button, StatusBar, StyleSheet, View, Image, ImageBackground, Dimensions, Text} from 'react-native';
+import {Button, StatusBar, StyleSheet, View, Image, ImageBackground, Dimensions, Text, AsyncStorage} from 'react-native';
 import {CropView} from 'react-native-image-crop-tools';
 import ImagePicker from 'react-native-image-picker';
 
@@ -9,10 +9,15 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
 
-const App: () => React$Node = () => {
+const App: () => React$Node = (props) => {
   const [uri, setUri] = useState();
   const [croppedi, setcroppedi] = React.useState('');
   const cropViewRef = useRef();
+
+  React.useEffect(() => {
+    setUri(props.route.params.img);
+  // console.log(AsyncStorage);
+  }, [])
 
   if(croppedi == '')
   {
@@ -21,28 +26,45 @@ const App: () => React$Node = () => {
     <>
       <StatusBar barStyle="dark-content" />
       <View style={styles.container}>
-        <Button
+        {/*<Button
           title={'Pick Image'}
           onPress={() => {
             ImagePicker.launchImageLibrary({noData: true}, response => {
               setUri(response.uri);
             });
           }}
-        />
+        />*/}
         {uri !== undefined && <CropView
           sourceUrl={uri}
           style={styles.cropView}
           ref={cropViewRef}
-          onImageCrop={(res) => setcroppedi(res.uri)}
+          onImageCrop={async (res) => {
+          setcroppedi('');
+          const scannedImg = await AsyncStorage.getItem('@scannedImg');
+          console.log(scannedImg);
+          
+            console.log("aaaaa");
+            try {
+            await AsyncStorage.setItem('@scannedImg', JSON.stringify([res]) );
+              
+            } catch (error) {
+              console.log(error)
+            }
+        
+
+          props.navigation.pop(2);
+
+          }}
           // keepAspectRatio
           // aspectRatio={{width: 16, height: 9}}
         />}
         <Button
-          title={'Get Cropped View'}
+          title={'Save'}
           onPress={async () => {
             cropViewRef.current.saveImage(true, 90);
-            cropViewRef.rotateImage(false)
-            // await console.log();
+            // cropViewRef.rotateImage(false);
+            
+
           }}
         />
       </View>
@@ -73,7 +95,7 @@ const styles = StyleSheet.create({
   },
   cropView: {
     flex: 1,
-    backgroundColor: 'red'
+    backgroundColor: 'black'
   },
 
   image: {

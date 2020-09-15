@@ -11,6 +11,7 @@ import {
   FlatList,
   PermissionsAndroid,
   Modal,
+  AsyncStorage
 } from 'react-native';
 import { Container, Header, Tab, Tabs, ScrollableTab } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
@@ -27,6 +28,7 @@ const ScanScreen = ({navigation}) =>  {
     React.useEffect(() => {
 
         const func = async () => {
+
             try {
                 const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList, AsyncStorage } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 
@@ -38,18 +38,24 @@ const PostFolder = ({ route, navigation }) => {
 
     const [explore, setExplore] = React.useState([
       {
-        'name': 'Bhargava  ',
-        'added': 0,
-        'age': 20,
-        'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
-      },
-      {
-        'name': 'Bhargava  ',
-        'added': 0,
-        'age': 20,
-        'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
+        'height': 0,
+        'width': '0',
+        'uri': ''
       },
     ])
+
+    React.useEffect(() => {
+      
+      const func = async () => {
+        // await AsyncStorage.setItem('@scannedImg', JSON.stringify([]));
+        const x = await AsyncStorage.getItem('@scannedImg')
+        console.log(x);
+        setExplore([...explore, ...JSON.parse(x)]);
+      }
+
+      func();
+
+    }, [])
 
     // console.log(navigation);
 
@@ -61,8 +67,8 @@ const PostFolder = ({ route, navigation }) => {
             renderItem={({ item }) => (
                 <View>
                   {
-                    item.added ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(item.name)}>
+                    item.height != 0 ?
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(explore)}>
                     <View
                     key={item.id}
                     style={{ flex: 1}}>
@@ -70,14 +76,10 @@ const PostFolder = ({ route, navigation }) => {
                         style={styles.image}
                         // imageStyle= {{ borderRadius: 20}}
                         source={{
-                        uri: item.image,
+                        uri: item.uri,
                         }}
                     >
                     <View style={styles.personDetails}>
-                    <View >
-                        <Text style={{fontWeight: 'bold', color: "#fff", textAlign: 'center'}}>{item.name}</Text>
-                        <Text style={{fontWeight: 'bold', color: "#fff", textAlign: 'center'}}>{item.age}</Text>
-                    </View>
                     </View>
                     </ImageBackground>
                     </View>
@@ -85,7 +87,7 @@ const PostFolder = ({ route, navigation }) => {
                     :
                     <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => navigation.navigate('Camera', {})}>
                     <View
-                    key={item.id}
+                    key={item.uri}
                     style={{ flex: 1}}>
                     <View
                         style={styles.addImg}
