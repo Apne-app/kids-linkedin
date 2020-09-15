@@ -3,14 +3,34 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
-
+import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, NotificationFeed } from 'react-native-activity-feed';
 var height = Dimensions.get('screen').height;
 
 const NotificationScreen = ({ route, navigation }) => {
 
   return (
     <Container>
-      <Header noShadow style={{ backgroundColor: '#fff',  flexDirection: 'row', height: height*0.06, borderBottomWidth: 0 }}>
+      <StreamApp
+        apiKey={'dfm952s3p57q'}
+        appId={'90935'}
+        token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ'}
+        defaultUserData={{
+          name: 'Batman',
+          url: 'batsignal.com',
+          desc: 'Smart, violent and brutally tough solutions to crime.',
+          profileImage:
+            'https://i.kinja-img.com/gawker-media/image/upload/s--PUQWGzrn--/c_scale,f_auto,fl_progressive,q_80,w_800/yktaqmkm7ninzswgkirs.jpg',
+          coverImage:
+            'https://i0.wp.com/photos.smugmug.com/Portfolio/Full/i-mwrhZK2/0/ea7f1268/X2/GothamCity-X2.jpg?resize=1280%2C743&ssl=1',
+        }}
+      >
+        <NotificationFeed
+          // Group={this._renderGroup}
+          // navigation={this.props.navigation}
+          notify
+        />
+      </StreamApp>
+      {/* <Header noShadow style={{ backgroundColor: '#fff',  flexDirection: 'row', height: height*0.06, borderBottomWidth: 0 }}>
         
         <Body style={{ alignItems: 'center'}}>
           <Title  style={{fontFamily:'Poppins-Regular', color: "#000", fontSize: 30, marginTop: height*0.03 }}>Notifications</Title>
@@ -123,7 +143,7 @@ const NotificationScreen = ({ route, navigation }) => {
           </Right>
         </ListItem>
 
-      </Content>
+      </Content> */}
     </Container>
   );
 }
@@ -140,7 +160,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: 18,
-    marginTop: height*0.05,
+    marginTop: height * 0.05,
     lineHeight: 25,
     backgroundColor: '#fff',
     borderColor: "#fff",
@@ -162,9 +182,9 @@ const styles = StyleSheet.create({
     // height: 80,
   },
   txt: {
-    fontFamily:'Poppins-Regular'
+    fontFamily: 'Poppins-Regular'
   },
-  time:{
+  time: {
     color: "#A9A9A9"
   }
 })

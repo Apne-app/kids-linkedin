@@ -85,91 +85,54 @@ const fontConfig = {
     },
 };
 
-const theme = {
-    ...DefaultTheme,
-    fonts: configureFonts(fontConfig),
-};
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'First Item',
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: 'Second Item',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-    },
-];
 
 const ProfileScreen = ({ navigation, route }) => {
-    const renderItem = ({ item }) => (
-        <FastImage
-            style={{ width: 200, height: 200, borderRadius: 5, margin: 1 }}
-            source={{
-                uri: 'https://unsplash.it/400/400?image=1',
-                priority: FastImage.priority.normal,
-            }}
-            resizeMode={FastImage.resizeMode.contain}
-        />
-    );
-
-    const Top = () => {
-        return (
-            <View>
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
-                    <Body style={{ alignItems: 'center' }}>
-                        <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title>
-                    </Body>
-                    <Right style={{ marginRight: 30, marginTop: 0 }}>
-                        <Icon onPress={() => { navigation.toggleDrawer(); }} name="menu" type="Feather" />
-                    </Right>
-                </Header>
-                <View style={{ marginTop: 60, flexDirection: 'row', flex: 2 }}>
-                    <Image
-                        style={{ width: 80, height: 80, borderRadius: 5, margin: 5, marginLeft: 30 }}
-                        source={{
-                            uri: 'https://unsplash.it/400/400?image=1'
-                        }}
-                    />
-                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 10 }}>
-                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>Manoj Kumar</Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular' }}>Google, India</Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular' }}>Proud father of 2</Text>
-                    </View>
+    return (
+        <SafeAreaProvider>
+            <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
+                <Body style={{ alignItems: 'center' }}>
+                    <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title>
+                </Body>
+                <Right style={{ marginRight: 30, marginTop: 0 }}>
+                    <Icon onPress={() => { navigation.toggleDrawer(); }} name="menu" type="Feather" />
+                </Right>
+            </Header>
+            <View style={{ marginTop: 60, flexDirection: 'row' }}>
+                <Image
+                    style={{ width: 80, height: 80, borderRadius: 5, margin: 5, marginLeft: 30 }}
+                    source={{
+                        uri: 'https://unsplash.it/400/400?image=1'
+                    }}
+                />
+                <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 10 }}>
+                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>Manoj Kumar</Text>
+                    <Text style={{ fontFamily: 'Poppins-Regular' }}>Google, India</Text>
+                    <Text style={{ fontFamily: 'Poppins-Regular' }}>Proud father of 2</Text>
                 </View>
-                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 90, borderRadius: 10, marginTop: 20, marginBottom: 20 }}>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                        <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>20</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>30</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
-                        </View>
+            </View>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 90, borderRadius: 10, marginTop: 20, marginBottom: 20 }}>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                    <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
+                        <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                    </View>
+                    <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>20</Text>
+                        <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                    </View>
+                    <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>30</Text>
+                        <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                     </View>
                 </View>
             </View>
-        )
-    }
-    return (
-        <SafeAreaProvider>
-            <FlatList
-                data={DATA}
-                horizontal={false}
-                ListHeaderComponent={Top}
-                style={{ alignSelf: 'center', flex: 1, zIndex: 20 }}
-                numColumns={Math.ceil(width / 210)}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-            />
+            <StreamApp
+                apiKey={'dfm952s3p57q'}
+                appId={'90935'}
+                token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ'}
+            >
+                <FlatFeed feedGroup="user" />
+            </StreamApp>
         </SafeAreaProvider>
     );
 };

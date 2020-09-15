@@ -92,7 +92,7 @@ const LoginScreen = ({ route, navigation }) => {
               if (response.data == 'success') {
                 navigation.navigate('Home')
               }
-              else{
+              else {
                 setscreen(response.data)
               }
             })
@@ -155,6 +155,9 @@ const LoginScreen = ({ route, navigation }) => {
         } */}
 
       </Content>
+      <Button onPressIn={()=>navigation.navigate('Home')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 60, width:width-40, alignSelf:'center', marginBottom:40 }}>
+        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: -4 }}>Continue as Guest User</Text>
+      </Button>
     </Container>
   );
 }
