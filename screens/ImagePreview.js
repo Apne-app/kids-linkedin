@@ -1,112 +1,166 @@
-import React, { Component } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
+import React from 'react';
+import { View, Image, Button, StyleSheet, Dimensions } from 'react-native';
+import ImageCropper from 'react-native-simple-image-cropper'; // eslint-disable-line
 
+import overlayPng from '../assets/link.png';
 
-var height = Dimensions.get('screen').height;
-var width = Dimensions.get('screen').width;
+const window = Dimensions.get('window');
+const w = window.width;
+const h = window.width;
+// const h = window.height;
 
-const fontConfig = {
-    default: {
-        regular: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        medium: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        light: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        thin: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-    },
-};
+// const IMAGE = 'https://picsum.photos/id/48/500/900';
+const IMAGE = 'https://picsum.photos/id/48/900/900';
+const IMAGE2 = 'https://picsum.photos/id/215/900/500';
 
-const theme = {
-    ...DefaultTheme,
-    fonts: configureFonts(fontConfig),
-};
-
-
-const ImagePreview = ({ route, navigation }) => {
-
-    console.log(route);
-    
-    return (
-      <Container>
-          <Content style={styles.container}>
-          <Header />
-          <View style={{width: "100%"}}>
-          <Image
-                 style={{height: height*0.6, width: "100%", transform: [{ rotate: '90deg' }]}}
-                 resizeMode="cover"
-                 source={{
-                   uri: route.params.img,
-                 }}
-               />
-         </View>
-          </Content>
-      </Container>
-    );
-}
+const CROP_AREA_WIDTH = w;
+const CROP_AREA_HEIGHT = h;
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: 'center',
     flex: 1,
-    flexDirection: 'column',
-    // padding: 40, 
-    // paddingTop: 80
-  },
-  form: {
-    marginTop: 40,
-    flex: 1
-    // alignSelf: 'center'
-  },
-  //  image: {
-  //   flex: 1,
-  //   resizeMode: "cover",
-  //   opacity: 0.4,
-  //   justifyContent: "center",
-
-  // },
-  addButton: {
-    right: 10,
-    bottom: 10,
-    alignSelf: 'center',
-    position: 'absolute',
-    // flexDirection: 'row',
-    // backgroundColor:'rgba(255,255,255,0.3)'
-  },
-  personDetails: {
-    // right: width*0.15,
-    bottom: 10,
-    position: 'absolute',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    padding: 10,
-    borderRadius: 15,
-    backgroundColor:'rgba(0,0,0,0.5)'
-  },
-  tinyLogo: {
-    alignSelf: 'center',
-    marginTop: 40
-    // height: 80,
+    justifyContent: 'center',
+    backgroundColor: 'black',
   },
 
-  image: {
-    height: width*0.45,
-    width: width*0.45,
-    margin: width*0.02,
-    borderRadius: 30,
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+  },
+
+  buttonChangeImageContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+
+  imagePreviewContainer: {
+    position: 'absolute',
+    top: 20,
+    right: 0,
+    borderWidth: 5,
+    borderColor: 'white',
+    opacity: 0.8,
+    zIndex: 3,
+  },
+
+  imagePreview: {
+    width: CROP_AREA_WIDTH / 3,
+    height: CROP_AREA_HEIGHT / 3,
+  },
+});
+
+class App extends React.Component {
+
+  
+
+  state = {
+    image: IMAGE,
+    cropperParams: {},
+    croppedImage: '',
+  };
+
+  setCropperParams = cropperParams => {
+    this.setState(prevState => ({
+      ...prevState,
+      cropperParams,
+    }));
+  };
+
+  handleChangeImagePress = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      image: prevState.image === IMAGE ? this.props.route.params.img : IMAGE,
+    }));
+  };
+
+  handlePress = async () => {
+    const { image } = this.state;
+    const { cropperParams } = this.state;
+    const cropSize = {
+      width: CROP_AREA_WIDTH / 2,
+      height: CROP_AREA_HEIGHT / 2,
+    };
+
+    const cropAreaSize = {
+      width: CROP_AREA_WIDTH,
+      height: CROP_AREA_HEIGHT,
+    };
+
+    // componentDidMount() {  
+
+    //   this.setState(prevState => ({
+    //       ...prevState,
+    //       image: this.props.route.params.img,
+    //     }));
+    // }
+
+    try {
+      const result = await ImageCropper.crop({
+        ...cropperParams,
+        imageUri: image,
+        cropSize,
+        cropAreaSize,
+      });
+      this.setState(prevState => ({
+        ...prevState,
+        croppedImage: result,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  render() {
+    const { croppedImage, image } = this.state;
+    const src = { uri: croppedImage };
+    // IMAGE = this.props.route.params.img;
     
-  },
-})
 
-export default ImagePreview;
+    // const Overlay = (
+    //   <Image
+    //     style={{
+    //       height: CROP_AREA_HEIGHT,
+    //       width: CROP_AREA_WIDTH,
+    //     }}
+    //     source={overlayPng}
+    //     resizeMode="contain"
+    //   />
+    // );
+    // console.log(this.props.route)
+
+    return (
+      <View style={styles.container}>
+        <ImageCropper
+          imageUri={image}
+          cropAreaWidth={CROP_AREA_WIDTH}
+          cropAreaHeight={CROP_AREA_HEIGHT}
+          setCropperParams={this.setCropperParams}
+          // areaOverlay={Overlay}
+        />
+        <View style={styles.buttonContainer}>
+          <Button onPress={this.handlePress} title="Crop Image" color="blue" />
+        </View>
+        <View style={styles.buttonChangeImageContainer}>
+          <Button
+            onPress={this.handleChangeImagePress}
+            title="Change Image"
+            color="blue"
+          />
+        </View>
+        {croppedImage ? (
+          <View style={styles.imagePreviewContainer}>
+            <Image
+              resizeMode="cover"
+              style={styles.imagePreview}
+              source={src}
+            />
+          </View>
+        ) : null}
+      </View>
+    );
+  }
+}
+
+export default App;

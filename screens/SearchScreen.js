@@ -115,7 +115,7 @@ const SearchScreen = ({ route, navigation }) => {
                   </View>
                   </ImageBackground>
                 </View>
-              </TouchableOpacity >
+              </TouchableOpacity>
             )}
             //Setting the number of column
             numColumns={2}
