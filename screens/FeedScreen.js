@@ -101,11 +101,13 @@ const FeedScreen = ({ navigation, route }) => {
             </Header>
             <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                 <StreamApp
-                    apiKey="r55k622fc59y"
-                    appId="89658"
-                    token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozNn0.yJ81iGpil0YwkrQKpu9CejA-ca2CGoxeonPkM0vpPdc"
+                    apiKey="dfm952s3p57q"
+                    appId="90935"
+                    //47 is this one
+                    token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDdpZCJ9.f3hGhw0QrYAeqF8TDTNY5E0JqMF0zI6CyUmMumpWdfI"
+                    //49, eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ
                 >
-                    <FlatFeed feedGroup="timeline" userId="36" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                    <FlatFeed feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                 </StreamApp>
             </SafeAreaView>
         </SafeAreaProvider>
