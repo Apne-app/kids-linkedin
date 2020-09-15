@@ -1,14 +1,14 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
-import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon } from 'react-native-activity-feed';
+import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton } from 'react-native-activity-feed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import ReplyIcon from '../images/icons/reply.png';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -48,14 +48,55 @@ updateStyle('uploadImage', {
 const CustomActivity = (props) => {
 
     const [commentVisible, setCmv] = React.useState('none');
-
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message:
+                    'React Native | A framework for building native apps using React',
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
     return (
         <Activity
             {...props}
             Footer={
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <LikeButton {...props} />
-                    <Icon name="comment" type="EvilIcons" />
+                <View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <LikeButton {...props} />
+                        <ReactionIcon
+                            icon={ReplyIcon}
+                            labelSingle="comment"
+                            labelPlural="comments"
+                            counts={props.activity.reaction_counts}
+                            kind="comment"
+                            onPress={() => props.navigation.navigate('SinglePost', {activity:props})}
+                        />
+                        <Icon onPress={() => onShare()} name="share-google" type="EvilIcons" style={{ fontSize: 28, marginLeft: 15 }} />
+                        <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: 15 }} />
+                    </View>
+                    <CommentBox
+                        onSubmit={(text) =>
+                            props.onAddReaction('comment', props.activity, {
+                                data: { text: text },
+                            })
+                        }
+                        // avatarProps={{
+                        //     source: (userData: UserResponse) =>
+                        //         userData.data.profileImage,
+                        // }}
+                        styles={{ container: { height: 78 } }}
+                    />
                 </View>
             }
         />
@@ -88,6 +129,9 @@ const theme = {
     ...DefaultTheme,
     fonts: configureFonts(fontConfig),
 };
+const notifi = () => {
+    return (<NewActivitiesNotification labelSingular={'Post'} labelPlural={'Posts'} />)
+}
 const FeedScreen = ({ navigation, route }) => {
     return (
         <SafeAreaProvider>
@@ -105,9 +149,9 @@ const FeedScreen = ({ navigation, route }) => {
                     appId="90935"
                     //47 is this one
                     token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDdpZCJ9.f3hGhw0QrYAeqF8TDTNY5E0JqMF0zI6CyUmMumpWdfI"
-                    //49, eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ
+                //49, eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ
                 >
-                    <FlatFeed feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                    <FlatFeed notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                 </StreamApp>
             </SafeAreaView>
         </SafeAreaProvider>
