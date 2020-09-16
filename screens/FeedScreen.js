@@ -91,7 +91,7 @@ const CustomActivity = (props) => {
                             });
                         }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: 15 }} />
                     </View>
-                    <CommentBox
+                    {/* <CommentBox
                         onSubmit={(text) =>
                             props.onAddReaction('comment', props.activity.id, {
                                 data: { 'text': text },
@@ -100,7 +100,7 @@ const CustomActivity = (props) => {
                         noAvatar
                         textInputProps={{ placeholder: 'Add a comment....', height: 45, marginTop: 10, marginLeft: -1, placeholderTextColor: 'grey', }}
                         styles={{ container: { maxHeight: 45, elevation: 0, color: 'black' } }}
-                    />
+                    /> */}
                 </View>
             }
         />

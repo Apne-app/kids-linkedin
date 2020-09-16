@@ -22,7 +22,7 @@ const PostScreen = () => {
       appId={'90935'}
       token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ'}
     >
-      <StatusUpdateForm />
+      <StatusUpdateForm  modifyActivityData={(data) => ({...data, image:'https://randomuser.me/api/portraits/men/1.jpg'})} />
     </StreamApp>
   );
 }
