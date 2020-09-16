@@ -113,8 +113,8 @@ const LoginScreen = ({ route, navigation }) => {
           <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 18, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 20 }}>{screen}</Text>
           </SimpleAnimation>
-          {type == 'email' ? <TextInput value={email} placeholderTextColor={'grey'} textContentType={'emailAddress'} placeholder={placeholder} onChangeText={(text) => setemail(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderColor: 'green', borderWidth: 1 }}></TextInput> :
-            <TextInput value={password} placeholderTextColor={'grey'} secureTextEntry={'true'} textContentType={'password'} placeholder={placeholder} onChangeText={(text) => setpassword(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderWidth: 1 }}></TextInput>}
+          {type == 'email' ? <TextInput value={email} placeholderTextColor={'grey'} textContentType={'emailAddress'} placeholder={placeholder} onChangeText={(text) => setemail(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderColor: 'green', borderWidth: 1, alignSelf: 'center' }}></TextInput> :
+            <TextInput value={password} placeholderTextColor={'grey'} secureTextEntry={true} textContentType={'password'} placeholder={placeholder} onChangeText={(text) => setpassword(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderColor: 'green', borderWidth: 1, alignSelf: 'center' }}></TextInput>}
           <View style={{ alignSelf: 'center' }}>
             <SpinnerButton
               buttonStyle={styles.buttonStyle}

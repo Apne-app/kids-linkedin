@@ -80,7 +80,7 @@ const LinkedIn = ({navigation}) => {
             onSuccess={(data) => {
                 // setToken(data.access_token);
                 getInfo(data.access_token);
-                // navigation.navigate('Home', {});
+                navigation.navigate('Home', {});
             }}
             // permissions={['r_liteprofile']}
             renderButton={() => 

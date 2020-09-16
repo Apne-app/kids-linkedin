@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList, AsyncStorage } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -44,18 +45,33 @@ const PostFolder = ({ route, navigation }) => {
       },
     ])
 
-    React.useEffect(() => {
+    // React.useEffect(() => {
       
-      const func = async () => {
-        // await AsyncStorage.setItem('@scannedImg', JSON.stringify([]));
-        const x = await AsyncStorage.getItem('@scannedImg')
-        console.log(x);
-        setExplore([...explore, ...JSON.parse(x)]);
-      }
+    //   const func = async () => {
+    //     // await AsyncStorage.setItem('@scannedImg', JSON.stringify([]));
+    //     // const x = await AsyncStorage.getItem('@scannedImg')
+    //     // console.log(route.params);
+    //     if(route.params.img.uri != explore[explore.length-1].uri)
+    //     setExplore([...explore, route.params.img]);
+    //   }
 
-      func();
+    //   func();
 
-    }, [])
+    // }, [navigation])
+
+    useFocusEffect(
+      React.useCallback(() => {
+        const func = async () => {
+          // await AsyncStorage.setItem('@scannedImg', JSON.stringify([]));
+          // const x = await AsyncStorage.getItem('@scannedImg')
+          // console.log(route.params);
+          if(route.params.img.uri != explore[explore.length-1].uri)
+          setExplore([...explore, route.params.img]);
+        }
+
+        func();
+      }, [])
+    );
 
     // console.log(navigation);
 
@@ -79,8 +95,6 @@ const PostFolder = ({ route, navigation }) => {
                         uri: item.uri,
                         }}
                     >
-                    <View style={styles.personDetails}>
-                    </View>
                     </ImageBackground>
                     </View>
               </TouchableOpacity>
