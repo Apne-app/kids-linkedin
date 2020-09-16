@@ -1,112 +1,111 @@
-import React, { Component } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
+
+import React, {useState, useRef} from 'react';
+import {Button, StatusBar, StyleSheet, View, Image, ImageBackground, Dimensions, Text, AsyncStorage} from 'react-native';
+import {CropView} from 'react-native-image-crop-tools';
+import ImagePicker from 'react-native-image-picker';
 
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
-const fontConfig = {
-    default: {
-        regular: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        medium: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        light: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-        thin: {
-            fontFamily: 'Poppins-Regular',
-            fontWeight: 'normal',
-        },
-    },
-};
 
-const theme = {
-    ...DefaultTheme,
-    fonts: configureFonts(fontConfig),
-};
+const App: () => React$Node = (props) => {
+  const [uri, setUri] = useState();
+  const [croppedi, setcroppedi] = React.useState('');
+  const cropViewRef = useRef();
 
+  React.useEffect(() => {
+    setUri(props.route.params.img);
+  // console.log(AsyncStorage);
+  }, [])
 
-const ImagePreview = ({ route, navigation }) => {
+  if(croppedi == '')
+  {
 
-    console.log(route);
-    
+  return (
+    <>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.container}>
+        {/*<Button
+          title={'Pick Image'}
+          onPress={() => {
+            ImagePicker.launchImageLibrary({noData: true}, response => {
+              setUri(response.uri);
+            });
+          }}
+        />*/}
+        {uri !== undefined && <CropView
+          sourceUrl={uri}
+          style={styles.cropView}
+          ref={cropViewRef}
+          onImageCrop={async (res) => {
+          setcroppedi('');
+          const scannedImg = await AsyncStorage.getItem('@scannedImg');
+          console.log(scannedImg);
+          
+            console.log("aaaaa");
+            try {
+            await AsyncStorage.setItem('@scannedImg', JSON.stringify([res]) );
+              
+            } catch (error) {
+              console.log(error)
+            }
+        
+
+          props.navigation.pop(2);
+
+          }}
+          // keepAspectRatio
+          // aspectRatio={{width: 16, height: 9}}
+        />}
+        <Button
+          title={'Save'}
+          onPress={async () => {
+            cropViewRef.current.saveImage(true, 90);
+            // cropViewRef.rotateImage(false);
+            
+
+          }}
+        />
+      </View>
+    </>
+  );
+  }
+  else
+  {
     return (
-      <Container>
-          <Content style={styles.container}>
-          <Header />
-          <View style={{width: "100%"}}>
-          <Image
-                 style={{height: height*0.6, width: "100%", transform: [{ rotate: '90deg' }]}}
-                 resizeMode="cover"
-                 source={{
-                   uri: route.params.img,
-                 }}
-               />
-         </View>
-          </Content>
-      </Container>
+
+    <View style={styles.container}>
+      <Image
+          style={styles.image}
+          // imageStyle= {{ transform: [{ rotate: '-90deg'}]}}
+          source={{
+          uri: croppedi,
+          }}
+      />
+      <Button title={'Go Back'} onPress={() => setcroppedi('')} />
+    </View>
     );
-}
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: 'center',
     flex: 1,
-    flexDirection: 'column',
-    // padding: 40, 
-    // paddingTop: 80
   },
-  form: {
-    marginTop: 40,
-    flex: 1
-    // alignSelf: 'center'
-  },
-  //  image: {
-  //   flex: 1,
-  //   resizeMode: "cover",
-  //   opacity: 0.4,
-  //   justifyContent: "center",
-
-  // },
-  addButton: {
-    right: 10,
-    bottom: 10,
-    alignSelf: 'center',
-    position: 'absolute',
-    // flexDirection: 'row',
-    // backgroundColor:'rgba(255,255,255,0.3)'
-  },
-  personDetails: {
-    // right: width*0.15,
-    bottom: 10,
-    position: 'absolute',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    padding: 10,
-    borderRadius: 15,
-    backgroundColor:'rgba(0,0,0,0.5)'
-  },
-  tinyLogo: {
-    alignSelf: 'center',
-    marginTop: 40
-    // height: 80,
+  cropView: {
+    flex: 1,
+    backgroundColor: 'black'
   },
 
   image: {
-    height: width*0.45,
-    width: width*0.45,
-    margin: width*0.02,
-    borderRadius: 30,
+    height: width,
+    width: width,
+    // margin: width*0.02,
+    // elevation: 3
+    // borderRadius: 30,
     
   },
-})
+});
 
-export default ImagePreview;
+export default App;

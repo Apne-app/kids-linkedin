@@ -16,7 +16,9 @@ import PostScreen from './screens/PostScreen'
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
+import CameraScreen from './screens/CameraScreen'
 import ChildScreen from './screens/ChildScreen'
+import ScanScreen from './screens/ScanScreen'
 import SinglePostScreen from './screens/SinglePost'
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
@@ -29,6 +31,7 @@ function Bottom() {
       <BottomNav.Screen name="Post" component={PostScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: '#357feb', fontSize: size + 15, marginBottom: -20 }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10 }}></Text>) }} />
       <BottomNav.Screen name="Notifications" component={NotificationScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="Feather" name="bell" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Notifications</Text>) }} />
       <BottomNav.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="Feather" name="user" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Profile</Text>) }} />
+      <BottomNav.Screen name="Scan" component={ScanScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} />
     </BottomNav.Navigator>
   )
 }
@@ -53,11 +56,12 @@ const App = () => {
     <NavigationContainer ref={containerRef}>
       <Stack.Navigator>
       <Stack.Screen options={{ headerShown: false }} name="Home" component={Drawer} />
-      <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
+      <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
       <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+      <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
       <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
-      <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
+      <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

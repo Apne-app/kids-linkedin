@@ -132,11 +132,12 @@ android {
     defaultConfig {
         applicationId "com.kids"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        targetSdkVersion 27
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
     }
     splits {
         abi {
