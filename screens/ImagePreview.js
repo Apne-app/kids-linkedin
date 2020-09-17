@@ -41,18 +41,21 @@ const App: () => React$Node = (props) => {
           onImageCrop={async (res) => {
           setcroppedi('');
           const scannedImg = await AsyncStorage.getItem('@scannedImg');
-          console.log(scannedImg);
+          // console.log(scannedImg);
           
-            console.log("aaaaa");
-            try {
-            await AsyncStorage.setItem('@scannedImg', JSON.stringify([res]) );
+            // console.log("aaaaa");
+            // try {
+            // await AsyncStorage.setItem('@scannedImg', JSON.stringify([res]) );
               
-            } catch (error) {
-              console.log(error)
-            }
+            // } catch (error) {
+            //   console.log(error)
+            // }
         
 
-          props.navigation.pop(2);
+          props.navigation.navigate('Home', {
+            screen: 'Scan',
+            params: { "img": res },
+          });
 
           }}
           // keepAspectRatio

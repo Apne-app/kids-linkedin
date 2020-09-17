@@ -23,7 +23,10 @@ import SinglePostScreen from './screens/SinglePost'
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
-function Bottom() {
+function Bottom(props) {
+
+  console.log(props.route.params);
+
   return (
     <BottomNav.Navigator tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}>
       <BottomNav.Screen name="Feed" component={FeedScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="Feather" name="home" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Home</Text>) }} />
@@ -35,17 +38,20 @@ function Bottom() {
     </BottomNav.Navigator>
   )
 }
-function Drawer() {
-  return (
-    <DrawNav.Navigator drawerPosition={"right"} initialRouteName="Home" >
-      <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
-      <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
-      <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
-      {/* <DrawNav.Screen name="Tickets" component={Tickets} />
-      <DrawNav.Screen name="Shipping" component={Shipping} /> */}
-    </DrawNav.Navigator>
-  )
-}
+// function Drawer({route}) {
+
+//   // console.log(route);
+
+//   return (
+//     <DrawNav.Navigator drawerPosition={"right"} initialRouteName="Home" >
+//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
+//       {/* <DrawNav.Screen name="Tickets" component={Tickets} />
+//       <DrawNav.Screen name="Shipping" component={Shipping} /> */}
+//     </DrawNav.Navigator>
+//   )
+// }
 const App = () => {
 
   const containerRef = React.useRef();
@@ -55,9 +61,9 @@ const App = () => {
   return (
     <NavigationContainer ref={containerRef}>
       <Stack.Navigator>
-      <Stack.Screen options={{ headerShown: false }} name="Home" component={Drawer} />
-      <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
+      <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
       <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+      <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
       <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
       <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />

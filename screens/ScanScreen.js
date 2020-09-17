@@ -21,9 +21,12 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 // import FastImage from 'react-native-fast-image';
 
-const ScanScreen = ({navigation}) =>  {
+const ScanScreen = ({navigation, route}) =>  {
 
     const [gallery, setGallery] = React.useState([]);
+
+
+    // console.log(route.params);
 
     React.useEffect(() => {
 
@@ -41,7 +44,7 @@ const ScanScreen = ({navigation}) =>  {
                 console.log("You can use read from the storage");
 
                  CameraRoll.getPhotos({
-                    first: 20,
+                    first: 100,
                     assetType: 'All',
                     })
                     .then(r => {
@@ -107,7 +110,7 @@ const ScanScreen = ({navigation}) =>  {
           />
           </Tab>
           <Tab heading="Picture">
-              <PostFolder navigation={navigation} />
+              <PostFolder navigation={navigation} route={route}  />
           </Tab>
           <Tab heading="Video">
             
