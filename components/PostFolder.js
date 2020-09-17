@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList, AsyncStorage } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage';
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 
@@ -45,39 +46,60 @@ const PostFolder = ({ route, navigation }) => {
       },
     ])
 
-    // React.useEffect(() => {
-      
-    //   const func = async () => {
-    //     // await AsyncStorage.setItem('@scannedImg', JSON.stringify([]));
-    //     // const x = await AsyncStorage.getItem('@scannedImg')
-    //     // console.log(route.params);
-    //     if(route.params.img.uri != explore[explore.length-1].uri)
-    //     setExplore([...explore, route.params.img]);
-    //   }
 
-    //   func();
+    
 
-    // }, [navigation])
-
-    useFocusEffect(
-      React.useCallback(() => {
-        const func = async () => {
-          // await AsyncStorage.setItem('@scannedImg', JSON.stringify([]));
-          // const x = await AsyncStorage.getItem('@scannedImg')
-          // console.log(route.params);
-          if(route.params.img.uri != explore[explore.length-1].uri)
-          setExplore([...explore, route.params.img]);
+        const getImages = async () => {
+          let x = await AsyncStorage.getItem("@scanImg");
+          console.log(x);
+          if(x)
+          {
+            if(JSON.parse(x).uri != explore[explore.length-1])
+            {
+              setExplore([ ...explore, (JSON.parse(x)) ]);
+              console.log(x);
+            }
+          }
         }
 
-        func();
-      }, [])
-    );
+        // console.log(route.params)
 
-    // console.log(navigation);
+        if(route.params)
+    {
+      if(route.params.reload)
+      {
+        getImages();
+        console.log("asds");
+        route.params.reload = 0; 
+      }
+    }
+
+        // getImages();
+
 
     return (
       <Container>
           <Content style={styles.container}>
+          
+          <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}>
+              <View style={styles.save}>
+              <Icon name="download" type="Feather" style={{color: "#fff", flex: 1}} />
+                <Text style={{color: "#fff", flex: 1, marginTop: 5}}>
+                  Save
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}>
+              <View style={styles.save2}>
+              <Icon name="upload-cloud" type="Feather" style={{color: "#357feb", flex: 1}} />
+                <Text style={{color: "#357feb", flex: 1, marginTop: 5}}>
+                  Upload
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
           <FlatList
             data={explore}
             renderItem={({ item }) => (
@@ -87,10 +109,10 @@ const PostFolder = ({ route, navigation }) => {
                     <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(explore)}>
                     <View
                     key={item.id}
-                    style={{ flex: 1}}>
+                    style={{ flex: 1,}}>
                     <ImageBackground
                         style={styles.image}
-                        // imageStyle= {{ borderRadius: 20}}
+                        imageStyle= {{ borderRadius: 20}}
                         source={{
                         uri: item.uri,
                         }}
@@ -194,9 +216,32 @@ const styles = StyleSheet.create({
     width: width*0.45,
     margin: width*0.02,
     borderWidth: 2,
-    borderRadius: 1,
+    borderRadius: 15,
     borderStyle: 'dashed',
   },
+  save: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 15,
+    // margin: 5,
+    backgroundColor: '#357feb',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#fff",
+    width: width*0.31
+  },
+  save2: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 15,
+    // margin: 5,
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#357feb",
+    width: width*0.31
+  },
+
 })
 
 export default PostFolder;

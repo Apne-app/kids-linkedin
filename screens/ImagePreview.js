@@ -1,7 +1,8 @@
 
 import React, {useState, useRef} from 'react';
-import {Button, StatusBar, StyleSheet, View, Image, ImageBackground, Dimensions, Text, AsyncStorage} from 'react-native';
+import {Button, StatusBar, StyleSheet, View, Image, ImageBackground, Dimensions, Text} from 'react-native';
 import {CropView} from 'react-native-image-crop-tools';
+import AsyncStorage from '@react-native-community/async-storage';
 import ImagePicker from 'react-native-image-picker';
 
 
@@ -18,6 +19,7 @@ const App: () => React$Node = (props) => {
     setUri(props.route.params.img);
   // console.log(AsyncStorage);
   }, [])
+
 
   if(croppedi == '')
   {
@@ -40,21 +42,25 @@ const App: () => React$Node = (props) => {
           ref={cropViewRef}
           onImageCrop={async (res) => {
           setcroppedi('');
-          const scannedImg = await AsyncStorage.getItem('@scannedImg');
+          // var scannedImg = await AsyncStorage.getItem('@scanImg');
           // console.log(scannedImg);
           
             // console.log("aaaaa");
             // try {
-            // await AsyncStorage.setItem('@scannedImg', JSON.stringify([res]) );
+          await AsyncStorage.setItem('@scanImg', JSON.stringify(res) );
               
+
+          // scannedImg = await AsyncStorage.getItem('@scanImg');
+          // console.log(scannedImg, "sd");
             // } catch (error) {
             //   console.log(error)
-            // }
+            // // }
         
 
           props.navigation.navigate('Home', {
             screen: 'Scan',
-            params: { "img": res },
+            params: { "reload": 1
+            },
           });
 
           }}
