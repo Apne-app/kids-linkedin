@@ -24,6 +24,8 @@ target 'kids' do
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
+  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing
