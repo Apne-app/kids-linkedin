@@ -114,7 +114,7 @@ const ProfileScreen = ({ navigation, route }) => {
             } else {
                 // upload(response.uri);
                 // profileImage: 'https://randomuser.me/api/portraits/men/11.jpg'
-                client.user('49id').update({ name:'Bhargava Macha', profileImage: 'https://randomuser.me/api/portraits/men/11.jpg' });
+                client.user('49id').update({ name: 'Bhargava Macha', profileImage: 'https://randomuser.me/api/portraits/men/11.jpg' });
                 setavatarSource(response.uri);
             }
         });
@@ -150,7 +150,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         <Text style={{ fontFamily: 'Poppins-Regular' }}>Grade II, DAVPS</Text>
                     </View>
                 </View>
-                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 90, borderRadius: 10, marginTop: 20, marginBottom: 20 }}>
+                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 180, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
@@ -164,6 +164,17 @@ const ProfileScreen = ({ navigation, route }) => {
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>30</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                         </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
+                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
+                        </View>
+                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>20</Text>
+                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
+                        </View>
+
                     </View>
                 </View>
                 <FlatFeed feedGroup="user" />

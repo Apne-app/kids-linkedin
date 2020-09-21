@@ -6,12 +6,13 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeAreaView from 'react-native-safe-area-view';
-import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from './react-native-activity-feed';
+import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from "react-native-image-viewing";
 import SwipeUpDown from 'react-native-swipe-up-down';
+import Video from 'react-native-video';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -66,7 +67,16 @@ const FeedScreen = ({ navigation, route }) => {
         const footer = (id) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <LikeButton labelFunction={nulre} {...props} />
+                    {/* <LikeButton labelFunction={nulre} {...props} /> */}
+                    <ReactionToggleIcon
+                        // styles={styles}
+                        counts={props.activity.reaction_counts}
+                        // own_reactions={own_reactions}
+                        kind={'like'}
+                        onPress={this._onPress}
+                        activeIcon={require('../images/icons/star.png')}
+                        inactiveIcon={require('../images/icons/star-outline.png')}
+                    />
                     <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="comment" type="EvilIcons" style={{ fontSize: 28, marginLeft: 10 }} />
                     <Icon onPress={() => {
                         Linking.openURL('whatsapp://send?text=check').then((data) => {
@@ -94,7 +104,7 @@ const FeedScreen = ({ navigation, route }) => {
                         kind="comment"
                         height={0}
                         width={-20}
-                        onPress={() => {setactid(id); setdisplay('flex') }}
+                        onPress={() => { setactid(id); setdisplay('flex') }}
                     />
                 </View>
                 {/* <CommentBox
@@ -163,6 +173,7 @@ const FeedScreen = ({ navigation, route }) => {
         return (
             <Activity
                 {...props}
+                {...console.log(props.activity)}
                 Header={
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Avatar
@@ -220,12 +231,25 @@ const FeedScreen = ({ navigation, route }) => {
                                     </View>
                                         <Text style={{ fontFamily: 'Poppins-Regular', color: 'white', marginLeft: 30, marginTop: 10, marginRight: 30 }}>{props.activity.object}</Text></View>)
                             }}
+
                         /> : <View></View>}
                         <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
                             {props.activity.image ? <Image
                                 source={{ uri: props.activity.image }}
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
                             /> : <View></View>}
+                            {props.activity.video ? <Video source={{ uri: props.activity.video }}   // Can be a URL or a local file.
+                                // ref={(ref) => {
+                                //     this.player = ref
+                                // }}                                      // Store reference
+                                // onBuffer={this.onBuffer}                // Callback when remote video is buffering
+                                // onError={this.videoError}               // Callback when video cannot be loaded
+                                controls={true}
+                                style={{
+                                    width: width - 40, height: 340, marginTop: 20
+
+                                }}
+                            /> : null}
                         </TouchableOpacity>
                     </View>
                 }
