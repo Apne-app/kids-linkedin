@@ -59,7 +59,7 @@ const uploadToS3 = (i) => {
 
   const options = {
     keyPrefix: userid+"/",
-    bucket: "your-bucket",
+    bucket: "kids-linkedin",
     region: "us-east-1",
     accessKey: "your-access-key",
     secretKey: "your-secret-key",

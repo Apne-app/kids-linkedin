@@ -28,6 +28,7 @@
     "react-native-activity-feed": "^0.9.1",
     "react-native-aws3": "0.0.9",
     "react-native-camera": "^2.5.0",
+    "react-native-dotenv": "^2.4.0",
     "react-native-elements": "^2.3.2",
     "react-native-fast-image": "^8.3.2",
     "react-native-gesture-handler": "^1.7.0",
