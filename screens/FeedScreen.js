@@ -1,16 +1,15 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking, TouchableHighlight } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking, TouchableHighlight } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import SafeAreaView from 'react-native-safe-area-view';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
-import ImageView from "react-native-image-viewing";
+import ImageView from 'react-native-image-viewing';
 import SwipeUpDown from 'react-native-swipe-up-down';
 import Video from 'react-native-video';
 var height = Dimensions.get('screen').height;
@@ -184,7 +183,7 @@ const FeedScreen = ({ navigation, route }) => {
                         />
                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                             <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.data.name}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.created_at.split('T')[0].replaceAll('-', '/')}</Text>
+                            <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
                         </View>
                         <ActionSheet
                             ref={refActionSheet}
@@ -218,7 +217,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                             <Text style={{ fontFamily: 'Poppins-Regular', color: 'white' }}>{props.activity.actor.data.name}</Text>
-                                            <Text style={{ fontFamily: 'Poppins-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replaceAll('-', '/')}</Text>
+                                            <Text style={{ fontFamily: 'Poppins-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
                                         </View>
                                         <ActionSheet
                                             ref={refActionSheet}
