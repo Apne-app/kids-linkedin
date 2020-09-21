@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList } from 'react-native'
+import { RNS3 } from 'react-native-aws3';
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 
@@ -35,8 +36,58 @@ const theme = {
     fonts: configureFonts(fontConfig),
 };
 
+function randomStr(len, arr) { 
+    var ans = ''; 
+    for (var i = len; i > 0; i--) { 
+        ans +=  
+          arr[Math.floor(Math.random() * arr.length)]; 
+    } 
+    return ans; 
+} 
+
+const userid = "shashwatid"
+  
+
+const uploadToS3 = (i) => {
+
+  const file = {
+    // `uri` can also be a file system path (i.e. file://)
+    uri: explore[i].uri,
+    name: randomStr(20, '12345abcde')+'.'+explore[i].uri[explore[i].uri.length-1]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-3],
+    type: "image/png"
+  }
+
+  const options = {
+    keyPrefix: userid+"/",
+    bucket: "your-bucket",
+    region: "us-east-1",
+    accessKey: "your-access-key",
+    secretKey: "your-secret-key",
+    successActionStatus: 201
+  }
+
+  RNS3.put(file, options).then(response => {
+    if (response.status !== 201)
+      throw new Error("Failed to upload image to S3");
+    console.log(response.body);
+    /**
+    * {
+    *   postResponse: {
+    *     bucket: "your-bucket",
+    *     etag : "9f620878e06d28774406017480a59fd4",
+    *     key: "uploads/image.png",
+    *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+    *   }
+    * }
+    */
+  });
+
+}
+
 
 const PostFolder = ({ route, navigation }) => {
+
+    const [modalVisible, setModalVisible] = React.useState(false);
 
     const [explore, setExplore] = React.useState([
       {
@@ -56,7 +107,7 @@ const PostFolder = ({ route, navigation }) => {
           {
             if(JSON.parse(x).uri != explore[explore.length-1])
             {
-              setExplore([ ...explore, (JSON.parse(x)) ]);
+              setExplore([(JSON.parse(x)), ...explore ]);
               console.log(x);
             }
           }
@@ -80,9 +131,46 @@ const PostFolder = ({ route, navigation }) => {
     return (
       <Container>
           <Content style={styles.container}>
-          
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <TouchableOpacity onPress={() => setModalVisible(false)} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
+                  <Text style={styles.modalText}>Add a Tag!</Text>
+                    <Item floatingLabel>
+                      <Label>Tag</Label>
+                      <Input />
+                    </Item>
+                    <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
+                      onPress={() => {
+                        console.log(explore);
+                        
+                      }}
+                    >
+                      <View style={styles.save2}>
+                        <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
+                          Upload
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          </View>
+                
           <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}>
+            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
+              onPress={() => {
+                setModalVisible(true);
+              }}
+            >
               <View style={styles.save}>
               <Icon name="download" type="Feather" style={{color: "#fff", flex: 1}} />
                 <Text style={{color: "#fff", flex: 1, marginTop: 5}}>
@@ -90,7 +178,11 @@ const PostFolder = ({ route, navigation }) => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}>
+            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}
+              onPress={() => {
+                setModalVisible(true);
+              }}
+            >
               <View style={styles.save2}>
               <Icon name="upload-cloud" type="Feather" style={{color: "#357feb", flex: 1}} />
                 <Text style={{color: "#357feb", flex: 1, marginTop: 5}}>
@@ -241,7 +333,37 @@ const styles = StyleSheet.create({
     borderColor: "#357feb",
     width: width*0.31
   },
-
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginVertical: 15,
+    fontSize: 20,
+    textAlign: "center"
+  }
 })
 
 export default PostFolder;

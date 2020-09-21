@@ -34,9 +34,9 @@ var setAndroidTranslucentStatusBar = function setAndroidTranslucentStatusBar() {
     exports.androidTranslucentStatusBar = androidTranslucentStatusBar = translucent;
 
     if (translucent) {
-      _reactNativeSafeAreaView["default"].setStatusBarHeight(24);
+      // _reactNativeSafeAreaView["default"].setStatusBarHeight(24);
     } else {
-      _reactNativeSafeAreaView["default"].setStatusBarHeight(0);
+      // _reactNativeSafeAreaView["default"].setStatusBarHeight(0);
     }
   }
 };
