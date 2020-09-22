@@ -3,9 +3,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
-
+import { SECRET_KEY, ACCESS_KEY } from '@env'
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -48,46 +48,12 @@ function randomStr(len, arr) {
 const userid = "shashwatid"
   
 
-const uploadToS3 = (i) => {
-
-  const file = {
-    // `uri` can also be a file system path (i.e. file://)
-    uri: explore[i].uri,
-    name: randomStr(20, '12345abcde')+'.'+explore[i].uri[explore[i].uri.length-1]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-3],
-    type: "image/png"
-  }
-
-  const options = {
-    keyPrefix: userid+"/",
-    bucket: "kids-linkedin",
-    region: "us-east-1",
-    accessKey: "your-access-key",
-    secretKey: "your-secret-key",
-    successActionStatus: 201
-  }
-
-  RNS3.put(file, options).then(response => {
-    if (response.status !== 201)
-      throw new Error("Failed to upload image to S3");
-    console.log(response.body);
-    /**
-    * {
-    *   postResponse: {
-    *     bucket: "your-bucket",
-    *     etag : "9f620878e06d28774406017480a59fd4",
-    *     key: "uploads/image.png",
-    *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-    *   }
-    * }
-    */
-  });
-
-}
-
 
 const PostFolder = ({ route, navigation }) => {
 
     const [modalVisible, setModalVisible] = React.useState(false);
+
+    const [uploading, setUploading] = React.useState({});
 
     const [explore, setExplore] = React.useState([
       {
@@ -108,7 +74,13 @@ const PostFolder = ({ route, navigation }) => {
             if(JSON.parse(x).uri != explore[explore.length-1])
             {
               setExplore([(JSON.parse(x)), ...explore ]);
-              console.log(x);
+              var y = ""+String((JSON.parse(x)).uri);
+              var obj = {};
+              obj[String((JSON.parse(x)).uri)] = false;
+              setUploading({
+                ...uploading,
+                ...obj
+              });
             }
           }
         }
@@ -128,6 +100,67 @@ const PostFolder = ({ route, navigation }) => {
         // getImages();
 
 
+
+const uploadToS3 = (i) => {
+
+  // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
+
+  const file = {
+    // `uri` can also be a file system path (i.e. file://)
+    uri: explore[i].uri,
+    name: randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1],
+    type: "image/png",
+  }
+
+  const options = {
+    keyPrefix: userid+"/",
+    bucket: "kids-linkedin",
+    region: "ap-south-1",
+    accessKey: ACCESS_KEY,
+    secretKey: SECRET_KEY,
+    successActionStatus: 201
+  }
+
+  RNS3.put(file, options).then(response => {
+    console.log("dassd")
+    if (response.status !== 201)
+      throw new Error("Failed to upload image to S3");
+    console.log(response.body);
+    /**
+    * {
+    *   postResponse: {
+    *     bucket: "your-bucket",
+    *     etag : "9f620878e06d28774406017480a59fd4",
+    *     key: "uploads/image.png",
+    *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+    *   }
+    * }
+    */
+
+    var obj = { ...uploading };
+    var a = 0;
+    if(!a)
+    {
+      a++;
+    obj[explore[i].uri] = false;
+    }
+
+    console.log(obj, i);
+
+    setUploading({
+      ...obj
+    })
+
+  if(i == explore.length-2) alert("Uploaded");
+
+  })
+  .catch(err => {
+    console.log(err);
+  })
+  ;
+
+}
+
     return (
       <Container>
           <Content style={styles.container}>
@@ -137,7 +170,7 @@ const PostFolder = ({ route, navigation }) => {
               transparent={true}
               visible={modalVisible}
               onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
+                alert("Modal has been closed.");
               }}
             >
               <View style={styles.centeredView}>
@@ -150,7 +183,23 @@ const PostFolder = ({ route, navigation }) => {
                     </Item>
                     <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
                       onPress={() => {
-                        console.log(explore);
+                        // console.log(randomStr(20, '12345abcdepq75xyz'));
+                        var i;
+                        setTimeout(() => {
+                        setModalVisible(false)
+                        }, 300);
+                        var obj = {...uploading};
+                        for(i = 0; i < explore.length-1; i++)
+                        {
+                          obj[(explore[i].uri)] = true;
+                          setUploading({
+                            ...obj
+                          });
+                        }
+                        for(i = 0; i < explore.length-1; i++)
+                        {
+                          uploadToS3(i);
+                        }
                         
                       }}
                     >
@@ -198,17 +247,23 @@ const PostFolder = ({ route, navigation }) => {
                 <View>
                   {
                     item.height != 0 ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(explore)}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(uploading[item["uri"]])}>
                     <View
                     key={item.id}
                     style={{ flex: 1,}}>
                     <ImageBackground
                         style={styles.image}
-                        imageStyle= {{ borderRadius: 20}}
+                        imageStyle= {{ borderRadius: 20, opacity: uploading[item["uri"]] ? 0.5 : 1 }}
                         source={{
                         uri: item.uri,
                         }}
                     >
+                    {
+                      uploading[item["uri"]] ?
+                     <Spinner color='blue' style={{ position: 'absolute', alignSelf: 'center', top: height*0.1 }} />
+                     :
+                     <View />
+                    }
                     </ImageBackground>
                     </View>
               </TouchableOpacity>
