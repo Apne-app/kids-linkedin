@@ -6,6 +6,7 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOp
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
+import { Chip } from 'react-native-paper';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -161,6 +162,9 @@ const uploadToS3 = (i) => {
 
 }
 
+    const [tags, setTags] = React.useState([]);
+    const [tag, setTag] = React.useState('');
+
     return (
       <Container>
           <Content style={styles.container}>
@@ -177,10 +181,33 @@ const uploadToS3 = (i) => {
                 <View style={styles.modalView}>
                   <TouchableOpacity onPress={() => setModalVisible(false)} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
                   <Text style={styles.modalText}>Add a Tag!</Text>
+                    <View style={{flexDirection: 'row'}} >
+                      {
+                        tags.map((item, i) => {
+                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 1}} textStyle={{color: "#fff"}} icon="close">{item}</Chip>
+                        })
+                      }
+                    </View>  
                     <Item floatingLabel>
                       <Label>Tag</Label>
-                      <Input />
+                      <Input value={tag} onChangeText={text => setTag(text)} />
                     </Item>
+                    <View style={{flexDirection: 'row'}} >
+                    <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
+                        onPress={() => {
+                          setTags([
+                            ...tags,
+                            tag
+                          ])
+                          console.log(tag)
+                        }}
+                      >
+                        <View style={styles.save}>
+                          <Text style={{color: "#fff", flex: 1, textAlign:'center'}}>
+                          Add
+                        </Text>
+                        </View>
+                      </TouchableOpacity>
                     <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
                       onPress={() => {
                         // console.log(randomStr(20, '12345abcdepq75xyz'));
@@ -209,6 +236,7 @@ const uploadToS3 = (i) => {
                         </Text>
                       </View>
                     </TouchableOpacity>
+                    </View>
                 </View>
               </View>
             </Modal>
@@ -241,6 +269,7 @@ const uploadToS3 = (i) => {
             </TouchableOpacity>
           </View>
 
+          
           <FlatList
             data={explore}
             renderItem={({ item }) => (
