@@ -1,0 +1,80 @@
+{
+  "_from": "react-native-curved-bottom-tabbar",
+  "_id": "react-native-curved-bottom-tabbar@0.0.3",
+  "_inBundle": false,
+  "_integrity": "sha512-i7NC4KYGm8Ep/xkyiQKLZXBa/UDv+wTqp9E6IcV/AViRWpiPU0vxcXSbbkV594J3RmhpyX+8XS74Zm0615ytLA==",
+  "_location": "/react-native-curved-bottom-tabbar",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "react-native-curved-bottom-tabbar",
+    "name": "react-native-curved-bottom-tabbar",
+    "escapedName": "react-native-curved-bottom-tabbar",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-native-curved-bottom-tabbar/-/react-native-curved-bottom-tabbar-0.0.3.tgz",
+  "_shasum": "2c07c16237858355832f0e0e7892055668c845cc",
+  "_spec": "react-native-curved-bottom-tabbar",
+  "_where": "/Users/bhargava/Desktop/kids-linkedin",
+  "author": {
+    "name": "Muhammad Numan",
+    "email": "muhammadnuman70@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/nomi9995/react-native-curved-bottom-tabbar/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "React Native Reanimated Curve Tab Bar",
+  "devDependencies": {
+    "react": "^16.9.0",
+    "react-native": "^0.61.5",
+    "react-native-gesture-handler": "^1.6.1",
+    "react-native-reanimated": "^1.9.0"
+  },
+  "files": [
+    "README.md",
+    "android",
+    "index.js",
+    "ios",
+    "react-native-curved-bottom-tabbar.podspec"
+  ],
+  "homepage": "https://github.com/nomi9995/react-native-curved-bottom-tabbar#readme",
+  "keywords": [
+    "tabbar",
+    "curved",
+    "bottom",
+    "navigation",
+    "react-native",
+    "curved-tab-bar",
+    "curve-tabs-bar",
+    "tabs-bar",
+    "react-native-reanimated",
+    "react-native-gesture-handler"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "react-native-curved-bottom-tabbar",
+  "peerDependencies": {
+    "react": "^16.8.1",
+    "react-native": ">=0.60.0-rc.0 <1.0.x",
+    "react-native-gesture-handler": "^1.6.1",
+    "react-native-reanimated": "^1.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nomi9995/react-native-curved-bottom-tabbar.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "title": "React Native Reanimated Curve Tab Bar",
+  "version": "0.0.3"
+}
