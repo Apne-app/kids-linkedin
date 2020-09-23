@@ -51,14 +51,16 @@ const App: () => React$Node = (props) => {
               
 
           // scannedImg = await AsyncStorage.getItem('@scanImg');
-          // console.log(scannedImg, "sd");
+          console.log("sd");
             // } catch (error) {
             //   console.log(error)
             // // }
+
+
         
 
           props.navigation.navigate('Home', {
-            screen: 'Scan',
+            screen: 'Post',
             params: { "reload": 1
             },
           });

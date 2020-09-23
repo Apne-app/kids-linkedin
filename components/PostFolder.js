@@ -8,17 +8,14 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOp
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
-<<<<<<< HEAD
+
 import { Chip } from 'react-native-paper';
 
-=======
 import ReanimatedCurvedTabBar from './react-native-curved-bottom-tabbar';
 import Upload from './Post';
->>>>>>> d0718764fb67d18acbf4c86cb534f0794299a316
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const PostFolder = ({ route, navigation }) => {
-<<<<<<< HEAD
 
     const [modalVisible, setModalVisible] = React.useState(false);
 
@@ -43,6 +40,7 @@ const PostFolder = ({ route, navigation }) => {
             if(JSON.parse(x).uri != explore[explore.length-1])
             {
               setExplore([(JSON.parse(x)), ...explore ]);
+              console.log(x);
               var y = ""+String((JSON.parse(x)).uri);
               var obj = {};
               obj[String((JSON.parse(x)).uri)] = false;
@@ -54,13 +52,14 @@ const PostFolder = ({ route, navigation }) => {
           }
         }
 
-        // console.log(route.params)
+        console.log(route)
 
         if(route.params)
     {
       if(route.params.reload)
       {
         getImages();
+        console.log(route.params.reload);
         console.log("asds");
         route.params.reload = 0; 
       }
@@ -290,7 +289,6 @@ const uploadToS3 = (i) => {
         </Content>
       </Container>
     );
-=======
   const screens = [<Upload navigation={navigation}/>, <Upload navigation={navigation}/>, <Upload navigation={navigation}/>]
   const icons = ['cloud', 'aperture', 'image']
   const iconstext = ['Uploads', 'Scan', 'Gallery']
@@ -329,7 +327,134 @@ const uploadToS3 = (i) => {
       allowDropAnime={true}
     />
   );
->>>>>>> d0718764fb67d18acbf4c86cb534f0794299a316
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    // alignItems: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    // padding: 40, 
+    // paddingTop: 80
+  },
+  form: {
+    marginTop: 40,
+    flex: 1
+    // alignSelf: 'center'
+  },
+  //  image: {
+  //   flex: 1,
+  //   resizeMode: "cover",
+  //   opacity: 0.4,
+  //   justifyContent: "center",
+
+  // },
+  addButton: {
+    right: 10,
+    bottom: 10,
+    alignSelf: 'center',
+    position: 'absolute',
+    // flexDirection: 'row',
+    // backgroundColor:'rgba(255,255,255,0.3)'
+  },
+  personDetails: {
+    // right: width*0.15,
+    bottom: 10,
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 10,
+    borderRadius: 15,
+    backgroundColor:'rgba(0,0,0,0.5)'
+  },
+  addIcon: {
+    // right: width*0.15,
+    bottom: "35%",
+    position: 'absolute',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 20,
+    borderRadius: 15,
+    borderWidth: 1
+    // backgroundColor:'rgba(0,0,0,0.5)'
+  },
+  tinyLogo: {
+    alignSelf: 'center',
+    marginTop: 40
+    // height: 80,
+  },
+
+  image: {
+    height: width*0.65,
+    width: width*0.45,
+    margin: width*0.02,
+    elevation: 3
+    // borderRadius: 30,
+    
+  },
+  addImg: {
+    height: width*0.65,
+    width: width*0.45,
+    margin: width*0.02,
+    borderWidth: 2,
+    borderRadius: 15,
+    borderStyle: 'dashed',
+  },
+  save: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 15,
+    // margin: 5,
+    backgroundColor: '#357feb',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#fff",
+    width: width*0.31
+  },
+  save2: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 15,
+    // margin: 5,
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#357feb",
+    width: width*0.31
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginVertical: 15,
+    fontSize: 20,
+    textAlign: "center"
+  }
+})
+
 
 export default PostFolder;
