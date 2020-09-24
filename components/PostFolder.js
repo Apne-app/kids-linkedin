@@ -4,15 +4,55 @@ import React, { Component, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList } from 'react-native'
+import CameraRoll from "@react-native-community/cameraroll";
+import {  Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
+import RNImageToPdf from 'react-native-image-to-pdf';
 
 import { Chip } from 'react-native-paper';
 
 import ReanimatedCurvedTabBar from './react-native-curved-bottom-tabbar';
 import Upload from './Post';
+// require the module
+var RNFS = require('react-native-fs');
+
+// create a path you want to write to
+// :warning: on iOS, you cannot write into `RNFS.MainBundlePath`,
+// but `RNFS.DocumentDirectoryPath` exists on both platforms and is writable
+var path = Platform.OS === 'ios' ? RNFS.LibraryDirectoryPath + '/test.txt' : RNFS.ExternalDirectoryPath + '/test.txt';
+
+// write the file
+
+const writeFile = () => {
+
+console.log(path)
+
+RNFS.writeFile(path, 'Lorem ipsum dolor sit amet', 'utf8')
+  .then((success) => {
+    console.log('FILE WRITTEN!');
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
+}
+
+
+async function hasAndroidPermission() {
+  const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+
+  const hasPermission = await PermissionsAndroid.check(permission);
+  if (hasPermission) {
+    return true;
+  }
+
+  const status = await PermissionsAndroid.request(permission);
+  return status === 'granted';
+}
+
+
+
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const PostFolder = ({ route, navigation }) => {
@@ -52,7 +92,7 @@ const PostFolder = ({ route, navigation }) => {
           }
         }
 
-        console.log(route)
+        // console.log(route)
 
         if(route.params)
     {
@@ -65,8 +105,43 @@ const PostFolder = ({ route, navigation }) => {
       }
     }
 
+    const saveImages = async () => {
+
+      if (Platform.OS === "android" && !(await hasAndroidPermission())) {
+          return;
+        }
+
+      explore.map((item) => {
+        try {
+          CameraRoll.save(item.uri, {type:'photo', album: tags[0]})
+          .then(res => 
+          {
+            console.log(res)
+          })
+          .catch(err => 
+          {
+            console.log(err)
+          });
+          ;
+        } catch (error) {
+          console.log(error)
+        }
+      })  
+
+    }
+
         // getImages();
 
+function randomStr(len, arr) { 
+    var ans = ''; 
+    for (var i = len; i > 0; i--) { 
+        ans +=  
+          arr[Math.floor(Math.random() * arr.length)]; 
+    } 
+    return ans; 
+} 
+
+const userid = "shashwatid"
 
 
 const uploadToS3 = (i) => {
@@ -129,6 +204,25 @@ const uploadToS3 = (i) => {
 
 }
 
+    const myAsyncPDFFunction = async () => {
+        try {
+            const options = {
+                imagePaths: [explore[0].uri.slice(5, explore[0].uri.length),explore[1].uri.slice(5, explore[0].uri.length)],
+                name: 'PDFName.pdf',
+                maxSize: { // optional maximum image dimension - larger images will be resized
+                    width: 900,
+                    height: Math.round(height / width * 900),
+                },
+                quality: .7, // optional compression paramter
+            };
+            const pdf = await RNImageToPdf.createPDFbyImages(options);
+            
+            console.log(pdf.filePath);
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
     const [tags, setTags] = React.useState([]);
     const [tag, setTag] = React.useState('');
 
@@ -151,7 +245,7 @@ const uploadToS3 = (i) => {
                     <View style={{flexDirection: 'row'}} >
                       {
                         tags.map((item, i) => {
-                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 1}} textStyle={{color: "#fff"}} icon="close">{item}</Chip>
+                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 1}} textStyle={{color: "#fff"}} icon="close" onPress={() => {tags.splice(i, 1); setTags([...tags]);}} >{item}</Chip>
                         })
                       }
                     </View>  
@@ -162,11 +256,18 @@ const uploadToS3 = (i) => {
                     <View style={{flexDirection: 'row'}} >
                     <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
                         onPress={() => {
-                          setTags([
-                            ...tags,
-                            tag
-                          ])
-                          console.log(tag)
+                          // if(tag != "")
+                          // {
+
+                          // setTags([
+                          //   ...tags,
+                          //   tag
+                          // ])
+                          // // writeFile();
+                          // }
+                          // saveImages();
+                          myAsyncPDFFunction()
+                          // console.log(explore)
                         }}
                       >
                         <View style={styles.save}>

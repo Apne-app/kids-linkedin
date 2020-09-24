@@ -26,6 +26,10 @@ target 'kids' do
 
   pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
 
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
+  pod 'RNImageToPdf', :path => '../node_modules/react-native-image-to-pdf'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing
