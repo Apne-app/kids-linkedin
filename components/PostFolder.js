@@ -266,8 +266,8 @@ const uploadToS3 = (i) => {
                           // // writeFile();
                           // }
                           // saveImages();
-                          myAsyncPDFFunction()
-                          // console.log(explore)
+                          // myAsyncPDFFunction()
+                          console.log(explore)
                         }}
                       >
                         <View style={styles.save}>
