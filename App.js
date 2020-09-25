@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
@@ -21,7 +21,9 @@ import ChildScreen from './screens/ChildScreen'
 import ScanScreen from './screens/ScanScreen'
 import SinglePostScreen from './screens/SinglePost'
 import Unverified from './screens/Unverified'
+import Verified from './screens/Verified'
 import PostFolder from './components/PostFolder'
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -57,20 +59,34 @@ function Bottom(props) {
 const App = () => {
 
   const containerRef = React.useRef();
-
+  const [init, setinit] = useState('Login')
+  useEffect(() => {
+    dynamicLinks()
+      .getInitialLink()
+      .then(link => {
+        if (link.url === 'https://genio.app/verified') {
+          setinit('Verified')
+        }
+      })
+      .catch(() => {
+        // console.log('do nothing')
+      }
+      )
+  }, []);
   // setInitialNavigationState(await getInitialState());
 
   return (
     <NavigationContainer ref={containerRef}>
-      <Stack.Navigator>
-      <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-      <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
-      <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
-      <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
-      <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
-      <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
-      <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
-      <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
+      <Stack.Navigator initialRouteName={init}>
+        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
+        <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
+        <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
+        <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
+        <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView } from 'react-native'
 import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
@@ -12,9 +12,47 @@ import axios from 'axios';
 import LinkedIn from '../components/LinkedIn'
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const LoginScreen = ({ route, navigation }) => {
+  const handleDynamicLink = link => {
+    // Handle dynamic link inside your own application
+    if (link.url === 'https://genio.app/verified') {
+      // ...navigate to your offers screen
+      navigation.navigate('Verified')
+    }
+  };
+  useEffect(() => {
+    const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    // When the is component unmounted, remove the listener
+    return () => unsubscribe();
+  }, []);
+  useEffect(() => {
+    const check = async () => {
+      var pro = await AsyncStorage.getItem('profile')
+      if (pro !== null) {
+        pro = JSON.parse(pro)
+        axios.get('http://104.199.146.206:5000/login/' + pro.email + '/' + pro.pwd + '/none/')
+          .then((response) => {
+            if (response.data.verified == 'yes') {
+              navigation.navigate('Home')
+            }
+            else if (response.data.verified == 'no') {
+              navigation.navigate('Unverified')
+            }
+            else {
+              // setscreen(response.data)
+              // setLoading(false)
+            }
+          })
+      }
+      else {
+        // console.log('helo')
+      }
+    }
+    check()
+  })
   const fontConfig = {
     default: {
       regular: {
@@ -59,6 +97,7 @@ const LoginScreen = ({ route, navigation }) => {
   const api = () => {
     // setemail(email.split(' ')[0])
     // console.log(email)
+    setLoading(true);
     if (type == 'email') {
       axios.get('http://104.199.146.206:5000/email/' + email.split(' ')[0] + '/')
         .then((response) => {
@@ -135,21 +174,28 @@ const LoginScreen = ({ route, navigation }) => {
 
     }
   }
-  const checkemail = () => {
-    var em = email.split(' ')[0]
-    if (em.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)) {
-      if (em.includes('gmail')) { seteverified(false); return }
-      if (em.includes('yahoo')) { seteverified(false); return }
-      if (em.includes('aol')) { seteverified(false); return }
-      if (em.includes('hotmail')) { seteverified(false); return }
-      seteverified(true)
+  const checkemail = (text) => {
+    text = text.split(' ')[0]
+    if (text != '') {
+      if (text.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)) {
+        if (text.includes('gmail.com')) { seteverified(false); return }
+        if (text.includes('yahoo.co.in')) { seteverified(false); return }
+        if (text.includes('yahoo.com')) { seteverified(false); return }
+        if (text.includes('hotmail.com')) { seteverified(false); return }
+        seteverified(true)
+      }
+      else {
+        console.log('check')
+        seteverified(false)
+      }
     }
     else {
+      console.log('check')
       seteverified(false)
     }
   }
-  const checkpass = () => {
-    if (password.length < 6) {
+  const checkpass = (text) => {
+    if (text.length < 6) {
       setpverified(false)
     }
     else {
@@ -170,8 +216,8 @@ const LoginScreen = ({ route, navigation }) => {
           <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 10 }}>{screen}</Text>
           </SimpleAnimation>
-          {type == 'email' ? <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={placeholder} onChangeText={(text) => { setemail(text); checkemail() }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput> :
-            <TextInput value={password} placeholderTextColor={'lightgrey'} secureTextEntry={true} textContentType={'password'} placeholder={placeholder} autoCapitalize={'none'} onChangeText={(text) => { setpassword(text); checkpass() }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: pverified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>}
+          {type == 'email' ? <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={placeholder} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput> :
+            <TextInput value={password} placeholderTextColor={'lightgrey'} secureTextEntry={true} textContentType={'password'} placeholder={placeholder} autoCapitalize={'none'} onChangeText={(text) => { setpassword(text); checkpass(text) }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: pverified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>}
           <View style={{ alignSelf: 'center' }}>
             <SpinnerButton
               buttonStyle={{
@@ -184,7 +230,7 @@ const LoginScreen = ({ route, navigation }) => {
               isLoading={Loading}
               spinnerType='BarIndicator'
               onPress={() => {
-                setLoading(true); api()
+                everified && pverified ? api() : null
               }}
               indicatorCount={10}
             >
