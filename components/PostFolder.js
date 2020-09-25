@@ -8,6 +8,7 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOp
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
+import { enableScreens } from 'react-native-screens';
 
 import { Chip } from 'react-native-paper';
 
@@ -16,11 +17,16 @@ import Upload from './Post';
 import ScanScreen from '../screens/ScanScreen';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
+
+
 const PostFolder = ({ route, navigation }) => {
   const screens = [<Upload route={route} navigation={navigation}/>, <Upload route={route} navigation={navigation}/>, <ScanScreen route={route} navigation={navigation}/>]
   const icons = ['cloud', 'aperture', 'image']
   const iconstext = ['Uploads', 'Scan', 'Gallery']
   const [num, setnum] = useState(0)
+
+  enableScreens(false);
+
   return (
     <ReanimatedCurvedTabBar
       height={170}
@@ -40,6 +46,7 @@ const PostFolder = ({ route, navigation }) => {
       iconScale={1.4}
       lockScaleAnime={true}
 
+
       // icons drop down animation
       // (default 30)
       iconDropY={30}
@@ -54,7 +61,6 @@ const PostFolder = ({ route, navigation }) => {
       screensArray={[...Array(3)].map((item, index) =>
         screens[index]
       )}
-      allowDropAnime={true}
     />
   );
 }

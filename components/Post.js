@@ -1,5 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
-/* eslint-disable */
 import React, { Component, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -10,13 +8,13 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
-
+import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
 
-import ReanimatedCurvedTabBar from './react-native-curved-bottom-tabbar';
-import Upload from './Post';
 // require the module
 var RNFS = require('react-native-fs');
+
+enableScreens(false);
 
 // create a path you want to write to
 // :warning: on iOS, you cannot write into `RNFS.MainBundlePath`,
@@ -55,9 +53,12 @@ async function hasAndroidPermission() {
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-const Post = ({ route, navigation }) => {
+
+
+const Upload = ({ route, navigation }) => {
 
     const [modalVisible, setModalVisible] = React.useState(false);
+    const [modalVisible2, setModalVisible2] = React.useState(false);
 
     const [uploading, setUploading] = React.useState({});
 
@@ -169,16 +170,6 @@ const uploadToS3 = (i) => {
     if (response.status !== 201)
       throw new Error("Failed to upload image to S3");
     console.log(response.body);
-    /**
-    * {
-    *   postResponse: {
-    *     bucket: "your-bucket",
-    *     etag : "9f620878e06d28774406017480a59fd4",
-    *     key: "uploads/image.png",
-    *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-    *   }
-    * }
-    */
 
     var obj = { ...uploading };
     var a = 0;
@@ -227,16 +218,13 @@ const uploadToS3 = (i) => {
     const [tag, setTag] = React.useState('');
 
     return (
-      <Container>
-          <Content style={styles.container}>
+      <Container style={styles.container}>
+          <Content >
           <View style={styles.centeredView}>
             <Modal
               animationType="slide"
               transparent={true}
               visible={modalVisible}
-              onRequestClose={() => {
-                alert("Modal has been closed.");
-              }}
             >
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
@@ -245,7 +233,7 @@ const uploadToS3 = (i) => {
                     <View style={{flexDirection: 'row'}} >
                       {
                         tags.map((item, i) => {
-                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 1}} textStyle={{color: "#fff"}} icon="close" onPress={() => {tags.splice(i, 1); setTags([...tags]);}} >{item}</Chip>
+                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 2}} textStyle={{color: "#fff"}} icon="close" onPress={() => {tags.splice(i, 1); setTags([...tags]);}} >{item}</Chip>
                         })
                       }
                     </View>  
@@ -256,18 +244,96 @@ const uploadToS3 = (i) => {
                     <View style={{flexDirection: 'row'}} >
                     <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
                         onPress={() => {
-                          // if(tag != "")
-                          // {
+                          if(tag != "")
+                          {
 
-                          // setTags([
-                          //   ...tags,
-                          //   tag
-                          // ])
-                          // // writeFile();
-                          // }
+                          setTags([
+                            ...tags,
+                            tag
+                          ])
+                          // writeFile();
+                          }
                           // saveImages();
                           // myAsyncPDFFunction()
-                          console.log(explore)
+                          // console.log(explore)
+                        }}
+                      >
+                        <View style={styles.save}>
+                          <Text style={{color: "#fff", flex: 1, textAlign:'center'}}>
+                          Add
+                        </Text>
+                        </View>
+                      </TouchableOpacity>
+                    <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
+                      onPress={() => {
+                        // console.log(randomStr(20, '12345abcdepq75xyz'));
+                        var i;
+                        setTimeout(() => {
+                        setModalVisible(false)
+                        }, 300);
+                        var obj = {...uploading};
+                        for(i = 0; i < explore.length-1; i++)
+                        {
+                          obj[(explore[i].uri)] = true;
+                          setUploading({
+                            ...obj
+                          });
+                        }
+                        for(i = 0; i < explore.length-1; i++)
+                        {
+                          uploadToS3(i);
+                        }
+                        
+                      }}
+                    >
+                      <View style={styles.save2}>
+                        <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
+                          Save
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    </View>
+                </View>
+              </View>
+            </Modal>
+          </View>
+
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible2}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <TouchableOpacity onPress={() => setModalVisible2(false)} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
+                  <Text style={styles.modalText}>Add a Tag!</Text>
+                    <View style={{flexDirection: 'row'}} >
+                      {
+                        tags.map((item, i) => {
+                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 2}} textStyle={{color: "#fff"}} icon="close" onPress={() => {tags.splice(i, 1); setTags([...tags]);}} >{item}</Chip>
+                        })
+                      }
+                    </View>  
+                    <Item floatingLabel>
+                      <Label>Tag</Label>
+                      <Input value={tag} onChangeText={text => setTag(text)} />
+                    </Item>
+                    <View style={{flexDirection: 'row'}} >
+                    <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
+                        onPress={() => {
+                          if(tag != "")
+                          {
+
+                          setTags([
+                            ...tags,
+                            tag
+                          ])
+                          // writeFile();
+                          }
+                          // saveImages();
+                          // myAsyncPDFFunction()
+                          // console.log(explore)
                         }}
                       >
                         <View style={styles.save}>
@@ -325,7 +391,7 @@ const uploadToS3 = (i) => {
             </TouchableOpacity>
             <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}
               onPress={() => {
-                setModalVisible(true);
+                setModalVisible2(true);
               }}
             >
               <View style={styles.save2}>
@@ -390,44 +456,6 @@ const uploadToS3 = (i) => {
         </Content>
       </Container>
     );
-  const screens = [<Upload navigation={navigation}/>, <Upload navigation={navigation}/>, <Upload navigation={navigation}/>]
-  const icons = ['cloud', 'aperture', 'image']
-  const iconstext = ['Uploads', 'Scan', 'Gallery']
-  const [num, setnum] = useState(0)
-  return (
-    <ReanimatedCurvedTabBar
-      height={170}
-      screensBackground={'white'}
-      topGap={15}
-      tabColor={'#b2dfdb'}
-      backgroundColor={'white'}
-      duration={500}
-      sidesRadius={1}
-      marginBottom={23}
-      scaleYCircle={1.4}
-      iconTranslateY={-5}
-      lockTranslateYAnime={true}
-
-      // icon scale animation
-      // (default 1.4)
-      iconScale={1.4}
-      lockScaleAnime={true}
-
-      // icons drop down animation
-      // (default 30)
-      iconDropY={30}
-      allowDropAnime={true}
-      // first icon will also drop down
-      dropWithFirst={false}
-
-      iconsArray={[...Array(3)].map((item, index) =>
-        (<View style={{ alignSelf: 'center' }}><Icon style={{ fontSize: 20, alignSelf: 'center' }} type="Feather" name={icons[index]} /><Text style={{ fontFamily: 'Poppins-Regular', alignSelf: 'center', fontSize: 9, display: 'flex' }}>{iconstext[index]}</Text></View>)
-      )}
-      onPress={(btnNum) => { setnum(btnNum - 1) }}
-      screensArray={screens}
-      allowDropAnime={true}
-    />
-  );
 }
 
 
@@ -558,4 +586,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default Post;
+export default Upload;

@@ -16,7 +16,7 @@ import {
 import { Container, Header, Tab, Tabs, ScrollableTab } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
 import Camera from '../components/Camera'
-import PostFolder from '../components/PostFolder'
+import Upload from '../components/Post'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 // import FastImage from 'react-native-fast-image';
@@ -110,7 +110,7 @@ const ScanScreen = ({navigation, route}) =>  {
           />
           </Tab>
           <Tab heading="Picture">
-              <PostFolder navigation={navigation} route={route}  />
+              <Upload navigation={navigation} route={route}  />
           </Tab>
           <Tab heading="Video">
             
