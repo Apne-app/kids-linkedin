@@ -1,9 +1,10 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView } from 'react-native'
 import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
+import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
 import LoginForm from '../components/Login';
 import SignUpForm from '../components/SignUp';
@@ -48,16 +49,29 @@ const LoginScreen = ({ route, navigation }) => {
     viewPass: false
   })
   const [Loading, setLoading] = useState(false)
+  const [everified, seteverified] = useState(false)
+  const [pverified, setpverified] = useState(true)
   const [type, settype] = useState('email');
   const [email, setemail] = useState('');
   const [password, setpassword] = useState('');
-  const [screen, setscreen] = useState('Get started using work mail-id');
+  const [screen, setscreen] = useState('Login/Signup using work mail-id');
   const [placeholder, setplaceholder] = useState('manoj@google.com');
   const api = () => {
+    // setemail(email.split(' ')[0])
+    // console.log(email)
     if (type == 'email') {
-      axios.get('http://104.199.146.206:5000/email/' + email + '/')
+      axios.get('http://104.199.146.206:5000/email/' + email.split(' ')[0] + '/')
         .then((response) => {
-          console.log(response.data)
+          setpverified(false)
+          // console.log(response.data)
+          const storeEmail = async () => {
+            try {
+              await AsyncStorage.setItem('email', email)
+            } catch (e) {
+              // saving error
+            }
+          }
+          storeEmail()
           if (response.data === 'yes') {
             setscreen('Welcome back! Enter your password');
             setplaceholder('*********')
@@ -65,7 +79,7 @@ const LoginScreen = ({ route, navigation }) => {
             setLoading(false)
           }
           else {
-            setscreen("Hi there! You don't seem to have an account with us. Add a password to change that right now!");
+            setscreen("Hi there! You don't seem to have an account with us. Add a password to become a part of the family!");
             setplaceholder('*********')
             settype('new_password')
             setLoading(false)
@@ -75,11 +89,18 @@ const LoginScreen = ({ route, navigation }) => {
     else if (type == 'new_password') {
       sha256(password)
         .then((hash) => {
-          axios.get('http://104.199.146.206:5000/signup/' + email + '/' + hash + '/none/')
+          axios.get('http://104.199.146.206:5000/signup/' + email.split(' ')[0] + '/' + hash + '/none/')
             .then((response) => {
-              if (response.data == 'success') {
-                navigation.navigate('Home')
+              console.log(response.data)
+              const storeProfile = async () => {
+                try {
+                  await AsyncStorage.setItem('profile', JSON.stringify(response.data))
+                } catch (e) {
+                  // saving error
+                }
               }
+              storeProfile()
+              navigation.navigate('Unverified')
             })
         })
 
@@ -87,23 +108,59 @@ const LoginScreen = ({ route, navigation }) => {
     else {
       sha256(password)
         .then((hash) => {
-          axios.get('http://104.199.146.206:5000/login/' + email + '/' + hash + '/none/')
+          axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + '/' + hash + '/none/')
             .then((response) => {
-              if (response.data == 'success') {
+              const storeProfile = async () => {
+                try {
+                  await AsyncStorage.setItem('profile', JSON.stringify(response.data))
+                } catch (e) {
+                  // saving error
+                }
+              }
+              if (response.data.verified == 'yes') {
+                storeProfile()
                 navigation.navigate('Home')
+              }
+              else if (response.data.verified == 'no') {
+                storeProfile()
+                navigation.navigate('Unverified')
               }
               else {
                 setscreen(response.data)
+                setLoading(false)
               }
+              // console.log(response.data)
             })
         })
 
     }
   }
+  const checkemail = () => {
+    var em = email.split(' ')[0]
+    if (em.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)) {
+      if (em.includes('gmail')) { seteverified(false); return }
+      if (em.includes('yahoo')) { seteverified(false); return }
+      if (em.includes('aol')) { seteverified(false); return }
+      if (em.includes('hotmail')) { seteverified(false); return }
+      seteverified(true)
+    }
+    else {
+      seteverified(false)
+    }
+  }
+  const checkpass = () => {
+    if (password.length < 6) {
+      setpverified(false)
+    }
+    else {
+      setpverified(true)
+    }
+  }
   return (
-    <Container style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
+      {/* <Container style={styles.container}> */}
       <Content >
-        <View style={{ flex: 1, marginBottom: 15, marginTop: 50 }}>
+        <View style={{ flex: 1, marginBottom: 15, marginTop: 50, }}>
           <Image
             style={styles.tinyLogo}
             source={require('../assets/link.png')}
@@ -111,13 +168,19 @@ const LoginScreen = ({ route, navigation }) => {
         </View>
         <View>
           <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 18, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 20 }}>{screen}</Text>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 10 }}>{screen}</Text>
           </SimpleAnimation>
-          {type == 'email' ? <TextInput value={email} placeholderTextColor={'grey'} textContentType={'emailAddress'} placeholder={placeholder} onChangeText={(text) => setemail(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderColor: 'green', borderWidth: 1, alignSelf: 'center' }}></TextInput> :
-            <TextInput value={password} placeholderTextColor={'grey'} secureTextEntry={true} textContentType={'password'} placeholder={placeholder} onChangeText={(text) => setpassword(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Poppins-Regular', borderColor: 'green', borderWidth: 1, alignSelf: 'center' }}></TextInput>}
+          {type == 'email' ? <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={placeholder} onChangeText={(text) => { setemail(text); checkemail() }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput> :
+            <TextInput value={password} placeholderTextColor={'lightgrey'} secureTextEntry={true} textContentType={'password'} placeholder={placeholder} autoCapitalize={'none'} onChangeText={(text) => { setpassword(text); checkpass() }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: pverified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>}
           <View style={{ alignSelf: 'center' }}>
             <SpinnerButton
-              buttonStyle={styles.buttonStyle}
+              buttonStyle={{
+                borderRadius: 10,
+                margin: 20,
+                width: 200,
+                alignSelf: 'center',
+                backgroundColor: everified ? (pverified ? 'lightgreen' : 'grey') : 'grey'
+              }}
               isLoading={Loading}
               spinnerType='BarIndicator'
               onPress={() => {
@@ -125,40 +188,17 @@ const LoginScreen = ({ route, navigation }) => {
               }}
               indicatorCount={10}
             >
-              <Icon active type="Feather" name='chevron-right' />
-              {/* <Text style={styles.buttonText}>Next</Text> */}
+              <Icon active type="Feather" name='chevron-right' style={{ color: 'black', fontWeight: 'bold' }} />
             </SpinnerButton>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
-            <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "rgba(56, 56, 56, 0.8);" }} />
-            <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'Poppins-Regular' }} >Or</Text>
-            <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "rgba(56, 56, 56, 0.8);" }} />
-          </View>
           <LinkedIn navigation={navigation} />
+          <Button onPressIn={() => navigation.navigate('Home')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 60, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
+            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Continue as Guest User</Text>
+          </Button>
         </View>
-        {/* <View style={{flexDirection:"row"}}>
-         <Button transparent style={{flex: 2, flexDirection: 'column'}} onPress={() => setActiveForm(!activeform)}>
-           <Text style={{textAlign: 'right', fontSize: 20, fontFamily:'Poppins-Regular', color:  activeform ?  "#000" : "#A9A9A9"}}>Login</Text>
-           <View style={{borderWidth: 4, borderColor: "#357feb", borderRadius: 4, opacity: activeform ? 1 : 0}} />
-         </Button>
-         <Button transparent style={{flex: 2, flexDirection: 'column'}} onPress={() => setActiveForm(!activeform)}>
-          <Text style={{textAlign: 'right', fontSize: 20, fontFamily:'Poppins-Regular', color:  !activeform ?  "#000" : "#A9A9A9"}}>Sign Up</Text>
-           <View style={{borderWidth: 4, borderColor: "#357feb", borderRadius: 4, opacity: !activeform ? 1 : 0}} />
-         </Button>
-         <View style={{flex: 1}} />
-         <View style={{flex: 1}} />
-        </View> */}
-        {/* {
-          activeform ?
-          <LoginForm navigation={navigation} />:
-          <SignUpForm navigation={navigation} />
-        } */}
-
       </Content>
-      <Button onPressIn={()=>navigation.navigate('Home')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 60, width:width-40, alignSelf:'center', marginBottom:40 }}>
-        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: -4 }}>Continue as Guest User</Text>
-      </Button>
-    </Container>
+      {/* </Container> */}
+    </KeyboardAvoidingView>
   );
 }
 

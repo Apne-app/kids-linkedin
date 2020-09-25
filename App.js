@@ -20,6 +20,7 @@ import CameraScreen from './screens/CameraScreen'
 import ChildScreen from './screens/ChildScreen'
 import ScanScreen from './screens/ScanScreen'
 import SinglePostScreen from './screens/SinglePost'
+import Unverified from './screens/Unverified'
 import PostFolder from './components/PostFolder'
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
@@ -62,8 +63,9 @@ const App = () => {
   return (
     <NavigationContainer ref={containerRef}>
       <Stack.Navigator>
-      <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
       <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+      <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
+      <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
       <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
       <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
       <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
