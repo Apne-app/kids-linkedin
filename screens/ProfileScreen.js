@@ -6,7 +6,7 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 import FastImage from 'react-native-fast-image'
 import ImagePicker from 'react-native-image-picker';
@@ -119,21 +119,21 @@ const ProfileScreen = ({ navigation, route }) => {
         });
     }
     return (
-        <SafeAreaProvider>
+        <ScrollView>
             <StreamApp
                 apiKey={'dfm952s3p57q'}
                 appId={'90935'}
                 token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ'}
             >
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
+                {/* <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
                     <Body style={{ alignItems: 'center' }}>
                         <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title>
                     </Body>
                     <Right style={{ marginRight: 30, marginTop: 0 }}>
                         <Icon onPress={() => { navigation.toggleDrawer(); }} name="menu" type="Feather" />
                     </Right>
-                </Header>
-                <View style={{ marginTop: 60, flexDirection: 'row' }}>
+                </Header> */}
+                <View style={{ marginTop: 30, flexDirection: 'row' }}>
                     <Avatar
                         source={avatarSource}
                         size={96}
@@ -149,7 +149,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         <Text style={{ fontFamily: 'Poppins-Regular' }}>Grade II, DAVPS</Text>
                     </View>
                 </View>
-                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 180, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
@@ -178,7 +178,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 </View>
                 <FlatFeed feedGroup="user" />
             </StreamApp>
-        </SafeAreaProvider>
+        </ScrollView>
     );
 };
 
