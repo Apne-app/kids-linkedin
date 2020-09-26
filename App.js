@@ -18,7 +18,7 @@ import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
 import CameraScreen from './screens/CameraScreen'
 import ChildScreen from './screens/ChildScreen'
-import ScanScreen from './screens/ScanScreen'
+import Gallery from './components/Gallery'
 import SinglePostScreen from './screens/SinglePost'
 import Unverified from './screens/Unverified'
 import Upload from './components/Post';
@@ -116,6 +116,7 @@ const App = () => {
         <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
       </Stack.Navigator>
     </NavigationContainer>
   );

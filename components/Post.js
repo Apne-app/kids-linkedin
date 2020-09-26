@@ -6,12 +6,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
 import {  Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Tabs, Tab, TabHeading, Label, H1, H2, H3, Icon,Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
 import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
+import Gallery from './Gallery'
 
 // require the module
 var RNFS = require('react-native-fs');
@@ -64,6 +65,8 @@ const Upload = ({ route, navigation }) => {
 
     const [uploading, setUploading] = React.useState({});
 
+    const [active, setActive] = React.useState(1)
+
     const [explore, setExplore] = React.useState([
       {
         'height': 0,
@@ -113,6 +116,7 @@ const Upload = ({ route, navigation }) => {
       if (Platform.OS === "android" && !(await hasAndroidPermission())) {
           return;
         }
+        // console.log(explore[0].uri, tags[0])
 
       explore.map((item) => {
         try {
@@ -199,8 +203,17 @@ const uploadToS3 = (i) => {
 
     const myAsyncPDFFunction = async () => {
         try {
+
+            var arr = [];
+
+            explore.map(item => {
+              if(item.uri.length > 10)
+              arr.push(item.uri.slice(5, item.uri.length));
+            })
+            // console.log(arr);
+
             const options = {
-                imagePaths: [explore[0].uri.slice(5, explore[0].uri.length),explore[1].uri.slice(5, explore[0].uri.length)],
+                imagePaths: arr,
                 name: 'PDFName.pdf',
                 maxSize: { // optional maximum image dimension - larger images will be resized
                     width: 900,
@@ -219,10 +232,21 @@ const uploadToS3 = (i) => {
     const [tags, setTags] = React.useState([]);
     const [tag, setTag] = React.useState('');
 
+    if(active == 0)
+    return (
+      <Gallery />
+    )
+
     return (
       <Container style={styles.container}>
           <Content >
-          <View style={styles.centeredView}>
+          <Tabs initialPage={1}>
+            <Tab heading={ <TabHeading><Icon name="upload" type="Feather" /></TabHeading>}>
+              <Gallery />
+            </Tab>
+            <Tab heading={ <TabHeading><Icon name="camera" /></TabHeading>}>
+              <View>
+              <View style={styles.centeredView}>
             <Modal
               animationType="slide"
               transparent={true}
@@ -230,7 +254,7 @@ const uploadToS3 = (i) => {
             >
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => setModalVisible(false)} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
+                  <TouchableOpacity onPress={() => {setModalVisible(false); setTags([]); setTag('');}} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
                   <Text style={styles.modalText}>Add a Tag!</Text>
                     <View style={{flexDirection: 'row'}} >
                       {
@@ -243,7 +267,7 @@ const uploadToS3 = (i) => {
                       <Label>Tag</Label>
                       <Input value={tag} onChangeText={text => setTag(text)} />
                     </Item>
-                    <View style={{flexDirection: 'row'}} >
+                    <View>
                     <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
                         onPress={() => {
                           if(tag != "")
@@ -266,31 +290,42 @@ const uploadToS3 = (i) => {
                         </Text>
                         </View>
                       </TouchableOpacity>
+                    </View>
+                    <View style={{flexDirection: 'row'}} >
+                    <TouchableOpacity  style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}
+                        onPress={() => {
+                          // if(tag != "")
+                          // {
+
+                          // setTags([
+                          //   ...tags,
+                          //   tag
+                          // ])
+                          // // writeFile();
+                          // }
+                          // saveImages();
+                          myAsyncPDFFunction()
+                          // console.log(explore)
+                        }}
+                      >
+                        <View style={styles.save2}>
+                          <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
+                          PDF
+                        </Text>
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
                       onPress={() => {
                         // console.log(randomStr(20, '12345abcdepq75xyz'));
                         var i;
-                        setTimeout(() => {
-                        setModalVisible(false)
-                        }, 300);
-                        var obj = {...uploading};
-                        for(i = 0; i < explore.length-1; i++)
-                        {
-                          obj[(explore[i].uri)] = true;
-                          setUploading({
-                            ...obj
-                          });
-                        }
-                        for(i = 0; i < explore.length-1; i++)
-                        {
-                          uploadToS3(i);
-                        }
+
+                        saveImages();
                         
                       }}
                     >
                       <View style={styles.save2}>
                         <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
-                          Save
+                          Gallery
                         </Text>
                       </View>
                     </TouchableOpacity>
@@ -308,7 +343,7 @@ const uploadToS3 = (i) => {
             >
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => setModalVisible2(false)} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
+                  <TouchableOpacity onPress={() => {setModalVisible2(false); ; setTags([]); setTag('');}} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
                   <Text style={styles.modalText}>Add a Tag!</Text>
                     <View style={{flexDirection: 'row'}} >
                       {
@@ -349,7 +384,7 @@ const uploadToS3 = (i) => {
                         // console.log(randomStr(20, '12345abcdepq75xyz'));
                         var i;
                         setTimeout(() => {
-                        setModalVisible(false)
+                        setModalVisible2(false)
                         }, 300);
                         var obj = {...uploading};
                         for(i = 0; i < explore.length-1; i++)
@@ -455,6 +490,14 @@ const uploadToS3 = (i) => {
             numColumns={2}
             keyExtractor={(item, index) => index.toString()}
           />
+              </View>
+            </Tab>
+            <Tab heading={ <TabHeading><Icon name="apps" /></TabHeading>}>
+              <Gallery />
+            </Tab>
+          </Tabs>
+          
+          
         </Content>
       </Container>
     );
@@ -465,7 +508,9 @@ const styles = StyleSheet.create({
   container: {
     // alignItems: 'center',
     flex: 1,
+    backgroundColor: "#f7f7f7",
     flexDirection: 'column',
+    height: height,
     // padding: 40, 
     // paddingTop: 80
   },
