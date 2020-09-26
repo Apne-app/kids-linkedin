@@ -18,27 +18,56 @@ import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
 import CameraScreen from './screens/CameraScreen'
 import ChildScreen from './screens/ChildScreen'
-import ScanScreen from './screens/ScanScreen'
+import Gallery from './components/Gallery'
 import SinglePostScreen from './screens/SinglePost'
 import Unverified from './screens/Unverified'
+import Upload from './components/Post';
 import Verified from './screens/Verified'
 import PostFolder from './components/PostFolder'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
+import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
+
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
+
+
+  const tabs: TabsConfigsType ={
+    Feed: {
+      icon: ({ progress }) => <Icon style={{ color: "#000", fontSize: 20 }}  type="Feather" name="home" />
+    },
+    Search: {
+      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+    },
+    Post: {
+      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+    },
+    Notifications: {
+      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+    },
+    Profile: {
+      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
+    }
+  }
+
 function Bottom(props) {
 
   // console.log(props.route.params);
 
+
   return (
-    <BottomNav.Navigator tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}>
-      <BottomNav.Screen name="Feed" component={FeedScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="Feather" name="home" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Home</Text>) }} />
-      <BottomNav.Screen name="Search" component={SearchScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="Feather" name="search" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Search</Text>) }} />
-      <BottomNav.Screen name="Post" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: '#357feb', fontSize: size + 15, marginBottom: -20 }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10 }}></Text>) }} />
-      <BottomNav.Screen name="Notifications" component={NotificationScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="Feather" name="bell" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Notifications</Text>) }} />
-      <BottomNav.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="Feather" name="user" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Profile</Text>) }} />
-      {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
+    <BottomNav.Navigator 
+      tabBar={props => (
+        <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
+      )}
+      // tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
+    >
+      <BottomNav.Screen name="Feed" component={FeedScreen} />
+      <BottomNav.Screen  name="Search" component={SearchScreen} />
+      <BottomNav.Screen name="Post" component={Upload} />
+      <BottomNav.Screen name="Notifications" component={NotificationScreen} />
+      <BottomNav.Screen name="Profile" component={ProfileScreen} />
+      {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
     </BottomNav.Navigator>
   )
 }
@@ -48,9 +77,9 @@ function Bottom(props) {
 
 //   return (
 //     <DrawNav.Navigator drawerPosition={"right"} initialRouteName="Home" >
-//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: focused ? 'purple' : 'black', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
+//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
 //       {/* <DrawNav.Screen name="Tickets" component={Tickets} />
 //       <DrawNav.Screen name="Shipping" component={Shipping} /> */}
 //     </DrawNav.Navigator>
@@ -87,6 +116,7 @@ const App = () => {
         <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
       </Stack.Navigator>
     </NavigationContainer>
   );
