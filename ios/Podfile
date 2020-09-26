@@ -30,6 +30,8 @@ target 'kids' do
 
   pod 'RNImageToPdf', :path => '../node_modules/react-native-image-to-pdf'
 
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing
