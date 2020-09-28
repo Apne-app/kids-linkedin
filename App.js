@@ -34,19 +34,19 @@ const DrawNav = createDrawerNavigator();
 
   const tabs: TabsConfigsType ={
     Feed: {
-      icon: ({ progress }) => <Icon style={{ color: "#000", fontSize: 20 }}  type="Feather" name="home" />
+      icon: () => <Icon style={{ color: "#000", fontSize: 20 }}  type="Feather" name="home" />
     },
     Search: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
     },
     Post: {
       icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
     },
     Notifications: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
     },
     Profile: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
     }
   }
 
