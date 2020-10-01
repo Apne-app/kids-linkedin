@@ -26,7 +26,7 @@ import Verified from './screens/Verified'
 import PostFolder from './components/PostFolder'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
-
+import messaging from '@react-native-firebase/messaging';
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -89,6 +89,13 @@ const App = () => {
 
   const containerRef = React.useRef();
   const [init, setinit] = useState('Login')
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }, []);
   useEffect(() => {
     dynamicLinks()
       .getInitialLink()
