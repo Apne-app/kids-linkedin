@@ -11,7 +11,7 @@ export default class ExampleApp extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {gallery: new Array()};
+    this.state = {gallery: new Array(), side: RNCamera.Constants.Type.back};
   }
 
   componentDidMount() {
@@ -67,7 +67,7 @@ export default class ExampleApp extends PureComponent {
             this.camera = ref;
           }}
           style={styles.preview}
-          type={RNCamera.Constants.Type.back}
+          type={this.state.side}
           flashMode={RNCamera.Constants.FlashMode.off}
           // style={{flex: 1,}}
           androidCameraPermissionOptions={{
@@ -113,8 +113,14 @@ export default class ExampleApp extends PureComponent {
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture}>
-            <Icon type="Entype" name="camera" />
+          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-start', marginLeft: 15, marginTop: 14}}>
+            <Icon type="EvilIcons" name="image" style={{color: "#fff", fontSize: 50}} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 2, alignItems: 'center'}}>
+            <Icon type="Entypo" name="circle" style={{color: "#fff", fontSize: 70}} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-end', marginRight: 15}}>
+            <Icon type="Ionicons" name="camera-reverse-outline" style={{color: "#fff", fontSize: 45, marginTop: 10}} />
           </TouchableOpacity>
         </View>
       </View>
@@ -131,6 +137,17 @@ export default class ExampleApp extends PureComponent {
 
     }
   };
+  changeSide = async () => {
+    // console.log("asd");
+    if(this.camera)
+    {
+      this.setState({
+        ...this.state,
+        side: this.state.side == RNCamera.Constants.Type.back ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back
+      })
+    }
+
+  }
 }
 
 const styles = StyleSheet.create({
@@ -148,10 +165,11 @@ const styles = StyleSheet.create({
   },
   capture: {
     flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 30,
+    // backgroundColor: '#fff',
+    // borderRadius: 30,
     // height: 0,
     padding: 10,
+    marginBottom: 16,
     paddingHorizontal: 20,
     alignSelf: 'center',
     // margin: 10,

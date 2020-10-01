@@ -1,9 +1,10 @@
 
 import React, {useState, useRef} from 'react';
-import {Button, StatusBar, StyleSheet, View, Image, ImageBackground, Dimensions, Text} from 'react-native';
+import { StatusBar, StyleSheet, View, Image, ImageBackground, Dimensions, Text, TouchableOpacity} from 'react-native';
 import {CropView} from 'react-native-image-crop-tools';
 import AsyncStorage from '@react-native-community/async-storage';
 import ImagePicker from 'react-native-image-picker';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 
 
 var height = Dimensions.get('screen').height;
@@ -69,7 +70,24 @@ const App: () => React$Node = (props) => {
           // keepAspectRatio
           // aspectRatio={{width: 16, height: 9}}
         />}
-        <Button
+        <View>
+        <TouchableOpacity onPress={() => props.navigation.pop()} style={{backgroundColor: '#fff', position: 'absolute', bottom: height*0.05, left: 20, borderWidth: 1, borderRadius: 100,}}>
+            <Icon type="Entypo" name="cross" style={{color: "red", fontSize: 35, padding: 5}} />
+          </TouchableOpacity>
+        <TouchableOpacity onPress={async () => {
+            cropViewRef.current.saveImage(true, 90);
+            // cropViewRef.rotateImage(false);
+            
+        }} style={{backgroundColor: '#fff', position: 'absolute', bottom: height*0.05, right: 20, borderWidth: 1, borderRadius: 100}}>
+            <Icon type="Entypo" name="check" style={{color: "green", fontSize: 35, padding: 5}} />
+          </TouchableOpacity>
+        </View>
+        <View>
+          <TouchableOpacity style={{position: 'absolute', bottom: height*0.015, width: width*0.6, backgroundColor: "#357feb", alignSelf: 'center', padding: 12, borderRadius: 20,}}>
+            <Text style={{color: "#fff",  textAlign: 'center'}}>Add Kid's Details</Text>
+          </TouchableOpacity>
+        </View>
+        {/*<Button
           title={'Save'}
           onPress={async () => {
             cropViewRef.current.saveImage(true, 90);
@@ -77,7 +95,7 @@ const App: () => React$Node = (props) => {
             
 
           }}
-        />
+        />*/}
       </View>
     </>
   );
