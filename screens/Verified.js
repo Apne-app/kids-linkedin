@@ -12,7 +12,7 @@ const Unverified = ({ navigation }) => {
     const [profile, setprofile] = useState({ 'email': '' })
     // console.log('http://35.229.160.51:5000/send/' + profile.id + '/' + profile.email + '/')
     const send = () => {
-        navigation.navigate('Child')
+        navigation.navigate('Home')
     }
     useEffect(() => {
         const getData = async () => {
@@ -25,7 +25,7 @@ const Unverified = ({ navigation }) => {
                     axios.get('http://35.229.160.51:5000/send/' + pro.id + '/' + pro.email + '/')
                         .then((response) => {
                             if(response.data=='verified'){
-                                navigation.navigate('Child')
+                                navigation.navigate('Home')
                             }
                             else{
                                 navigation.navigate('Unverified')
