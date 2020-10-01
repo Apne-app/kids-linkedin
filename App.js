@@ -34,7 +34,7 @@ const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 
 
-console.disableYellowBox = true
+// console.disableYellowBox = true
 
   const tabs: TabsConfigsType ={
     Feed: {
