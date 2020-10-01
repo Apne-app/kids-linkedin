@@ -34,23 +34,25 @@ const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 
 
-const tabs: TabsConfigsType = {
-  Feed: {
-    icon: () => <Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />
-  },
-  Search: {
-    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
-  },
-  Post: {
-    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
-  },
-  Notifications: {
-    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
-  },
-  Profile: {
-    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
+console.disableYellowBox = true
+
+  const tabs: TabsConfigsType ={
+    Feed: {
+      icon: () => <Icon style={{ color: "#000", fontSize: 20 }}  type="Feather" name="home" />
+    },
+    Search: {
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+    },
+    Post: {
+      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+    },
+    Notifications: {
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+    },
+    Profile: {
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
+    }
   }
-}
 
 function Bottom(props) {
 
