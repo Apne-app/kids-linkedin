@@ -10,7 +10,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
-import SwipeUpDown from 'react-native-swipe-up-down';
+import VideoPlayer from 'react-native-video-controls';
 import Video from 'react-native-video';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -72,7 +72,7 @@ const FeedScreen = ({ navigation, route }) => {
                         counts={props.activity.reaction_counts}
                         // own_reactions={own_reactions}
                         kind={'like'}
-                        onPress={this._onPress}
+                        // onPress={this._onPress}
                         activeIcon={require('../images/icons/star.png')}
                         inactiveIcon={require('../images/icons/star-outline.png')}
                     />
@@ -237,18 +237,12 @@ const FeedScreen = ({ navigation, route }) => {
                                 source={{ uri: props.activity.image }}
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
                             /> : <View></View>}
-                            {props.activity.video ? <Video source={{ uri: props.activity.video }}   // Can be a URL or a local file.
-                                // ref={(ref) => {
-                                //     this.player = ref
-                                // }}                                      // Store reference
-                                // onBuffer={this.onBuffer}                // Callback when remote video is buffering
-                                // onError={this.videoError}               // Callback when video cannot be loaded
-                                controls={true}
-                                style={{
-                                    width: width - 40, height: 340, marginTop: 20
-
-                                }}
-                            /> : null}
+                            {props.activity.video ?
+                            <View style={{width:width-40, height:340}}>
+                                <VideoPlayer
+                                    source={{ uri: props.activity.video }}
+                                    navigator={navigator}
+                                /></View> : null}
                         </TouchableOpacity>
                     </View>
                 }
@@ -306,16 +300,7 @@ const FeedScreen = ({ navigation, route }) => {
                 >
                     <FlatFeed Footer={() => {
                         return (
-                            <SwipeUpDown
-                                itemMini={<CommentList infiniteScroll activityId={actid} />} // Pass props component when collapsed
-                                itemFull={<CommentList infiniteScroll activityId={actid} />} // Pass props component when show full
-                                onShowMini={() => console.log('mini')}
-                                onShowFull={() => console.log('full')}
-                                onMoveDown={() => console.log('down')}
-                                onMoveUp={() => console.log('up')}
-                                disablePressToShow={true} // Press item mini to show full
-                                style={{ backgroundColor: 'lightblue', display: display }} // style for swipe
-                            />
+                            <View />
                         )
                     }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                 </StreamApp>

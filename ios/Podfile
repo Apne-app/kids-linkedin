@@ -32,6 +32,10 @@ target 'kids' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
+  pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing

@@ -132,8 +132,8 @@ export default class ExampleApp extends PureComponent {
     if (this.camera) {
       const options = { quality: 0.5, base64: true, fixOrientation: true };
       const data = await this.camera.takePictureAsync(options);
-      this.props.navigation.navigate('Preview', {'img': data.uri});
-      // console.log(data.uri);
+      this.props.navigation.navigate('Preview', {'img': data.uri, 'height': data.height, 'width': data.width});
+      // console.log(data);
 
     }
   };

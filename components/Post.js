@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
-import {  Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
+import {  ScrollView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Tab, TabHeading, Label, H1, H2, H3, Icon,Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
@@ -229,7 +229,7 @@ const uploadToS3 = (i) => {
         }
     }
 
-    const [tags, setTags] = React.useState([]);
+    const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other' , 'Other']);
     const [tag, setTag] = React.useState('');
 
     if(active == 0)
@@ -239,13 +239,16 @@ const uploadToS3 = (i) => {
 
     return (
       <Container style={styles.container}>
+      <Header style={{backgroundColor: "#000", paddingTop: 20}} >
+        <Left>
+          <Icon name="arrow-left" type="Feather" style={{color: "#fff"}} />
+        </Left>
+        <Right>
+          <Icon type="MaterialCommunityIcons" name="dots-vertical" style={{color: "#fff"}} />
+        </Right>
+      </Header>
           <Content >
-          <Tabs initialPage={1}>
-            <Tab heading={ <TabHeading><Icon name="upload" type="Feather" /></TabHeading>}>
-              <Gallery />
-            </Tab>
-            <Tab heading={ <TabHeading><Icon name="camera" /></TabHeading>}>
-              <View>
+              <View style={{backgroundColor: "#000"}}>
               <View style={styles.centeredView}>
             <Modal
               animationType="slide"
@@ -412,8 +415,9 @@ const uploadToS3 = (i) => {
               </View>
             </Modal>
           </View>
-                
-          <View style={{flexDirection: 'row', alignSelf: 'center'}}>
+
+              
+          {/*<View style={{flexDirection: 'row', alignSelf: 'center', backgroundColor: "#000"}}>
             <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
               onPress={() => {
                 setModalVisible(true);
@@ -428,7 +432,8 @@ const uploadToS3 = (i) => {
             </TouchableOpacity>
             <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}
               onPress={() => {
-                setModalVisible2(true);
+                // setModalVisible2(true);
+                console.log(explore);
               }}
             >
               <View style={styles.save2}>
@@ -438,8 +443,25 @@ const uploadToS3 = (i) => {
                 </Text>
               </View>
             </TouchableOpacity>
-          </View>
+          </View>*/}
 
+          <View style={{flexDirection: 'row'}} >
+            <FlatList
+              data={tags}
+              scrollEnabled={true}
+              contentContainerStyle={{
+                flexGrow: 1,
+              }}
+              // style={{marginTop: 5}}
+              renderItem={({ item, i }) => (
+                 <Chip key={i} style={{backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10,paddingRight: 10}} textStyle={{color: "#fff"}}  onPress={() => setTag(item)} >{item}</Chip>
+              )}
+              //Setting the number of column
+              // numColumns={3}
+              horizontal={true}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
           
           <FlatList
             data={explore}
@@ -447,13 +469,13 @@ const uploadToS3 = (i) => {
                 <View>
                   {
                     item.height != 0 ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(uploading[item["uri"]])}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column',  }} onPress={() => console.log(uploading[item["uri"]])}>
                     <View
                     key={item.id}
                     style={{ flex: 1,}}>
                     <ImageBackground
                         style={styles.image}
-                        imageStyle= {{ borderRadius: 20, opacity: uploading[item["uri"]] ? 0.5 : 1 }}
+                        imageStyle= {{ opacity: uploading[item["uri"]] ? 0.5 : 1 }}
                         source={{
                         uri: item.uri,
                         }}
@@ -477,7 +499,7 @@ const uploadToS3 = (i) => {
                     >
                     <View style={styles.addIcon}>
                     <View >
-                        <Icon type="AntDesign" name="plus"  />
+                        <Icon type="AntDesign" name="plus" style={{color: "#fff"}} />
                     </View>
                     </View>
                     </View>
@@ -491,14 +513,21 @@ const uploadToS3 = (i) => {
             keyExtractor={(item, index) => index.toString()}
           />
               </View>
-            </Tab>
-            <Tab heading={ <TabHeading><Icon name="apps" /></TabHeading>}>
-              <Gallery />
-            </Tab>
-          </Tabs>
-          
-          
         </Content>
+
+        <TouchableOpacity style={{position: 'absolute', bottom: height*0.15, right: 6}}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
+        </TouchableOpacity>
+            <Item last style={{position: 'absolute', bottom: height*0.09}} >
+              <Input placeholder="Add a caption and hashtags" />
+              <Icon style={{color: "#fff"}} type="Ionicons" name='send' />
+            </Item>
+          
+          
       </Container>
     );
 }
@@ -508,7 +537,7 @@ const styles = StyleSheet.create({
   container: {
     // alignItems: 'center',
     flex: 1,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: "#000",
     flexDirection: 'column',
     height: height,
     // padding: 40, 
@@ -551,8 +580,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     padding: 20,
-    borderRadius: 15,
-    borderWidth: 1
+    borderRadius: 8,
+    backgroundColor: '#000',
+    // borderWidth: 1,
+    borderColor: "#fff"
     // backgroundColor:'rgba(0,0,0,0.5)'
   },
   tinyLogo: {
@@ -562,7 +593,7 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    height: width*0.65,
+    height: width*0.48,
     width: width*0.45,
     margin: width*0.02,
     elevation: 3
@@ -570,12 +601,13 @@ const styles = StyleSheet.create({
     
   },
   addImg: {
-    height: width*0.65,
+    height: width*0.48,
     width: width*0.45,
     margin: width*0.02,
-    borderWidth: 2,
-    borderRadius: 15,
-    borderStyle: 'dashed',
+    // borderWidth: 2,
+    // borderRadius: 15,
+    backgroundColor: "#327FEB"
+    // borderStyle: 'dashed',
   },
   save: {
     alignSelf: 'center',
@@ -599,9 +631,21 @@ const styles = StyleSheet.create({
     borderColor: "#357feb",
     width: width*0.31
   },
+  save3: {
+    // alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 10,
+    // margin: 5,
+    // backgroundColor: '#357feb',
+    // borderRadius: 30,
+    // borderWidth: 5,
+    // borderColor: "#3cb979",
+    width: 60
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
+    backgroundColor: "#000",
     alignItems: "center",
     marginTop: 22
   },

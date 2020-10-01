@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -10,6 +10,8 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 import FastImage from 'react-native-fast-image'
 import ImagePicker from 'react-native-image-picker';
+import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 import { connect } from 'getstream';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -95,7 +97,38 @@ const ProfileScreen = ({ navigation, route }) => {
             path: 'images',
         },
     };
-
+    const [children, setchildren] = useState({"0": {"id": 74, "n": {"grade": "10", "gsToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzRpZCJ9.jpZbUf4xqXXHLbF4zwEhq7abaqRMJUUs3YLfvjukbpM", "name": "name", "school": "davps", "year": "2000"}}})
+    const [current, setcurrent] = useState(0)
+    useEffect(() => {
+        const check = async () => {
+            var child = await AsyncStorage.getItem('profile')
+            child = JSON.parse(child)
+            setchildren(child)
+        }
+        check()
+    }, [])
+    useEffect(() => {
+        const check = async () => {
+            var pro = await AsyncStorage.getItem('profile')
+            if (pro !== null) {
+                pro = JSON.parse(pro)
+                axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+                    .then(async (response) => {
+                        setchildren(response.data)
+                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+            else {
+                // console.log('helo')
+            }
+        }
+        setTimeout(() => {
+            check()
+        }, 3000);
+    }, [])
     const pickImage = () => {
         async function upload(uri) {
             const check = await client.images.upload(uri);
@@ -144,7 +177,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     />
 
                     <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 10 }}>
-                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>Manoj Kumar</Text>
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children[0]['name']}</Text>
                         {/* <Text style={{ fontFamily: 'Poppins-Regular' }}>Google, India</Text> */}
                         <Text style={{ fontFamily: 'Poppins-Regular' }}>Grade II, DAVPS</Text>
                     </View>
