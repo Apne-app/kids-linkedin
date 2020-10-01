@@ -12,7 +12,7 @@ const Unverified = ({ navigation }) => {
     const [profile, setprofile] = useState({ 'email': '' })
     // console.log('http://35.229.160.51:5000/send/' + profile.id + '/' + profile.email + '/')
     const send = () => {
-        navigation.navigate('Home')
+        navigation.navigate('Child')
     }
     useEffect(() => {
         const getData = async () => {

@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking, TouchableHighlight } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -12,7 +12,8 @@ import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
 import SwipeUpDown from 'react-native-swipe-up-down';
 import VideoPlayer from 'react-native-video-controls';
-import Video from 'react-native-video';
+import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -239,11 +240,11 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
                             /> : <View></View>}
                             {props.activity.video ?
-                            <View style={{width:width-40, height:340}}>
-                                <VideoPlayer
-                                    source={{ uri: props.activity.video }}
-                                    navigator={navigator}
-                                /></View> : null}
+                                <View style={{ width: width - 40, height: 340 }}>
+                                    <VideoPlayer
+                                        source={{ uri: props.activity.video }}
+                                        navigator={navigator}
+                                    /></View> : null}
                         </TouchableOpacity>
                     </View>
                 }
@@ -281,41 +282,90 @@ const FeedScreen = ({ navigation, route }) => {
     const notifi = () => {
         return (<NewActivitiesNotification labelSingular={'Post'} labelPlural={'Posts'} />)
     }
+    const [children, setchildren] = useState({})
+    useEffect(() => {
+        const check = async () => {
+            var child = await AsyncStorage.getItem('children')
+            if (child != null) {
+                child = JSON.parse(child)
+                setchildren(child)
+            }
+        }
+        check()
+    }, [])
+    useEffect(() => {
+        const check = async () => {
+            var pro = await AsyncStorage.getItem('profile')
+            if (pro !== null) {
+                pro = JSON.parse(pro)
+                axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+                    .then(async (response) => {
+                        setchildren(response.data)
+                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+            else {
+                // console.log('helo')
+            }
+        }
+        setTimeout(() => {
+            check()
+        }, 3000);
+    }, [])
+    const there = () => {
+        return (
+            <SafeAreaProvider>
+                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
+                    <Body style={{ alignItems: 'center' }}>
+                        <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Home</Title>
+                    </Body>
+                    <Right style={{ marginRight: 30, marginTop: 0 }}>
+                        <Icon onPress={() => { navigation.toggleDrawer(); }} name="menu" type="Feather" />
+                    </Right>
+                </Header>
+                <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
+                    <StreamApp
+                        apiKey="dfm952s3p57q"
+                        appId="90935"
+                        token={children['0']['data']['gsToken']}
+                    >
+                        <FlatFeed Footer={() => {
+                            return (
+                                <SwipeUpDown
+                                    itemMini={<CommentList infiniteScroll activityId={actid} />} // Pass props component when collapsed
+                                    itemFull={<CommentList infiniteScroll activityId={actid} />} // Pass props component when show full
+                                    onShowMini={() => console.log('mini')}
+                                    onShowFull={() => console.log('full')}
+                                    onMoveDown={() => console.log('down')}
+                                    onMoveUp={() => console.log('up')}
+                                    disablePressToShow={true} // Press item mini to show full
+                                    style={{ backgroundColor: 'lightblue', display: display }} // style for swipe
+                                />
+                            )
+                        }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                    </StreamApp>
+                </SafeAreaView>
+            </SafeAreaProvider>
+        );
+    }
+    const notthere = () => {
+        return (
+            <View style={{ backgroundColor: 'white', height: height, width: width }}>
+                <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
+                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
+                <View style={{ backgroundColor: 'white' }}>
+                    <Button onPress={() => navigation.navigate('Child')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
+                        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
+                    </Button>
+                </View>
+            </View>
+        )
+    }
     return (
-        <SafeAreaProvider>
-            <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
-                <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Home</Title>
-                </Body>
-                <Right style={{ marginRight: 30, marginTop: 0 }}>
-                    <Icon onPress={() => { navigation.toggleDrawer(); }} name="menu" type="Feather" />
-                </Right>
-            </Header>
-            <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
-                <StreamApp
-                    apiKey="dfm952s3p57q"
-                    appId="90935"
-                    //47 is this one
-                    token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDdpZCJ9.f3hGhw0QrYAeqF8TDTNY5E0JqMF0zI6CyUmMumpWdfI"
-                //49, eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ
-                >
-                    <FlatFeed Footer={() => {
-                        return (
-                            <SwipeUpDown
-                                itemMini={<CommentList infiniteScroll activityId={actid} />} // Pass props component when collapsed
-                                itemFull={<CommentList infiniteScroll activityId={actid} />} // Pass props component when show full
-                                onShowMini={() => console.log('mini')}
-                                onShowFull={() => console.log('full')}
-                                onMoveDown={() => console.log('down')}
-                                onMoveUp={() => console.log('up')}
-                                disablePressToShow={true} // Press item mini to show full
-                                style={{ backgroundColor: 'lightblue', display: display }} // style for swipe
-                            />
-                        )
-                    }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
-                </StreamApp>
-            </SafeAreaView>
-        </SafeAreaProvider>
+        Object.keys(children).length > 0 ? there() : notthere()
     );
 };
 

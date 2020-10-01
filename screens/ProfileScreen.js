@@ -12,10 +12,11 @@ import FastImage from 'react-native-fast-image'
 import ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import { SECRET_KEY, ACCESS_KEY } from '@env';
+import { RNS3 } from 'react-native-aws3';
 import { connect } from 'getstream';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-const client = connect('dfm952s3p57q', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ', '90935');
 updateStyle('activity', {
     container:
     {
@@ -97,66 +98,14 @@ const ProfileScreen = ({ navigation, route }) => {
             path: 'images',
         },
     };
-    const [children, setchildren] = useState({"0": {"id": 74, "n": {"grade": "10", "gsToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzRpZCJ9.jpZbUf4xqXXHLbF4zwEhq7abaqRMJUUs3YLfvjukbpM", "name": "name", "school": "davps", "year": "2000"}}})
+    const [children, setchildren] = useState({})
     const [current, setcurrent] = useState(0)
-    useEffect(() => {
-        const check = async () => {
-            var child = await AsyncStorage.getItem('profile')
-            child = JSON.parse(child)
-            setchildren(child)
-        }
-        check()
-    }, [])
-    useEffect(() => {
-        const check = async () => {
-            var pro = await AsyncStorage.getItem('profile')
-            if (pro !== null) {
-                pro = JSON.parse(pro)
-                axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
-                    .then(async (response) => {
-                        setchildren(response.data)
-                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
-            }
-            else {
-                // console.log('helo')
-            }
-        }
-        setTimeout(() => {
-            check()
-        }, 3000);
-    }, [])
-    const pickImage = () => {
-        async function upload(uri) {
-            const check = await client.images.upload(uri);
-            console.log(check);
-        }
-        ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
-
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            } else {
-                // upload(response.uri);
-                // profileImage: 'https://randomuser.me/api/portraits/men/11.jpg'
-                client.user('49id').update({ name: 'Bhargava Macha', profileImage: 'https://randomuser.me/api/portraits/men/11.jpg' });
-                setavatarSource(response.uri);
-            }
-        });
-    }
-    return (
-        <ScrollView>
+    const there = () => {
+        return (<ScrollView>
             <StreamApp
                 apiKey={'dfm952s3p57q'}
                 appId={'90935'}
-                token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ'}
+                token={children['0']['data']['gsToken']}
             >
                 {/* <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
                     <Body style={{ alignItems: 'center' }}>
@@ -168,7 +117,6 @@ const ProfileScreen = ({ navigation, route }) => {
                 </Header> */}
                 <View style={{ marginTop: 30, flexDirection: 'row' }}>
                     <Avatar
-                        source={avatarSource}
                         size={96}
                         noShadow
                         editButton
@@ -176,10 +124,10 @@ const ProfileScreen = ({ navigation, route }) => {
                         styles={{ container: { width: 80, height: 80, borderRadius: 5, margin: 5, marginLeft: 30 } }}
                     />
 
-                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 10 }}>
-                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children[0]['name']}</Text>
+                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 31 }}>
+                        <Text {...console.log(children)} style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
                         {/* <Text style={{ fontFamily: 'Poppins-Regular' }}>Google, India</Text> */}
-                        <Text style={{ fontFamily: 'Poppins-Regular' }}>Grade II, DAVPS</Text>
+                        {/* <Text style={{ fontFamily: 'Poppins-Regular' }}>Grade II, DAVPS</Text> */}
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
@@ -211,7 +159,93 @@ const ProfileScreen = ({ navigation, route }) => {
                 </View>
                 <FlatFeed feedGroup="user" />
             </StreamApp>
-        </ScrollView>
+        </ScrollView>)
+    }
+    const notthere = () => {
+        return (
+            <View style={{ backgroundColor: 'white', height: height, width: width }}>
+                <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
+                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
+                <View style={{ backgroundColor: 'white' }}>
+                    <Button onPress={() => navigation.navigate('Child')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
+                        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
+                    </Button>
+                </View>
+            </View>
+        )
+    }
+    useEffect(() => {
+        const check = async () => {
+            var child = await AsyncStorage.getItem('children')
+            if (child != null) {
+                child = JSON.parse(child)
+                setchildren(child)
+            }
+        }
+        check()
+    }, [])
+    useEffect(() => {
+        const check = async () => {
+            var pro = await AsyncStorage.getItem('profile')
+            if (pro !== null) {
+                pro = JSON.parse(pro)
+                axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+                    .then(async (response) => {
+                        setchildren(response.data)
+                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+            else {
+                // console.log('helo')
+            }
+        }
+        setTimeout(() => {
+            check()
+        }, 3000);
+    }, [])
+    const pickImage = () => {
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                // upload(response.uri);
+                const file = {
+                    // `uri` can also be a file system path (i.e. file://)
+                    uri: response.uri,
+                    name: children['0']['data']['gsToken']+'.jpg',
+                    type: "image/png",
+                }
+
+                const options = {
+                    keyPrefix: '',
+                    bucket: "kids-linkedin-avatars",
+                    region: "ap-south-1",
+                    accessKey: ACCESS_KEY,
+                    secretKey: SECRET_KEY,
+                    successActionStatus: 201
+                }
+                RNS3.put(file, options).then(response => {
+                    console.log("dassd")
+                    if (response.status !== 201)
+                        throw new Error("Failed to upload image to S3");
+
+                })
+                const client = connect('dfm952s3p57q', children['0']['data']['gsToken'], '90935');
+                client.user().update({ profileImage:'https://d5c8j8afeo6fv.cloudfront.net/'+children['0']['data']['gsToken']+'.jpg' });
+            }
+        });
+    }
+    return (
+        Object.keys(children).length > 0 ? there() : notthere()
     );
 };
 

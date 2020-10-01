@@ -20,7 +20,9 @@ import CameraScreen from './screens/CameraScreen'
 import ChildScreen from './screens/ChildScreen'
 import Gallery from './components/Gallery'
 import SinglePostScreen from './screens/SinglePost'
+import Searching from './screens/Searching'
 import Unverified from './screens/Unverified'
+import ChildSuccess from './screens/ChildSuccess'
 import Upload from './components/Post';
 import Verified from './screens/Verified'
 import PostFolder from './components/PostFolder'
@@ -32,23 +34,23 @@ const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 
 
-  const tabs: TabsConfigsType ={
-    Feed: {
-      icon: () => <Icon style={{ color: "#000", fontSize: 20 }}  type="Feather" name="home" />
-    },
-    Search: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
-    },
-    Post: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
-    },
-    Notifications: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
-    },
-    Profile: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
-    }
+const tabs: TabsConfigsType = {
+  Feed: {
+    icon: () => <Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />
+  },
+  Search: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+  },
+  Post: {
+    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+  },
+  Notifications: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+  },
+  Profile: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
   }
+}
 
 function Bottom(props) {
 
@@ -56,14 +58,14 @@ function Bottom(props) {
 
 
   return (
-    <BottomNav.Navigator 
+    <BottomNav.Navigator
       tabBar={props => (
         <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
       )}
-      // tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
+    // tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
     >
       <BottomNav.Screen name="Feed" component={FeedScreen} />
-      <BottomNav.Screen  name="Search" component={SearchScreen} />
+      <BottomNav.Screen name="Search" component={SearchScreen} />
       <BottomNav.Screen name="Post" component={Upload} />
       <BottomNav.Screen name="Notifications" component={NotificationScreen} />
       <BottomNav.Screen name="Profile" component={ProfileScreen} />
@@ -114,16 +116,18 @@ const App = () => {
   return (
     <NavigationContainer ref={containerRef}>
       <Stack.Navigator initialRouteName={init}>
+        <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
         <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
         <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
-        <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
         <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
+        <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
       </Stack.Navigator>
     </NavigationContainer>
   );
