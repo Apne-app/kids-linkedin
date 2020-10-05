@@ -2,7 +2,7 @@
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking, TouchableHighlight } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left,Fab } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
@@ -333,16 +333,7 @@ const FeedScreen = ({ navigation, route }) => {
                     >
                         <FlatFeed Footer={() => {
                             return (
-                                <SwipeUpDown
-                                    itemMini={<CommentList infiniteScroll activityId={actid} />} // Pass props component when collapsed
-                                    itemFull={<CommentList infiniteScroll activityId={actid} />} // Pass props component when show full
-                                    onShowMini={() => console.log('mini')}
-                                    onShowFull={() => console.log('full')}
-                                    onMoveDown={() => console.log('down')}
-                                    onMoveUp={() => console.log('up')}
-                                    disablePressToShow={true} // Press item mini to show full
-                                    style={{ backgroundColor: 'lightblue', display: display }} // style for swipe
-                                />
+                                <View />
                             )
                         }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                     </StreamApp>

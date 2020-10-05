@@ -16,8 +16,7 @@ import {
 } from 'react-native';
 import { Container, Header, Tab, Tabs, ScrollableTab, Footer, FooterTab, Button, Icon } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
-import Camera from '../components/Camera'
-import Upload from '../components/Post'
+
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;

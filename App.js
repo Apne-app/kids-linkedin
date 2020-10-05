@@ -23,6 +23,7 @@ import SinglePostScreen from './screens/SinglePost'
 import Searching from './screens/Searching'
 import Unverified from './screens/Unverified'
 import ChildSuccess from './screens/ChildSuccess'
+import FileScreen from './screens/FileScreen'
 import Upload from './components/Post';
 import Verified from './screens/Verified'
 import PostFolder from './components/PostFolder'
@@ -45,6 +46,9 @@ const DrawNav = createDrawerNavigator();
     },
     Post: {
       icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+    },
+    Files: {
+      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
     },
     Notifications: {
       icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
@@ -70,7 +74,9 @@ function Bottom(props) {
       <BottomNav.Screen name="Search" component={SearchScreen} />
       <BottomNav.Screen name="Post" component={Upload} />
       <BottomNav.Screen name="Notifications" component={NotificationScreen} />
+      <BottomNav.Screen name="Files" component={FileScreen} />
       <BottomNav.Screen name="Profile" component={ProfileScreen} />
+
       {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
     </BottomNav.Navigator>
   )

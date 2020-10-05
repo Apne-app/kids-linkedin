@@ -137,7 +137,7 @@ const App: () => React$Node = (props) => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <ViewShot ref={viewShot} style={styles.container}>
+      <View style={styles.container}>
         {/*<Button
           title={'Pick Image'}
           onPress={() => {
@@ -187,16 +187,16 @@ const App: () => React$Node = (props) => {
         }
         {
           croppedi &&
-           <View style={styles.cropView}>
-          <Image source={{uri: uri}} style={{ height: dim.height, width: dim.width }} >
+           <ViewShot ref={viewShot} style={styles.cropView}>
+          <Image  source={{uri: uri}} style={{ aspectRatio: (dim.width)/(dim.height), width: dim.width > dim.height ? "100%" : "auto", height: dim.width < dim.height ? "100%" : "auto", }} >
           </Image>
-          <Draggable x={75} y={100}  renderColor='transparen' renderText='A' shouldReverse={false} 
+          <Draggable x={75} y={100}  renderColor='transparent' renderText='A' shouldReverse={false} 
           children={<Text style={{backgroundColor: "transparent", color: value.color, fontSize: value.size}} >{value.value}</Text>}
           />
-        </View>
+        </ViewShot>
         }
         
-        </ViewShot>
+        </View>
         <View style={{flex: 1}}>
         <View style={{flex: 1, backgroundColor: "#000"}}>
         <TouchableOpacity onPress={() =>  croppedi ? setcroppedi(false) : props.navigation.pop()} style={{backgroundColor: '#fff', position: 'absolute', bottom: height*0.13, left: 20, borderWidth: 1, borderRadius: 100,}}>
@@ -270,7 +270,9 @@ const styles = StyleSheet.create({
   },
   cropView: {
     flex: 1,
-    backgroundColor: 'black'
+    alignItems: 'center',
+    backgroundColor: 'black',
+    justifyContent: 'center',
   },
 
   // image: {

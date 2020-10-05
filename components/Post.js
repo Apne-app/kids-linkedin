@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
 import {  ScrollView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Tabs, Tab, TabHeading, Label, H1, H2, H3, Icon,Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Tabs, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon,Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
@@ -60,12 +60,17 @@ var width = Dimensions.get('screen').width;
 
 const Upload = ({ route, navigation }) => {
 
+    const [activefab, setActiveFab] = React.useState(false);
+
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalVisible2, setModalVisible2] = React.useState(false);
+    const [modalVisible3, setModalVisible3] = React.useState(false);
 
     const [uploading, setUploading] = React.useState({});
 
     const [active, setActive] = React.useState(1)
+
+    const [filename, setFileName] = React.useState('')
 
     const [explore, setExplore] = React.useState([
       {
@@ -118,9 +123,10 @@ const Upload = ({ route, navigation }) => {
         }
         // console.log(explore[0].uri, tags[0])
 
-      explore.map((item) => {
+      explore.map(async (item) => {
         try {
-          CameraRoll.save(item.uri, {type:'photo', album: tags[0]})
+          console.log(item.uri);
+          await CameraRoll.save(item.uri, {type:'photo', album: filename})
           .then(res => 
           {
             console.log(res)
@@ -129,11 +135,35 @@ const Upload = ({ route, navigation }) => {
           {
             console.log(err)
           });
-          ;
         } catch (error) {
           console.log(error)
         }
-      })  
+      }) 
+        let x = await AsyncStorage.getItem("albums");
+        let albums = JSON.parse(x);
+        if(albums)
+        {
+          var c =1;
+          for(var i = 0; i < albums.length; i++)
+          {
+              if(albums[i] == filename){
+                c = 0;
+                break;
+              }
+          }
+          if(c)
+          {
+            albums = [ ...albums,  filename];
+          }
+          await AsyncStorage.setItem("albums", JSON.stringify(albums));
+        }
+        else 
+        {
+          await AsyncStorage.setItem("albums", JSON.stringify([ filename ]));
+        }
+             
+        setModalVisible3(false);
+        alert('Images Saved');
 
     }
 
@@ -214,7 +244,7 @@ const uploadToS3 = (i) => {
 
             const options = {
                 imagePaths: arr,
-                name: 'PDFName.pdf',
+                name: `${filename}.pdf`,
                 maxSize: { // optional maximum image dimension - larger images will be resized
                     width: 900,
                     height: Math.round(height / width * 900),
@@ -222,8 +252,27 @@ const uploadToS3 = (i) => {
                 quality: .7, // optional compression paramter
             };
             const pdf = await RNImageToPdf.createPDFbyImages(options);
+
+            let x = await AsyncStorage.getItem("albums");
+            let albums = JSON.parse(x);
+            var c =1;
+            for(var i = 0; i < albums.length; i++)
+            {
+                if(album[i] == filename){
+                  c = 0;
+                  break;
+                }
+            }
+            if(c)
+            {
+              albums = [ ...albums,  filename];
+            }
+
+            await AsyncStorage.setItem("albums", JSON.stringify(albums));
             
             console.log(pdf.filePath);
+            setModalVisible(false);
+            alert('PDF Saved');
         } catch(e) {
             console.log(e);
         }
@@ -257,42 +306,13 @@ const uploadToS3 = (i) => {
             >
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => {setModalVisible(false); setTags([]); setTag('');}} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
-                  <Text style={styles.modalText}>Add a Tag!</Text>
-                    <View style={{flexDirection: 'row'}} >
-                      {
-                        tags.map((item, i) => {
-                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 2}} textStyle={{color: "#fff"}} icon="close" onPress={() => {tags.splice(i, 1); setTags([...tags]);}} >{item}</Chip>
-                        })
-                      }
-                    </View>  
+                  <TouchableOpacity onPress={() => {setModalVisible(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
+                                      <Text style={styles.modalText}>Save as pdf!</Text>
                     <Item floatingLabel>
-                      <Label>Tag</Label>
-                      <Input value={tag} onChangeText={text => setTag(text)} />
+                      <Label>Collection Name</Label>
+                      <Input value={filename} onChangeText={text => setFileName(text)} />
                     </Item>
                     <View>
-                    <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
-                        onPress={() => {
-                          if(tag != "")
-                          {
-
-                          setTags([
-                            ...tags,
-                            tag
-                          ])
-                          // writeFile();
-                          }
-                          // saveImages();
-                          // myAsyncPDFFunction()
-                          // console.log(explore)
-                        }}
-                      >
-                        <View style={styles.save}>
-                          <Text style={{color: "#fff", flex: 1, textAlign:'center'}}>
-                          Add
-                        </Text>
-                        </View>
-                      </TouchableOpacity>
                     </View>
                     <View style={{flexDirection: 'row'}} >
                     <TouchableOpacity  style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}
@@ -313,11 +333,11 @@ const uploadToS3 = (i) => {
                       >
                         <View style={styles.save2}>
                           <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
-                          PDF
+                          Save
                         </Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
+                    {/*<TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
                       onPress={() => {
                         // console.log(randomStr(20, '12345abcdepq75xyz'));
                         var i;
@@ -331,7 +351,67 @@ const uploadToS3 = (i) => {
                           Gallery
                         </Text>
                       </View>
+                    </TouchableOpacity>*/}
+                    </View>
+                </View>
+              </View>
+            </Modal>
+          </View>
+
+           <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible3}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <TouchableOpacity onPress={() => {setModalVisible3(false);}} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
+                                      <Text style={styles.modalText}>Save in gallery!</Text>
+                    <Item floatingLabel>
+                      <Label>Collection Name</Label>
+                      <Input value={filename} onChangeText={text => setFileName(text)} />
+                    </Item>
+                    <View>
+                    </View>
+                    <View style={{flexDirection: 'row'}} >
+                    <TouchableOpacity  style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}
+                        onPress={() => {
+                          // if(tag != "")
+                          // {
+
+                          // setTags([
+                          //   ...tags,
+                          //   tag
+                          // ])
+                          // // writeFile();
+                          // }
+                          // saveImages();
+                          saveImages();
+                          // console.log(explore)
+                        }}
+                      >
+                        <View style={styles.save2}>
+                          <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
+                          Save
+                        </Text>
+                        </View>
                     </TouchableOpacity>
+                    {/*<TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
+                      onPress={() => {
+                        // console.log(randomStr(20, '12345abcdepq75xyz'));
+                        var i;
+
+                        saveImages();
+                        
+                      }}
+                    >
+                      <View style={styles.save2}>
+                        <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
+                          Gallery
+                        </Text>
+                      </View>
+                    </TouchableOpacity>*/}
                     </View>
                 </View>
               </View>
@@ -346,42 +426,10 @@ const uploadToS3 = (i) => {
             >
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => {setModalVisible2(false); ; setTags([]); setTag('');}} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
-                  <Text style={styles.modalText}>Add a Tag!</Text>
+                  <TouchableOpacity onPress={() => {setModalVisible2(false)}} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end'}} ><Icon name="cross" type="Entypo"  /></TouchableOpacity>
+                                    <Text style={styles.modalText}>Upload to cloud!</Text>
                     <View style={{flexDirection: 'row'}} >
-                      {
-                        tags.map((item, i) => {
-                            return <Chip key={i} style={{backgroundColor: '#357feb', margin: 2}} textStyle={{color: "#fff"}} icon="close" onPress={() => {tags.splice(i, 1); setTags([...tags]);}} >{item}</Chip>
-                        })
-                      }
-                    </View>  
-                    <Item floatingLabel>
-                      <Label>Tag</Label>
-                      <Input value={tag} onChangeText={text => setTag(text)} />
-                    </Item>
-                    <View style={{flexDirection: 'row'}} >
-                    <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
-                        onPress={() => {
-                          if(tag != "")
-                          {
-
-                          setTags([
-                            ...tags,
-                            tag
-                          ])
-                          // writeFile();
-                          }
-                          // saveImages();
-                          // myAsyncPDFFunction()
-                          // console.log(explore)
-                        }}
-                      >
-                        <View style={styles.save}>
-                          <Text style={{color: "#fff", flex: 1, textAlign:'center'}}>
-                          Add
-                        </Text>
-                        </View>
-                      </TouchableOpacity>
+                    
                     <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
                       onPress={() => {
                         // console.log(randomStr(20, '12345abcdepq75xyz'));
@@ -513,20 +561,44 @@ const uploadToS3 = (i) => {
             keyExtractor={(item, index) => index.toString()}
           />
               </View>
+              
         </Content>
 
-        <TouchableOpacity style={{position: 'absolute', bottom: height*0.15, right: 6}}
+{/*        <TouchableOpacity style={{position: 'absolute', bottom: height*0.15, right: 6}}
           onPress={() => {
             setModalVisible(true);
           }}
         >
           <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
-        </TouchableOpacity>
-            <Item last style={{position: 'absolute', bottom: height*0.09}} >
+        </TouchableOpacity>*/}
+            <Item last style={{position: 'absolute', bottom: height*0.11}} >
               <Input placeholder="Add a caption and hashtags" />
               <Icon style={{color: "#fff"}} type="Ionicons" name='send' />
             </Item>
-          
+
+          <Fab
+            active={activefab}
+            direction="up"
+            containerStyle={{ right: 8 }}
+            style={{ backgroundColor: 'transparent', bottom: height*0.15}}
+            position="bottomRight"
+            onPress={() => setActiveFab(!activefab )}>
+             <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50 }} />
+            <Button onPress={() => setModalVisible3(true)} style={{ backgroundColor: '#3B5998', marginBottom:  height*0.15 }}>
+              <Icon name="image" type="Feather" />
+            </Button>
+            <Button onPress={() => setModalVisible(true)} style={{ backgroundColor: '#DD5144', marginBottom:  height*0.15 }}>
+              <Icon name="file-pdf" type="FontAwesome5" />
+            </Button>
+            <Button style={{ backgroundColor: '#3B5998', marginBottom:  height*0.15 }}
+              onPress={() => {
+                setModalVisible2(true);
+                // console.log(explore);
+              }}
+            >
+              <Icon name="upload-cloud" type="Feather" style={{color: "#fff"}} />
+            </Button>
+          </Fab>
           
       </Container>
     );
