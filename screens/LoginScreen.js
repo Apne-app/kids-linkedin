@@ -31,7 +31,14 @@ const LoginScreen = ({ route, navigation }) => {
   useEffect(() => {
     const check = async () => {
       var pro = await AsyncStorage.getItem('profile')
+      console.log(pro);
       if (pro !== null) {
+
+        if(JSON.parse(pro).pfname)
+        {
+          navigation.navigate('Home');
+        }
+
         pro = JSON.parse(pro)
         axios.get('http://104.199.146.206:5000/login/' + pro.email + '/' + pro.pwd + '/none/')
           .then((response) => {
