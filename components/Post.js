@@ -289,13 +289,13 @@ return name;
     children = JSON.parse(children)['0']['data']
     var name = ''
     for (i = 0; i < explore.length - 1; i++) {
-      name = uploadToS3(i, children.gsToken);
+      name = name+"https://d2k1j93fju3qxb.cloudfront.net/"+children['gsToken']+'/'+uploadToS3(i, children.gsToken)+', ';
     }
     const client = connect('dfm952s3p57q', children['gsToken'], '90935');
-    var activity = {"image": "https://d2k1j93fju3qxb.cloudfront.net/"+children['gsToken']+'/'+name, "object": "hello",  "verb": "post"}
+    var activity = {"image": name, "object": "test",  "verb": "post"}
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
-    var user = client.feed('user', '103id');
+    var user = client.feed('timeline', '103id');
     await user.addActivity(activity);
 
   }

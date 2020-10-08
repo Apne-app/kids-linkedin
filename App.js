@@ -31,12 +31,9 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
 import messaging from '@react-native-firebase/messaging';
 import SplashScreen from 'react-native-splash-screen';
-
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
-
-
 // console.disableYellowBox = true
 
   const tabs: TabsConfigsType ={

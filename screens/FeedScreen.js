@@ -1,11 +1,12 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking, TouchableHighlight } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left,Fab } from 'native-base';
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left, Fab } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
+import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
+import LikeButton from '../components/LikeButton'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
@@ -13,7 +14,10 @@ import ImageView from 'react-native-image-viewing';
 import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import BottomSheet from 'reanimated-bottom-sheet';
+
 var height = Dimensions.get('screen').height;
+var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
 
 updateStyle('activity', {
@@ -51,6 +55,13 @@ updateStyle('uploadImage', {
 const FeedScreen = ({ navigation, route }) => {
     const [actid, setactid] = useState('1');
     const [display, setdisplay] = useState('none');
+    const sheetRef = React.useRef(null);
+    const renderContent = () => {
+        var data = <Text></Text>
+        data = actid ?  <Text></Text>:  <View style={{height:height, backgroundColor:'black'}}></View>
+        return <View style={{height:height, backgroundColor:'black'}}></View>
+
+    }
     const CustomActivity = (props) => {
 
         const [commentVisible, setCmv] = React.useState('none');
@@ -67,16 +78,7 @@ const FeedScreen = ({ navigation, route }) => {
         const footer = (id) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {/* <LikeButton labelFunction={nulre} {...props} /> */}
-                    <ReactionToggleIcon
-                        // styles={styles}
-                        counts={props.activity.reaction_counts}
-                        // own_reactions={own_reactions}
-                        kind={'like'}
-                        // onPress={this._onPress}
-                        activeIcon={require('../images/icons/star.png')}
-                        inactiveIcon={require('../images/icons/star-outline.png')}
-                    />
+                    <LikeButton  {...props} />
                     <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="comment" type="EvilIcons" style={{ fontSize: 28, marginLeft: 10 }} />
                     <Icon onPress={() => {
                         Linking.openURL('whatsapp://send?text=check').then((data) => {
@@ -94,7 +96,7 @@ const FeedScreen = ({ navigation, route }) => {
                         kind="like"
                         height={0}
                         width={0}
-                        onPress={() => props.navigation.navigate('SinglePost', { activity: props })}
+                        onPress={() => { setactid(id); sheetRef.current.snapTo(1) }}
                     />
                     <Text style={{ marginRight: -15, marginLeft: 5 }}>•</Text>
                     <ReactionIcon
@@ -120,17 +122,17 @@ const FeedScreen = ({ navigation, route }) => {
             </View>)
         }
         const footer2 = () => {
-            return (<View style={{ padding: 20, marginBottom: 10 }}>
+            return (<View style={{ padding: 14, marginBottom: 10 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <LikeButton labelFunction={nulre} {...props} styles={{ width: 40, height: 40, backgroundColor: 'white' }} />
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="comment" type="EvilIcons" style={{ fontSize: 40, marginLeft: 10, color: 'white' }} />
+                    <LikeButton {...props} />
+                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="comment" type="EvilIcons" style={{ fontSize: 30, marginLeft: 10, color: 'white' }} />
                     <Icon onPress={() => {
                         Linking.openURL('whatsapp://send?text=check').then((data) => {
                             // console.log('WhatsApp Opened');
                         }).catch(() => {
                             alert('Make sure Whatsapp is installed on your device');
                         });
-                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 25, marginLeft: 15, color: '#4FCE5D' }} />
+                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 22, marginLeft: 15, color: '#4FCE5D' }} />
                     <Right>
                         <View style={{ flexDirection: 'row', alignItems: 'center', color: 'white' }}>
                             <ReactionIcon
@@ -170,10 +172,11 @@ const FeedScreen = ({ navigation, route }) => {
             </View>)
         }
         const [visible, setIsVisible] = React.useState(false);
+        var images = []
+        props.activity.image.split(', ').map((item)=>images.push({uri:item}))
         return (
             <Activity
                 {...props}
-                {...console.log(props.activity)}
                 Header={
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Avatar
@@ -184,7 +187,7 @@ const FeedScreen = ({ navigation, route }) => {
                         />
                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                             <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.data.name}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
+                            <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.created_at.split('T')[0]}</Text>
                         </View>
                         <ActionSheet
                             ref={refActionSheet}
@@ -200,7 +203,7 @@ const FeedScreen = ({ navigation, route }) => {
                     <View style={{ padding: 20 }}>
                         <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.object}</Text>
                         {props.activity.image ? <ImageView
-                            images={[{ uri: props.activity.image }]}
+                            images={images}
                             imageIndex={0}
                             visible={visible}
                             doubleTapToZoomEnabled={true}
@@ -336,6 +339,13 @@ const FeedScreen = ({ navigation, route }) => {
                                 <View />
                             )
                         }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                        <BottomSheet
+                            ref={sheetRef}
+                            snapPoints={[height - 200, 400, 0]}
+                            initialSnap={2}
+                            borderRadius={25}
+                            renderContent={renderContent}
+                        />
                     </StreamApp>
                 </SafeAreaView>
             </SafeAreaProvider>
