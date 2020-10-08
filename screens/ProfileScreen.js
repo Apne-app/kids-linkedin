@@ -101,7 +101,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState({})
     const [current, setcurrent] = useState(0)
     const there = () => {
-        return (<ScrollView>
+        return (<ScrollView style={{marginBottom:80}}>
             <StreamApp
                 apiKey={'dfm952s3p57q'}
                 appId={'90935'}
