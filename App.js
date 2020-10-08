@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StatusBar } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'
@@ -30,6 +30,8 @@ import PostFolder from './components/PostFolder'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
 import messaging from '@react-native-firebase/messaging';
+import SplashScreen from 'react-native-splash-screen';
+
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -61,6 +63,10 @@ const DrawNav = createDrawerNavigator();
 function Bottom(props) {
 
   // console.log(props.route.params);
+
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, [])
 
 
   return (
@@ -123,6 +129,10 @@ const App = () => {
 
   return (
     <NavigationContainer ref={containerRef}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="#357feb"
+      />
       <Stack.Navigator initialRouteName={init}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />

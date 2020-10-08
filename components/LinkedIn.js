@@ -4,7 +4,8 @@ import React from 'react'
 import { StyleSheet, View, Text, Dimensions } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
-import LinkedInModal from 'react-native-linkedin'
+import LinkedInModal from 'react-native-linkedin';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 var height = Dimensions.get('screen').height;
@@ -32,14 +33,14 @@ const LinkedIn = ({navigation}) => {
     async function getInfo(token) {
       // console.log(token);
       // await 
-      axios.get("https://api.linkedin.com/v2/me/?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))", { headers: { 'Authorization': "Bearer " + token } })
+      await axios.get("https://api.linkedin.com/v2/me/?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))", { headers: { 'Authorization': "Bearer " + token } })
       .then(response => {
         // console.log(response.data);
           a = response.data.firstName.localized.en_US;
           b = response.data.lastName.localized.en_US;
       })
-      .then(() => {
-        axios.get(
+      .then(async () => {
+        await axios.get(
           "https://api.linkedin.com/v2/clientAwareMemberHandles?q=members&projection=(elements*(primary,type,handle~))", { headers: { 'Authorization': "Bearer " + token } })
         .then(response => {
           // setInfo(response.data);
@@ -47,8 +48,15 @@ const LinkedIn = ({navigation}) => {
           console.log(response.data.elements[0]['handle~'].emailAddress);
             c =  response.data.elements[0]['handle~'].emailAddress,
             axios.get('http://104.199.146.206:5000/authLinkedin/' + c + '/' + b + '/' + a)
-              .then((response) => {
+              .then(async (response) => {
                 console.log(response.data)
+                
+                  try {
+                  await AsyncStorage.setItem('profile', JSON.stringify(response.data));
+                  navigation.navigate('Child');
+                } catch (e) {
+                  // saving error
+                }
             })
             .catch(err => console.log(err))
         })
@@ -80,7 +88,6 @@ const LinkedIn = ({navigation}) => {
             onSuccess={(data) => {
                 // setToken(data.access_token);
                 getInfo(data.access_token);
-                navigation.navigate('Home', {});
             }}
             // permissions={['r_liteprofile']}
             renderButton={() => 
