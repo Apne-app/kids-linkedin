@@ -89,7 +89,22 @@ const fontConfig = {
     },
 };
 const ProfileScreen = ({ navigation, route }) => {
-    const [avatarSource, setavatarSource] = useState('https://randomuser.me/api/portraits/men/11.jpg')
+    useEffect(() => {
+        const addfollows = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+            var user = client.feed('timeline', children['id'] + 'id');
+            var follows = await user.get()
+            var data = []
+            console.log(follows)
+            // follows['results'].map(item => {
+            //     data.push(item['target_id'].replace('user:', '').replace('id', ''))
+            // })
+            // setfollows(data)
+        }
+        addfollows()
+    }, [])
     const options = {
         title: 'Select Avatar',
         customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
@@ -99,9 +114,8 @@ const ProfileScreen = ({ navigation, route }) => {
         },
     };
     const [children, setchildren] = useState({})
-    const [current, setcurrent] = useState(0)
     const there = () => {
-        return (<ScrollView style={{marginBottom:80}}>
+        return (<ScrollView style={{ marginBottom: 80 }}>
             <StreamApp
                 apiKey={'dfm952s3p57q'}
                 appId={'90935'}
@@ -125,9 +139,11 @@ const ProfileScreen = ({ navigation, route }) => {
                     />
 
                     <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 31 }}>
-                        <Text {...console.log(children)} style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
-                        {/* <Text style={{ fontFamily: 'Poppins-Regular' }}>Google, India</Text> */}
-                        {/* <Text style={{ fontFamily: 'Poppins-Regular' }}>Grade II, DAVPS</Text> */}
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
+                            <Icon style={{ fontSize: 15, marginTop: 10, marginLeft: 5 }} name="log-out" type="Feather" />
+                        </View>
+                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1 }}>I  am a very good boy. I am not a bad boy.</Text>
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
@@ -221,7 +237,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 const file = {
                     // `uri` can also be a file system path (i.e. file://)
                     uri: response.uri,
-                    name: children['0']['data']['gsToken']+'.jpg',
+                    name: children['0']['data']['gsToken'] + '.jpg',
                     type: "image/png",
                 }
 
@@ -240,7 +256,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                 })
                 const client = connect('dfm952s3p57q', children['0']['data']['gsToken'], '90935');
-                client.user().update({ profileImage:'https://d5c8j8afeo6fv.cloudfront.net/'+children['0']['data']['gsToken']+'.jpg' });
+                client.user().update({ profileImage: 'https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.jpg' });
             }
         });
     }

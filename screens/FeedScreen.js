@@ -15,7 +15,6 @@ import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import BottomSheet from 'reanimated-bottom-sheet';
-
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
