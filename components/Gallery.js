@@ -22,7 +22,7 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 // import FastImage from 'react-native-fast-image';
 
-const Gallery = ({navigation, route}) =>  {
+const Gallery = (props) =>  {
 
     const [gallery, setGallery] = React.useState([]);
 
@@ -75,16 +75,6 @@ const Gallery = ({navigation, route}) =>  {
    
       return (
         <ScrollView style={styles.container}>
-            <View style={{width: width, height: height*0.4}}>
-             <Image
-                    style={{height: height*0.4}}
-                    resizeMode="cover"
-
-                    source={{
-                      uri: selected,
-                    }}
-                  />
-            </View>
             <FlatList
             data={gallery}
             renderItem={({ item }) => (
@@ -94,7 +84,8 @@ const Gallery = ({navigation, route}) =>  {
                   style={{ flex: 1 }}
                   onPress={() => {
                     setSelected(item.node.image.uri)
-                    console.log(item);  
+                    props.navigation.navigate('Preview', {'img': item.node.image.uri});
+                    // console.log(props.navigation);  
                   }}>
                   {/*console.log(item.node.image.uri)*/}
                   <Image

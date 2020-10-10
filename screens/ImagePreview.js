@@ -93,6 +93,7 @@ const App: () => React$Node = (props) => {
             contentContainerStyle={{
               flexGrow: 1,
             }}
+            showsHorizontalScrollIndicator={false}
             style={{marginTop: 15}}
             renderItem={({ item }) => (
                 <TouchableOpacity
@@ -241,6 +242,7 @@ const App: () => React$Node = (props) => {
         ref={sheetRef}
         snapPoints={[halfHeight, 0]}
         initialSnap = {1}
+        enabledGestureInteraction={false}
         borderRadius={25}
         renderContent={renderContent}
       />

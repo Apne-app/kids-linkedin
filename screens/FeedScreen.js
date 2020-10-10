@@ -15,6 +15,7 @@ import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { SliderBox } from "react-native-image-slider-box";
 
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
@@ -66,6 +67,7 @@ const FeedScreen = ({ navigation, route }) => {
 
         const [commentVisible, setCmv] = React.useState('none');
         const refActionSheet = useRef(null);
+        console.log(props.activity);
         const onShare = async () => {
 
         };
