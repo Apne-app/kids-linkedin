@@ -15,6 +15,7 @@ import axios from 'axios';
 import { SECRET_KEY, ACCESS_KEY } from '@env';
 import { RNS3 } from 'react-native-aws3';
 import { connect } from 'getstream';
+import { set } from 'react-native-reanimated';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
@@ -89,15 +90,16 @@ const fontConfig = {
     },
 };
 const ProfileScreen = ({ navigation, route }) => {
+    const [data, setdata] = useState({ 'followers': [], 'following': [] })
     useEffect(() => {
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
             children = JSON.parse(children)['0']
             const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
             var user = client.feed('timeline', children['id'] + 'id');
-            var follows = await user.get()
-            var data = []
-            console.log(follows)
+            var follows = await user.followers()
+            var following = await user.following()
+            setdata({ 'followers': follows['results'], 'following': following['results'] })
             // follows['results'].map(item => {
             //     data.push(item['target_id'].replace('user:', '').replace('id', ''))
             // })
@@ -153,11 +155,11 @@ const ProfileScreen = ({ navigation, route }) => {
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>20</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>30</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                         </View>
                     </View>
