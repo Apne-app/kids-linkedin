@@ -1,9 +1,12 @@
 'use strict';
 import React, { PureComponent } from 'react';
-import { AppRegistry, Dimensions, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
+import { AppRegistry, ScrollView, TextInput, Dimensions, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
+import Gallery from './Gallery'
+import BottomSheet from 'reanimated-bottom-sheet';
+
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -58,10 +61,34 @@ export default class ExampleApp extends PureComponent {
         func();
 
   };
+  
 
   render() {
+    const renderContent = () => (
+    <View
+    // scrollEnabled={false}
+      style={{
+        backgroundColor: '#000',
+        padding: 16,
+        height: height*0.9,
+      }}
+    >
+      <Gallery navigation={this.props.navigation} />
+        </View>
+  );
+
     return (
       <View style={styles.container}>
+      <BottomSheet
+          ref={ref => {
+            this.sheetRef = ref;
+          }}
+          snapPoints={[height*0.9, 0]}
+          initialSnap = {1}
+          enabledGestureInteraction={false}
+          borderRadius={25}
+          renderContent={renderContent}
+        />
         <RNCamera
           ref={ref => {
             this.camera = ref;
@@ -113,7 +140,7 @@ export default class ExampleApp extends PureComponent {
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-start', marginLeft: 15, marginTop: 14}}>
+          <TouchableOpacity onPress={() => this.sheetRef.snapTo(0)} style={styles.capture, {flex: 1, alignItems: 'flex-start', marginLeft: 15, marginTop: 14}}>
             <Icon type="EvilIcons" name="image" style={{color: "#fff", fontSize: 50}} />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 2, alignItems: 'center'}}>
@@ -123,6 +150,7 @@ export default class ExampleApp extends PureComponent {
             <Icon type="Ionicons" name="camera-reverse-outline" style={{color: "#fff", fontSize: 45, marginTop: 10}} />
           </TouchableOpacity>
         </View>
+        
       </View>
     );
   }

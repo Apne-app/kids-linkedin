@@ -78,27 +78,13 @@ const App: () => React$Node = (props) => {
           editable
           maxLength={100}
         />
-        <View scrollEnabled={false} style={{alignItems: 'center', paddingTop: 20, flexDirection: 'row'}}>
-          <View style={{flex: 2, alignItems: 'flex-end', marginRight: 10}}>
-            <Text>Size</Text>
-          </View>
-          <View style={{flex: 2}}>
-              <TextInput
-                style={{
-                  // backgroundColor: ,
-                  // borderColor: '#000000',
-                  borderWidth: 0.5,
-                  borderRadius: 15,
-                  padding: 10
-                }}
-                keyboardType="numeric"
-                onChangeText={text => setValue({ ...value, size: text.length ? JSON.parse(text.replace(/[^0-9]/g, '')) : console.log("wrong") })}
-                value={value.size}
-                editable
-                // maxLength={100}
-              />
-          </View>
-          <View style={{flex: 2}} />
+        <Text style={{textAlign: 'center', margin: 5, fontSize: 18}}>Size</Text>
+        <View scrollEnabled={false} style={{alignItems: 'center', justifyContent: 'center', paddingTop: 1, flexDirection: 'row'}}>
+
+          <TouchableOpacity onPress={() => setValue({ ...value, size: 10 })} style={{  minWidth: width*0.1, backgroundColor: value.size == 10? "#4cad4a":"#fff", borderWidth: 1, alignSelf: 'center', padding: 6, marginLeft: 10, borderRadius: 8, alignItems: 'center'}}><Text style={{fontSize: 10, textAlign: 'center'}}>A</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => setValue({ ...value, size: 20 })} style={{  minWidth: width*0.12, backgroundColor:value.size == 20? "#4cad4a": "#fff", borderWidth: 1, alignSelf: 'center', padding: 6, marginLeft: 10, borderRadius: 8, alignItems: 'center'}}><Text style={{fontSize: 20, textAlign: 'center'}}>A</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => setValue({ ...value, size: 40 })} style={{  minWidth: width*0.15, backgroundColor:value.size == 40? "#4cad4a": "#fff", borderWidth: 1, alignSelf: 'center', paddingLeft: 3, paddingRight: 3, marginLeft: 10, borderRadius: 8, alignItems: 'center'}}><Text style={{fontSize: 40, textAlign: 'center'}}>A</Text></TouchableOpacity>
+        
         </View>
         <ScrollView style={{flex: 1}} scrollEnabled={true} >
         <FlatList
@@ -107,6 +93,7 @@ const App: () => React$Node = (props) => {
             contentContainerStyle={{
               flexGrow: 1,
             }}
+            showsHorizontalScrollIndicator={false}
             style={{marginTop: 15}}
             renderItem={({ item }) => (
                 <TouchableOpacity
@@ -255,6 +242,7 @@ const App: () => React$Node = (props) => {
         ref={sheetRef}
         snapPoints={[halfHeight, 0]}
         initialSnap = {1}
+        enabledGestureInteraction={false}
         borderRadius={25}
         renderContent={renderContent}
       />

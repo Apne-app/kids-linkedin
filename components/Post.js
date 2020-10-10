@@ -295,7 +295,7 @@ const Upload = ({ route, navigation }) => {
     var activity = { "image": name, "object": "test", "verb": "post" }
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
-    var user = client.feed('timeline', children['id']);
+    var user = client.feed('user', String(String(children['id'])+String("id")));
     await user.addActivity(activity);
   }
   return (
