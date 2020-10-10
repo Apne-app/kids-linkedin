@@ -15,6 +15,7 @@ import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import BottomSheet from 'reanimated-bottom-sheet';
+
 import { SliderBox } from "react-native-image-slider-box";
 
 var height = Dimensions.get('screen').height;

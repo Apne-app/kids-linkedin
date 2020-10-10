@@ -30,6 +30,7 @@ import PostFolder from './components/PostFolder'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
 import messaging from '@react-native-firebase/messaging';
+import IndProfile from './screens/IndProfile';
 import SplashScreen from 'react-native-splash-screen';
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
@@ -132,6 +133,7 @@ const App = () => {
       />
       <Stack.Navigator initialRouteName={init}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />

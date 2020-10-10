@@ -175,7 +175,7 @@ const Upload = ({ route, navigation }) => {
   const uploadToS3 = (i, email) => {
 
     // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
-var name = randomStr(20, '12345abcdepq75xyz') + '.' + explore[i].uri[explore[i].uri.length - 3] + explore[i].uri[explore[i].uri.length - 2] + explore[i].uri[explore[i].uri.length - 1]
+    var name = randomStr(20, '12345abcdepq75xyz') + '.' + explore[i].uri[explore[i].uri.length - 3] + explore[i].uri[explore[i].uri.length - 2] + explore[i].uri[explore[i].uri.length - 1]
     const file = {
       // `uri` can also be a file system path (i.e. file://)
       uri: explore[i].uri,
@@ -218,7 +218,7 @@ var name = randomStr(20, '12345abcdepq75xyz') + '.' + explore[i].uri[explore[i].
         console.log(err);
       })
       ;
-return name;
+    return name;
   }
 
   const myAsyncPDFFunction = async () => {
@@ -273,7 +273,7 @@ return name;
     return (
       <Gallery />
     )
-  const PostUpload = async() => {
+  const PostUpload = async () => {
     var i;
     setTimeout(() => {
       setModalVisible2(false)
@@ -286,18 +286,17 @@ return name;
       });
     }
     var children = await AsyncStorage.getItem('children')
-    children = JSON.parse(children)['0']['data']
+    children = JSON.parse(children)['0']
     var name = ''
     for (i = 0; i < explore.length - 1; i++) {
-      name = name+"https://d2k1j93fju3qxb.cloudfront.net/"+children['gsToken']+'/'+uploadToS3(i, children.gsToken)+', ';
+      name = name + "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + '/' + uploadToS3(i, children['data']['gsToken']) + ', ';
     }
-    const client = connect('dfm952s3p57q', children['gsToken'], '90935');
-    var activity = {"image": name, "object": "test",  "verb": "post"}
+    const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+    var activity = { "image": name, "object": "test", "verb": "post" }
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
-    var user = client.feed('timeline', '103id');
+    var user = client.feed('timeline', children['id']);
     await user.addActivity(activity);
-
   }
   return (
     <Container style={styles.container}>

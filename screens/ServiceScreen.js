@@ -20,7 +20,7 @@ const ServiceScreen = ({ route, navigation }) => {
       <View   style={{flexDirection: 'row'}}>
         <CardItem style={{flex: 1}} >
           <Left>
-            <Image style={{height: 80, width: 80}} source={require('../assets/logo.png')} />
+            {/* <Image style={{height: 80, width: 80}} source={require('../assets/logo.png')} /> */}
             
           </Left>
         </CardItem>
