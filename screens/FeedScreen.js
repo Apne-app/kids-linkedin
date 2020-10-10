@@ -240,10 +240,14 @@ const FeedScreen = ({ navigation, route }) => {
 
                         /> : <View></View>}
                         <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
-                            {props.activity.image ? <Image
+                            {props.activity.image ? props.activity.image.split(", ").length-1 == 1  ? <Image
                                 source={{ uri: props.activity.image }}
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
-                            /> : <View></View>}
+                            /> : <SliderBox
+                                    images={props.activity.image.split(", ")}
+                                    // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+                                    // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
+                                  /> : <View></View>}
                             {props.activity.video ?
                                 <View style={{ width: width - 40, height: 340 }}>
                                     <VideoPlayer
