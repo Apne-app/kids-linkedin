@@ -32,6 +32,8 @@ import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
 import messaging from '@react-native-firebase/messaging';
 import IndProfile from './screens/IndProfile';
 import SplashScreen from 'react-native-splash-screen';
+import AsyncStorage from '@react-native-community/async-storage';
+
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -64,6 +66,7 @@ function Bottom(props) {
 
   React.useEffect(() => {
     SplashScreen.hide();
+    // console.log("sadas");
   }, [])
 
 
@@ -110,6 +113,21 @@ const App = () => {
 
     return unsubscribe;
   }, []);
+
+  React.useEffect(() => {
+    const func = async () => {
+
+      var x = await AsyncStorage.getItem('profile');
+      // console.log(JSON.parse(x))
+      if(!JSON.parse(x))
+      {
+        SplashScreen.hide();
+      }
+    }
+    func();
+    // console.log("sadas");
+  }, [])
+
   useEffect(() => {
     dynamicLinks()
       .getInitialLink()
