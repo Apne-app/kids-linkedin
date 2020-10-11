@@ -17,12 +17,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { Container,Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Footer, FooterTab, Button, Icon } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
 import ImageView from "react-native-image-viewing";
+import { RNS3 } from 'react-native-aws3';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
 
-const FileScreen = () => {
+const FileScreen = (props) => {
     
 
     const [files, setFiles] = React.useState([]);
@@ -30,6 +31,58 @@ const FileScreen = () => {
     const [selected, setSelected] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
     const [seltopic, setSelTopic] = React.useState('');
+
+
+
+  const uploadToS3 = (i, email) => {
+
+    // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
+    var name = randomStr(20, '12345abcdepq75xyz') + '.' + selected[i].uri[selected[i].uri.length - 3] + selected[i].uri[selected[i].uri.length - 2] + selected[i].uri[selected[i].uri.length - 1]
+    const file = {
+      // `uri` can also be a file system path (i.e. file://)
+      uri: selected[i].uri,
+      name: name,
+      type: "image/png",
+    }
+
+    const options = {
+      keyPrefix: email + "/",
+      bucket: "kids-linkedin",
+      region: "ap-south-1",
+      accessKey: ACCESS_KEY,
+      secretKey: SECRET_KEY,
+      successActionStatus: 201
+    }
+
+    RNS3.put(file, options).then(response => {
+      console.log("dassd")
+      if (response.status !== 201)
+        throw new Error("Failed to upload image to S3");
+      console.log(response.body);
+
+      var obj = { ...uploading };
+      var a = 0;
+      if (!a) {
+        a++;
+        obj[selected[i].uri] = false;
+      }
+
+      console.log(obj, i);
+
+      setUploading({
+        ...obj
+      })
+
+      if (i == selected.length - 2) alert("Uploaded");
+
+    })
+      .catch(err => {
+        console.log(err);
+      })
+      ;
+    return name;
+  }
+
 
     const cancelSelection = () => {
 
@@ -185,7 +238,13 @@ const FileScreen = () => {
                 FooterComponent = {() => {
                     return (
                         <View>
-                            <TouchableOpacity style={{ marginBottom: height*0.06, marginLeft: width*0.83, width: 60,zIndex: 1000000, backgroundColor: "#357feb", borderRadius: 30, height: 60, justifyContent: 'center', alignItems: 'center'}} onPress={() => alert("Post these")}><Icon type="Ionicons" name='send' style={{color: "#fff", fontSize: 35 }} /></TouchableOpacity>
+                            <TouchableOpacity style={{ marginBottom: height*0.06, marginLeft: width*0.83, width: 60,zIndex: 1000000, backgroundColor: "#357feb", borderRadius: 30, height: 60, justifyContent: 'center', alignItems: 'center'}} onPress={() => {
+                                props.navigation.navigate('Home', {
+                                    screen: 'Post',
+                                    params: { "selected": selected
+                                    },
+                                  })
+                            }}><Icon type="Ionicons" name='send' style={{color: "#fff", fontSize: 35 }} /></TouchableOpacity>
                         </View>
                     )
                 }}

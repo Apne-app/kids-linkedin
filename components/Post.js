@@ -111,6 +111,11 @@ const Upload = ({ route, navigation }) => {
       console.log("asds");
       route.params.reload = 0;
     }
+    if(route.params.selected)
+    {
+      setExplore([ ...route.params.selected, {'height': 0, 'width': '0', 'uri': ''} ])
+      route.params.selected = null;
+    }
   }
 
   const saveImages = async () => {
