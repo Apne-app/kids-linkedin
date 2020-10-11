@@ -10,6 +10,7 @@ import LikeButton from '../components/LikeButton'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
+
 import ImageView from 'react-native-image-viewing';
 import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -65,6 +66,8 @@ const FeedScreen = ({ navigation, route }) => {
 
     }
     const CustomActivity = (props) => {
+
+        let img = props.activity.image ? props.activity.image.split(", ").length - 1 > 1 ? props.activity.image.split(", ").pop : props.activity.image : '';
 
         const [commentVisible, setCmv] = React.useState('none');
         const refActionSheet = useRef(null);
@@ -243,11 +246,16 @@ const FeedScreen = ({ navigation, route }) => {
                             {props.activity.image ? props.activity.image.split(", ").length-1 == 1  ? <Image
                                 source={{ uri: props.activity.image }}
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
-                            /> : <SliderBox
+                            /> : <View style={{height: 400}}><SliderBox
                                     images={props.activity.image.split(", ")}
+                                    dotColor="#FFEE58"
+                                    inactiveDotColor="#90A4AE"
+                                    paginationBoxVerticalPadding={20}
+
+                                    sliderBoxHeight={400}
                                     // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                                     // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
-                                  /> : <View></View>}
+                                  /></View> :  <View></View>}
                             {props.activity.video ?
                                 <View style={{ width: width - 40, height: 340 }}>
                                     <VideoPlayer
@@ -295,6 +303,7 @@ const FeedScreen = ({ navigation, route }) => {
     useEffect(() => {
         const check = async () => {
             var child = await AsyncStorage.getItem('children')
+            console.log(child)
             if (child != null) {
                 child = JSON.parse(child)
                 setchildren(child)
