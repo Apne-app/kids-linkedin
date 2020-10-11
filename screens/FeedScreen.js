@@ -246,11 +246,16 @@ const FeedScreen = ({ navigation, route }) => {
                             {props.activity.image ? props.activity.image.split(", ").length-1 == 1  ? <Image
                                 source={{ uri: props.activity.image }}
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
-                            /> : <SliderBox
-                                    images={img}
+                            /> : <View style={{height: 400}}><SliderBox
+                                    images={props.activity.image.split(", ")}
+                                    dotColor="#FFEE58"
+                                    inactiveDotColor="#90A4AE"
+                                    paginationBoxVerticalPadding={20}
+
+                                    sliderBoxHeight={400}
                                     // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                                     // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
-                                  /> :  <View></View>}
+                                  /></View> :  <View></View>}
                             {props.activity.video ?
                                 <View style={{ width: width - 40, height: 340 }}>
                                     <VideoPlayer
