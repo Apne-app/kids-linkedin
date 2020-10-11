@@ -37,34 +37,30 @@ const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 // console.disableYellowBox = true
 
-  const tabs: TabsConfigsType ={
-    Feed: {
-      icon: () => <Icon style={{ color: "#000", fontSize: 20 }}  type="Feather" name="home" />
-    },
-    Search: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
-    },
-    Post: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
-    },
-    Files: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
-    },
-    Notifications: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
-    },
-    Profile: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
-    }
+const tabs: TabsConfigsType = {
+  Feed: {
+    icon: () => <Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />
+  },
+  Search: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+  },
+  Post: {
+    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+  },
+  Files: {
+    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
+  },
+  Notifications: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+  },
+  Profile: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
   }
+}
 
 function Bottom(props) {
 
   // console.log(props.route.params);
-
-  React.useEffect(() => {
-    SplashScreen.hide();
-  }, [])
 
 
   return (
@@ -125,6 +121,9 @@ const App = () => {
   }, []);
   // setInitialNavigationState(await getInitialState());
 
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, [])
   return (
     <NavigationContainer ref={containerRef}>
       <StatusBar
