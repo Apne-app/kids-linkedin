@@ -14,6 +14,7 @@ import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
 import Gallery from './Gallery'
 import { connect } from 'getstream';
+import axios from 'axios'
 
 // require the module
 var RNFS = require('react-native-fs');
@@ -66,6 +67,13 @@ const Upload = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalVisible2, setModalVisible2] = React.useState(false);
   const [modalVisible3, setModalVisible3] = React.useState(false);
+  const [modalVisible4, setModalVisible4] = React.useState(false);
+
+  const [certi, setCerti] = React.useState({
+    certi_org: '',
+    certi_path: '',
+    certi_url: ''
+  })
 
   const [uploading, setUploading] = React.useState({});
 
@@ -281,7 +289,7 @@ const Upload = ({ route, navigation }) => {
   const PostUpload = async () => {
     var i;
     setTimeout(() => {
-      setModalVisible2(false)
+      setModalVisible4(false)
     }, 300);
     var obj = { ...uploading };
     for (i = 0; i < explore.length - 1; i++) {
@@ -294,8 +302,33 @@ const Upload = ({ route, navigation }) => {
     children = JSON.parse(children)['0']
     var name = ''
     for (i = 0; i < explore.length - 1; i++) {
-      name = name + "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + '/' + filename + "/" + tag + "/", + uploadToS3(i, children['data']['gsToken']) + ', ';
+      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + '/' + filename + "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
+      name = name + x;
+      if(tag == 'Certificate')
+      {
+        var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
+        var config = {
+          method: 'post',
+          url: 'https://barry-2z27nzutoq-as.a.run.app/updatecerti',
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          data : data
+        };
+
+        axios(config).then(res => {
+          if(res == "success")
+          {
+            console.log("success")
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+      }
+
     }
+    // setModalVisible4(false);
+
     const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
     var activity = { "image": name, "object": "test", "verb": "post" }
     // var user = client.feed('timeline', '103id');
@@ -303,6 +336,7 @@ const Upload = ({ route, navigation }) => {
     var user = client.feed('user', String(String(children['id'])+String("id")));
     await user.addActivity(activity);
   }
+
   return (
     <Container style={styles.container}>
       <Header style={{ backgroundColor: "#000", paddingTop: 20 }} >
@@ -345,6 +379,71 @@ const Upload = ({ route, navigation }) => {
                         // }
                         // saveImages();
                         myAsyncPDFFunction()
+                        // console.log(explore)
+                      }}
+                    >
+                      <View style={styles.save2}>
+                        <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                          Save
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    {/*<TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
+                      onPress={() => {
+                        // console.log(randomStr(20, '12345abcdepq75xyz'));
+                        var i;
+
+                        saveImages();
+                        
+                      }}
+                    >
+                      <View style={styles.save2}>
+                        <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
+                          Gallery
+                        </Text>
+                      </View>
+                    </TouchableOpacity>*/}
+                  </View>
+                </View>
+              </View>
+            </Modal>
+          </View>
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible4}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <TouchableOpacity onPress={() => { setModalVisible4(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
+                  <Text style={styles.modalText}>Information about your certificate!</Text>
+                  <Item floatingLabel>
+                    <Label>Certificate Organization</Label>
+                    <Input value={certi.certi_org} onChangeText={text => setCerti({ ...certi, certi_org: text })} />
+                  </Item>
+                  <Item floatingLabel>
+                    <Label>Certificate Url</Label>
+                    <Input value={certi.certi_url} onChangeText={text => setCerti({ ...certi, certi_url: text })} />
+                  </Item>
+                  <View>
+                  </View>
+                  <View style={{ flexDirection: 'row' }} >
+                    <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
+                      onPress={() => {
+                        // if(tag != "")
+                        // {
+
+                        // setTags([
+                        //   ...tags,
+                        //   tag
+                        // ])
+                        // // writeFile();
+                        // }
+                        // saveImages();
+                        // myAsyncPDFFunction()
+                        PostUpload();
+
                         // console.log(explore)
                       }}
                     >
@@ -589,7 +688,7 @@ const Upload = ({ route, navigation }) => {
         </TouchableOpacity>*/}
       <Item last style={{ position: 'absolute', bottom: height * 0.11 }} >
         <Input placeholder="Add a caption and hashtags" />
-        <Icon onPress={() => PostUpload()} style={{ color: "#fff" }} type="Ionicons" name='send' />
+        <Icon onPress={() => tag == 'Certificate' ? setModalVisible4(true): PostUpload()} style={{ color: "#fff" }} type="Ionicons" name='send' />
       </Item>
 
       <View style={{height: height*0.07}} />

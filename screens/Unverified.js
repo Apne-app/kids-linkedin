@@ -20,7 +20,7 @@ const Unverified = ({ navigation }) => {
             if (link.url.includes(pro.uuid)) {
                 console.log(link.url.includes(pro.uuid))
                 // ...navigate to your offers screen
-                // navigation.navigate('Verified')
+                navigation.navigate('Verified')
             }
         };
         useEffect(() => {
