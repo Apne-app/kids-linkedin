@@ -63,6 +63,10 @@ const tabs: TabsConfigsType = {
 function Bottom(props) {
 
   // console.log(props.route.params);
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, [])
+  SplashScreen.hide();
 
   return (
     <BottomNav.Navigator
@@ -110,21 +114,7 @@ const App = () => {
     return unsubscribe;
   }, []);
 
-<<<<<<< HEAD
-  React.useEffect(() => {
-    // const func = async () => {
 
-    //       var x = await AsyncStorage.getItem('profile');
-    //       // console.log(JSON.parse(x))
-    //       if(!JSON.parse(x))
-    //       {
-            SplashScreen.hide();
-        //   }
-        // }
-        // func();
-  }, [])
-=======
->>>>>>> 0be3df11db9281ea43d8c315b461db21e80dcae2
 
   useEffect(() => {
     dynamicLinks()
