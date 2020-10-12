@@ -58,11 +58,12 @@ updateStyle('uploadImage', {
 const FeedScreen = ({ navigation, route }) => {
     const [actid, setactid] = useState('1');
     const [display, setdisplay] = useState('none');
+    const [children, setchildren] = useState('notyet')
     const sheetRef = React.useRef(null);
     const renderContent = () => {
         var data = <Text></Text>
-        data = actid ?  <Text></Text>:  <View style={{height:height, backgroundColor:'black'}}></View>
-        return <View style={{height:height, backgroundColor:'black'}}></View>
+        data = actid ? <Text></Text> : <View style={{ height: height, backgroundColor: 'black' }}></View>
+        return <View style={{ height: height, backgroundColor: 'black' }}></View>
 
     }
     const CustomActivity = (props) => {
@@ -179,7 +180,7 @@ const FeedScreen = ({ navigation, route }) => {
         }
         const [visible, setIsVisible] = React.useState(false);
         var images = []
-        props.activity.image.split(', ').map((item)=>images.push({uri:item}))
+        props.activity.image.split(', ').map((item) => images.push({ uri: item }))
         return (
             <Activity
                 {...props}
@@ -243,7 +244,7 @@ const FeedScreen = ({ navigation, route }) => {
 
                         /> : <View></View>}
                         <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
-                            {props.activity.image ? props.activity.image.split(", ").length-1 == 1  ? <Image
+                            {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image }}
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
                             /> : <View style={{height: 400}}><SliderBox
@@ -251,11 +252,8 @@ const FeedScreen = ({ navigation, route }) => {
                                     dotColor="#357feb"
                                     inactiveDotColor="#90A4AE"
                                     paginationBoxVerticalPadding={20}
-
-                                    sliderBoxHeight={400}
-                                    // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-                                    // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
-                                  /></View> :  <View></View>}
+                            /> : <View></View>
+                            }
                             {props.activity.video ?
                                 <View style={{ width: width - 40, height: 340 }}>
                                     <VideoPlayer
@@ -299,7 +297,6 @@ const FeedScreen = ({ navigation, route }) => {
     const notifi = () => {
         return (<NewActivitiesNotification labelSingular={'Post'} labelPlural={'Posts'} />)
     }
-    const [children, setchildren] = useState({})
     useEffect(() => {
         const check = async () => {
             var child = await AsyncStorage.getItem('children')
@@ -367,6 +364,13 @@ const FeedScreen = ({ navigation, route }) => {
             </SafeAreaProvider>
         );
     }
+    const loading = () => {
+        return (
+            <View style={{ backgroundColor: 'white', height: height, width: width }}>
+                <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width/2 }} />
+            </View>
+        );
+    }
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
@@ -381,7 +385,7 @@ const FeedScreen = ({ navigation, route }) => {
         )
     }
     return (
-        Object.keys(children).length > 0 ? there() : notthere()
+        children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
     );
 };
 

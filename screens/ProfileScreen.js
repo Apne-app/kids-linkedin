@@ -91,6 +91,7 @@ const fontConfig = {
     },
 };
 const ProfileScreen = ({ navigation, route }) => {
+    const [children, setchildren] = useState('notyet')
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
 
     const [certi, setCerti] = useState([]);
@@ -163,7 +164,6 @@ const ProfileScreen = ({ navigation, route }) => {
             path: 'images',
         },
     };
-    const [children, setchildren] = useState({})
     const there = () => {
         return (<ScrollView style={{ marginBottom: 80 }}>
             <StreamApp
@@ -347,8 +347,15 @@ const ProfileScreen = ({ navigation, route }) => {
             }
         });
     }
+    const loading = () => {
+        return (
+            <View style={{ backgroundColor: 'white', height: height, width: width }}>
+                <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
+            </View>
+        );
+    }
     return (
-        Object.keys(children).length > 0 ? there() : notthere()
+        children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
     );
 };
 

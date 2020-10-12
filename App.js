@@ -39,36 +39,30 @@ const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 // console.disableYellowBox = true
 
-  const tabs: TabsConfigsType ={
-    Feed: {
-      icon: () => <Icon style={{ color: "#000", fontSize: 20 }}  type="Feather" name="home" />
-    },
-    Search: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
-    },
-    Post: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
-    },
-    Files: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
-    },
-    Notifications: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
-    },
-    Profile: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
-    }
+const tabs: TabsConfigsType = {
+  Feed: {
+    icon: () => <Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />
+  },
+  Search: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+  },
+  Post: {
+    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+  },
+  Files: {
+    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
+  },
+  Notifications: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+  },
+  Profile: {
+    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
   }
+}
 
 function Bottom(props) {
 
   // console.log(props.route.params);
-
-  React.useEffect(() => {
-    SplashScreen.hide();
-    // console.log("sadas");
-  }, [])
-
 
   return (
     <BottomNav.Navigator
@@ -103,7 +97,9 @@ function Bottom(props) {
 //   )
 // }
 const App = () => {
-
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, [])
   const containerRef = React.useRef();
   const [init, setinit] = useState('Login')
   useEffect(() => {
@@ -114,6 +110,7 @@ const App = () => {
     return unsubscribe;
   }, []);
 
+<<<<<<< HEAD
   React.useEffect(() => {
     // const func = async () => {
 
@@ -126,12 +123,16 @@ const App = () => {
         // }
         // func();
   }, [])
+=======
+>>>>>>> 0be3df11db9281ea43d8c315b461db21e80dcae2
 
   useEffect(() => {
     dynamicLinks()
       .getInitialLink()
-      .then(link => {
-        if (link.url === 'https://genio.app/verified') {
+      .then(async (link) => {
+        var pro = await AsyncStorage.getItem('profile')
+        pro = JSON.parse(pro)
+        if (link.url.includes(pro.uuid)) {
           setinit('Verified')
           SplashScreen.hide();
         }
@@ -143,7 +144,6 @@ const App = () => {
       )
   }, []);
   // setInitialNavigationState(await getInitialState());
-
   return (
     <NavigationContainer ref={containerRef}>
       <StatusBar
