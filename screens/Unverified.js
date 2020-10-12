@@ -16,9 +16,11 @@ const Unverified = ({ navigation }) => {
         // Handle dynamic link inside your own application
         var pro = await AsyncStorage.getItem('profile')
             pro = JSON.parse(pro)
+            console.log(pro, link, link.url.includes(pro.uuid), "sadad")
             if (link.url.includes(pro.uuid)) {
+                console.log(link.url.includes(pro.uuid))
                 // ...navigate to your offers screen
-                navigation.navigate('Verified')
+                // navigation.navigate('Verified')
             }
         };
         useEffect(() => {

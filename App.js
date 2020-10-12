@@ -100,12 +100,34 @@ function Bottom(props) {
 //     </DrawNav.Navigator>
 //   )
 // }
-const App = () => {
+const App = ({navigation}) => {
   React.useEffect(() => {
     SplashScreen.hide();
   }, [])
   const containerRef = React.useRef();
   const [init, setinit] = useState('Login')
+
+  const send = async () => {
+        var x = await AsyncStorage.getItem('status');
+        // console.log(x);
+        if (x) {
+            if (x == '1') {
+                containerRef.current?.navigate('Unverified')
+                setinit('Unverified')
+            }
+            if (x == '2') {
+                containerRef.current?.navigate('Child')
+                setinit('Child')
+            }
+            if (x == '3') {
+                containerRef.current?.navigate('Home')
+                setinit('Home')
+            }
+        }
+    }
+
+  send();
+
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -113,6 +135,7 @@ const App = () => {
 
     return unsubscribe;
   }, []);
+  
 
 
 
@@ -122,10 +145,12 @@ const App = () => {
       .then(async (link) => {
         var pro = await AsyncStorage.getItem('profile')
         pro = JSON.parse(pro)
-        if (link.url.includes(pro.uuid)) {
+        console.log(pro, link, link.url.includes(pro.uuid))
+        if (true) {
+        console.log("sdasd");
           setinit('Verified')
-          SplashScreen.hide();
         }
+          SplashScreen.hide();
       })
       .catch(() => {
         // console.log('do nothing')
