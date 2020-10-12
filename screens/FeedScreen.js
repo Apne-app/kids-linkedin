@@ -248,7 +248,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
                             /> : <View style={{height: 400}}><SliderBox
                                     images={props.activity.image.split(", ")}
-                                    dotColor="#FFEE58"
+                                    dotColor="#357feb"
                                     inactiveDotColor="#90A4AE"
                                     paginationBoxVerticalPadding={20}
 

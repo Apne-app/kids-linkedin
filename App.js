@@ -115,17 +115,16 @@ const App = () => {
   }, []);
 
   React.useEffect(() => {
-    const func = async () => {
+    // const func = async () => {
 
-      var x = await AsyncStorage.getItem('profile');
-      // console.log(JSON.parse(x))
-      if(!JSON.parse(x))
-      {
-        SplashScreen.hide();
-      }
-    }
-    func();
-    // console.log("sadas");
+    //       var x = await AsyncStorage.getItem('profile');
+    //       // console.log(JSON.parse(x))
+    //       if(!JSON.parse(x))
+    //       {
+            SplashScreen.hide();
+        //   }
+        // }
+        // func();
   }, [])
 
   useEffect(() => {
@@ -134,10 +133,12 @@ const App = () => {
       .then(link => {
         if (link.url === 'https://genio.app/verified') {
           setinit('Verified')
+          SplashScreen.hide();
         }
       })
       .catch(() => {
         // console.log('do nothing')
+        SplashScreen.hide();
       }
       )
   }, []);

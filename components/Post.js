@@ -144,18 +144,18 @@ const Upload = ({ route, navigation }) => {
     if (albums) {
       var c = 1;
       for (var i = 0; i < albums.length; i++) {
-        if (albums[i] == filename) {
+        if (albums[i]['albumName'] == filename) {
           c = 0;
           break;
         }
       }
       if (c) {
-        albums = [...albums, filename];
+        albums = [...albums, { 'albumName': filename, 'tagName': tag}];
       }
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
     }
     else {
-      await AsyncStorage.setItem("albums", JSON.stringify([filename]));
+      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': filename, 'tagName': tag}]));
     }
 
     setModalVisible3(false);
@@ -189,7 +189,7 @@ const Upload = ({ route, navigation }) => {
     }
 
     const options = {
-      keyPrefix: email + "/",
+      keyPrefix: email + "/" + filename + "/" + tag + "/",
       bucket: "kids-linkedin",
       region: "ap-south-1",
       accessKey: ACCESS_KEY,
@@ -252,13 +252,13 @@ const Upload = ({ route, navigation }) => {
       let albums = JSON.parse(x);
       var c = 1;
       for (var i = 0; i < albums.length; i++) {
-        if (album[i] == filename) {
+        if (album[i]['albumName'] == filename) {
           c = 0;
           break;
         }
       }
       if (c) {
-        albums = [...albums, filename];
+        albums = [...albums, { 'albumName': filename, 'tagName': tag}];
       }
 
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
@@ -271,8 +271,8 @@ const Upload = ({ route, navigation }) => {
     }
   }
 
-  const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other', 'Other']);
-  const [tag, setTag] = React.useState('');
+  const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
+  const [tag, setTag] = React.useState('Other');
 
   if (active == 0)
     return (
@@ -294,7 +294,7 @@ const Upload = ({ route, navigation }) => {
     children = JSON.parse(children)['0']
     var name = ''
     for (i = 0; i < explore.length - 1; i++) {
-      name = name + "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + '/' + uploadToS3(i, children['data']['gsToken']) + ', ';
+      name = name + "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + '/' + filename + "/" + tag + "/", + uploadToS3(i, children['data']['gsToken']) + ', ';
     }
     const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
     var activity = { "image": name, "object": "test", "verb": "post" }
@@ -512,12 +512,13 @@ const Upload = ({ route, navigation }) => {
             <FlatList
               data={tags}
               scrollEnabled={true}
+              showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
                 flexGrow: 1,
               }}
               // style={{marginTop: 5}}
               renderItem={({ item, i }) => (
-                <Chip key={i} style={{ backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10 }} textStyle={{ color: "#fff" }} onPress={() => setTag(item)} >{item}</Chip>
+                <Chip key={i} style={{ backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10 }} textStyle={{ color: "#fff" }} onPress={() => tag == item ? setTag(''): setTag(item)} >{item}</Chip>
               )}
               //Setting the number of column
               // numColumns={3}
@@ -591,6 +592,7 @@ const Upload = ({ route, navigation }) => {
         <Icon onPress={() => PostUpload()} style={{ color: "#fff" }} type="Ionicons" name='send' />
       </Item>
 
+      <View style={{height: height*0.07}} />
       <Fab
         active={activefab}
         direction="up"

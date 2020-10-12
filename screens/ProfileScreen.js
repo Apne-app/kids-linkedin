@@ -12,6 +12,7 @@ import FastImage from 'react-native-fast-image'
 import ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import CameraRoll from "@react-native-community/cameraroll";
 import { SECRET_KEY, ACCESS_KEY } from '@env';
 import { RNS3 } from 'react-native-aws3';
 import { connect } from 'getstream';
@@ -91,6 +92,9 @@ const fontConfig = {
 };
 const ProfileScreen = ({ navigation, route }) => {
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
+
+    const [certi, setCerti] = useState([]);
+
     useEffect(() => {
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
@@ -100,6 +104,50 @@ const ProfileScreen = ({ navigation, route }) => {
             var follows = await user.followers()
             var following = await user.following()
             setdata({ 'followers': follows['results'], 'following': following['results'] })
+
+            let albums = await AsyncStorage.getItem("albums");
+            // console.log(albums);
+            albums = JSON.parse(albums);
+                        for(var j = 0; j < albums.length; j++)
+                        {
+                            var arr = [];
+                            if(albums[j]['tagName'] == 'Certificate')
+                            {
+                            // console.log(albums[j], r[i].title)
+                            var y = albums[j]['albumName'];
+                            var z = albums[j]['tagName'];
+                                await CameraRoll.getPhotos({
+                                    first: 100,
+                                    assetType: 'All',
+                                    groupName: albums[j]['albumName']
+                                })
+                                .then(r => {
+                                    // console.log(r.edges[0].node.group_name, "asd");
+                                    // for(var k = 0; k < r.edges.length; k++)
+                                    // {
+                                    //     r.edges[k].node['checked'] = false;
+                                    // }
+                                    console.log(r.edges)
+                                    r.edges.map(item => {
+                                    arr.push( item );
+                                    })
+                                    // setFiles([ ...files, { 'name': y, 'files': r.edges} ])
+                                    
+                                })
+                            setCerti([ ...certi, ...arr ]);
+                            }
+                        }
+             
+            
+
+            // for(var i = 0; certies.length; i++)
+            // {
+            //     if(certies[i]['tagName'] == 'Certificate')
+            //     {
+            //         arr.push({'name': certies[i]['name'], 'files': certies[i]['files'], 'tag': 'Certificate'})
+            //     }
+            // }
+
             // follows['results'].map(item => {
             //     data.push(item['target_id'].replace('user:', '').replace('id', ''))
             // })
@@ -140,12 +188,14 @@ const ProfileScreen = ({ navigation, route }) => {
                         styles={{ container: { width: 80, height: 80, borderRadius: 5, margin: 5, marginLeft: 30 } }}
                     />
 
-                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 31 }}>
+                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 31, flexWrap: 'wrap' }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
                             <Icon style={{ fontSize: 15, marginTop: 10, marginLeft: 5 }} name="log-out" type="Feather" />
                         </View>
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1 }}>I  am a very good boy. I am not a bad boy.</Text>
+                        <TouchableOpacity style={{flex: 1, flexWrap: 'wrap', width: "100%"}} onPress={() => console.log(certi)}>
+                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1, flexWrap: 'wrap', width: "100%" }}>I  am a very good boy. I am not a bad boy.</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
@@ -175,6 +225,41 @@ const ProfileScreen = ({ navigation, route }) => {
 
                     </View>
                 </View>
+                    {certi.length > 0 ?
+                <View>
+                    <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>Certificates</Text>
+                        <FlatList
+                        data={certi}
+                        scrollEnabled={true}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{
+                            // flexGrow: 1,
+                        }}
+                        // style={{marginTop: 5}}
+                        renderItem={({ item, i }) => (
+                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(certi) } >
+                                <View
+                                key={i}
+                                style={{ flex: 1}}>
+                                <ImageBackground
+                                    style={{ height: width*0.40, width: width*0.40,margin: width*0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center',borderWidth: 0, borderColor: "#000" }}
+                                    imageStyle={{ borderRadius:15, height: "auto", width: "auto",   }}
+                                    source={{
+                                    uri: item.node.image.uri,
+                                    }}
+                                >
+                                </ImageBackground>
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                        //Setting the number of column
+                        // numColumns={3}
+                        horizontal={true}
+                        keyExtractor={(item, index) => index.toString()}
+                        /> 
+                </View>
+                        : <View />
+                        }
                 <FlatFeed feedGroup="user" />
             </StreamApp>
         </ScrollView>)

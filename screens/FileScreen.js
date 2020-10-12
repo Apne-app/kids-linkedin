@@ -14,8 +14,9 @@ import {
   CheckBox
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Container,Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Footer, FooterTab, Button, Icon } from 'native-base';
+import { Container,Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab,  Footer, FooterTab, Button, Icon } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
+import { Chip } from 'react-native-paper';
 import ImageView from "react-native-image-viewing";
 import { RNS3 } from 'react-native-aws3';
 
@@ -31,6 +32,9 @@ const FileScreen = (props) => {
     const [selected, setSelected] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
     const [seltopic, setSelTopic] = React.useState('');
+    const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other', 'Other']);
+    const [tag, setTag] = React.useState('');
+
 
 
 
@@ -110,6 +114,64 @@ const FileScreen = (props) => {
 
     }
 
+    const showAll = async () => {
+
+        let albums = await AsyncStorage.getItem("albums");
+            // console.log(albums);
+            albums = JSON.parse(albums);
+
+        CameraRoll.getAlbums({
+                    // first: 100,
+                    assetType: 'All',
+                    })
+                    .then(async r => {
+                        // console.log(r);
+
+                        var arr = [];
+
+                        for(var i = 0; i < r.length; i++)
+                        {
+                            for(var j = 0; j < albums.length; j++)
+                            {
+                                if(albums[j]['albumName'] == r[i].title)
+                                {
+                                // console.log(albums[j], r[i].title)
+                                var y = albums[j]['albumName'];
+                                var z = albums[j]['tagName'];
+                                    await CameraRoll.getPhotos({
+                                        first: r[i].count,
+                                        assetType: 'All',
+                                        groupName: albums[j]['albumName']
+                                    })
+                                    .then(r => {
+                                        // console.log(r.edges[0].node.group_name, "asd");
+                                        for(var k = 0; k < r.edges.length; k++)
+                                        {
+                                            r.edges[k].node['checked'] = false;
+                                        }
+                                        arr.push( {'name': y, 'files': r.edges, 'tag': z} );
+                                        // setFiles([ ...files, { 'name': y, 'files': r.edges} ])
+                                        
+                                    })
+                                }
+                            }
+                        }
+
+                        console.log(arr);
+                        setFiles([ ...arr ]);
+                        
+
+                    // setGallery([ ...r.edges ]);
+                    // setSelected(r.edges[0].node.image.uri)
+                    // console.log(r.edges[0].node.image.uri);
+                    })
+                    .catch((err) => {
+                        //Error Loading 
+                        console.log(err);
+                });
+
+    }
+
 
     React.useEffect(() => {
 
@@ -130,54 +192,7 @@ const FileScreen = (props) => {
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 console.log("You can use read from the storage");
 
-                 CameraRoll.getAlbums({
-                    // first: 100,
-                    assetType: 'All',
-                    })
-                    .then(async r => {
-                        // console.log(r);
-
-                        var arr = [];
-
-                        for(var i = 0; i < r.length; i++)
-                        {
-                            for(var j = 0; j < albums.length; j++)
-                            {
-                                if(albums[j] == r[i].title)
-                                {
-                                // console.log(albums[j], r[i].title)
-                                var y = albums[j];
-                                    await CameraRoll.getPhotos({
-                                        first: r[i].count,
-                                        assetType: 'All',
-                                        groupName: albums[j]
-                                    })
-                                    .then(r => {
-                                        // console.log(r.edges[0].node.group_name, "asd");
-                                        for(var k = 0; k < r.edges.length; k++)
-                                        {
-                                            r.edges[k].node['checked'] = false;
-                                        }
-                                        arr.push( {'name': y, 'files': r.edges} );
-                                        // setFiles([ ...files, { 'name': y, 'files': r.edges} ])
-                                        
-                                    })
-                                }
-                            }
-                        }
-
-                        console.log(arr);
-                        setFiles([ ...arr ]);
-                        
-
-                    // setGallery([ ...r.edges ]);
-                    // setSelected(r.edges[0].node.image.uri)
-                    // console.log(r.edges[0].node.image.uri);
-                    })
-                    .catch((err) => {
-                        //Error Loading 
-                        console.log(err);
-                });
+                    await showAll();
 
                 } else {
                 console.log("Storage permission denied")
@@ -207,6 +222,27 @@ const FileScreen = (props) => {
         setSelected([ ...arr2]);
         setSelTopic(topic);
         setVisible(true);
+    }
+
+    const showTags = async (selectedTag) => {
+
+        var arr = await AsyncStorage.getItem('albums');
+        arr = JSON.parse(arr);
+        var z = [];
+
+        if(selectedTag == 'Other') selectedTag = 'Other';
+
+        for(var i = 0; i < files.length; i++)
+        {
+            if(files[i]['tag'] == selectedTag)
+            {
+                z.push( {'name': files[i]['name'], 'files': files[i]['files'], 'tag': selectedTag} );
+            }
+        }
+
+        setFiles([ ...z ]);
+
+
     }
 
   
@@ -250,6 +286,23 @@ const FileScreen = (props) => {
                 }}
             />
             <Content style={{marginTop: 20,}}>
+            { files.length != 0? <View style={{ flexDirection: 'row' }} >
+                <FlatList
+                data={tags}
+                scrollEnabled={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                    flexGrow: 1,
+                }}
+                // style={{marginTop: 5}}
+                renderItem={({ item, i }) => (
+                    <Chip key={i} style={{ backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10 }} textStyle={{ color: "#fff" }} onPress={() => {tag == item ? setTag(''): setTag(item); tag == item ? showAll() : showTags(item); }} >{item}</Chip>
+                )}
+                //Setting the number of column
+                // numColumns={3}
+                horizontal={true}
+                />
+            </View>: <View />}
                     {
                         files.length == 0 ?
                     <View style={{ backgroundColor: 'white', height: height, width: width }}>
@@ -263,7 +316,7 @@ const FileScreen = (props) => {
                     return (
 
                     <View key={i}>
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>{it.name}</Text>
+                        <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>{it.name}-{it.tag}</Text>
                         <FlatList
                         data={it.files}
                         scrollEnabled={true}
