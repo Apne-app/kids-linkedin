@@ -28,38 +28,6 @@ const LoginScreen = ({ route, navigation }) => {
     // When the is component unmounted, remove the listener
     return () => unsubscribe();
   }, []);
-  useEffect(() => {
-    const check = async () => {
-      var pro = await AsyncStorage.getItem('profile')
-      console.log(pro);
-      if (pro !== null) {
-
-        if(JSON.parse(pro).pfname)
-        {
-          navigation.navigate('Home');
-        }
-
-        pro = JSON.parse(pro)
-        axios.get('http://104.199.146.206:5000/login/' + pro.email + '/' + pro.pwd + '/none/')
-          .then((response) => {
-            if (response.data.verified == 'yes') {
-              navigation.navigate('Home')
-            }
-            else if (response.data.verified == 'no') {
-              navigation.navigate('Unverified')
-            }
-            else {
-              // setscreen(response.data)
-              // setLoading(false)
-            }
-          })
-      }
-      else {
-        // console.log('helo')
-      }
-    }
-    check()
-  })
   const fontConfig = {
     default: {
       regular: {
@@ -86,100 +54,38 @@ const LoginScreen = ({ route, navigation }) => {
     fonts: configureFonts(fontConfig),
   };
 
-  const [activeform, setActiveForm] = React.useState(1);
-
-  const [login, setLogin] = React.useState({
-    username: '',
-    password: '',
-    viewPass: false
-  })
   const [Loading, setLoading] = useState(false)
-  const [everified, seteverified] = useState(false)
-  const [pverified, setpverified] = useState(true)
-  const [type, settype] = useState('email');
   const [email, setemail] = useState('');
-  const [password, setpassword] = useState('');
-  const [screen, setscreen] = useState('Login/Signup using work mail-id');
-  const [placeholder, setplaceholder] = useState('manoj@google.com');
+  const [everified, seteverified] = useState(false);
   const api = () => {
     // setemail(email.split(' ')[0])
     // console.log(email)
     setLoading(true);
-    if (type == 'email') {
-      axios.get('http://104.199.146.206:5000/email/' + email.split(' ')[0] + '/')
-        .then((response) => {
-          setpverified(false)
-          // console.log(response.data)
-          const storeEmail = async () => {
-            try {
-              await AsyncStorage.setItem('email', email)
-            } catch (e) {
-              // saving error
-            }
+    axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + '/default/')
+      .then((response) => {
+        const storeProfile = async () => {
+          try {
+            await AsyncStorage.setItem('profile', JSON.stringify(response.data))
+            //0 means no login
+            //1 means email sent
+            //2  means verified+no  child
+            /// 3 means child+verified
+            await AsyncStorage.setItem('status', '1')
+          } catch (e) {
+            // saving error
           }
-          storeEmail()
-          if (response.data === 'yes') {
-            setscreen('Welcome back! Enter your password');
-            setplaceholder('*********')
-            settype('existing_password')
-            setLoading(false)
-          }
-          else {
-            setscreen("Hi there! You don't seem to have an account with us. Add a password to become a part of the family!");
-            setplaceholder('*********')
-            settype('new_password')
-            setLoading(false)
-          }
-        })
-    }
-    else if (type == 'new_password') {
-      sha256(password)
-        .then((hash) => {
-          axios.get('http://104.199.146.206:5000/signup/' + email.split(' ')[0] + '/' + hash + '/none/')
-            .then((response) => {
-              console.log(response.data)
-              const storeProfile = async () => {
-                try {
-                  await AsyncStorage.setItem('profile', JSON.stringify(response.data))
-                } catch (e) {
-                  // saving error
-                }
-              }
-              storeProfile()
-              navigation.navigate('Unverified')
-            })
-        })
+        }
+        storeProfile()
+        console.log(response.data)
+        setLoading(false);
+        navigation.navigate('Unverified')
+      })
+      .catch((error) => {
+        console.log()
+        setLoading(false);
+      })
 
-    }
-    else {
-      sha256(password)
-        .then((hash) => {
-          axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + '/' + hash + '/none/')
-            .then((response) => {
-              const storeProfile = async () => {
-                try {
-                  await AsyncStorage.setItem('profile', JSON.stringify(response.data))
-                } catch (e) {
-                  // saving error
-                }
-              }
-              if (response.data.verified == 'yes') {
-                storeProfile()
-                navigation.navigate('Home')
-              }
-              else if (response.data.verified == 'no') {
-                storeProfile()
-                navigation.navigate('Unverified')
-              }
-              else {
-                setscreen(response.data)
-                setLoading(false)
-              }
-              // console.log(response.data)
-            })
-        })
 
-    }
   }
   const checkemail = (text) => {
     text = text.split(' ')[0]
@@ -192,21 +98,11 @@ const LoginScreen = ({ route, navigation }) => {
         seteverified(true)
       }
       else {
-        console.log('check')
         seteverified(false)
       }
     }
     else {
-      console.log('check')
       seteverified(false)
-    }
-  }
-  const checkpass = (text) => {
-    if (text.length < 6) {
-      setpverified(false)
-    }
-    else {
-      setpverified(true)
     }
   }
   return (
@@ -221,10 +117,9 @@ const LoginScreen = ({ route, navigation }) => {
         </View>
         <View>
           <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 10 }}>{screen}</Text>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 10 }}>{'Use Work Email-ID'}</Text>
           </SimpleAnimation>
-          {type == 'email' ? <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={placeholder} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput> :
-            <TextInput value={password} placeholderTextColor={'lightgrey'} secureTextEntry={true} textContentType={'password'} placeholder={placeholder} autoCapitalize={'none'} onChangeText={(text) => { setpassword(text); checkpass(text) }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: pverified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>}
+          <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>
           <View style={{ alignSelf: 'center' }}>
             <SpinnerButton
               buttonStyle={{
@@ -232,12 +127,12 @@ const LoginScreen = ({ route, navigation }) => {
                 margin: 20,
                 width: 200,
                 alignSelf: 'center',
-                backgroundColor: everified ? (pverified ? 'lightgreen' : 'grey') : 'grey'
+                backgroundColor: everified ? 'lightgreen' : 'grey'
               }}
               isLoading={Loading}
               spinnerType='BarIndicator'
               onPress={() => {
-                everified && pverified ? api() : null
+                everified ? api() : null
               }}
               indicatorCount={10}
             >

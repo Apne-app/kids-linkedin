@@ -97,7 +97,9 @@ function Bottom(props) {
 //   )
 // }
 const App = () => {
-
+  React.useEffect(() => {
+    SplashScreen.hide();
+  }, [])
   const containerRef = React.useRef();
   const [init, setinit] = useState('Login')
   useEffect(() => {
@@ -108,31 +110,14 @@ const App = () => {
     return unsubscribe;
   }, []);
 
-  React.useEffect(() => {
-    SplashScreen.hide();
-    // console.log("sadas");
-  }, [])
-
-
-  React.useEffect(() => {
-    const func = async () => {
-
-      var x = await AsyncStorage.getItem('profile');
-      // console.log(JSON.parse(x))
-      if(!JSON.parse(x))
-      {
-        SplashScreen.hide();
-      }
-    }
-    func();
-    // console.log("sadas");
-  }, [])
 
   useEffect(() => {
     dynamicLinks()
       .getInitialLink()
-      .then(link => {
-        if (link.url === 'https://genio.app/verified') {
+      .then(async (link) => {
+        var pro = await AsyncStorage.getItem('profile')
+        pro = JSON.parse(pro)
+        if (link.url.includes(pro.uuid)) {
           setinit('Verified')
         }
       })
@@ -142,10 +127,6 @@ const App = () => {
       )
   }, []);
   // setInitialNavigationState(await getInitialState());
-
-  React.useEffect(() => {
-    SplashScreen.hide();
-  }, [])
   return (
     <NavigationContainer ref={containerRef}>
       <StatusBar

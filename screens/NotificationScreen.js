@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect} from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, NotificationFeed } from 'react-native-activity-feed';
@@ -10,14 +10,14 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
 
-  const [children, setchildren] = useState({})
+  const [children, setchildren] = useState('notyet')
   useEffect(() => {
     const check = async () => {
       var child = await AsyncStorage.getItem('children')
       if (child != null) {
         child = JSON.parse(child)
         setchildren(child)
-    }
+      }
     }
     check()
   }, [])
@@ -67,121 +67,14 @@ const NotificationScreen = ({ route, navigation }) => {
             notify
           />
         </StreamApp>
-        {/* <Header noShadow style={{ backgroundColor: '#fff',  flexDirection: 'row', height: height*0.06, borderBottomWidth: 0 }}>
-        
-        <Body style={{ alignItems: 'center'}}>
-          <Title  style={{fontFamily:'Poppins-Regular', color: "#000", fontSize: 30, marginTop: height*0.03 }}>Notifications</Title>
-        </Body>
-      </Header>
-      <Content style={styles.container}>
-        <Separator bordered style={styles.sep}>
-          <Text style={{ fontSize: 20, fontFamily:'Poppins-Regular' }}>Today</Text>
-        </Separator>
-        <ListItem avatar style={{marginTop: height*0.02}} >
-          <Left>
-            <Thumbnail source={require('../assets/logo.png')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <ListItem last avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/basket.jpg')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <Separator bordered style={styles.sep}>
-          <Text style={{ fontSize: 20, fontFamily:'Poppins-Regular' }}>This Week</Text>
-        </Separator>
-        <ListItem avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/logo.png')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <ListItem last avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/basket.jpg')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <ListItem avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/logo.png')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <ListItem avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/basket.jpg')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <ListItem avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/logo.png')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <ListItem avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/basket.jpg')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-        <ListItem last avatar style={{marginTop: height*0.02}}>
-          <Left>
-            <Thumbnail source={require('../assets/basket.jpg')} />
-          </Left>
-          <Body style={{borderColor: "#fff"}}>
-            <Text style={styles.txt}><Text style={{fontWeight: "bold"}}> Kumar Pratik</Text> Doing what you like will always keep you happy ..</Text>
-          </Body>
-          <Right style={{borderColor: "#fff"}}>
-            <Text note style={styles.time}>3:43 pm</Text>
-          </Right>
-        </ListItem>
-
-      </Content> */}
       </Container>
+    );
+  }
+  const loading = () => {
+    return (
+      <View style={{ backgroundColor: 'white', height: height, width: width }}>
+        <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
+      </View>
     );
   }
   const notthere = () => {
@@ -198,7 +91,7 @@ const NotificationScreen = ({ route, navigation }) => {
     )
   }
   return (
-    Object.keys(children).length > 0 ? there() : notthere()
+    children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
   );
 }
 

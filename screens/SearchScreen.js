@@ -80,7 +80,7 @@ const SearchScreen = ({ route, navigation }) => {
       'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
     },
   ])
-  const [children, setchildren] = useState({})
+  const [children, setchildren] = useState('notyet')
   useEffect(() => {
     const check = async () => {
       var child = await AsyncStorage.getItem('children')
@@ -133,7 +133,7 @@ const SearchScreen = ({ route, navigation }) => {
             style={{ width: width - 40, height: 50, borderRadius: 10 }}
             theme={theme}
             placeholder="Search"
-            onResponderStart={()=>navigation.navigate('Searching')}
+            onResponderStart={() => navigation.navigate('Searching')}
           />
         </Header>
         <Content style={styles.container}>
@@ -183,8 +183,15 @@ const SearchScreen = ({ route, navigation }) => {
       </View>
     )
   }
+  const loading = () => {
+    return (
+      <View style={{ backgroundColor: 'white', height: height, width: width }}>
+        <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
+      </View>
+    );
+  }
   return (
-    Object.keys(children).length > 0 ? there() : notthere()
+    children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
   );
 }
 
