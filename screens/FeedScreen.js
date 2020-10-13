@@ -10,15 +10,13 @@ import LikeButton from '../components/LikeButton'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
-
 import ImageView from 'react-native-image-viewing';
 import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import BottomSheet from 'reanimated-bottom-sheet';
-
 import { SliderBox } from "react-native-image-slider-box";
-
+import { clockRunning, set } from 'react-native-reanimated';
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
@@ -56,14 +54,27 @@ updateStyle('uploadImage', {
     }
 });
 const FeedScreen = ({ navigation, route }) => {
-    const [actid, setactid] = useState('1');
+    const [actid, setactid] = useState('f137b98f-0d0d-11eb-8255-128a130028af');
+    const [type, settype] = useState('like');
     const [display, setdisplay] = useState('none');
     const [children, setchildren] = useState('notyet')
-    const sheetRef = React.useRef(null);
-    const renderContent = () => {
+    const [options, setoptions] = useState({})
+    const sheetRefLike = React.useRef(null);
+    const sheetRefCom = React.useRef(null);
+    const renderLikes = (props) => {
+        if (type==='like'){
+            return <View style={{ height: height, backgroundColor: 'lightgrey' }}><LikeList reactionKind={'like'} {...options} activityId={actid} /></View>
+        }
+        return <View style={{ height: height, backgroundColor: 'lightgrey' }}><CommentList {...options} activityId={actid} /><CommentBox {...options}  /></View>
+        // <View style={{ height: height, backgroundColor: 'black' }}></View>
+        // 
+
+    }
+    const renderComments = (props) => {
         var data = <Text></Text>
         data = actid ? <Text></Text> : <View style={{ height: height, backgroundColor: 'black' }}></View>
-        return <View style={{ height: height, backgroundColor: 'black' }}></View>
+        // <View style={{ height: height, backgroundColor: 'black' }}></View>
+        // 
 
     }
     const CustomActivity = (props) => {
@@ -72,7 +83,6 @@ const FeedScreen = ({ navigation, route }) => {
 
         const [commentVisible, setCmv] = React.useState('none');
         const refActionSheet = useRef(null);
-        console.log(props.activity);
         const onShare = async () => {
 
         };
@@ -97,13 +107,13 @@ const FeedScreen = ({ navigation, route }) => {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <ReactionIcon
-                        labelSingle="like"
-                        labelPlural="likes"
+                        labelSingle="Star"
+                        labelPlural="Stars"
                         counts={props.activity.reaction_counts}
                         kind="like"
                         height={0}
                         width={0}
-                        onPress={() => { setactid(id); sheetRef.current.snapTo(1) }}
+                        onPress={() => { console.log(id); setoptions(props); settype('like'); setactid(id); sheetRefLike.current.snapTo(1) }}
                     />
                     <Text style={{ marginRight: -15, marginLeft: 5 }}>•</Text>
                     <ReactionIcon
@@ -113,7 +123,7 @@ const FeedScreen = ({ navigation, route }) => {
                         kind="comment"
                         height={0}
                         width={-20}
-                        onPress={() => { setactid(id); setdisplay('flex') }}
+                        onPress={() => { console.log(id); setoptions(props); settype('comment'); setactid(id); sheetRefLike.current.snapTo(1) }}
                     />
                 </View>
                 {/* <CommentBox
@@ -180,7 +190,9 @@ const FeedScreen = ({ navigation, route }) => {
         }
         const [visible, setIsVisible] = React.useState(false);
         var images = []
-        props.activity.image.split(', ').map((item) => images.push({ uri: item }))
+        // console.log(props.activity.id)
+        props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null)
+        props.activity.own_reactions['like']?console.log(props.activity.own_reactions['like'][0]):null
         return (
             <Activity
                 {...props}
@@ -208,7 +220,7 @@ const FeedScreen = ({ navigation, route }) => {
                 }
                 Content={
                     <View style={{ padding: 20 }}>
-                        <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.object}</Text>
+                        <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>
                         {props.activity.image ? <ImageView
                             images={images}
                             imageIndex={0}
@@ -239,24 +251,24 @@ const FeedScreen = ({ navigation, route }) => {
                                         />
                                         <Right><Icon onPress={() => showActionSheet()} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20, color: 'white' }} /></Right>
                                     </View>
-                                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'white', marginLeft: 30, marginTop: 10, marginRight: 30 }}>{props.activity.object}</Text></View>)
+                                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'white', marginLeft: 30, marginTop: 10, marginRight: 30 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text></View>)
                             }}
 
                         /> : <View></View>}
                         <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
-                            {props.activity.image ? props.activity.image.split(", ").length-1 == 1  ? <Image
-                                source={{ uri: props.activity.image }}
+                            {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
+                                source={{ uri: props.activity.image.split(", ")[0] }}
                                 style={{ width: width - 40, height: 340, marginTop: 20 }}
-                            /> : <View style={{height: 400}}><SliderBox
-                                    images={props.activity.image.split(", ")}
-                                    dotColor="#FFEE58"
-                                    inactiveDotColor="#90A4AE"
-                                    paginationBoxVerticalPadding={20}
+                            /> : <View style={{ height: 400 }}><SliderBox
+                                images={props.activity.image.split(", ").filter(n => n)}
+                                dotColor="#FFEE58"
+                                inactiveDotColor="#90A4AE"
+                                paginationBoxVerticalPadding={20}
 
-                                    sliderBoxHeight={400}
-                                    // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-                                    // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
-                                  /></View> :  <View></View>}
+                                sliderBoxHeight={400}
+                            // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+                            // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
+                            /></View> : <View></View>}
                             {props.activity.video ?
                                 <View style={{ width: width - 40, height: 340 }}>
                                     <VideoPlayer
@@ -303,7 +315,7 @@ const FeedScreen = ({ navigation, route }) => {
     useEffect(() => {
         const check = async () => {
             var child = await AsyncStorage.getItem('children')
-            console.log(child)
+            // console.log(child)
             if (child != null) {
                 child = JSON.parse(child)
                 setchildren(child)
@@ -333,7 +345,7 @@ const FeedScreen = ({ navigation, route }) => {
             check()
         }, 3000);
     }, [])
-    const there = () => {
+    const there = (props) => {
         return (
             <SafeAreaProvider>
                 <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
@@ -352,16 +364,15 @@ const FeedScreen = ({ navigation, route }) => {
                     >
                         <FlatFeed Footer={() => {
                             return (
-                                <View />
+                                <BottomSheet
+                                    ref={sheetRefLike}
+                                    snapPoints={[height - 200, 400, 0]}
+                                    initialSnap={2}
+                                    borderRadius={25}
+                                    renderContent={renderLikes}
+                                />
                             )
                         }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
-                        <BottomSheet
-                            ref={sheetRef}
-                            snapPoints={[height - 200, 400, 0]}
-                            initialSnap={2}
-                            borderRadius={25}
-                            renderContent={renderContent}
-                        />
                     </StreamApp>
                 </SafeAreaView>
             </SafeAreaProvider>
@@ -370,7 +381,7 @@ const FeedScreen = ({ navigation, route }) => {
     const loading = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width/2 }} />
+                <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
             </View>
         );
     }

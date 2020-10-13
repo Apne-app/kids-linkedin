@@ -71,7 +71,7 @@ const Searching = ({ route, navigation }) => {
     }, [])
     const onChangeSearch = query => {
         if (query != '') {
-            axios.get('http://35.221.164.203:5000/keyword/' + query + '/0')
+            axios.get('http://35.221.164.203:5000/keyword/' + query.toLowerCase() + '/0')
                 .then(async (response) => {
                     setresult([])
                     var keys = Object.keys(response.data)

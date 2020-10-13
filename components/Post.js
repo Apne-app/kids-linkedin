@@ -119,9 +119,8 @@ const Upload = ({ route, navigation }) => {
       console.log("asds");
       route.params.reload = 0;
     }
-    if(route.params.selected)
-    {
-      setExplore([ ...route.params.selected, {'height': 0, 'width': '0', 'uri': ''} ])
+    if (route.params.selected) {
+      setExplore([...route.params.selected, { 'height': 0, 'width': '0', 'uri': '' }])
       route.params.selected = null;
     }
   }
@@ -158,12 +157,12 @@ const Upload = ({ route, navigation }) => {
         }
       }
       if (c) {
-        albums = [...albums, { 'albumName': filename, 'tagName': tag}];
+        albums = [...albums, { 'albumName': filename, 'tagName': tag }];
       }
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
     }
     else {
-      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': filename, 'tagName': tag}]));
+      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': filename, 'tagName': tag }]));
     }
 
     setModalVisible3(false);
@@ -197,7 +196,7 @@ const Upload = ({ route, navigation }) => {
     }
 
     const options = {
-      keyPrefix: email + "/" + filename + "/" + tag + "/",
+      keyPrefix: email + filename + "/" + tag + "/",
       bucket: "kids-linkedin",
       region: "ap-south-1",
       accessKey: ACCESS_KEY,
@@ -266,7 +265,7 @@ const Upload = ({ route, navigation }) => {
         }
       }
       if (c) {
-        albums = [...albums, { 'albumName': filename, 'tagName': tag}];
+        albums = [...albums, { 'albumName': filename, 'tagName': tag }];
       }
 
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
@@ -281,6 +280,7 @@ const Upload = ({ route, navigation }) => {
 
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
   const [tag, setTag] = React.useState('Other');
+  const [caption, setcaption] = React.useState('');
 
   if (active == 0)
     return (
@@ -302,7 +302,7 @@ const Upload = ({ route, navigation }) => {
     children = JSON.parse(children)['0']
     var name = ''
     for (i = 0; i < explore.length - 1; i++) {
-      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + '/' + filename + "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
+      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  + filename + "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
       name = name + x;
       if(tag == 'Certificate')
       {
@@ -330,10 +330,10 @@ const Upload = ({ route, navigation }) => {
     // setModalVisible4(false);
 
     const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
-    var activity = { "image": name, "object": "test", "verb": "post" }
+    var activity = { "image": name, "object": caption==''?'default123':caption, "verb": "post" }
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
-    var user = client.feed('user', String(String(children['id'])+String("id")));
+    var user = client.feed('timeline', String(String(children['id']) + String("id")));
     await user.addActivity(activity);
   }
 
@@ -617,7 +617,7 @@ const Upload = ({ route, navigation }) => {
               }}
               // style={{marginTop: 5}}
               renderItem={({ item, i }) => (
-                <Chip key={i} style={{ backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10 }} textStyle={{ color: "#fff" }} onPress={() => tag == item ? setTag(''): setTag(item)} >{item}</Chip>
+                <Chip key={i} style={{ backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10 }} textStyle={{ color: "#fff" }} onPress={() => tag == item ? setTag('') : setTag(item)} >{item}</Chip>
               )}
               //Setting the number of column
               // numColumns={3}
@@ -687,11 +687,13 @@ const Upload = ({ route, navigation }) => {
           <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
         </TouchableOpacity>*/}
       <Item last style={{ position: 'absolute', bottom: height * 0.11 }} >
-        <Input placeholder="Add a caption and hashtags" />
+        <Input onChangeText={(text) => {
+          setcaption(text)
+        }}value={caption} placeholder="Add a caption and hashtags" />
         <Icon onPress={() => tag == 'Certificate' ? setModalVisible4(true): PostUpload()} style={{ color: "#fff" }} type="Ionicons" name='send' />
       </Item>
 
-      <View style={{height: height*0.07}} />
+      <View style={{ height: height * 0.07 }} />
       <Fab
         active={activefab}
         direction="up"
