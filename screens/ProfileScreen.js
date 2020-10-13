@@ -92,6 +92,7 @@ const fontConfig = {
 };
 const ProfileScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState('notyet')
+    const [place, setplace] = useState('')
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
 
     const [certi, setCerti] = useState([]);
@@ -101,30 +102,37 @@ const ProfileScreen = ({ navigation, route }) => {
             var children = await AsyncStorage.getItem('children')
             children = JSON.parse(children)['0']
             const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
-            var user = client.feed('timeline', children['id'] + 'id');
+            var user = client.feed('user', children['id'] + 'id');
             var follows = await user.followers()
+            var user = client.feed('timeline', children['id'] + 'id');
             var following = await user.following()
+            console.log(follows)
             setdata({ 'followers': follows['results'], 'following': following['results'] })
-
-            var config = {
-                method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}`,
-                headers: { }
-            };
-            axios(config)
-            .then(function (response) {
-            // console.log((response.data));
-            var arr = [];
-            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-            setCerti([ ...arr ])
-            })
-            .catch(function (error) {
-            console.log(error);
-            });
-
         }
         addfollows()
     }, [])
+    useEffect(() => {
+        const addfollows = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            var config = {
+                method: 'get',
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}`,
+                headers: {}
+            };
+            axios(config)
+                .then(function (response) {
+                    // console.log((response.data));
+                    var arr = [];
+                    Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+                    setCerti([...arr])
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        addfollows()
+    })
     const options = {
         title: 'Select Avatar',
         customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
@@ -133,6 +141,12 @@ const ProfileScreen = ({ navigation, route }) => {
             path: 'images',
         },
     };
+    const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
+    const logout = async() => {
+        var keys = await AsyncStorage.getAllKeys()
+        await AsyncStorage.multiRemove(keys)
+        navigation.navigate('Login')
+    }
     const there = () => {
         return (<ScrollView style={{ marginBottom: 80 }}>
             <StreamApp
@@ -149,18 +163,17 @@ const ProfileScreen = ({ navigation, route }) => {
                     </Right>
                 </Header> */}
                 <View style={{ marginTop: 30, flexDirection: 'row' }}>
-                    <Avatar
-                        size={96}
-                        noShadow
-                        editButton
-                        onUploadButtonPress={() => pickImage()}
-                        styles={{ container: { width: 80, height: 80, borderRadius: 5, margin: 5, marginLeft: 30 } }}
-                    />
-
-                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 31, flexWrap: 'wrap' }}>
+                    <TouchableOpacity onPress={() => pickImage()}>
+                        <Image
+                            onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
+                            source={{ uri: source }}
+                            style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
+                        />
+                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
-                            <Icon style={{ fontSize: 15, marginTop: 10, marginLeft: 5 }} name="log-out" type="Feather" />
+                            <Icon onPress={()=>logout()} style={{ fontSize: 15, marginTop: 10, marginLeft: 5 }} name="log-out" type="Feather" />
                         </View>
                         <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1, flexWrap: 'wrap', width: "100%" }}>I  am a very good boy. I am not a bad boy.</Text>
                     </View>
@@ -192,41 +205,41 @@ const ProfileScreen = ({ navigation, route }) => {
 
                     </View>
                 </View>
-                    {certi.length > 0 ?
-                <View>
-                    <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>Certificates</Text>
+                {certi.length > 0 ?
+                    <View>
+                        <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>Certificates</Text>
                         <FlatList
-                        data={certi}
-                        scrollEnabled={true}
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{
-                            // flexGrow: 1,
-                        }}
-                        // style={{marginTop: 5}}
-                        renderItem={({ item, i }) => (
-                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(certi) } >
-                                <View
-                                key={i}
-                                style={{ flex: 1}}>
-                                <ImageBackground
-                                    style={{ height: width*0.40, width: width*0.40,margin: width*0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center',borderWidth: 0, borderColor: "#000" }}
-                                    imageStyle={{ borderRadius:15, height: "auto", width: "auto",   }}
-                                    source={{
-                                    uri: item.slice(0, item.length-2),
-                                    }}
-                                >
-                                </ImageBackground>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                        //Setting the number of column
-                        // numColumns={3}
-                        horizontal={true}
-                        keyExtractor={(item, index) => index.toString()}
-                        /> 
-                </View>
-                        : <View />
-                        }
+                            data={certi}
+                            scrollEnabled={true}
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{
+                                // flexGrow: 1,
+                            }}
+                            // style={{marginTop: 5}}
+                            renderItem={({ item, i }) => (
+                                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(certi)} >
+                                    <View
+                                        key={i}
+                                        style={{ flex: 1 }}>
+                                        <ImageBackground
+                                            style={{ height: width * 0.40, width: width * 0.40, margin: width * 0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center', borderWidth: 0, borderColor: "#000" }}
+                                            imageStyle={{ borderRadius: 15, height: "auto", width: "auto", }}
+                                            source={{
+                                                uri: item.slice(0, item.length - 2),
+                                            }}
+                                        >
+                                        </ImageBackground>
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                            //Setting the number of column
+                            // numColumns={3}
+                            horizontal={true}
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    </View>
+                    : <View />
+                }
                 <FlatFeed feedGroup="user" />
             </StreamApp>
         </ScrollView>)
@@ -291,7 +304,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 const file = {
                     // `uri` can also be a file system path (i.e. file://)
                     uri: response.uri,
-                    name: children['0']['data']['gsToken'] + '.jpg',
+                    name: children['0']['data']['gsToken'] + '.png',
                     type: "image/png",
                 }
 
@@ -309,8 +322,8 @@ const ProfileScreen = ({ navigation, route }) => {
                         throw new Error("Failed to upload image to S3");
 
                 })
-                const client = connect('dfm952s3p57q', children['0']['data']['gsToken'], '90935');
-                client.user().update({ profileImage: 'https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.jpg' });
+
+
             }
         });
     }

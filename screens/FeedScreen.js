@@ -62,10 +62,10 @@ const FeedScreen = ({ navigation, route }) => {
     const sheetRefLike = React.useRef(null);
     const sheetRefCom = React.useRef(null);
     const renderLikes = (props) => {
-        if (type==='like'){
+        if (type === 'like') {
             return <View style={{ height: height, backgroundColor: 'lightgrey' }}><LikeList reactionKind={'like'} {...options} activityId={actid} /></View>
         }
-        return <View style={{ height: height, backgroundColor: 'lightgrey' }}><CommentList {...options} activityId={actid} /><CommentBox {...options}  /></View>
+        return <View style={{ height: height, backgroundColor: 'lightgrey' }}><CommentList {...options} activityId={actid} /><CommentBox {...options} /></View>
         // <View style={{ height: height, backgroundColor: 'black' }}></View>
         // 
 
@@ -190,19 +190,19 @@ const FeedScreen = ({ navigation, route }) => {
         }
         const [visible, setIsVisible] = React.useState(false);
         var images = []
+        const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
         // console.log(props.activity.id)
         props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null)
-        props.activity.own_reactions['like']?console.log(props.activity.own_reactions['like'][0]):null
+        props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
             <Activity
                 {...props}
                 Header={
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Avatar
-                            source={props.activity.actor.data.profileImage}
-                            size={45}
-                            noShadow
-                            styles={{ container: { width: 40, height: 40, borderRadius: 5, margin: 5, marginLeft: 20 } }}
+                        <Image
+                            onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
+                            source={{ uri: source }}
+                            style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
                         />
                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                             <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.data.name}</Text>
@@ -232,11 +232,10 @@ const FeedScreen = ({ navigation, route }) => {
                             HeaderComponent={() => {
                                 return (
                                     <View><View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 40, padding: 10 }}>
-                                        <Avatar
-                                            source={props.activity.actor.data.profileImage}
-                                            size={45}
-                                            noShadow
-                                            styles={{ container: { width: 40, height: 40, borderRadius: 5, margin: 5, marginLeft: 20 } }}
+                                        <Image
+                                            onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
+                                            source={{ uri: source }}
+                                            style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                             <Text style={{ fontFamily: 'Poppins-Regular', color: 'white' }}>{props.activity.actor.data.name}</Text>

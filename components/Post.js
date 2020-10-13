@@ -333,7 +333,7 @@ const Upload = ({ route, navigation }) => {
     var activity = { "image": name, "object": caption==''?'default123':caption, "verb": "post" }
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
-    var user = client.feed('timeline', String(String(children['id']) + String("id")));
+    var user = client.feed('user', String(String(children['id']) + String("id")));
     await user.addActivity(activity);
   }
 
