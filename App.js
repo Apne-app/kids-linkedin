@@ -112,15 +112,15 @@ const App = ({ navigation }) => {
       var x = await AsyncStorage.getItem('status');
       // console.log(x);
       if (x) {
-        if (x == '1') {
+        if (x == '0') {
           containerRef.current?.navigate('Unverified')
           setinit('Unverified')
         }
-        if (x == '2') {
+        if (x == '1') {
           containerRef.current?.navigate('Child')
           setinit('Child')
         }
-        if (x == '3') {
+        if (x == '2') {
           containerRef.current?.navigate('Home')
           setinit('Home')
         }
