@@ -106,53 +106,22 @@ const ProfileScreen = ({ navigation, route }) => {
             var following = await user.following()
             setdata({ 'followers': follows['results'], 'following': following['results'] })
 
-            let albums = await AsyncStorage.getItem("albums");
-            // console.log(albums);
-            albums = JSON.parse(albums);
-                        for(var j = 0; j < albums.length; j++)
-                        {
-                            var arr = [];
-                            if(albums[j]['tagName'] == 'Certificate')
-                            {
-                            // console.log(albums[j], r[i].title)
-                            var y = albums[j]['albumName'];
-                            var z = albums[j]['tagName'];
-                                await CameraRoll.getPhotos({
-                                    first: 100,
-                                    assetType: 'All',
-                                    groupName: albums[j]['albumName']
-                                })
-                                .then(r => {
-                                    // console.log(r.edges[0].node.group_name, "asd");
-                                    // for(var k = 0; k < r.edges.length; k++)
-                                    // {
-                                    //     r.edges[k].node['checked'] = false;
-                                    // }
-                                    console.log(r.edges)
-                                    r.edges.map(item => {
-                                    arr.push( item );
-                                    })
-                                    // setFiles([ ...files, { 'name': y, 'files': r.edges} ])
-                                    
-                                })
-                            setCerti([ ...certi, ...arr ]);
-                            }
-                        }
-             
-            
+            var config = {
+                method: 'get',
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}`,
+                headers: { }
+            };
+            axios(config)
+            .then(function (response) {
+            // console.log((response.data));
+            var arr = [];
+            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+            setCerti([ ...arr ])
+            })
+            .catch(function (error) {
+            console.log(error);
+            });
 
-            // for(var i = 0; certies.length; i++)
-            // {
-            //     if(certies[i]['tagName'] == 'Certificate')
-            //     {
-            //         arr.push({'name': certies[i]['name'], 'files': certies[i]['files'], 'tag': 'Certificate'})
-            //     }
-            // }
-
-            // follows['results'].map(item => {
-            //     data.push(item['target_id'].replace('user:', '').replace('id', ''))
-            // })
-            // setfollows(data)
         }
         addfollows()
     }, [])
@@ -193,9 +162,7 @@ const ProfileScreen = ({ navigation, route }) => {
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
                             <Icon style={{ fontSize: 15, marginTop: 10, marginLeft: 5 }} name="log-out" type="Feather" />
                         </View>
-                        <TouchableOpacity style={{flex: 1, flexWrap: 'wrap', width: "100%"}} onPress={() => console.log(certi)}>
                         <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1, flexWrap: 'wrap', width: "100%" }}>I  am a very good boy. I am not a bad boy.</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
@@ -215,7 +182,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     </View>
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
@@ -245,7 +212,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                     style={{ height: width*0.40, width: width*0.40,margin: width*0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center',borderWidth: 0, borderColor: "#000" }}
                                     imageStyle={{ borderRadius:15, height: "auto", width: "auto",   }}
                                     source={{
-                                    uri: item.node.image.uri,
+                                    uri: item.slice(0, item.length-2),
                                     }}
                                 >
                                 </ImageBackground>
