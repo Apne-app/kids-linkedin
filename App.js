@@ -100,33 +100,35 @@ function Bottom(props) {
 //     </DrawNav.Navigator>
 //   )
 // }
-const App = ({navigation}) => {
-  React.useEffect(() => {
-    SplashScreen.hide();
-  }, [])
+const App = ({ navigation }) => {
+  // React.useEffect(() => {
+  //   SplashScreen.hide();
+  // }, [])
   const containerRef = React.useRef();
   const [init, setinit] = useState('Login')
+  useEffect(() => {
 
-  const send = async () => {
-        var x = await AsyncStorage.getItem('status');
-        // console.log(x);
-        if (x) {
-            if (x == '1') {
-                containerRef.current?.navigate('Unverified')
-                setinit('Unverified')
-            }
-            if (x == '2') {
-                containerRef.current?.navigate('Child')
-                setinit('Child')
-            }
-            if (x == '3') {
-                containerRef.current?.navigate('Home')
-                setinit('Home')
-            }
+    const send = async () => {
+      var x = await AsyncStorage.getItem('status');
+      // console.log(x);
+      if (x) {
+        if (x == '1') {
+          containerRef.current?.navigate('Unverified')
+          setinit('Unverified')
         }
+        if (x == '2') {
+          containerRef.current?.navigate('Child')
+          setinit('Child')
+        }
+        if (x == '3') {
+          containerRef.current?.navigate('Home')
+          setinit('Home')
+        }
+      }
+      SplashScreen.hide();
     }
-
-  send();
+    send();
+  }, [])
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -135,7 +137,7 @@ const App = ({navigation}) => {
 
     return unsubscribe;
   }, []);
-  
+
 
 
 
@@ -143,18 +145,21 @@ const App = ({navigation}) => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
+        console.log(link)
         var pro = await AsyncStorage.getItem('profile')
         pro = JSON.parse(pro)
         console.log(pro, link, link.url.includes(pro.uuid))
-        if (true) {
-        console.log("sdasd");
+        if (link.url.includes(pro.uuid)) {
+          containerRef.current?.navigate('Verified')
           setinit('Verified')
         }
-          SplashScreen.hide();
+        else {
+          containerRef.current?.navigate('Unverified')
+        }
       })
       .catch(() => {
         // console.log('do nothing')
-        SplashScreen.hide();
+        // SplashScreen.hide();
       }
       )
   }, []);
@@ -165,7 +170,7 @@ const App = ({navigation}) => {
         barStyle="light-content"
         backgroundColor="#357feb"
       />
-      <Stack.Navigator initialRouteName={init}>
+      <Stack.Navigator initialRouteName={'Login'}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
         <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />

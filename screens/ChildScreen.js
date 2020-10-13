@@ -63,8 +63,9 @@ const ChildScreen = ({ route, navigation }) => {
             var pro = await AsyncStorage.getItem('profile');
             pro = JSON.parse(pro);
             axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email)
-                .then((response) => {
+                .then(async(response) => {
                     if (response.data.split(', ').length == 2) {
+                        await AsyncStorage.setItem('status', '3')
                         navigation.navigate('ChildSuccess')
                     }
                 })
