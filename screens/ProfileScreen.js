@@ -10,11 +10,13 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 import FastImage from 'react-native-fast-image'
 import ImagePicker from 'react-native-image-picker';
+import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import CameraRoll from "@react-native-community/cameraroll";
 import { SECRET_KEY, ACCESS_KEY } from '@env';
 import { RNS3 } from 'react-native-aws3';
+import BottomSheet from 'reanimated-bottom-sheet';
 import { connect } from 'getstream';
 import { set } from 'react-native-reanimated';
 var height = Dimensions.get('screen').height;
@@ -96,6 +98,125 @@ const ProfileScreen = ({ navigation, route }) => {
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
 
     const [certi, setCerti] = useState([]);
+    const [Loading, setLoading] = useState(false)
+    const [option, setOption] = useState('');
+    const [courses, setCourses] = useState([])
+    const [bottomType, setBottomType] = useState('')
+    const [course, setCourse] = useState({
+        org: '',
+        url: '',
+        name: ''
+    })
+
+    const renderOptions = () => (
+        <View
+            scrollEnabled={false}
+            style={{
+                backgroundColor: '#fff',
+                padding: 16,
+                height: height*0.4,
+            }}
+        >
+            <TouchableOpacity onPress={() => {optionsRef.current.snapTo(1); setBottomType('');setOption('')}} style={{alignItems: 'center',paddingBottom: 10}}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
+            {
+            bottomType == '' && option == '' ?
+            <Button onPress={() => setOption('course')} full style={{backgroundColor: "#357feb"}}>
+                <Text>Add Course</Text>
+            </Button>  :  null    
+            }
+            {
+            bottomType == '' && option == 'course' ?
+            <View>
+            <TouchableOpacity onPress={() => { setOption(''); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
+                <Text >Add Course Details!</Text>
+                  <Item floatingLabel>
+                    <Label>Course Organization</Label>
+                    <Input value={course.org} onChangeText={text => setCourse({ ...course, org: text })} />
+                </Item>
+                  <Item floatingLabel>
+                    <Label>Course Name</Label>
+                    <Input value={course.name} onChangeText={text => setCourse({ ...course, name: text })} />
+                </Item>
+                  <Item floatingLabel>
+                    <Label>Course Url</Label>
+                    <Input value={course.url} onChangeText={text => setCourse({ ...course, url: text })} />
+                </Item>
+                <SpinnerButton
+                    buttonStyle={{
+                        borderRadius: 10,
+                        margin: 20,
+                        width: 200,
+                        alignSelf: 'center',
+                        backgroundColor: '#357feb'
+                    }}
+                    isLoading={Loading}
+                    spinnerType='BarIndicator'
+                    onPress={async () => {
+                        setLoading(true);
+                        var children = await AsyncStorage.getItem('children')
+                        children = JSON.parse(children)['0']
+                        var data = JSON.stringify({"gstoken":children['data']['gsToken'],"course_url":course.url,"course_name":course.name,"course_org":course.org});
+
+                        var config = {
+                        method: 'post',
+                        url: 'https://barry-2z27nzutoq-as.a.run.app/updatecourses',
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        data : data
+                        };
+
+                        axios(config)
+                        .then(function (response) {
+                        console.log(JSON.stringify(response.data));
+                        setLoading(false);
+                        })
+                        .catch(function (error) {
+                        alert(error);
+                        setLoading(false)
+                        });
+                    }}
+                    indicatorCount={10}
+                    >
+                    <Icon active type="Feather" name='chevron-right' style={{ color: 'black', fontWeight: 'bold' }} />
+                </SpinnerButton>
+                
+                </View> : null
+            }
+            {
+                bottomType == 'courses' ? 
+                 <FlatList
+                        data={courses}
+                        scrollEnabled={true}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{
+                            // flexGrow: 1,
+                        }}
+                        // style={{marginTop: 5}}
+                        renderItem={({ item, i }) => (
+                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(courses) } >
+                                <View
+                                key={i}
+                                style={{ flex: 1, alignItems: 'center', borderWidth: 0.3, margin: 4, padding: 10, borderRadius: 15, backgroundColor: "#357feb"}}>
+                                    <Text style={{fontSize: 18, color: "#fff"}}>{item.org} : {item.name}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                        //Setting the number of column
+                        numColumns={1}
+                        keyExtractor={(item, index) => index.toString()}
+                        /> 
+                 : null
+            }
+        </View>
+    );
+
+    const renderCourses = () => {
+
+    }
+
+    const optionsRef = React.useRef(null);
+
 
     useEffect(() => {
         const addfollows = async () => {
@@ -121,15 +242,33 @@ const ProfileScreen = ({ navigation, route }) => {
                 headers: {}
             };
             axios(config)
-                .then(function (response) {
-                    // console.log((response.data));
-                    var arr = [];
-                    Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-                    setCerti([...arr])
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            .then(function (response) {
+            // console.log((response.data));
+            var arr = [];
+            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+            setCerti([ ...arr ])
+            })
+            .catch(function (error) {
+            console.log(error);
+            });
+
+            config = {
+            method: 'get',
+            url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
+            headers: { }
+            };
+
+            axios(config)
+            .then(function (response) {
+            var arr = [];
+            Object.keys(response.data).forEach(e => arr.push({"name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"]}));
+            setCourses([ ...arr ])
+            console.log(arr)
+            })
+            .catch(function (error) {
+            // console.log(error);
+            });
+
         }
         addfollows()
     })
@@ -148,7 +287,16 @@ const ProfileScreen = ({ navigation, route }) => {
         navigation.navigate('Login')
     }
     const there = () => {
-        return (<ScrollView style={{ marginBottom: 80 }}>
+        return (<View style={{ marginBottom: 80 }}>
+        <ScrollView>
+        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 5 }}>
+                    <Body style={{ alignItems: 'center' }}>
+                    <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title> 
+                </Body>
+                <Right style={{ marginRight: 30, marginTop: 0 }}>
+                    <Icon onPress={() => {optionsRef.current.snapTo(0); console.log("sad")}} type="MaterialCommunityIcons" name="dots-vertical"  />
+                </Right>
+            </Header>
             <StreamApp
                 apiKey={'dfm952s3p57q'}
                 appId={'90935'}
@@ -175,7 +323,6 @@ const ProfileScreen = ({ navigation, route }) => {
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
                             <Icon onPress={()=>logout()} style={{ fontSize: 15, marginTop: 10, marginLeft: 5 }} name="log-out" type="Feather" />
                         </View>
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1, flexWrap: 'wrap', width: "100%" }}>I  am a very good boy. I am not a bad boy.</Text>
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
@@ -198,10 +345,10 @@ const ProfileScreen = ({ navigation, route }) => {
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
                         </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>20</Text>
+                        <TouchableOpacity onPress={() => {optionsRef.current.snapTo(0); setBottomType('courses')}} style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
-                        </View>
+                        </TouchableOpacity>
 
                     </View>
                 </View>
@@ -209,40 +356,52 @@ const ProfileScreen = ({ navigation, route }) => {
                     <View>
                         <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>Certificates</Text>
                         <FlatList
-                            data={certi}
-                            scrollEnabled={true}
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{
-                                // flexGrow: 1,
-                            }}
-                            // style={{marginTop: 5}}
-                            renderItem={({ item, i }) => (
-                                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(certi)} >
-                                    <View
-                                        key={i}
-                                        style={{ flex: 1 }}>
-                                        <ImageBackground
-                                            style={{ height: width * 0.40, width: width * 0.40, margin: width * 0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center', borderWidth: 0, borderColor: "#000" }}
-                                            imageStyle={{ borderRadius: 15, height: "auto", width: "auto", }}
-                                            source={{
-                                                uri: item.slice(0, item.length - 2),
-                                            }}
-                                        >
-                                        </ImageBackground>
-                                    </View>
-                                </TouchableOpacity>
-                            )}
-                            //Setting the number of column
-                            // numColumns={3}
-                            horizontal={true}
-                            keyExtractor={(item, index) => index.toString()}
-                        />
-                    </View>
-                    : <View />
-                }
+                        data={certi}
+                        scrollEnabled={true}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{
+                            // flexGrow: 1,
+                        }}
+                        // style={{marginTop: 5}}
+                        renderItem={({ item, i }) => (
+                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(certi) } >
+                                <View
+                                key={i}
+                                style={{ flex: 1}}>
+                                <ImageBackground
+                                    style={{ height: width*0.30, width: width*0.30,margin: width*0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center',borderWidth: 0, borderColor: "#000" }}
+                                    imageStyle={{ borderRadius:15, height: "auto", width: "auto",   }}
+                                    source={{
+                                    uri: item.slice(0, item.length-2),
+                                    }}
+                                >
+                                </ImageBackground>
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                        //Setting the number of column
+                        // numColumns={3}
+                        horizontal={true}
+                        keyExtractor={(item, index) => index.toString()}
+                        /> 
+                </View>
+                        : <View />
+                        }
                 <FlatFeed feedGroup="user" />
             </StreamApp>
-        </ScrollView>)
+            </ScrollView>
+            <BottomSheet
+                ref={optionsRef}
+                snapPoints={[height*0.4, 0]}
+                initialSnap = {1}
+                enabledGestureInteraction={true}
+                borderRadius={25}
+                renderContent={renderOptions}
+            />
+            
+
+            
+        </View>)
     }
     const notthere = () => {
         return (

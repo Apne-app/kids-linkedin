@@ -112,7 +112,7 @@ const App = ({ navigation }) => {
       var x = await AsyncStorage.getItem('status');
       // console.log(x);
       if (x) {
-        if (x == '1') {
+        if (x == '0') {
           containerRef.current?.navigate('Unverified')
           setinit('Unverified')
         }
