@@ -21,6 +21,7 @@ const IndProfile = ({ navigation, route }) => {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [result, setresult] = React.useState([]);
     const [follows, setfollows] = React.useState([]);
+    const [followPerson, setFollowPerson] = React.useState('Follow')
     const [currentid, setcurrentid] = React.useState('');
     useEffect(() => {
         const addfollows = async () => {
@@ -35,6 +36,7 @@ const IndProfile = ({ navigation, route }) => {
                 data.push(item['target_id'].replace('user:', '').replace('id', ''))
             })
             setfollows(data)
+            data.includes(String(route.params.id)) ? setFollowPerson('Following') : null;
         }
         addfollows()
     }, [])
@@ -48,12 +50,14 @@ const IndProfile = ({ navigation, route }) => {
         addfollows()
     }, [])
     const followid = (id) => {
+        // console.log("asd");
         axios.get('http://104.199.158.211:5000/follow/' + currentid + '/' + id)
             .then(async (response) => {
                 if (response.data == 'success') {
                     var place = follows;
                     place.push(String(id));
                     setfollows(place)
+                    setFollowPerson('Following');
                 }
             })
     }
@@ -114,9 +118,9 @@ const IndProfile = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 31 }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{route['params']['data']['name']}</Text>
-                            <Button onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, marginHorizontal: 10 }}>
-                                <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, marginTop: 2 }}>{follows.includes(String(route.params.id)) ? 'Following' : 'Follow'}</Text>
-                            </Button>
+                            <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, marginHorizontal: 10 }}>
+                                <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
+                            </TouchableOpacity>
                         </View>
                         <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1 }}>I  am a very good boy. I am not a bad boy.</Text>
                     </View>

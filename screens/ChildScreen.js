@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native'
+import { Text, StyleSheet,Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native'
 import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
 import SpinnerButton from 'react-native-spinner-button';
@@ -12,9 +12,32 @@ import axios from 'axios';
 import LinkedIn from '../components/LinkedIn'
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
+import { useFocusEffect } from "@react-navigation/native";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const ChildScreen = ({ route, navigation }) => {
+    useFocusEffect(
+        React.useCallback(() => {
+        const onBackPress = () => {
+            Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            { text: "YES", onPress: () => BackHandler.exitApp() }
+            ]);
+            return true;
+        };
+
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+    }, []));
+
+
     const fontConfig = {
         default: {
             regular: {
@@ -62,10 +85,12 @@ const ChildScreen = ({ route, navigation }) => {
             Keyboard.dismiss
             var pro = await AsyncStorage.getItem('profile');
             pro = JSON.parse(pro);
+            console.log(pro, "sad");
             axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email)
                 .then(async(response) => {
                     if (response.data.split(', ').length == 2) {
                         await AsyncStorage.setItem('status', '3')
+                        // console.log(response.data)
                         navigation.navigate('ChildSuccess')
                     }
                 })

@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
+  RefreshControl,
   PermissionsAndroid,
   Modal,
+  Platform,
   ImageBackground,
   ScrollView,
   CheckBox
@@ -19,15 +21,18 @@ import CameraRoll from "@react-native-community/cameraroll";
 import { Chip } from 'react-native-paper';
 import ImageView from "react-native-image-viewing";
 import { RNS3 } from 'react-native-aws3';
+var RNFS = require('react-native-fs');
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
+var dir_path = Platform.OS === 'ios' ? RNFS.LibraryDirectoryPath : RNFS.ExternalDirectoryPath;
 
 const FileScreen = (props) => {
     
 
     const [files, setFiles] = React.useState([]);
+    const [pdfs, setPDFS] = React.useState([]);
     const [selecting, setSelecting] = React.useState(false);
     const [selected, setSelected] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
@@ -35,7 +40,7 @@ const FileScreen = (props) => {
     const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other', 'Other']);
     const [tag, setTag] = React.useState('');
 
-
+    const [refreshing, setRefreshing] = React.useState(false);
 
 
   const uploadToS3 = (i, email) => {
@@ -119,6 +124,7 @@ const FileScreen = (props) => {
         let albums = await AsyncStorage.getItem("albums");
             // console.log(albums);
             albums = JSON.parse(albums);
+        
 
         CameraRoll.getAlbums({
                     // first: 100,
@@ -158,22 +164,36 @@ const FileScreen = (props) => {
                         }
 
                         console.log(arr);
-                        setFiles([ ...arr ]);
-                        
+                        let tempImg = await AsyncStorage.getItem('tempImg');
+                        tempImg = JSON.parse(tempImg);
+                        // console.log(tempImg);
+                        var array = arr;
+                        if(tempImg)
+                        {
 
-                    // setGallery([ ...r.edges ]);
-                    // setSelected(r.edges[0].node.image.uri)
-                    // console.log(r.edges[0].node.image.uri);
+                        // for(var i = 0; i < tempImg.files.length; i++)
+                        // {
+                        //     console.log(tempImg.files[i]);
+                        //     array.push()
+                        // }
+                        array.push(tempImg);
+                        // setFiles([ ...files, ...array ]);
+                        }
+                        setFiles([ ...array ]);
                     })
                     .catch((err) => {
                         //Error Loading 
                         console.log(err);
                 });
 
+                
+                
+
     }
 
 
     React.useEffect(() => {
+
 
         const func = async () => {
 
@@ -203,6 +223,45 @@ const FileScreen = (props) => {
         }
         func();
     }, [])
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+
+        const func = async () => {
+
+            let albums = await AsyncStorage.getItem("albums");
+            // console.log(albums);
+            albums = JSON.parse(albums);
+
+            try {
+                const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                {
+                    'title': 'Access Storage',
+                    'message': 'Access Storage for the pictures'
+                }
+                )
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("You can use read from the storage");
+
+                    await showAll();
+                    setRefreshing(false);
+
+                } else {
+                console.log("Storage permission denied")
+                setRefreshing(false);
+                }
+            } catch (err) {
+                console.warn(err)
+                setRefreshing(false);
+            }
+        }
+        func();
+
+        
+    }, []);
+
+
 
     const viewImages = (topic) => {
 
@@ -249,6 +308,33 @@ const FileScreen = (props) => {
 
     return (
         <Container >
+            <ImageView
+                images={selected}
+                imageIndex={0}
+                visible={visible}
+                onRequestClose={() => {setSelected([]); cancelSelection(); setVisible(false);setSelTopic(''); setSelecting(false)}}
+                HeaderComponent = {() => {
+                    return <Text style={{color: "#fff", fontSize: 26, margin: 20}}>{seltopic}</Text>
+                }}
+                FooterComponent = {() => {
+                    return (
+                        <View>
+                            <TouchableOpacity style={{ marginBottom: height*0.06, marginLeft: width*0.83, width: 60,zIndex: 1000000, backgroundColor: "#357feb", borderRadius: 30, height: 60, justifyContent: 'center', alignItems: 'center'}} onPress={() => {
+                                setSelected([]); cancelSelection(); setVisible(false);setSelTopic(''); setSelecting(false)
+                                props.navigation.navigate('Home', {
+                                    screen: 'Post',
+                                    params: { "selected": selected
+                                    },
+                                  })
+                            }}><Icon type="Ionicons" name='send' style={{color: "#fff", fontSize: 35 }} /></TouchableOpacity>
+                        </View>
+                    )
+                }}
+            />
+            <ScrollView
+                refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> }
+            >
             <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 20 }}>
                 {
                     !selecting ?
@@ -263,29 +349,9 @@ const FileScreen = (props) => {
                     <Icon onPress={() => { navigation.toggleDrawer(); }} name="bell" type="Feather" />
                 </Right>
             </Header>
-            <ImageView
-                images={selected}
-                imageIndex={0}
-                visible={visible}
-                onRequestClose={() => {setSelected([]); cancelSelection(); setVisible(false);setSelTopic(''); setSelecting(false)}}
-                HeaderComponent = {() => {
-                    return <Text style={{color: "#fff", fontSize: 26, margin: 20}}>{seltopic}</Text>
-                }}
-                FooterComponent = {() => {
-                    return (
-                        <View>
-                            <TouchableOpacity style={{ marginBottom: height*0.06, marginLeft: width*0.83, width: 60,zIndex: 1000000, backgroundColor: "#357feb", borderRadius: 30, height: 60, justifyContent: 'center', alignItems: 'center'}} onPress={() => {
-                                props.navigation.navigate('Home', {
-                                    screen: 'Post',
-                                    params: { "selected": selected
-                                    },
-                                  })
-                            }}><Icon type="Ionicons" name='send' style={{color: "#fff", fontSize: 35 }} /></TouchableOpacity>
-                        </View>
-                    )
-                }}
-            />
-            <Content style={{marginTop: 20,}}>
+            
+            
+
             { files.length != 0? <View style={{ flexDirection: 'row' }} >
                 <FlatList
                 data={tags}
@@ -304,7 +370,7 @@ const FileScreen = (props) => {
                 />
             </View>: <View />}
                     {
-                        files.length == 0 ?
+                       pdfs.length == 0 && files.length == 0 ?
                     <View style={{ backgroundColor: 'white', height: height, width: width }}>
                         <Image source={require('../assets/empty.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
                         <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Nothing to view here.</Text>
@@ -364,7 +430,7 @@ const FileScreen = (props) => {
                     })
                     }
                     <View style={{height: height*0.07}} />
-            </Content>
+                </ScrollView>
             {
                 selecting ?
                 <Fab

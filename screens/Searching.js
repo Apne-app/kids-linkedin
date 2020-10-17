@@ -109,9 +109,9 @@ const Searching = ({ route, navigation }) => {
                             styles={{ container: { alignSelf: 'center', marginTop: 18 } }}
                         />
                         <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', marginTop: 15 }}>{item['data']['name']}</Text>
-                        <Button onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
-                            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, marginTop: 2 }}>{follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
-                        </Button>
+                        {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
+                            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, marginTop: 2 }}>{follows && follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
+                        </TouchableOpacity>*/}
                     </TouchableOpacity>
                 </StreamApp>
             </View>

@@ -6,13 +6,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
 import { ScrollView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Tabs, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
 import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
 import Gallery from './Gallery'
+import ImageView from "react-native-image-viewing";
 import { connect } from 'getstream';
 import axios from 'axios'
 
@@ -68,7 +69,8 @@ const Upload = ({ route, navigation }) => {
   const [modalVisible2, setModalVisible2] = React.useState(false);
   const [modalVisible3, setModalVisible3] = React.useState(false);
   const [modalVisible4, setModalVisible4] = React.useState(false);
-
+  const [selected, setSelected] = React.useState([]);
+  const [visible, setVisible] = React.useState(false);
   const [certi, setCerti] = React.useState({
     certi_org: '',
     certi_path: '',
@@ -99,6 +101,12 @@ const Upload = ({ route, navigation }) => {
       if (JSON.parse(x).uri != explore[explore.length - 1]) {
         setExplore([(JSON.parse(x)), ...explore]);
         console.log(x);
+        var tempImg = await AsyncStorage.getItem('tempImg');
+        tempImg = JSON.parse(tempImg);
+        if(!tempImg) tempImg = { "files": [], "name": "Unsaved Images", "tag": "unsaved" };
+        tempImg.files.push( { "node": {"image": { "uri" : JSON.parse(x).uri }}} )
+        console.log(tempImg);
+        await AsyncStorage.setItem('tempImg', JSON.stringify(tempImg));
         var y = "" + String((JSON.parse(x)).uri);
         var obj = {};
         obj[String((JSON.parse(x)).uri)] = false;
@@ -234,6 +242,12 @@ const Upload = ({ route, navigation }) => {
   }
 
   const myAsyncPDFFunction = async () => {
+
+    setTimeout(() => {
+      setModalVisible(false);
+
+    }, 300)  
+
     try {
 
       var arr = [];
@@ -271,7 +285,6 @@ const Upload = ({ route, navigation }) => {
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
 
       console.log(pdf.filePath);
-      setModalVisible(false);
       alert('PDF Saved');
     } catch (e) {
       console.log(e);
@@ -340,11 +353,19 @@ const Upload = ({ route, navigation }) => {
   return (
     <Container style={styles.container}>
       <Header style={{ backgroundColor: "#000", paddingTop: 20 }} >
-        <Left>
-          <Icon name="arrow-left" type="Feather" style={{ color: "#fff" }} />
-        </Left>
+        
         <Right>
-          <Icon type="MaterialCommunityIcons" name="dots-vertical" style={{ color: "#fff" }} />
+        <TouchableOpacity onPress={() => {
+          setExplore([
+            {
+              'height': 0,
+              'width': '0',
+              'uri': ''
+            },
+          ])
+        }}>
+          <Icon type="Entypo" name="trash" style={{ color: "red" }} />
+        </TouchableOpacity>
         </Right>
       </Header>
       <Content >
@@ -388,21 +409,6 @@ const Upload = ({ route, navigation }) => {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    {/*<TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
-                      onPress={() => {
-                        // console.log(randomStr(20, '12345abcdepq75xyz'));
-                        var i;
-
-                        saveImages();
-                        
-                      }}
-                    >
-                      <View style={styles.save2}>
-                        <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
-                          Gallery
-                        </Text>
-                      </View>
-                    </TouchableOpacity>*/}
                   </View>
                 </View>
               </View>
@@ -431,20 +437,7 @@ const Upload = ({ route, navigation }) => {
                   <View style={{ flexDirection: 'row' }} >
                     <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
                       onPress={() => {
-                        // if(tag != "")
-                        // {
-
-                        // setTags([
-                        //   ...tags,
-                        //   tag
-                        // ])
-                        // // writeFile();
-                        // }
-                        // saveImages();
-                        // myAsyncPDFFunction()
                         PostUpload();
-
-                        // console.log(explore)
                       }}
                     >
                       <View style={styles.save2}>
@@ -453,21 +446,6 @@ const Upload = ({ route, navigation }) => {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    {/*<TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
-                      onPress={() => {
-                        // console.log(randomStr(20, '12345abcdepq75xyz'));
-                        var i;
-
-                        saveImages();
-                        
-                      }}
-                    >
-                      <View style={styles.save2}>
-                        <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
-                          Gallery
-                        </Text>
-                      </View>
-                    </TouchableOpacity>*/}
                   </View>
                 </View>
               </View>
@@ -493,18 +471,7 @@ const Upload = ({ route, navigation }) => {
                   <View style={{ flexDirection: 'row' }} >
                     <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
                       onPress={() => {
-                        // if(tag != "")
-                        // {
-
-                        // setTags([
-                        //   ...tags,
-                        //   tag
-                        // ])
-                        // // writeFile();
-                        // }
-                        // saveImages();
                         saveImages();
-                        // console.log(explore)
                       }}
                     >
                       <View style={styles.save2}>
@@ -513,21 +480,6 @@ const Upload = ({ route, navigation }) => {
                         </Text>
                       </View>
                     </TouchableOpacity>
-                    {/*<TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15}}
-                      onPress={() => {
-                        // console.log(randomStr(20, '12345abcdepq75xyz'));
-                        var i;
-
-                        saveImages();
-                        
-                      }}
-                    >
-                      <View style={styles.save2}>
-                        <Text style={{color: "#357feb", flex: 1, textAlign:'center'}}>
-                          Gallery
-                        </Text>
-                      </View>
-                    </TouchableOpacity>*/}
                   </View>
                 </View>
               </View>
@@ -577,37 +529,24 @@ const Upload = ({ route, navigation }) => {
               </View>
             </Modal>
           </View>
+          <ImageView
+                images={selected}
+                imageIndex={0}
+                visible={visible}
+                onRequestClose={() => {setSelected([]);setVisible(false);}}
+                HeaderComponent = {() => {
+                    return <Text style={{color: "#fff", fontSize: 26, margin: 20}}>Picture</Text>
+                }}
+                FooterComponent = {() => {
+                    return (
+                        <View>
+                        </View>
+                    )
+                }}
+            />
 
 
-          {/*<View style={{flexDirection: 'row', alignSelf: 'center', backgroundColor: "#000"}}>
-            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#357feb", alignSelf: 'center', margin: 5}}
-              onPress={() => {
-                setModalVisible(true);
-              }}
-            >
-              <View style={styles.save}>
-              <Icon name="download" type="Feather" style={{color: "#fff", flex: 1}} />
-                <Text style={{color: "#fff", flex: 1, marginTop: 5}}>
-                  Save
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={{borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5}}
-              onPress={() => {
-                // setModalVisible2(true);
-                console.log(explore);
-              }}
-            >
-              <View style={styles.save2}>
-              <Icon name="upload-cloud" type="Feather" style={{color: "#357feb", flex: 1}} />
-                <Text style={{color: "#357feb", flex: 1, marginTop: 5}}>
-                  Upload
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>*/}
-
-          <View style={{ flexDirection: 'row' }} >
+          <View style={{ flexDirection: 'row', marginTop: -height*0.06 }} >
             <FlatList
               data={tags}
               scrollEnabled={true}
@@ -632,7 +571,7 @@ const Upload = ({ route, navigation }) => {
               <View>
                 {
                   item.height != 0 ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => console.log(uploading[item["uri"]])}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {setSelected([{ uri: item.uri}]); setVisible(true)}}>
                       <View
                         key={item.id}
                         style={{ flex: 1, }}>

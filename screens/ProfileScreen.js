@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
+import { Text, StyleSheet,RefreshControl, Dimensions, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -101,6 +101,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const [Loading, setLoading] = useState(false)
     const [option, setOption] = useState('');
     const [courses, setCourses] = useState([])
+    const [refreshing, setRefreshing] = React.useState(false);
     const [bottomType, setBottomType] = useState('')
     const [course, setCourse] = useState({
         org: '',
@@ -108,13 +109,15 @@ const ProfileScreen = ({ navigation, route }) => {
         name: ''
     })
 
+    
+
     const renderOptions = () => (
         <View
             scrollEnabled={false}
             style={{
                 backgroundColor: '#fff',
                 padding: 16,
-                height: height*0.4,
+                height: height*0.5,
             }}
         >
             <TouchableOpacity onPress={() => {optionsRef.current.snapTo(1); setBottomType('');setOption('')}} style={{alignItems: 'center',paddingBottom: 10}}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
@@ -211,9 +214,6 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
     );
 
-    const renderCourses = () => {
-
-    }
 
     const optionsRef = React.useRef(null);
 
@@ -229,11 +229,12 @@ const ProfileScreen = ({ navigation, route }) => {
             var following = await user.following()
             console.log(follows)
             setdata({ 'followers': follows['results'], 'following': following['results'] })
+            // console.log(follows)
         }
         addfollows()
     }, [])
     useEffect(() => {
-        const addfollows = async () => {
+        const addCerti = async () => {
             var children = await AsyncStorage.getItem('children')
             children = JSON.parse(children)['0']
             var config = {
@@ -247,6 +248,7 @@ const ProfileScreen = ({ navigation, route }) => {
             var arr = [];
             Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
             setCerti([ ...arr ])
+            // console.log(arr);
             })
             .catch(function (error) {
             console.log(error);
@@ -270,8 +272,71 @@ const ProfileScreen = ({ navigation, route }) => {
             });
 
         }
-        addfollows()
-    })
+        addCerti();
+    }, [])
+
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+
+        const addfollows = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+            var user = client.feed('user', children['id'] + 'id');
+            var follows = await user.followers()
+            var user = client.feed('timeline', children['id'] + 'id');
+            var following = await user.following()
+            console.log(follows)
+            setdata({ 'followers': follows['results'], 'following': following['results'] })
+            // console.log(follows)
+        }
+        addfollows();
+
+        const addCerti = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            var config = {
+                method: 'get',
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}`,
+                headers: {}
+            };
+            axios(config)
+            .then(function (response) {
+            // console.log((response.data));
+            var arr = [];
+            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+            setCerti([ ...arr ])
+            // console.log(arr);
+            })
+            .catch(function (error) {
+            console.log(error);
+            });
+
+            config = {
+            method: 'get',
+            url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
+            headers: { }
+            };
+
+            axios(config)
+            .then(function (response) {
+            var arr = [];
+            Object.keys(response.data).forEach(e => arr.push({"name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"]}));
+            setCourses([ ...arr ])
+            console.log(arr);
+            setRefreshing(false)
+            })
+            .catch(function (error) {
+            // console.log(error);
+            setRefreshing(false)
+            });
+
+        }
+        addCerti();
+        
+    }, []);
+
     const options = {
         title: 'Select Avatar',
         customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
@@ -287,8 +352,9 @@ const ProfileScreen = ({ navigation, route }) => {
         navigation.navigate('Login')
     }
     const there = () => {
-        return (<View style={{ marginBottom: 80 }}>
-        <ScrollView>
+        return (<View style={{ marginBottom: 80, minHeight: "93%" }}>
+        <ScrollView style={{backgroundColor: "#f9f9f9"}} refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> }>
         <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 5 }}>
                     <Body style={{ alignItems: 'center' }}>
                     <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title> 
@@ -302,14 +368,6 @@ const ProfileScreen = ({ navigation, route }) => {
                 appId={'90935'}
                 token={children['0']['data']['gsToken']}
             >
-                {/* <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
-                    <Body style={{ alignItems: 'center' }}>
-                        <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title>
-                    </Body>
-                    <Right style={{ marginRight: 30, marginTop: 0 }}>
-                        <Icon onPress={() => { navigation.toggleDrawer(); }} name="menu" type="Feather" />
-                    </Right>
-                </Header> */}
                 <View style={{ marginTop: 30, flexDirection: 'row' }}>
                     <TouchableOpacity onPress={() => pickImage()}>
                         <Image
@@ -352,55 +410,17 @@ const ProfileScreen = ({ navigation, route }) => {
 
                     </View>
                 </View>
-                {certi.length > 0 ?
-                    <View>
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>Certificates</Text>
-                        <FlatList
-                        data={certi}
-                        scrollEnabled={true}
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{
-                            // flexGrow: 1,
-                        }}
-                        // style={{marginTop: 5}}
-                        renderItem={({ item, i }) => (
-                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(certi) } >
-                                <View
-                                key={i}
-                                style={{ flex: 1}}>
-                                <ImageBackground
-                                    style={{ height: width*0.30, width: width*0.30,margin: width*0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center',borderWidth: 0, borderColor: "#000" }}
-                                    imageStyle={{ borderRadius:15, height: "auto", width: "auto",   }}
-                                    source={{
-                                    uri: item.slice(0, item.length-2),
-                                    }}
-                                >
-                                </ImageBackground>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                        //Setting the number of column
-                        // numColumns={3}
-                        horizontal={true}
-                        keyExtractor={(item, index) => index.toString()}
-                        /> 
-                </View>
-                        : <View />
-                        }
                 <FlatFeed feedGroup="user" />
             </StreamApp>
             </ScrollView>
             <BottomSheet
                 ref={optionsRef}
-                snapPoints={[height*0.4, 0]}
-                initialSnap = {1}
+                snapPoints={[height*0.5, 0, -200]}
+                initialSnap = {2}
                 enabledGestureInteraction={true}
                 borderRadius={25}
                 renderContent={renderOptions}
             />
-            
-
-            
         </View>)
     }
     const notthere = () => {
@@ -479,10 +499,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     console.log("dassd")
                     if (response.status !== 201)
                         throw new Error("Failed to upload image to S3");
-
                 })
-
-
             }
         });
     }
@@ -494,7 +511,9 @@ const ProfileScreen = ({ navigation, route }) => {
         );
     }
     return (
-        children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
+        <View>
+        {children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()}
+        </View>
     );
 };
 

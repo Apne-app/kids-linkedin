@@ -81,7 +81,7 @@ const LoginScreen = ({ route, navigation }) => {
         navigation.navigate('Unverified')
       })
       .catch((error) => {
-        console.log()
+        console.log(error)
         setLoading(false);
       })
 
@@ -140,7 +140,7 @@ const LoginScreen = ({ route, navigation }) => {
             </SpinnerButton>
           </View>
           <LinkedIn navigation={navigation} />
-          <Button onPressIn={() => navigation.navigate('Home')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 60, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
+          <Button onPress={() => navigation.navigate('Home')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 60, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
             <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Continue as Guest User</Text>
           </Button>
         </View>
