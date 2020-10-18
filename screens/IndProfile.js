@@ -51,15 +51,32 @@ const IndProfile = ({ navigation, route }) => {
     }, [])
     const followid = (id) => {
         // console.log("asd");
-        axios.get('http://104.199.158.211:5000/follow/' + currentid + '/' + id)
-            .then(async (response) => {
-                if (response.data == 'success') {
-                    var place = follows;
-                    place.push(String(id));
-                    setfollows(place)
-                    setFollowPerson('Following');
-                }
-            })
+        if (followPerson == 'Follow') {
+            axios.get('http://104.199.158.211:5000/follow/' + currentid + '/' + id)
+                .then(async (response) => {
+                    if (response.data == 'success') {
+                        var place = follows;
+                        place.push(String(id));
+                        setfollows(place)
+                        setFollowPerson('Following');
+                    }
+                })
+        }
+        else {
+            axios.get('http://104.199.158.211:5000/unfollow/' + currentid + '/' + id)
+                .then(async (response) => {
+                    if (response.data == 'success') {
+                        var place = follows;
+                        const index = place.indexOf(id);
+                        if (index > -1) {
+                            place.splice(index, 1);
+                        }
+                        setfollows(place)
+                        setFollowPerson('Follow');
+                    }
+                })
+        }
+
     }
     const pickImage = () => {
         ImagePicker.showImagePicker(options, (response) => {
