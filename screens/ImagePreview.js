@@ -43,11 +43,7 @@ const App: () => React$Node = (props) => {
     viewShot.current.capture().then(async (url) => {
       console.log("do something with ", uri);
       await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': url}) );
-        props.navigation.navigate('Home', {
-        screen: 'Post',
-        params: { "reload": 1
-        },
-      })
+        props.navigation.navigate('PostScreen', { "reload": 1 })
     });
   }
 

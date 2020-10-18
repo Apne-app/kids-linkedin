@@ -124,6 +124,7 @@ const FileScreen = (props) => {
         let albums = await AsyncStorage.getItem("albums");
             // console.log(albums);
             albums = JSON.parse(albums);
+            // console.log(albums);
         
 
         CameraRoll.getAlbums({
@@ -134,6 +135,8 @@ const FileScreen = (props) => {
                         // console.log(r);
 
                         var arr = [];
+                        if(albums)
+                        {
 
                         for(var i = 0; i < r.length; i++)
                         {
@@ -161,6 +164,7 @@ const FileScreen = (props) => {
                                     })
                                 }
                             }
+                        }
                         }
 
                         console.log(arr);
@@ -326,7 +330,7 @@ const FileScreen = (props) => {
                                     params: { "selected": selected
                                     },
                                   })
-                            }}><Icon type="Ionicons" name='send' style={{color: "#fff", fontSize: 35 }} /></TouchableOpacity>
+                            }}><Icon type="FontAwesome" name='send' style={{color: "#fff", fontSize: 35, marginRight: 4 }} /></TouchableOpacity>
                         </View>
                     )
                 }}

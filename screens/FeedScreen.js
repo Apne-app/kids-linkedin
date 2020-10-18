@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left, Fab } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -14,6 +14,7 @@ import ImageView from 'react-native-image-viewing';
 import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import { useFocusEffect } from "@react-navigation/native";
 import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
 import { clockRunning, set } from 'react-native-reanimated';
@@ -61,6 +62,28 @@ const FeedScreen = ({ navigation, route }) => {
     const [options, setoptions] = useState({})
     const sheetRefLike = React.useRef(null);
     const sheetRefCom = React.useRef(null);
+
+    useFocusEffect(
+        React.useCallback(() => {
+        const onBackPress = () => {
+            Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            { text: "YES", onPress: () => BackHandler.exitApp() }
+            ]);
+            return true;
+        };
+
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+    }, []));
+
     const renderLikes = (props) => {
         if (type === 'like') {
             return <View style={{ height: height, backgroundColor: 'lightgrey' }}><LikeList reactionKind={'like'} {...options} activityId={actid} /></View>

@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
-import { ScrollView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
+import { ScrollView, Text, StyleSheet, Dimensions, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
@@ -90,6 +90,21 @@ const Upload = ({ route, navigation }) => {
       'uri': ''
     },
   ])
+
+  useFocusEffect(
+        React.useCallback(() => {
+        const backAction = () => {
+        navigation.navigate('Home', {
+        screen: 'Feed',
+      })
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+    }, []));
 
 
 
@@ -353,7 +368,11 @@ const Upload = ({ route, navigation }) => {
   return (
     <Container style={styles.container}>
       <Header style={{ backgroundColor: "#000", paddingTop: 20 }} >
-        
+        <Left>
+          <TouchableOpacity onPress={() =>  navigation.navigate('Home', {screen: 'Feed'})}>
+          <Icon type="Entypo" name="cross" style={{ color: "#fff", fontSize: 40 }} />
+          </TouchableOpacity>
+        </Left>
         <Right>
         <TouchableOpacity onPress={() => {
           setExplore([
@@ -625,11 +644,11 @@ const Upload = ({ route, navigation }) => {
         >
           <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
         </TouchableOpacity>*/}
-      <Item last style={{ position: 'absolute', bottom: height * 0.11 }} >
+      <Item last style={{ position: 'absolute', bottom: height * 0.03 }} >
         <Input onChangeText={(text) => {
           setcaption(text)
         }}value={caption} placeholder="Add a caption and hashtags" />
-        <Icon onPress={() => tag == 'Certificate' ? setModalVisible4(true): PostUpload()} style={{ color: "#fff" }} type="Ionicons" name='send' />
+        <Icon onPress={() => tag == 'Certificate' ? setModalVisible4(true): PostUpload()} style={{ color: "#fff" }} type="FontAwesome" name='send' />
       </Item>
 
       <View style={{ height: height * 0.07 }} />
@@ -637,17 +656,17 @@ const Upload = ({ route, navigation }) => {
         active={activefab}
         direction="up"
         containerStyle={{ right: 8 }}
-        style={{ backgroundColor: 'transparent', bottom: height * 0.15 }}
+        style={{ backgroundColor: 'transparent', bottom: height * 0.07 }}
         position="bottomRight"
         onPress={() => setActiveFab(!activefab)}>
         <Icon name="arrow-down-circle" type="Feather" style={{ color: "#3cb979", fontSize: 50 }} />
-        <Button onPress={() => setModalVisible3(true)} style={{ backgroundColor: '#3B5998', marginBottom: height * 0.15 }}>
+        <Button onPress={() => setModalVisible3(true)} style={{ backgroundColor: '#3B5998', marginBottom: height * 0.08 }}>
           <Icon name="image" type="Feather" />
         </Button>
-        <Button onPress={() => setModalVisible(true)} style={{ backgroundColor: '#DD5144', marginBottom: height * 0.15 }}>
+        <Button onPress={() => setModalVisible(true)} style={{ backgroundColor: '#DD5144', marginBottom: height * 0.08 }}>
           <Icon name="file-pdf" type="FontAwesome5" />
         </Button>
-        <Button style={{ backgroundColor: '#3B5998', marginBottom: height * 0.15 }}
+        <Button style={{ backgroundColor: '#3B5998', marginBottom: height * 0.08 }}
           onPress={() => {
             setModalVisible2(true);
             // console.log(explore);

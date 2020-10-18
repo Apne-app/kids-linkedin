@@ -177,7 +177,7 @@ export default class ExampleApp extends PureComponent {
             <Icon type="Entypo" name="circle" style={{color: "#fff", fontSize: 70}} />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-end', marginRight: 15}}>
-            <Icon type="Ionicons" name="camera-reverse-outline" style={{color: "#fff", fontSize: 45, marginTop: 10}} />
+            <Icon type="Ionicons" name="camera-reverse" style={{color: "#fff", fontSize: 45, marginTop: 10}} />
           </TouchableOpacity>
         </View>
         

@@ -26,6 +26,7 @@ import ChildSuccess from './screens/ChildSuccess'
 import FileScreen from './screens/FileScreen'
 import Upload from './components/Post';
 import Verified from './screens/Verified'
+import PostScreenNavig from './screens/PostScreenNavig'
 import PostFolder from './components/PostFolder'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
@@ -39,53 +40,6 @@ const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 // console.disableYellowBox = true
 
-const tabs: TabsConfigsType = {
-  Feed: {
-    icon: () => <Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />
-  },
-  Search: {
-    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
-  },
-  Post: {
-    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
-  },
-  Files: {
-    icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
-  },
-  Notifications: {
-    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
-  },
-  Profile: {
-    icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
-  }
-}
-
-function Bottom(props) {
-
-  // console.log(props.route.params);
-  React.useEffect(() => {
-    SplashScreen.hide();
-  }, [])
-  SplashScreen.hide();
-
-  return (
-    <BottomNav.Navigator
-      tabBar={props => (
-        <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
-      )}
-    // tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
-    >
-      <BottomNav.Screen name="Feed" component={FeedScreen} />
-      <BottomNav.Screen name="Search" component={SearchScreen} />
-      <BottomNav.Screen name="Post" component={Upload} />
-      <BottomNav.Screen name="Notifications" component={NotificationScreen} />
-      <BottomNav.Screen name="Files" component={FileScreen} />
-      <BottomNav.Screen name="Profile" component={ProfileScreen} />
-
-      {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
-    </BottomNav.Navigator>
-  )
-}
 // function Drawer({route}) {
 
 //   // console.log(route);
@@ -100,11 +54,66 @@ function Bottom(props) {
 //     </DrawNav.Navigator>
 //   )
 // }
-const App = ({ navigation }) => {
-  // React.useEffect(() => {
-  //   SplashScreen.hide();
-  // }, [])
+const App = (props) => {
+  React.useEffect(() => {
+    console.log("aaa", props);
+  }, [])
+
+
+
   const containerRef = React.useRef();
+
+
+  const tabs: TabsConfigsType = {
+    Feed: {
+      icon: () => <Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />
+    },
+    Search: {
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+    },
+    Post: {
+      icon: ({ progress }) => <Icon onPress={() => console.log('navigate')} style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+    },
+    Files: {
+      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
+    },
+    Notifications: {
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+    },
+    Profile: {
+      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
+    }
+  }
+
+  function Bottom(props) {
+
+    // console.log(props.route.params);
+    React.useEffect(() => {
+      SplashScreen.hide();
+    }, [])
+    SplashScreen.hide();
+
+    return (
+      <BottomNav.Navigator
+        tabBar={props => (
+          <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
+        )}
+      // tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
+      >
+        <BottomNav.Screen name="Feed" component={FeedScreen} />
+        <BottomNav.Screen name="Search" component={SearchScreen} />
+        <BottomNav.Screen name="Post" component={PostScreenNavig} />
+        <BottomNav.Screen name="Notifications" component={NotificationScreen} />
+        <BottomNav.Screen name="Files" component={FileScreen} />
+        <BottomNav.Screen name="Profile" component={ProfileScreen} />
+
+        {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
+      </BottomNav.Navigator>
+    )
+  }
+
+
+
   const [init, setinit] = useState('Login')
   useEffect(() => {
 
@@ -183,6 +192,7 @@ const App = ({ navigation }) => {
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
+        <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
         <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -353,14 +353,13 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     const there = () => {
         return (<View style={{ marginBottom: 80, minHeight: "93%" }}>
-        <ScrollView style={{backgroundColor: "#f9f9f9"}} refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> }>
+        <ScrollView style={{backgroundColor: "#f9f9f9"}} >
         <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 5 }}>
                     <Body style={{ alignItems: 'center' }}>
                     <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title> 
                 </Body>
-                <Right style={{ marginRight: 30, marginTop: 0 }}>
-                    <Icon onPress={() => {optionsRef.current.snapTo(0); console.log("sad")}} type="MaterialCommunityIcons" name="dots-vertical"  />
+                <Right style={{ marginRight: 10, marginTop: 0 }}>
+                    <Icon onPress={() => {optionsRef.current.snapTo(0); console.log("sad")}} style={{color: "#000", fontSize: 20}} type="Entypo" name="dots-three-vertical"  />
                 </Right>
             </Header>
             <StreamApp
