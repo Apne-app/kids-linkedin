@@ -12,6 +12,7 @@ import axios from 'axios';
 import LinkedIn from '../components/LinkedIn'
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
+import analytics from '@segment/analytics-react-native';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -71,6 +72,13 @@ const LoginScreen = ({ route, navigation }) => {
             //2  means verified+no  child
             /// 3 means child+verified
             await AsyncStorage.setItem('status', '1')
+
+            analytics.identify(response.data.uuid, {
+              email: response.data.email
+            })
+
+            analytics.track('Login')
+
           } catch (e) {
             // saving error
           }

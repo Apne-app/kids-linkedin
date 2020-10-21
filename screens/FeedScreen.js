@@ -17,6 +17,7 @@ import axios from 'axios';
 import { useFocusEffect } from "@react-navigation/native";
 import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
+import analytics from '@segment/analytics-react-native'
 import { clockRunning, set } from 'react-native-reanimated';
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
@@ -136,7 +137,7 @@ const FeedScreen = ({ navigation, route }) => {
                         kind="like"
                         height={0}
                         width={0}
-                        onPress={() => { console.log(id); setoptions(props); settype('like'); setactid(id); sheetRefLike.current.snapTo(1) }}
+                        onPress={() => { analytics.track('Like'); console.log(id); setoptions(props); settype('like'); setactid(id); sheetRefLike.current.snapTo(1) }}
                     />
                     <Text style={{ marginRight: -15, marginLeft: 5 }}>•</Text>
                     <ReactionIcon
@@ -146,7 +147,7 @@ const FeedScreen = ({ navigation, route }) => {
                         kind="comment"
                         height={0}
                         width={-20}
-                        onPress={() => { console.log(id); setoptions(props); settype('comment'); setactid(id); sheetRefLike.current.snapTo(1) }}
+                        onPress={() => { analytics.track('Comment'); console.log(id); setoptions(props); settype('comment'); setactid(id); sheetRefLike.current.snapTo(1) }}
                     />
                 </View>
                 {/* <CommentBox

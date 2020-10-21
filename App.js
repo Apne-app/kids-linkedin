@@ -34,6 +34,8 @@ import messaging from '@react-native-firebase/messaging';
 import IndProfile from './screens/IndProfile';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
+import analytics from '@segment/analytics-react-native'
+
 
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
@@ -151,6 +153,17 @@ const App = (props) => {
 
 
   useEffect(() => {
+
+    const segmentInitialize = async () => {
+      await analytics.setup('A43k9qNF1Cof0lLE4DeTil5iMfSxCiap', {
+        // Record screen views automatically!
+        recordScreenViews: true,
+        // Record certain application events automatically!
+        trackAppLifecycleEvents: true
+      })
+    }
+    segmentInitialize();
+
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {

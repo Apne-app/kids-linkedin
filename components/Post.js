@@ -12,7 +12,8 @@ import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
 import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
-import Gallery from './Gallery'
+import Gallery from './Gallery';
+import analytics from '@segment/analytics-react-native'
 import ImageView from "react-native-image-viewing";
 import { connect } from 'getstream';
 import axios from 'axios'
@@ -90,6 +91,12 @@ const Upload = ({ route, navigation }) => {
       'uri': ''
     },
   ])
+
+  React.useEffect(() => {
+    analytics.screen('Post Screen')
+    console.log("aaaa");
+  }, [])
+
 
   useFocusEffect(
         React.useCallback(() => {
@@ -418,6 +425,7 @@ const Upload = ({ route, navigation }) => {
                         // // writeFile();
                         // }
                         // saveImages();
+                        analytics.track('PDF Saved');
                         myAsyncPDFFunction()
                         // console.log(explore)
                       }}
@@ -456,6 +464,7 @@ const Upload = ({ route, navigation }) => {
                   <View style={{ flexDirection: 'row' }} >
                     <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
                       onPress={() => {
+                        analytics.track('Certificate Upload');
                         PostUpload();
                       }}
                     >
@@ -490,6 +499,7 @@ const Upload = ({ route, navigation }) => {
                   <View style={{ flexDirection: 'row' }} >
                     <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
                       onPress={() => {
+                        analytics.track('Saved to Gallery')
                         saveImages();
                       }}
                     >
@@ -519,6 +529,7 @@ const Upload = ({ route, navigation }) => {
 
                     <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15 }}
                       onPress={() => {
+                        analytics.track('Cloud Storage')
                         // console.log(randomStr(20, '12345abcdepq75xyz'));
                         var i;
                         setTimeout(() => {
@@ -648,7 +659,7 @@ const Upload = ({ route, navigation }) => {
         <Input onChangeText={(text) => {
           setcaption(text)
         }}value={caption} placeholder="Add a caption and hashtags" />
-        <Icon onPress={() => tag == 'Certificate' ? setModalVisible4(true): PostUpload()} style={{ color: "#fff" }} type="FontAwesome" name='send' />
+        <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#fff" }} type="FontAwesome" name='send' />
       </Item>
 
       <View style={{ height: height * 0.07 }} />

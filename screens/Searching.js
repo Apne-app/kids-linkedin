@@ -7,6 +7,7 @@ import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Sea
 import AsyncStorage from '@react-native-community/async-storage';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
 import axios from 'axios';
+import analytics from '@segment/analytics-react-native';
 import { connect } from 'getstream';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -102,7 +103,7 @@ const Searching = ({ route, navigation }) => {
                     appId={'90935'}
                     token={item['data']['gsToken']}
                 >
-                    <TouchableOpacity style={{ flex: 1, width: 180, height: 180, flexDirection: 'column', backgroundColor: 'lightgrey', borderRadius: 20, alignSelf: 'center' }} onPress={() => navigation.navigate('IndProf', { id: item.id, data: item.data })}>
+                    <TouchableOpacity style={{ flex: 1, width: 180, height: 180, flexDirection: 'column', backgroundColor: 'lightgrey', borderRadius: 20, alignSelf: 'center' }} onPress={() => {navigation.navigate('IndProf', { id: item.id, data: item.data }); analytics.track('Child Search')}}>
                         <Avatar
                             size={80}
                             noShadow

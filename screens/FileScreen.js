@@ -325,11 +325,7 @@ const FileScreen = (props) => {
                         <View>
                             <TouchableOpacity style={{ marginBottom: height*0.06, marginLeft: width*0.83, width: 60,zIndex: 1000000, backgroundColor: "#357feb", borderRadius: 30, height: 60, justifyContent: 'center', alignItems: 'center'}} onPress={() => {
                                 setSelected([]); cancelSelection(); setVisible(false);setSelTopic(''); setSelecting(false)
-                                props.navigation.navigate('Home', {
-                                    screen: 'Post',
-                                    params: { "selected": selected
-                                    },
-                                  })
+                                props.navigation.navigate('PostScreen', { "selected": selected })
                             }}><Icon type="FontAwesome" name='send' style={{color: "#fff", fontSize: 35, marginRight: 4 }} /></TouchableOpacity>
                         </View>
                     )

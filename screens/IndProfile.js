@@ -23,7 +23,12 @@ const IndProfile = ({ navigation, route }) => {
     const [follows, setfollows] = React.useState([]);
     const [followPerson, setFollowPerson] = React.useState('Follow')
     const [currentid, setcurrentid] = React.useState('');
+    const [certi, setCerti] = useState([]);
+    const [courses, setCourses] = useState([])
+    const [data, setdata] = useState({ 'followers': [], 'following': [] })
+
     useEffect(() => {
+        // console.log(route.params)
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
             console.log(children)
@@ -31,6 +36,11 @@ const IndProfile = ({ navigation, route }) => {
             const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
             var user = client.feed('timeline', children['id'] + 'id');
             var follows = await user.following()
+            // var profile = client.feed('user', route['params']['id']+'id');
+            // var profFollow = await profile.followers();
+            // var profFollowing = await profile.followers();
+            // console.log("asdaaaa",profile)
+            // setdata({ 'followers': profFollow['results'], 'following': profFollowing['results'] });
             var data = []
             follows['results'].map(item => {
                 data.push(item['target_id'].replace('user:', '').replace('id', ''))
@@ -40,6 +50,49 @@ const IndProfile = ({ navigation, route }) => {
         }
         addfollows()
     }, [])
+
+    useEffect(() => {
+        const addCerti = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            var config = {
+                method: 'get',
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${route['params']['data']['gsToken']}`,
+                headers: {}
+            };
+            axios(config)
+            .then(function (response) {
+            // console.log((response.data));
+            var arr = [];
+            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+            setCerti([ ...arr ])
+            // console.log(arr);
+            })
+            .catch(function (error) {
+            console.log(error);
+            });
+
+            config = {
+            method: 'get',
+            url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${route['params']['data']['gsToken']}`,
+            headers: { }
+            };
+
+            axios(config)
+            .then(function (response) {
+            var arr = [];
+            Object.keys(response.data).forEach(e => arr.push({"name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"]}));
+            setCourses([ ...arr ])
+            console.log(arr)
+            })
+            .catch(function (error) {
+            // console.log(error);
+            });
+
+        }
+        addCerti();
+    }, [])
+
     useEffect(() => {
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
@@ -139,7 +192,6 @@ const IndProfile = ({ navigation, route }) => {
                                 <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'black', flex: 1 }}>I  am a very good boy. I am not a bad boy.</Text>
                     </View>
                 </View>
                 <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
@@ -149,23 +201,23 @@ const IndProfile = ({ navigation, route }) => {
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>20</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>30</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
                         </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>20</Text>
+                        <TouchableOpacity  style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
                             <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
-                        </View>
+                        </TouchableOpacity>
 
                     </View>
                 </View>
