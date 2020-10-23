@@ -8,7 +8,7 @@ class PostScreenNavig extends Component {
     this.focusListener = this.props.navigation.addListener("focus", () =>
         setTimeout(() => {
             
-            this.props.navigation.navigate("PostScreen")
+            this.props.navigation.navigate("Camera")
         }, 10)
     );
   }

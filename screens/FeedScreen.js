@@ -1,8 +1,8 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left, Fab } from 'native-base';
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title,Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
@@ -17,7 +17,9 @@ import axios from 'axios';
 import { useFocusEffect } from "@react-navigation/native";
 import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
-import analytics from '@segment/analytics-react-native'
+import { Snackbar } from 'react-native-paper';
+import analytics from '@segment/analytics-react-native';
+import { Chip } from 'react-native-paper';
 import { clockRunning, set } from 'react-native-reanimated';
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
@@ -62,7 +64,13 @@ const FeedScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState('notyet')
     const [options, setoptions] = useState({})
     const sheetRefLike = React.useRef(null);
+    const [showToast, setShowToast] = useState(false)
     const sheetRefCom = React.useRef(null);
+    const [reportedProfile, setReportedProfile] = useState({});
+    const sheetRefReport = React.useRef(null);
+    const [reportType, setReportType] = useState('')
+    const [reportComment, setReportComment] = useState('');
+    const [actionstatus, setActionStatus] = useState(0); 
 
     useFocusEffect(
         React.useCallback(() => {
@@ -85,6 +93,48 @@ const FeedScreen = ({ navigation, route }) => {
 
     }, []));
 
+    const report = (x) => {
+
+        // console.log(children);
+        var now = new Date(); 
+        var datetime = now.getFullYear()+'/'+(now.getMonth()+1)+'/'+now.getDate(); 
+        datetime += ' '+now.getHours()+':'+now.getMinutes()+':'+now.getSeconds(); 
+
+        var body = {
+            "created_by" : children["0"]["data"]["gsToken"],
+            "reported_name": x["actor"]["data"]["name"],
+            "post_id": x["id"],
+            "images": x["image"],
+            "reported_id": x["actor"]["id"].split("id")[0],
+            "reported_time": datetime
+        }
+
+        var config = {
+        method: 'post',
+        url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
+        headers: { 
+            'Content-Type': 'application/json'
+        },
+        data : body
+        };
+        axios(config)
+        .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        // setLoading(false);
+        if(response.data == "success")
+        {
+            setShowToast(true);
+        }
+        })
+        .catch(function (error) {
+        alert(error);
+        // setLoading(false)
+        });
+
+        // console.log(body);
+
+    }
+
     const renderLikes = (props) => {
         if (type === 'like') {
             return <View style={{ height: height, backgroundColor: 'lightgrey' }}><LikeList reactionKind={'like'} {...options} activityId={actid} /></View>
@@ -94,6 +144,40 @@ const FeedScreen = ({ navigation, route }) => {
         // 
 
     }
+
+    const renderReport = () => (
+        <View
+            scrollEnabled={false}
+            style={{
+                backgroundColor: '#fff',
+                padding: 16,
+                height: height*0.5,
+            }}
+        >
+            <TouchableOpacity onPress={() => {sheetRefReport.current.snapTo(2);}} style={{alignItems: 'center',paddingBottom: 10}}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
+            <Text style={{alignSelf: 'center', marginBottom: 5, fontSize: 15 }} >Report {!(Object.keys(reportedProfile).length === 0 && reportedProfile.constructor === Object) ? reportedProfile.actor.data.name : ''}'s Post</Text>
+            <FlatList
+              data={[ "Improper Content", "Faking to be someone else" ]}
+              scrollEnabled={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                // flexGrow: 1,
+              }}
+              // style={{marginTop: 5}}
+              renderItem={({ item, i }) => (
+                <Chip key={i} style={{ backgroundColor: reportType == item ? 'red' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10, height: 35 }} textStyle={{ color: "#fff" }} onPress={() => reportType == item ? setReportType('') : setReportType(item)} >{item}</Chip>
+              )}
+              //Setting the number of column
+              // numColumns={3}
+              horizontal={true}
+              keyExtractor={(item, index) => index.toString()}
+            />
+            <Form style={{marginBottom: height*0.17}}>
+                <Textarea  value={reportComment} onChangeText = {(text) => setReportComment(text)} rowSpan={5} bordered placeholder="Add Remarks" />
+            </Form>
+        </View>
+    );
+
     const renderComments = (props) => {
         var data = <Text></Text>
         data = actid ? <Text></Text> : <View style={{ height: height, backgroundColor: 'black' }}></View>
@@ -237,9 +321,9 @@ const FeedScreen = ({ navigation, route }) => {
                             options={['Share', 'Report', 'Close']}
                             cancelButtonIndex={2}
                             destructiveButtonIndex={1}
-                            onPress={(index) => { /* do something */ }}
+                            onPress={(index) => { index  == 1 ? report(props.activity) : null; }}
                         />
-                        <Right><Icon onPress={() => showActionSheet()} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20 }} /></Right>
+                        <Right><Icon onPress={() => {showActionSheet(); }} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20 }} /></Right>
                     </View>
                 }
                 Content={
@@ -270,9 +354,9 @@ const FeedScreen = ({ navigation, route }) => {
                                             options={['Share', 'Report', 'Close']}
                                             cancelButtonIndex={2}
                                             destructiveButtonIndex={1}
-                                            onPress={(index) => { /* do something */ }}
+                                            onPress={(index) => { index  == 1 ? report(props.activity): null ;  }}
                                         />
-                                        <Right><Icon onPress={() => showActionSheet()} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20, color: 'white' }} /></Right>
+                                        <Right><Icon onPress={() => {showActionSheet(); }} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20, color: 'white' }} /></Right>
                                     </View>
                                         <Text style={{ fontFamily: 'Poppins-Regular', color: 'white', marginLeft: 30, marginTop: 10, marginRight: 30 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text></View>)
                             }}
@@ -397,7 +481,27 @@ const FeedScreen = ({ navigation, route }) => {
                             )
                         }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                     </StreamApp>
+                    <BottomSheet
+                        ref={sheetRefReport}
+                        snapPoints={[height - 200, 400, 0]}
+                        initialSnap={2}
+                        borderRadius={25}
+                        renderContent={renderReport}
+                    />
                 </SafeAreaView>
+                <Snackbar
+                    visible={showToast}
+                    style={{marginBottom: height*0.08}}
+                    duration={1500}
+                    onDismiss={ () => setShowToast(false) }
+                    action={{
+                    label: 'Done',
+                    onPress: () => {
+                        // Do something
+                    },
+                    }}>
+                    Post Reported
+                </Snackbar>
             </SafeAreaProvider>
         );
     }
@@ -423,6 +527,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     return (
         children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
+        
     );
 };
 

@@ -16,7 +16,7 @@ import PostScreen from './screens/PostScreen'
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
-import CameraScreen from './screens/CameraScreen'
+import Camera from './components/Camera'
 import ChildScreen from './screens/ChildScreen'
 import Gallery from './components/Gallery'
 import SinglePostScreen from './screens/SinglePost'
@@ -203,7 +203,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
         <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Camera" component={CameraScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
         <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
         <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />

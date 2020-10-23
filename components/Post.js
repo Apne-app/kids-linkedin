@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
-import { ScrollView, Text, StyleSheet, Dimensions, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
+import { ScrollView, Text, Keyboard, StyleSheet, Dimensions, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
@@ -92,9 +92,26 @@ const Upload = ({ route, navigation }) => {
     },
   ])
 
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const onKeyboardShow = event => setKeyboardOffset(event.endCoordinates.height);
+  const onKeyboardHide = () => setKeyboardOffset(0);
+  const keyboardDidShowListener = React.useRef();
+  const keyboardDidHideListener = React.useRef();
+
+  React.useEffect(() => {
+    keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
+    keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
+
+    return () => {
+      keyboardDidShowListener.current.remove();
+      keyboardDidHideListener.current.remove();
+    };
+  }, []);
+
   React.useEffect(() => {
     analytics.screen('Post Screen')
-    console.log("aaaa");
+    // console.log("aaaa");
+    // console.log(route.params.images)
   }, [])
 
 
@@ -117,27 +134,30 @@ const Upload = ({ route, navigation }) => {
 
 
   const getImages = async () => {
-    let x = await AsyncStorage.getItem("@scanImg");
-    console.log(x);
-    if (x) {
-      if (JSON.parse(x).uri != explore[explore.length - 1]) {
-        setExplore([(JSON.parse(x)), ...explore]);
-        console.log(x);
-        var tempImg = await AsyncStorage.getItem('tempImg');
-        tempImg = JSON.parse(tempImg);
-        if(!tempImg) tempImg = { "files": [], "name": "Unsaved Images", "tag": "unsaved" };
-        tempImg.files.push( { "node": {"image": { "uri" : JSON.parse(x).uri }}} )
-        console.log(tempImg);
-        await AsyncStorage.setItem('tempImg', JSON.stringify(tempImg));
-        var y = "" + String((JSON.parse(x)).uri);
-        var obj = {};
-        obj[String((JSON.parse(x)).uri)] = false;
-        setUploading({
-          ...uploading,
-          ...obj
-        });
-      }
-    }
+    // let x = await AsyncStorage.getItem("@scanImg");
+    // console.log(x);
+    // if (x) {
+    //   if (JSON.parse(x).uri != explore[explore.length - 1]) {
+    //     setExplore([(JSON.parse(x)), ...explore]);
+    //     console.log(x);
+    //     var tempImg = await AsyncStorage.getItem('tempImg');
+    //     tempImg = JSON.parse(tempImg);
+    //     if(!tempImg) tempImg = { "files": [], "name": "Unsaved Images", "tag": "unsaved" };
+    //     tempImg.files.push( { "node": {"image": { "uri" : JSON.parse(x).uri }}} )
+    //     console.log(tempImg);
+    //     await AsyncStorage.setItem('tempImg', JSON.stringify(tempImg));
+    //     var y = "" + String((JSON.parse(x)).uri);
+    //     var obj = {};
+    //     obj[String((JSON.parse(x)).uri)] = false;
+    //     setUploading({
+    //       ...uploading,
+    //       ...obj
+    //     });
+    //   }
+    // }
+    // console.log(route.params.images)
+    setExplore([ ...route.params.images, { 'height': 0, 'width': '0', 'uri': '' } ])
+
   }
 
   // console.log(route)
@@ -145,6 +165,7 @@ const Upload = ({ route, navigation }) => {
   if (route.params) {
     if (route.params.reload) {
       getImages();
+      // setExplore([ route.params.images,  ])
       console.log(route.params.reload);
       console.log("asds");
       route.params.reload = 0;
@@ -372,30 +393,41 @@ const Upload = ({ route, navigation }) => {
     await user.addActivity(activity);
   }
 
+  const openImageViewer = () => {
+
+    var selectedImg = [];
+    for(var i = 0; i < explore.length-1; i++)
+    {
+      selectedImg.push({ uri: explore[i]["uri"]});
+    }
+    setSelected([ ...selectedImg ]);
+
+  }
+
   return (
-    <Container style={styles.container}>
-      <Header style={{ backgroundColor: "#000", paddingTop: 20 }} >
+    <View style={styles.container}>
+      <Header style={{ backgroundColor: "#fff", paddingTop: 10 }} >
         <Left>
           <TouchableOpacity onPress={() =>  navigation.navigate('Home', {screen: 'Feed'})}>
-          <Icon type="Entypo" name="cross" style={{ color: "#fff", fontSize: 40 }} />
+          <Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 40 }} />
           </TouchableOpacity>
         </Left>
         <Right>
-        <TouchableOpacity onPress={() => {
-          setExplore([
-            {
-              'height': 0,
-              'width': '0',
-              'uri': ''
-            },
-          ])
-        }}>
-          <Icon type="Entypo" name="trash" style={{ color: "red" }} />
+        <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center',  }}
+          onPress={() => {
+            analytics.track('PDF Saved');
+            setModalVisible(true);
+          }}
+        >
+          <View style={styles.saveAsPDF}>
+            <Text style={{ color: "#fff", flex: 1, textAlign: 'center' }}>
+              Save as PDF
+            </Text>
+          </View>
         </TouchableOpacity>
         </Right>
       </Header>
-      <Content >
-        <View style={{ backgroundColor: "#000" }}>
+        <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.centeredView}>
             <Modal
               animationType="slide"
@@ -415,16 +447,6 @@ const Upload = ({ route, navigation }) => {
                   <View style={{ flexDirection: 'row' }} >
                     <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
                       onPress={() => {
-                        // if(tag != "")
-                        // {
-
-                        // setTags([
-                        //   ...tags,
-                        //   tag
-                        // ])
-                        // // writeFile();
-                        // }
-                        // saveImages();
                         analytics.track('PDF Saved');
                         myAsyncPDFFunction()
                         // console.log(explore)
@@ -565,7 +587,11 @@ const Upload = ({ route, navigation }) => {
                 visible={visible}
                 onRequestClose={() => {setSelected([]);setVisible(false);}}
                 HeaderComponent = {() => {
-                    return <Text style={{color: "#fff", fontSize: 26, margin: 20}}>Picture</Text>
+                    return (
+                      <TouchableOpacity style={{marginTop: 20, marginLeft: 20}} onPress={() => {setSelected([]);setVisible(false);} }>
+                      <Icon type="Entypo" name="cross" style={{ color: "#fff", fontSize: 40 }} />
+                      </TouchableOpacity>
+                    )
                 }}
                 FooterComponent = {() => {
                     return (
@@ -574,40 +600,20 @@ const Upload = ({ route, navigation }) => {
                     )
                 }}
             />
-
-
-          <View style={{ flexDirection: 'row', marginTop: -height*0.06 }} >
-            <FlatList
-              data={tags}
-              scrollEnabled={true}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                flexGrow: 1,
-              }}
-              // style={{marginTop: 5}}
-              renderItem={({ item, i }) => (
-                <Chip key={i} style={{ backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10 }} textStyle={{ color: "#fff" }} onPress={() => tag == item ? setTag('') : setTag(item)} >{item}</Chip>
-              )}
-              //Setting the number of column
-              // numColumns={3}
-              horizontal={true}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-
+          <ScrollView style={{height: height*0.6, backgroundColor: '#f9f9f9'}}>
           <FlatList
             data={explore}
             renderItem={({ item }) => (
               <View>
                 {
                   item.height != 0 ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {setSelected([{ uri: item.uri}]); setVisible(true)}}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {openImageViewer(); setVisible(true)}}>
                       <View
                         key={item.id}
                         style={{ flex: 1, }}>
                         <ImageBackground
                           style={styles.image}
-                          imageStyle={{ opacity: uploading[item["uri"]] ? 0.5 : 1 }}
+                          imageStyle={{ opacity: uploading[item["uri"]] ? 0.5 : 1, borderRadius: 20 }}
                           source={{
                             uri: item.uri,
                           }}
@@ -622,7 +628,7 @@ const Upload = ({ route, navigation }) => {
                       </View>
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => navigation.navigate('Camera', {})}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => {var ar = [...explore]; ar.pop(); navigation.navigate('Camera', {"images": ar})}}>
                       <View
                         key={item.uri}
                         style={{ flex: 1 }}>
@@ -644,9 +650,9 @@ const Upload = ({ route, navigation }) => {
             numColumns={2}
             keyExtractor={(item, index) => index.toString()}
           />
+          </ScrollView>
         </View>
 
-      </Content>
 
       {/*        <TouchableOpacity style={{position: 'absolute', bottom: height*0.15, right: 6}}
           onPress={() => {
@@ -655,14 +661,34 @@ const Upload = ({ route, navigation }) => {
         >
           <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
         </TouchableOpacity>*/}
-      <Item last style={{ position: 'absolute', bottom: height * 0.03 }} >
+      <View style={{height: height*0.25, borderTopWidth: 0.2,borderLeftWidth: 0.2,borderRightWidth: 0.2, borderRadius: 10}}>
+      <View style={{ marginTop: 10}} >
+            <FlatList
+              data={tags}
+              scrollEnabled={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                flexGrow: 1,
+              }}
+              // style={{marginTop: 5}}
+              renderItem={({ item, i }) => (
+                <Chip key={i} style={{ backgroundColor: tag == item ? '#357feb' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#357feb" }} textStyle={{ color: tag == item ? "#fff" : "#357feb" }} onPress={() => tag == item ? setTag('') : setTag(item)} >{item}</Chip>
+              )}
+              //Setting the number of column
+              // numColumns={3}
+              horizontal={true}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+      <Item last style={{ position: 'absolute', bottom: height * 0.03, width: width*0.85, alignItems: 'center', alignSelf: 'center' }} >
         <Input onChangeText={(text) => {
           setcaption(text)
-        }}value={caption} placeholder="Add a caption and hashtags" />
-        <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#fff" }} type="FontAwesome" name='send' />
+        }}value={caption} placeholder="Add a caption and hashtags"  />
+        <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#357feb" }} type="FontAwesome" name='send' />
       </Item>
+      </View>
 
-      <View style={{ height: height * 0.07 }} />
+      {/*<View style={{ height: height * 0.07 }} />
       <Fab
         active={activefab}
         direction="up"
@@ -685,9 +711,9 @@ const Upload = ({ route, navigation }) => {
         >
           <Icon name="upload-cloud" type="Feather" style={{ color: "#fff" }} />
         </Button>
-      </Fab>
+      </Fab>*/}
 
-    </Container>
+    </View>
   );
 }
 
@@ -696,9 +722,10 @@ const styles = StyleSheet.create({
   container: {
     // alignItems: 'center',
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: "#fff",
     flexDirection: 'column',
     height: height,
+    overflow: 'hidden'
     // padding: 40, 
     // paddingTop: 80
   },
@@ -752,19 +779,18 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    height: width * 0.48,
+    height: width * 0.45,
     width: width * 0.45,
     margin: width * 0.02,
-    elevation: 3
-    // borderRadius: 30,
+    borderRadius: 30,
 
   },
   addImg: {
-    height: width * 0.48,
+    height: width * 0.45,
     width: width * 0.45,
     margin: width * 0.02,
     // borderWidth: 2,
-    // borderRadius: 15,
+    borderRadius: 20,
     backgroundColor: "#327FEB"
     // borderStyle: 'dashed',
   },
@@ -778,6 +804,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#fff",
     width: width * 0.31
+  },
+  saveAsPDF: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 8,
+    // margin: 5,
+    backgroundColor: '#357feb',
+    borderRadius: 7,
+    borderWidth: 1,
+    borderColor: "#fff",
+    width: 120
   },
   save2: {
     alignSelf: 'center',
@@ -804,9 +841,9 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#000",
+    backgroundColor: "transparent",
     alignItems: "center",
-    marginTop: 22
+    // marginTop: 22
   },
   modalView: {
     margin: 20,

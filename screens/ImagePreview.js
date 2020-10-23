@@ -8,6 +8,7 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import BottomSheet from 'reanimated-bottom-sheet';
 import ViewShot from "react-native-view-shot";
 import Draggable from 'react-native-draggable';
+import { useFocusEffect } from "@react-navigation/native";
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -40,13 +41,38 @@ const App: () => React$Node = (props) => {
 
   const takeShot = async () => {
     // console.log(viewShot)
-    viewShot.current.capture().then(async (url) => {
-      console.log("do something with ", uri);
-      await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': url}) );
-        props.navigation.navigate('PostScreen', { "reload": 1 })
-    });
+    // viewShot.current.capture().then(async (url) => {
+    //   console.log("do something with ", uri);
+    // console.log(props.route.params);
+      // await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': uri}) );
+        props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...props.route.params.images, {'height': 200, 'uri': uri} ] })
+    // });
   }
 
+  const backBehavior = () => {
+    if(croppedi)
+    {
+      setcroppedi(false);
+    }
+    else
+    {
+      props.navigation.navigate('Camera')
+    }
+  }
+
+  useFocusEffect(
+        React.useCallback(() => {
+        const backAction = () => {
+          // console.log(croppedi)
+          backBehavior();
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+    }, []));
 
   const renderContent = () => (
     <View
@@ -120,6 +146,36 @@ const App: () => React$Node = (props) => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
+      <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05, }}>
+              <Left style={{ alignItems: 'center' }}>
+              <TouchableOpacity onPress={() =>  croppedi ? setcroppedi(false) : props.navigation.pop()}><Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
+          </Left>
+          <Body>
+             
+          </Body>
+          <Right>
+          {
+            !croppedi ? 
+            <TouchableOpacity onPress={async () => {
+            cropViewRef.current.saveImage(true, 90)
+              
+          }} style={{marginRight: 10}}>
+              <Icon type="Entypo" name="check" style={{ color: "#000", fontSize: 30,}} />
+            </TouchableOpacity>
+            :
+            <TouchableOpacity onPress={async () => {
+            // cropViewRef.current.saveImage(true, 90)
+              // :
+              takeShot();
+              
+              // cropViewRef.rotateImage(false);
+              
+          }} style={{marginRight: 10}}>
+              <Icon type="Entypo" name="check" style={{ color: "#000", fontSize: 30,}} />
+            </TouchableOpacity>
+          }
+          </Right>
+      </Header>
       <View style={styles.container}>
         {/*<Button
           title={'Pick Image'}
@@ -170,18 +226,22 @@ const App: () => React$Node = (props) => {
         }
         {
           croppedi &&
-           <ViewShot ref={viewShot} style={styles.cropView}>
+           /*<ViewShot ref={viewShot} style={styles.cropView}>
           <Image  source={{uri: uri}} style={{ aspectRatio: (dim.width)/(dim.height), width: dim.width > dim.height ? "100%" : "auto", height: dim.width < dim.height ? "100%" : "auto", }} >
           </Image>
           <Draggable x={75} y={100}  renderColor='transparent' renderText='A' shouldReverse={false} 
           children={<Text style={{backgroundColor: "transparent", color: value.color, fontSize: value.size}} >{value.value}</Text>}
           />
-        </ViewShot>
+        </ViewShot>*/
+          <View style={styles.cropView}>  
+          <Image  source={{uri: uri}} style={{ aspectRatio: (dim.width)/(dim.height), width: dim.width > dim.height ? "100%" : "auto", height: dim.width < dim.height ? "100%" : "auto", }} >
+          </Image>
+          </View>
         }
         
         </View>
-        <View style={{flex: 1}}>
-        <View style={{flex: 1, backgroundColor: "#000"}}>
+        {/*<View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: "#fff"}}>
         <TouchableOpacity onPress={() =>  croppedi ? setcroppedi(false) : props.navigation.pop()} style={{backgroundColor: '#fff', position: 'absolute', bottom: height*0.13, left: 20, borderWidth: 1, borderRadius: 100,}}>
             <Icon type="Entypo" name="cross" style={{color: "red", fontSize: 35, padding: 5}} />
           </TouchableOpacity>
@@ -225,15 +285,7 @@ const App: () => React$Node = (props) => {
           </TouchableOpacity>
         </View>:
         <View />
-        }{/*<Button
-          title={'Save'}
-          onPress={async () => {
-            cropViewRef.current.saveImage(true, 90);
-            // cropViewRef.rotateImage(false);
-            
-
-          }}
-        />*/}
+        }
         <BottomSheet
         ref={sheetRef}
         snapPoints={[halfHeight, 0]}
@@ -242,7 +294,7 @@ const App: () => React$Node = (props) => {
         borderRadius={25}
         renderContent={renderContent}
       />
-      </View>
+      </View>*/}
     </>
   );
  

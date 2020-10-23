@@ -1,24 +1,50 @@
 'use strict';
 import React, { PureComponent } from 'react';
-import { AppRegistry, ScrollView,Alert, TextInput, Dimensions,BackHandler, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
+import { AppRegistry, ScrollView,Alert, TextInput, Platform, Dimensions,BackHandler, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
 import Gallery from './Gallery'
+import ZoomView from './ZoomView';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useFocusEffect } from "@react-navigation/native";
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
+const MAX_ZOOM = 7; // iOS only
+const ZOOM_F = Platform.OS === 'ios' ? 0.0005 : 0.08;
+
 export default class ExampleApp extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {gallery: new Array(), side: RNCamera.Constants.Type.back, isGalleryOpen: false};
+    this.state = { zoom: 0.0, gallery: new Array(), side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off};
+  }
+   _onPinchStart = () => {
+    this._prevPinch = 1
   }
 
-  
+  _onPinchEnd = () => {
+    this._prevPinch = 1
+  }
+
+  _onPinchProgress = (p) => {
+    let p2 = p - this._prevPinch
+    if(p2 > 0 && p2 > ZOOM_F) {
+      this._prevPinch = p
+      this.setState({ ...this.state, zoom: Math.min(this.state.zoom + ZOOM_F, 1)}, () => {
+      })
+    }
+    else if (p2 < 0 && p2 < -ZOOM_F) {
+      this._prevPinch = p
+      this.setState({ ...this.state, zoom: Math.max(this.state.zoom - ZOOM_F, 0)}, () => {
+      })
+    }
+    // console.log(this.state.zoom)
+  }
+
+
 
   componentDidMount() {
 
@@ -64,28 +90,42 @@ export default class ExampleApp extends PureComponent {
         }
         func();
 
-        const backAction = () => {
-        if(this.state.isGalleryOpen)
+        this.focusListener = this.props.navigation.addListener("focus", () =>
         {
-          this.setState({
-            ...this.state,
-            isGalleryOpen: false
-          })
-          this.sheetRef.snapTo(1);
-        }
-        else 
-        {
-          this.props.navigation.goBack(null);
-        }
-        return true;
-      };
 
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
+          const backAction = () => {
+          if(this.state.isGalleryOpen)
+          {
+            this.setState({
+              ...this.state,
+              isGalleryOpen: false
+            })
+            this.sheetRef.snapTo(1);
+          }
+          else if(this.props.route.params)
+          {
+            this.props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...this.props.route.params.images] })
+            console.log(this.props.route.params);
+          }
+          else 
+          {
+            this.props.navigation.navigate('Home', {
+              screen: 'Feed',
+            })
+          }
+          return true;
+        };
 
-      return () => backHandler.remove();
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction
+        );
+
+        return () => backHandler.remove();
+        }
+        );
+
+        
 
   };
   
@@ -107,8 +147,31 @@ export default class ExampleApp extends PureComponent {
         </View>
   );
 
+  
+
     return (
       <View style={styles.container}>
+      <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05, }}>
+              <Left style={{ alignItems: 'center' }}>
+              <TouchableOpacity onPress={() => {
+                if(this.props.route.params)
+                {
+                  this.props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...this.props.route.params.images] })
+                  console.log(this.props.route.params);
+                }
+                else 
+                {
+                  this.props.navigation.navigate('Home', {
+                    screen: 'Feed',
+                  })
+                }
+              }} ><Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
+          </Left>
+          <Body>
+            <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 20, marginTop: 5 }}>Take Picture</Title> 
+          </Body>
+          <Right />
+      </Header>
       <BottomSheet
           ref={ref => {
             this.sheetRef = ref;
@@ -119,14 +182,15 @@ export default class ExampleApp extends PureComponent {
           borderRadius={25}
           renderContent={renderContent}
         />
+        <View style={{height: height*0.6,}}>
         <RNCamera
           ref={ref => {
             this.camera = ref;
           }}
           style={styles.preview}
           type={this.state.side}
-          flashMode={RNCamera.Constants.FlashMode.off}
-          // style={{flex: 1,}}
+          zoom={this.state.zoom}
+          flashMode={this.state.flash}
           androidCameraPermissionOptions={{
             title: 'Permission to use camera',
             message: 'We need your permission to use your camera',
@@ -139,10 +203,26 @@ export default class ExampleApp extends PureComponent {
             buttonPositive: 'Ok',
             buttonNegative: 'Cancel',
           }}
-        />
-        <View style={{height: height*0.16, alignItems: 'center', marginTop: height*0.1}} >
+        >
+        <ZoomView 
+          onPinchEnd={this._onPinchEnd}
+          onPinchStart={this._onPinchStart}
+          onPinchProgress={this._onPinchProgress}
+        >  
+          <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 10, left: 10}}>
+              <Image style={{height: 50, width: 50, color: "#fff",}} source={require('../assets/switchcam.png')} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity onPress={this.changeFlash.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 15, right: 10}}>
+              { this.state.flash == RNCamera.Constants.FlashMode.off ? <Icon name="flash" type="FontAwesome" style={{color: "#000", fontSize: 30}} /> : <Icon name="flash-off" type="MaterialIcons" style={{color: "#000", fontSize: 30}} />}
+          </TouchableOpacity>
+        </ZoomView>
+        </RNCamera>
+        </View>
+        <View style={{height: height*0.13, alignItems: 'center', marginTop: height*0.02}} >
           <FlatList
             data={this.state.gallery}
+            showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => (
               <View style={{ flex: 1, flexDirection: 'column', margin: 1, height: 80}}>
                 <TouchableOpacity
@@ -150,10 +230,9 @@ export default class ExampleApp extends PureComponent {
                   style={{ flex: 1 }}
                   onPress={() => {
                     // setSelected(item.node.image.uri)
-                    this.props.navigation.navigate('Preview', {'img': item.node.image.uri});
+                    this.props.navigation.navigate('Preview', {'img': item.node.image.uri, 'images': this.props.route.params ? this.props.route.params.images : []});
                     console.log(item);  
                   }}>
-                  {/*console.log(item.node.image.uri)*/}
                   <Image
                     style={styles.image}
                     source={{
@@ -170,14 +249,18 @@ export default class ExampleApp extends PureComponent {
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => {this.sheetRef.snapTo(0); this.setState({ ...this.state, isGalleryOpen: true });}} style={styles.capture, {flex: 1, alignItems: 'flex-start', marginLeft: 15, marginTop: 14}}>
-            <Icon type="EvilIcons" name="image" style={{color: "#fff", fontSize: 50}} />
+          <TouchableOpacity onPress={() => {this.sheetRef.snapTo(0); this.setState({ ...this.state, isGalleryOpen: true });}} style={styles.capture, {flex: 1, alignItems: 'flex-start', marginLeft: 15, marginTop: 6}}>
+            <Icon type="EvilIcons" name="image" style={{color: "#000", fontSize: 50}} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 2, alignItems: 'center'}}>
-            <Icon type="Entypo" name="circle" style={{color: "#fff", fontSize: 70}} />
+          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 2, alignItems: 'center', marginTop: -10}}>
+            <Icon type="Entypo" name="circle" style={{color: "#000", fontSize: 70}} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-end', marginRight: 15}}>
-            <Icon type="Ionicons" name="camera-reverse" style={{color: "#fff", fontSize: 45, marginTop: 10}} />
+          <TouchableOpacity onPress={() => {
+            this.props.navigation.navigate('Home', {
+              screen: 'Files',
+            })
+          }} style={styles.capture, {flex: 1, alignItems: 'flex-end', marginRight: 20, marginTop: 10}}>
+            <Icon name="file-pdf" type="FontAwesome5" style={{color: "#000", fontSize: 30}} />
           </TouchableOpacity>
         </View>
         
@@ -190,10 +273,11 @@ export default class ExampleApp extends PureComponent {
     if (this.camera) {
       const options = { quality: 0.5, base64: true, fixOrientation: true };
       const data = await this.camera.takePictureAsync(options);
-      this.props.navigation.navigate('Preview', {'img': data.uri, 'height': data.height, 'width': data.width});
+      this.props.navigation.navigate('Preview', {'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params ? this.props.route.params.images : []  });
       // console.log(data);
 
     }
+    // console.log(this.props.route.params.images)
   };
   changeSide = async () => {
     // console.log("asd");
@@ -206,20 +290,33 @@ export default class ExampleApp extends PureComponent {
     }
 
   }
+
+  changeFlash = async () => {
+    console.log("asd");
+    if(this.camera)
+    {
+      this.setState({
+        ...this.state,
+        flash: this.state.flash == RNCamera.Constants.FlashMode.torch ? RNCamera.Constants.FlashMode.off : RNCamera.Constants.FlashMode.torch
+      })
+    }
+
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'black',
+    backgroundColor: '#fff',
     // width: width;
   },
   preview: {
     // flex: 1,
-    height: height*0.55,
+    height: height*0.60,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    overflow: 'hidden'
   },
   capture: {
     flex: 0,
@@ -233,7 +330,7 @@ const styles = StyleSheet.create({
     // margin: 10,
   },
   image: {
-    height: height*0.13,
-    width: height*0.13,
+    height: height*0.1,
+    width: height*0.1,
   },
 });
