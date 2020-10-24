@@ -12,6 +12,7 @@ import NotificationScreen from './screens/NotificationScreen'
 import SearchScreen from './screens/SearchScreen'
 import FeedScreen from './screens/FeedScreen'
 import IntroScreen from './screens/IntroScreen'
+import IntroSlider from './screens/IntroSlider'
 import PostScreen from './screens/PostScreen'
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
@@ -181,7 +182,7 @@ const App = (props) => {
       })
       .catch(() => {
         // console.log('do nothing')
-        // SplashScreen.hide();
+        SplashScreen.hide();
       }
       )
   }, []);
@@ -192,7 +193,7 @@ const App = (props) => {
         barStyle="light-content"
         backgroundColor="#357feb"
       />
-      <Stack.Navigator initialRouteName={'Login'}>
+      <Stack.Navigator initialRouteName={'IntroSlider'}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
         <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
@@ -207,6 +208,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
         <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
         <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
+        <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
       </Stack.Navigator>
     </NavigationContainer>
   );
