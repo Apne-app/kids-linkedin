@@ -186,7 +186,7 @@ const Upload = ({ route, navigation }) => {
     explore.map(async (item) => {
       try {
         console.log(item.uri);
-        await CameraRoll.save(item.uri, { type: 'photo', album: filename })
+        await CameraRoll.save(item.uri, { type: 'photo', album: tag })
           .then(res => {
             console.log(res)
           })
@@ -202,22 +202,22 @@ const Upload = ({ route, navigation }) => {
     if (albums) {
       var c = 1;
       for (var i = 0; i < albums.length; i++) {
-        if (albums[i]['albumName'] == filename) {
+        if (albums[i]['albumName'] == tag) {
           c = 0;
           break;
         }
       }
       if (c) {
-        albums = [...albums, { 'albumName': filename, 'tagName': tag }];
+        albums = [...albums, { 'albumName': tag, 'tagName': tag }];
       }
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
     }
     else {
-      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': filename, 'tagName': tag }]));
+      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': tag, 'tagName': tag }]));
     }
 
     setModalVisible3(false);
-    alert('Images Saved');
+    // alert('Images Saved');
 
   }
 
@@ -408,7 +408,7 @@ const Upload = ({ route, navigation }) => {
     <View style={styles.container}>
       <Header style={{ backgroundColor: "#fff", paddingTop: 10 }} >
         <Left>
-          <TouchableOpacity onPress={() =>  navigation.navigate('Home', {screen: 'Feed'})}>
+          <TouchableOpacity onPress={() =>  {saveImages();navigation.navigate('Home', {screen: 'Feed'})}}>
           <Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 40 }} />
           </TouchableOpacity>
         </Left>

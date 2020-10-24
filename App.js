@@ -193,7 +193,7 @@ const App = (props) => {
         barStyle="light-content"
         backgroundColor="#357feb"
       />
-      <Stack.Navigator initialRouteName={'IntroSlider'}>
+      <Stack.Navigator initialRouteName={'Login'}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
         <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />

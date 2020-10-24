@@ -37,6 +37,7 @@ const FileScreen = (props) => {
     const [selected, setSelected] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
     const [seltopic, setSelTopic] = React.useState('');
+    const [tagsPresent, setTagsPresent] = React.useState(false)
     const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other', 'Other']);
     const [tag, setTag] = React.useState('');
 
@@ -352,7 +353,7 @@ const FileScreen = (props) => {
             
             
 
-            { files.length != 0? <View style={{ flexDirection: 'row' }} >
+            { files.length != 0  || tagsPresent ? <View style={{ flexDirection: 'row' }} >
                 <FlatList
                 data={tags}
                 scrollEnabled={true}
@@ -362,7 +363,7 @@ const FileScreen = (props) => {
                 }}
                 // style={{marginTop: 5}}
                 renderItem={({ item, i }) => (
-                    <Chip key={i} style={{ backgroundColor: tag == item ? 'green' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10 }} textStyle={{ color: "#fff" }} onPress={() => {tag == item ? setTag(''): setTag(item); tag == item ? showAll() : showTags(item); }} >{item}</Chip>
+                    <Chip key={i} style={{ backgroundColor: tag == item ? '#357feb' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#357feb" }} textStyle={{ color: tag == item ? "#fff" : "#357feb" }} onPress={() => {tag == item ? setTag(''): setTag(item); tag == item ? showAll() : showTags(item); setTagsPresent(true); }} >{item}</Chip>
                 )}
                 //Setting the number of column
                 // numColumns={3}
@@ -382,7 +383,7 @@ const FileScreen = (props) => {
                     return (
 
                     <View key={i}>
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>{it.name}-{it.tag}</Text>
+                        <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>{it.name}</Text>
                         <FlatList
                         data={it.files}
                         scrollEnabled={true}
@@ -441,7 +442,7 @@ const FileScreen = (props) => {
                 position="bottomRight"
                 onPress={() => setVisible(true)}
                 >
-                <Icon type="Ionicons" name='send' style={{color: "#fff", fontSize: 35 }} />
+                <Icon type="FontAwesome" name='send' style={{color: "#fff", fontSize: 27, marginRight: 5 }} />
             </Fab>:
             <View />
             }

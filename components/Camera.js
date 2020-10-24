@@ -151,7 +151,7 @@ export default class ExampleApp extends PureComponent {
 
     return (
       <View style={styles.container}>
-      <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05, }}>
+      <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05 }}>
               <Left style={{ alignItems: 'center' }}>
               <TouchableOpacity onPress={() => {
                 if(this.props.route.params)
@@ -182,7 +182,7 @@ export default class ExampleApp extends PureComponent {
           borderRadius={25}
           renderContent={renderContent}
         />
-        <View style={{height: height*0.6,}}>
+        <View style={{height: height*0.6, }}>
         <RNCamera
           ref={ref => {
             this.camera = ref;
