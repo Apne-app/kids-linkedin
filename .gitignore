@@ -20,6 +20,7 @@ xcuserdata
 DerivedData
 *.hmap
 *.ipa
+*.hprof
 *.xcuserstate
 
 # Android/IntelliJ
