@@ -42,42 +42,42 @@ const SearchScreen = ({ route, navigation }) => {
     {
       'name': 'Shashwat  ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/73472702_2546600495460139_1094134431800623104_o.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=sZpIUgPO6fYAX9_oNE_&_nc_oc=AQlgdIn0oK_RmjPhHfnZ3Xqwi0U9-O2Kq30XhR_SekdNtiJz2a3t3siRjDuqzJJAKptXqSqcBrvMq8h9iPc_8hdf&_nc_ht=scontent.famd5-1.fna&oh=ea5012f402e51b50f8870fa9ed02cf43&oe=5F802DC5'
+      'image': 'http://shashwatmdas.info/shash.jpg'
     },
     {
       'name': 'Bhargava  ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
+      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
     },
     {
       'name': 'Bhargava  ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
+      'image': 'http://shashwatmdas.info/shash.jpg'
     },
     {
       'name': 'Shashwat ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/73472702_2546600495460139_1094134431800623104_o.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=sZpIUgPO6fYAX9_oNE_&_nc_oc=AQlgdIn0oK_RmjPhHfnZ3Xqwi0U9-O2Kq30XhR_SekdNtiJz2a3t3siRjDuqzJJAKptXqSqcBrvMq8h9iPc_8hdf&_nc_ht=scontent.famd5-1.fna&oh=ea5012f402e51b50f8870fa9ed02cf43&oe=5F802DC5'
+      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
     },
     {
       'name': 'Shashwat ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/73472702_2546600495460139_1094134431800623104_o.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=sZpIUgPO6fYAX9_oNE_&_nc_oc=AQlgdIn0oK_RmjPhHfnZ3Xqwi0U9-O2Kq30XhR_SekdNtiJz2a3t3siRjDuqzJJAKptXqSqcBrvMq8h9iPc_8hdf&_nc_ht=scontent.famd5-1.fna&oh=ea5012f402e51b50f8870fa9ed02cf43&oe=5F802DC5'
+      'image': 'http://shashwatmdas.info/shash.jpg'
     },
     {
       'name': 'Shashwat ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/73472702_2546600495460139_1094134431800623104_o.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=sZpIUgPO6fYAX9_oNE_&_nc_oc=AQlgdIn0oK_RmjPhHfnZ3Xqwi0U9-O2Kq30XhR_SekdNtiJz2a3t3siRjDuqzJJAKptXqSqcBrvMq8h9iPc_8hdf&_nc_ht=scontent.famd5-1.fna&oh=ea5012f402e51b50f8870fa9ed02cf43&oe=5F802DC5'
+      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
     },
     {
       'name': 'Bhargava  ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
+      'image': 'http://shashwatmdas.info/shash.jpg'
     },
     {
       'name': 'Bhargava  ',
       'age': 20,
-      'image': 'https://scontent.famd5-1.fna.fbcdn.net/v/t1.0-9/52991262_268327267426211_8888915069430136832_n.jpg?_nc_cat=101&_nc_sid=09cbfe&_nc_ohc=QCzv3sme33QAX-cOn03&_nc_ht=scontent.famd5-1.fna&oh=1577b6f0e5834cee42a2d1aaee12e1df&oe=5F80B8B1'
+      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
     },
   ])
   const [children, setchildren] = useState('notyet')
@@ -129,14 +129,16 @@ const SearchScreen = ({ route, navigation }) => {
     return (
       <Container>
         <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, marginTop: 20 }}>
-          <Searchbar
-            style={{ width: width - 40, height: 50, borderRadius: 10 }}
-            theme={theme}
-            placeholder="Search"
-            onResponderStart={() => navigation.navigate('Searching')}
-          />
+          
+          <Item regular style={{width: width*0.9, borderColor: "#000", height: 45, borderRadius: 10}}>
+            <Icon active name='search' type="EvilIcons" />
+            <Input placeholder='Search' onResponderStart={() => navigation.navigate('Searching')}/>
+          </Item>
         </Header>
         <Content style={styles.container}>
+          <View >
+            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 16, marginLeft: 15 }}>Kids</Text>
+          </View>
           <FlatList
             data={explore}
             renderItem={({ item }) => (
@@ -147,23 +149,61 @@ const SearchScreen = ({ route, navigation }) => {
                   {/*console.log(item.node.image.uri)*/}
                   <ImageBackground
                     style={styles.image}
-                    imageStyle={{ borderRadius: 20 }}
+                    imageStyle={{ borderRadius: width*0.2 }}
                     source={{
                       uri: item.image,
                     }}
                   >
-                    <View style={styles.personDetails}>
+                    {/*<View style={styles.personDetails}>
                       <View >
                         <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.name}</Text>
                         <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.age}</Text>
                       </View>
-                    </View>
+                    </View>*/}
                   </ImageBackground>
+                  <View >
+                    <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
+                  </View>
                 </View>
               </TouchableOpacity>
             )}
             //Setting the number of column
-            numColumns={2}
+            numColumns={4}
+            keyExtractor={(item, index) => index.toString()}
+          />
+          <View style={{marginTop: 30}} >
+            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 16, marginLeft: 15 }}>Services</Text>
+          </View>
+          <FlatList
+            data={explore}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(item.name)}>
+                <View
+                  key={item.id}
+                  style={{ flex: 1, }}>
+                  {/*console.log(item.node.image.uri)*/}
+                  <ImageBackground
+                    style={styles.image}
+                    imageStyle={{ borderRadius: width*0.2,backgroundColor: 'lightgrey', }}
+                    source={{
+                      uri: item.image,
+                    }}
+                  >
+                    {/*<View style={styles.personDetails}>
+                      <View >
+                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.name}</Text>
+                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.age}</Text>
+                      </View>
+                    </View>*/}
+                  </ImageBackground>
+                  <View >
+                    <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+            //Setting the number of column
+            numColumns={4}
             keyExtractor={(item, index) => index.toString()}
           />
         </Content>
@@ -240,10 +280,10 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    height: width * 0.45,
-    width: width * 0.45,
+    height: width * 0.2,
+    width: width * 0.2,
     margin: width * 0.02,
-    borderRadius: 30,
+    borderRadius: width*0.02,
 
   },
 })

@@ -72,6 +72,8 @@ const App: () => React$Node = (props) => {
         "hardwareBackPress",
         backAction
       );
+
+      console.log(props.route.params)
     }, []));
 
   const renderContent = () => (
