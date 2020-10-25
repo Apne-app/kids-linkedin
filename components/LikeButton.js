@@ -69,12 +69,14 @@ export default class LikeButton extends React.Component<Props> {
       <ReactionToggleIcon
         styles={styles}
         counts={counts}
-        own_reactions={own_reactions}s
+        own_reactions={own_reactions}
         kind={reactionKind}
         onPress={this._onPress}
         activeIcon={require('../images/icons/star.png')}
         inactiveIcon={require('../images/icons/star-outline.png')}
-        labelFunction={() => <Text></Text>}
+        // labelFunction={() => <Text></Text>}
+        labelSingle={'   '}
+        labelPlural={'   '}
       />
     );
   }

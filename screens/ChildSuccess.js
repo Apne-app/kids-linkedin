@@ -38,7 +38,7 @@ const ChildSuccess = ({ navigation }) => {
     return (
         <View style={{ backgroundColor: 'white', height: height, width: width }}>
             <Image source={require('../assets/verified.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Succesfully added your child!</Text>
+            <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Succesfully added your child!</Text>
             <View style={{ backgroundColor: 'white' }}>
                 <Button block dark style={{ marginTop: 30, backgroundColor: 'lightblue', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
                     <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Taking you to Home....</Text>

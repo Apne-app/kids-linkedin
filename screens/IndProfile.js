@@ -198,25 +198,25 @@ const IndProfile = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Followers</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Following</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
                         </View>
                         <TouchableOpacity  style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
                         </TouchableOpacity>
 
                     </View>

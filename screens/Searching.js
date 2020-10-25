@@ -15,19 +15,19 @@ var width = Dimensions.get('screen').width;
 const fontConfig = {
     default: {
         regular: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
         medium: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
         light: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
         thin: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
     },
@@ -110,8 +110,8 @@ const Searching = ({ route, navigation }) => {
                             styles={{ container: { alignSelf: 'center' } }}
                         />
                         <View style={{marginTop: 20, marginLeft: 20, flexDirection: 'column'}}>
-                        <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'].toUpperCase()}</Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  3 Posts </Text>
+                        <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'].toUpperCase()}</Text>
+                        <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  3 Posts </Text>
                         </View>
                         {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
                             <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, marginTop: 2 }}>{follows && follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
@@ -136,14 +136,14 @@ const Searching = ({ route, navigation }) => {
                         placeholder='Search' onResponderStart={() => navigation.navigate('Searching')}/>
                 </Item>
             </Header>
-            {searchQuery == '' ? <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center' }}>Search for children to follow</Text> : (result.length != 0 ? (<View><FlatList
+            {searchQuery == '' ? <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center' }}>Search for children to follow</Text> : (result.length != 0 ? (<View><FlatList
                 data={result}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.gsToken}
                 numColumns={1}
                 style={{ alignSelf: 'center' }}
             />
-            </View>) : <View style={{ backgroundColor: 'lightgrey', height: 60, width: width - 40, alignSelf: 'center', borderRadius: 10 }}><Text style={{ fontFamily: 'Poppins-Regular', paddingLeft: 20, marginTop: 18 }}>Search for "{searchQuery}"</Text></View>)}
+            </View>) : <View style={{ backgroundColor: 'lightgrey', height: 60, width: width - 40, alignSelf: 'center', borderRadius: 10 }}><Text style={{ fontFamily: 'Nunito-Sans', paddingLeft: 20, marginTop: 18 }}>Search for "{searchQuery}"</Text></View>)}
         </Container>
     );
 }

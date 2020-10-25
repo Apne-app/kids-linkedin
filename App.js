@@ -1,9 +1,10 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar } from 'react-native';
+import { View, Text, StatusBar, Image } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -49,9 +50,9 @@ const DrawNav = createDrawerNavigator();
 
 //   return (
 //     <DrawNav.Navigator drawerPosition={"right"} initialRouteName="Home" >
-//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
+//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Nunito-Sans', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Nunito-Sans', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Nunito-Sans', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
 //       {/* <DrawNav.Screen name="Tickets" component={Tickets} />
 //       <DrawNav.Screen name="Shipping" component={Shipping} /> */}
 //     </DrawNav.Navigator>
@@ -98,19 +99,18 @@ const App = (props) => {
 
     return (
       <BottomNav.Navigator
-        tabBar={props => (
-          <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
-        )}
-      // tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
+        // tabBar={props => (
+        //   <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
+        // )}
+      tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
       >
-        <BottomNav.Screen name="Feed" component={FeedScreen} />
-        <BottomNav.Screen name="Search" component={SearchScreen} />
-        <BottomNav.Screen name="Post" component={PostScreenNavig} />
-        <BottomNav.Screen name="Notifications" component={NotificationScreen} />
-        <BottomNav.Screen name="Files" component={FileScreen} />
-        <BottomNav.Screen name="Profile" component={ProfileScreen} />
+        <BottomNav.Screen name="Feed" component={FeedScreen}  options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/Home.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />:<Image source={require("./images/Home-Outline.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />}} />
+        <BottomNav.Screen name="Search" component={SearchScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/Home.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />:<Image source={require("./images/Home-Outline.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />}} />
+        <BottomNav.Screen name="Post" style={{backgroundColor:'transparent'}} component={PostScreenNavig} options={{tabBarLabel: '', tabBarIcon:({focused})=><LinearGradient locations={[0.9,1]} colors={['transparent', '#f5f5f5']} style={{borderRadius:10000, padding:8,  marginBottom:40}}><Icon name={'plus'} type="Feather" style={{backgroundColor:'#327FEB', borderRadius:10000, color:'white', width:54, height:54, fontSize:30, padding:12}} /></LinearGradient>}} />
+        <BottomNav.Screen name="Files" component={FileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/Home.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />:<Image source={require("./images/Home-Outline.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />}} />
+        <BottomNav.Screen name="Profile" component={ProfileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/User.png")} style={{width:28, height:28, marginBottom:-15}} />:<Image source={require("./images/User-Outline.png")} style={{width:28, height:28, marginBottom:-15}} />}} />
 
-        {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Poppins-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
+        {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Nunito-Sans', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
       </BottomNav.Navigator>
     )
   }

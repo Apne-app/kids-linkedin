@@ -27,13 +27,13 @@ updateStyle('activity', {
         marginVertical: height * 0.01,
         borderRadius: width * 0.05,
         backgroundColor: "#fff",
-        fontFamily: 'Poppins-Regular'
+        fontFamily: 'Nunito-Sans'
     },
     text: {
-        fontFamily: 'Poppins-Regular'
+        fontFamily: 'Nunito-Sans'
     },
     header: {
-        fontFamily: 'Poppins-Regular'
+        fontFamily: 'Nunito-Sans'
     }
 });
 updateStyle('flatFeed', {
@@ -75,19 +75,19 @@ var width = Dimensions.get('screen').width;
 const fontConfig = {
     default: {
         regular: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
         medium: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
         light: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
         thin: {
-            fontFamily: 'Poppins-Regular',
+            fontFamily: 'Nunito-Sans',
             fontWeight: 'normal',
         },
     },
@@ -356,7 +356,7 @@ const ProfileScreen = ({ navigation, route }) => {
         <ScrollView style={{backgroundColor: "#f9f9f9"}} >
         <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 5 }}>
                     <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title> 
+                    <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title> 
                 </Body>
                 <Right style={{ marginRight: 10, marginTop: 0 }}>
                     <Icon onPress={() => {optionsRef.current.snapTo(0); console.log("sad")}} style={{color: "#000", fontSize: 20}} type="Entypo" name="dots-three-vertical"  />
@@ -386,25 +386,25 @@ const ProfileScreen = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Followers</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Following</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                         <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
                         </View>
                         <TouchableOpacity onPress={() => {optionsRef.current.snapTo(0); setBottomType('courses')}} style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
+                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
                         </TouchableOpacity>
 
                     </View>
@@ -426,7 +426,7 @@ const ProfileScreen = ({ navigation, route }) => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
+                <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
                 <View style={{ backgroundColor: 'white' }}>
                     <Button onPress={() => navigation.navigate('Child')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
                         <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>

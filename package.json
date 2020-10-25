@@ -50,6 +50,7 @@
     "react-native-image-to-pdf": "^1.2.0",
     "react-native-image-viewing": "^0.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.2",
+    "react-native-linear-gradient": "^2.5.6",
     "react-native-linkedin": "^2.1.1",
     "react-native-paper": "^4.1.0",
     "react-native-photo-browser": "^0.7.0",

@@ -2,7 +2,7 @@
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title,Toast, Right, Left, Fab, Textarea } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
@@ -31,13 +31,13 @@ updateStyle('activity', {
         marginVertical: height * 0.01,
         borderRadius: width * 0.05,
         backgroundColor: "#fff",
-        fontFamily: 'Poppins-Regular'
+        fontFamily: 'NunitoSans-Regular'
     },
     text: {
-        fontFamily: 'Poppins-Regular'
+        fontFamily: 'NunitoSans-Regular'
     },
     header: {
-        fontFamily: 'Poppins-Regular'
+        fontFamily: 'NunitoSans-Regular'
     }
 });
 updateStyle('flatFeed', {
@@ -70,38 +70,38 @@ const FeedScreen = ({ navigation, route }) => {
     const sheetRefReport = React.useRef(null);
     const [reportType, setReportType] = useState('')
     const [reportComment, setReportComment] = useState('');
-    const [actionstatus, setActionStatus] = useState(0); 
+    const [actionstatus, setActionStatus] = useState(0);
 
     useFocusEffect(
         React.useCallback(() => {
-        const onBackPress = () => {
-            Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-            {
-                text: "Cancel",
-                onPress: () => null,
-                style: "cancel"
-            },
-            { text: "YES", onPress: () => BackHandler.exitApp() }
-            ]);
-            return true;
-        };
+            const onBackPress = () => {
+                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => BackHandler.exitApp() }
+                ]);
+                return true;
+            };
 
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-    }, []));
+        }, []));
 
     const report = (x) => {
 
         // console.log(children);
-        var now = new Date(); 
-        var datetime = now.getFullYear()+'/'+(now.getMonth()+1)+'/'+now.getDate(); 
-        datetime += ' '+now.getHours()+':'+now.getMinutes()+':'+now.getSeconds(); 
+        var now = new Date();
+        var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+        datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 
         var body = {
-            "created_by" : children["0"]["data"]["gsToken"],
+            "created_by": children["0"]["data"]["gsToken"],
             "reported_name": x["actor"]["data"]["name"],
             "post_id": x["id"],
             "images": x["image"],
@@ -110,26 +110,25 @@ const FeedScreen = ({ navigation, route }) => {
         }
 
         var config = {
-        method: 'post',
-        url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
-        headers: { 
-            'Content-Type': 'application/json'
-        },
-        data : body
+            method: 'post',
+            url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: body
         };
         axios(config)
-        .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        // setLoading(false);
-        if(response.data == "success")
-        {
-            setShowToast(true);
-        }
-        })
-        .catch(function (error) {
-        alert(error);
-        // setLoading(false)
-        });
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                // setLoading(false);
+                if (response.data == "success") {
+                    setShowToast(true);
+                }
+            })
+            .catch(function (error) {
+                alert(error);
+                // setLoading(false)
+            });
 
         // console.log(body);
 
@@ -151,29 +150,29 @@ const FeedScreen = ({ navigation, route }) => {
             style={{
                 backgroundColor: '#fff',
                 padding: 16,
-                height: height*0.5,
+                height: height * 0.5,
             }}
         >
-            <TouchableOpacity onPress={() => {sheetRefReport.current.snapTo(2);}} style={{alignItems: 'center',paddingBottom: 10}}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
-            <Text style={{alignSelf: 'center', marginBottom: 5, fontSize: 15 }} >Report {!(Object.keys(reportedProfile).length === 0 && reportedProfile.constructor === Object) ? reportedProfile.actor.data.name : ''}'s Post</Text>
+            <TouchableOpacity onPress={() => { sheetRefReport.current.snapTo(2); }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
+            <Text style={{ alignSelf: 'center', marginBottom: 5, fontSize: 15 }} >Report {!(Object.keys(reportedProfile).length === 0 && reportedProfile.constructor === Object) ? reportedProfile.actor.data.name : ''}'s Post</Text>
             <FlatList
-              data={[ "Improper Content", "Faking to be someone else" ]}
-              scrollEnabled={true}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                // flexGrow: 1,
-              }}
-              // style={{marginTop: 5}}
-              renderItem={({ item, i }) => (
-                <Chip key={i} style={{ backgroundColor: reportType == item ? 'red' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10, height: 35 }} textStyle={{ color: "#fff" }} onPress={() => reportType == item ? setReportType('') : setReportType(item)} >{item}</Chip>
-              )}
-              //Setting the number of column
-              // numColumns={3}
-              horizontal={true}
-              keyExtractor={(item, index) => index.toString()}
+                data={["Improper Content", "Faking to be someone else"]}
+                scrollEnabled={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                    // flexGrow: 1,
+                }}
+                // style={{marginTop: 5}}
+                renderItem={({ item, i }) => (
+                    <Chip key={i} style={{ backgroundColor: reportType == item ? 'red' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10, height: 35 }} textStyle={{ color: "#fff" }} onPress={() => reportType == item ? setReportType('') : setReportType(item)} >{item}</Chip>
+                )}
+                //Setting the number of column
+                // numColumns={3}
+                horizontal={true}
+                keyExtractor={(item, index) => index.toString()}
             />
-            <Form style={{marginBottom: height*0.17}}>
-                <Textarea  value={reportComment} onChangeText = {(text) => setReportComment(text)} rowSpan={5} bordered placeholder="Add Remarks" />
+            <Form style={{ marginBottom: height * 0.17 }}>
+                <Textarea value={reportComment} onChangeText={(text) => setReportComment(text)} rowSpan={5} bordered placeholder="Add Remarks" />
             </Form>
         </View>
     );
@@ -204,16 +203,24 @@ const FeedScreen = ({ navigation, route }) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <LikeButton  {...props} />
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="comment" type="EvilIcons" style={{ fontSize: 28, marginLeft: 10 }} />
+                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <ReactionIcon
+                        labelSingle=" "
+                        labelPlural=" "
+                        counts={props.activity.reaction_counts}
+                        kind="comment"
+                        width={-80}
+                        onPress={() => { analytics.track('Comment'); console.log(id); setoptions(props); settype('comment'); setactid(id); sheetRefLike.current.snapTo(1) }}
+                    />
                     <Icon onPress={() => {
                         Linking.openURL('whatsapp://send?text=check').then((data) => {
                             console.log('WhatsApp Opened');
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
-                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: 15, color: '#4FCE5D' }} />
+                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <ReactionIcon
                         labelSingle="Star"
                         labelPlural="Stars"
@@ -233,7 +240,7 @@ const FeedScreen = ({ navigation, route }) => {
                         width={-20}
                         onPress={() => { analytics.track('Comment'); console.log(id); setoptions(props); settype('comment'); setactid(id); sheetRefLike.current.snapTo(1) }}
                     />
-                </View>
+                </View> */}
                 {/* <CommentBox
                 onSubmit={(text) =>
                     props.onAddReaction('comment', props.activity.id, {
@@ -266,11 +273,11 @@ const FeedScreen = ({ navigation, route }) => {
                                 counts={props.activity.reaction_counts}
                                 kind="like"
                                 height={0}
-                                labelFunction={(text) => { return (<Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>{String(text.count) + ' ' + (text.count === 1 ? 'like' : 'likes')}</Text>) }}
+                                labelFunction={(text) => { return (<Text style={{ color: 'white', fontFamily: 'NunitoSans-Regular' }}>{String(text.count) + ' ' + (text.count === 1 ? 'like' : 'likes')}</Text>) }}
                                 width={0}
                                 onPress={() => props.navigation.navigate('SinglePost', { activity: props })}
                             />
-                            <Text style={{ marginRight: -15, marginLeft: 5, color: 'white', fontFamily: 'Poppins-Regular' }}>•</Text>
+                            <Text style={{ marginRight: -15, marginLeft: 5, color: 'white', fontFamily: 'NunitoSans-Regular' }}>•</Text>
                             <ReactionIcon
                                 labelSingle="comment"
                                 labelPlural="comments"
@@ -278,7 +285,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 kind="comment"
                                 height={0}
                                 width={-20}
-                                labelFunction={(text) => { return (<Text style={{ color: 'white', fontFamily: 'Poppins-Regular' }}>{String(text.count) + ' ' + (text.count === 1 ? 'comment' : 'comments')}</Text>) }}
+                                labelFunction={(text) => { return (<Text style={{ color: 'white', fontFamily: 'NunitoSans-Regular' }}>{String(text.count) + ' ' + (text.count === 1 ? 'comment' : 'comments')}</Text>) }}
                                 onPress={() => props.navigation.navigate('SinglePost', { activity: props })}
                             />
                         </View>
@@ -306,29 +313,31 @@ const FeedScreen = ({ navigation, route }) => {
             <Activity
                 {...props}
                 Header={
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image
-                            onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
-                            source={{ uri: source }}
-                            style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
-                        />
-                        <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                            <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.data.name}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.actor.created_at.split('T')[0]}</Text>
+                    <View style={{ flexDirection: 'column' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image
+                                // onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
+                                source={{ uri: props.activity.user ? props.activity.user.data.profileImage : 'https://d5c8j8afeo6fv.cloudfront.net/profile.png' }}
+                                style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
+                            />
+                            <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1)}</Text>
+                            </View>
+                            <ActionSheet
+                                ref={refActionSheet}
+                                options={['Share', 'Report', 'Close']}
+                                cancelButtonIndex={2}
+                                destructiveButtonIndex={1}
+                                onPress={(index) => { index == 1 ? report(props.activity) : null; }}
+                            />
+                            <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
                         </View>
-                        <ActionSheet
-                            ref={refActionSheet}
-                            options={['Share', 'Report', 'Close']}
-                            cancelButtonIndex={2}
-                            destructiveButtonIndex={1}
-                            onPress={(index) => { index  == 1 ? report(props.activity) : null; }}
-                        />
-                        <Right><Icon onPress={() => {showActionSheet(); }} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20 }} /></Right>
+                        <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>
                     </View>
                 }
                 Content={
                     <View style={{ padding: 20 }}>
-                        <Text style={{ fontFamily: 'Poppins-Regular' }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>
+                        {props.activity.object === 'default123' ? null : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                         {props.activity.image ? <ImageView
                             images={images}
                             imageIndex={0}
@@ -346,32 +355,32 @@ const FeedScreen = ({ navigation, route }) => {
                                             style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                            <Text style={{ fontFamily: 'Poppins-Regular', color: 'white' }}>{props.activity.actor.data.name}</Text>
-                                            <Text style={{ fontFamily: 'Poppins-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data.name}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
                                         </View>
                                         <ActionSheet
                                             ref={refActionSheet}
                                             options={['Share', 'Report', 'Close']}
                                             cancelButtonIndex={2}
                                             destructiveButtonIndex={1}
-                                            onPress={(index) => { index  == 1 ? report(props.activity): null ;  }}
+                                            onPress={(index) => { index == 1 ? report(props.activity) : null; }}
                                         />
-                                        <Right><Icon onPress={() => {showActionSheet(); }} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20, color: 'white' }} /></Right>
+                                        <Right><Icon onPress={() => { showActionSheet(); }} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20, color: 'white' }} /></Right>
                                     </View>
-                                        <Text style={{ fontFamily: 'Poppins-Regular', color: 'white', marginLeft: 30, marginTop: 10, marginRight: 30 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text></View>)
+                                        <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', marginLeft: 30, marginTop: 10, marginRight: 30, fontSize: 14 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text></View>)
                             }}
 
                         /> : <View></View>}
                         <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
                             {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image.split(", ")[0] }}
-                                style={{ width: width - 40, height: 340, marginTop: 20 }}
-                            /> : <View style={{ height: 400 }}><SliderBox
+                                style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
+                            /> : <View style={{ height: 400, borderRadius: 10 }}><SliderBox
                                 images={props.activity.image.split(", ").filter(n => n)}
                                 dotColor="#FFEE58"
+                                style={{ borderRadius: 10 }}
                                 inactiveDotColor="#90A4AE"
                                 paginationBoxVerticalPadding={20}
-
                                 sliderBoxHeight={400}
                             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
@@ -394,19 +403,19 @@ const FeedScreen = ({ navigation, route }) => {
     const fontConfig = {
         default: {
             regular: {
-                fontFamily: 'Poppins-Regular',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             medium: {
-                fontFamily: 'Poppins-Regular',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             light: {
-                fontFamily: 'Poppins-Regular',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             thin: {
-                fontFamily: 'Poppins-Regular',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
         },
@@ -455,12 +464,12 @@ const FeedScreen = ({ navigation, route }) => {
     const there = (props) => {
         return (
             <SafeAreaProvider>
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginBottom: -45 }}>
-                    <Body style={{ alignItems: 'center' }}>
-                        <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Home</Title>
+                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 10 }}>
+                    <Body style={{ alignItems: 'center', marginLeft: -20 }}>
+                        <Title style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Home</Title>
                     </Body>
                     <Right style={{ marginRight: 30, marginTop: 0 }}>
-                        <Icon onPress={() => { navigation.toggleDrawer(); }} name="menu" type="Feather" />
+                        <Icon name="bell" type="Feather" />
                     </Right>
                 </Header>
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
@@ -469,6 +478,7 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="90935"
                         token={children['0']['data']['gsToken']}
                     >
+                <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View>
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet
@@ -491,14 +501,14 @@ const FeedScreen = ({ navigation, route }) => {
                 </SafeAreaView>
                 <Snackbar
                     visible={showToast}
-                    style={{marginBottom: height*0.08}}
+                    style={{ marginBottom: height * 0.08 }}
                     duration={1500}
-                    onDismiss={ () => setShowToast(false) }
+                    onDismiss={() => setShowToast(false)}
                     action={{
-                    label: 'Done',
-                    onPress: () => {
-                        // Do something
-                    },
+                        label: 'Done',
+                        onPress: () => {
+                            // Do something
+                        },
                     }}>
                     Post Reported
                 </Snackbar>
@@ -515,11 +525,11 @@ const FeedScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
+                <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center' }} />
+                <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
                 <View style={{ backgroundColor: 'white' }}>
                     <Button onPress={() => navigation.navigate('Child')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
-                        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
+                        <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
                     </Button>
                 </View>
             </View>
@@ -527,7 +537,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     return (
         children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
-        
+
     );
 };
 

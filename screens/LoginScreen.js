@@ -32,19 +32,19 @@ const LoginScreen = ({ route, navigation }) => {
   const fontConfig = {
     default: {
       regular: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
       medium: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
       light: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
       thin: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
     },
@@ -127,7 +127,7 @@ const LoginScreen = ({ route, navigation }) => {
           <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 10 }}>{'Use Work Email-ID'}</Text>
           </SimpleAnimation>
-          <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Poppins-Regular', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>
+          <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Nunito-Sans', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>
           <View style={{ alignSelf: 'center' }}>
             <SpinnerButton
               buttonStyle={{

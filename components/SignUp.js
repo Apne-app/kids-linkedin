@@ -13,19 +13,19 @@ const SignUpForm = ({ navigation }) => {
   const fontConfig = {
     default: {
       regular: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
       medium: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
       light: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
       thin: {
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Nunito-Sans',
         fontWeight: 'normal',
       },
     },
@@ -56,11 +56,11 @@ const SignUpForm = ({ navigation }) => {
   return (
     <View style={styles.form}>
       <Form>
-        <Label style={{ fontFamily: 'Poppins-Regular' }}>Work Mail-Id</Label>
+        <Label style={{ fontFamily: 'Nunito-Sans' }}>Work Mail-Id</Label>
         <Item rounded style={{ marginTop: 12, marginBottom: 12, backgroundColor: "#fff" }}>
           <Input placeholder='manoj@google.com' value={signup.email} onChangeText={(txt) => setSignup({ ...signup, email: txt })} style={{ paddingLeft: 30, height: 60 }} />
         </Item>
-        <Label style={{ fontFamily: 'Poppins-Regular' }}>Password</Label>
+        <Label style={{ fontFamily: 'Nunito-Sans' }}>Password</Label>
         <Item rounded style={{ marginTop: 12, backgroundColor: "#fff" }}>
           <Input placeholder='*******' secureTextEntry={!signup.viewPass} value={signup.password} onChangeText={(txt) => setSignup({ ...signup, password: txt })} style={{ paddingLeft: 30, height: 60 }} />
           {
@@ -70,7 +70,7 @@ const SignUpForm = ({ navigation }) => {
           }
         </Item>
       </Form>
-      <Text style={{ textAlign: 'right', color: 'rgba(56, 56, 56, 0.8)', fontFamily: 'Poppins-Regular', marginTop: 10 }}>Forgot Password?</Text>
+      <Text style={{ textAlign: 'right', color: 'rgba(56, 56, 56, 0.8)', fontFamily: 'Nunito-Sans', marginTop: 10 }}>Forgot Password?</Text>
       <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 25, height: 50, }} onPress={() => { loginApi() }}>
         <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>SIGN UP</Text>
       </Button>

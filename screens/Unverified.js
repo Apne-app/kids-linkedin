@@ -84,8 +84,8 @@ const Unverified = ({ navigation }) => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <Image source={require('../assets/emailsent.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>We've sent an email to{"\n"}<Text style={{ textDecorationLine: 'underline', textDecorationColor: 'lightblue' }}>{profile.email}</Text>{"\n"}for verification</Text>
-                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Please verify for becoming a part of the community</Text>
+                <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>We've sent an email to{"\n"}<Text style={{ textDecorationLine: 'underline', textDecorationColor: 'lightblue' }}>{profile.email}</Text>{"\n"}for verification</Text>
+                <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Please verify for becoming a part of the community</Text>
                 <View style={{ backgroundColor: 'white' }}>
                     <Button onPress={() => send()} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
                         <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Send again</Text>

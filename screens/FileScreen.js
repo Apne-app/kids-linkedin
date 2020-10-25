@@ -340,7 +340,7 @@ const FileScreen = (props) => {
                 {
                     !selecting ?
                     <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Poppins-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Your Files</Title> 
+                    <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Your Files</Title> 
                 </Body> :
                 <Left>
                     <TouchableOpacity style={{marginLeft: 15}} onPress={() =>cancelSelection()} ><Icon style={{ fontSize: 40}} name="cross" type="Entypo" /></TouchableOpacity>
@@ -374,8 +374,8 @@ const FileScreen = (props) => {
                        pdfs.length == 0 && files.length == 0 ?
                     <View style={{ backgroundColor: 'white', height: height, width: width }}>
                         <Image source={require('../assets/empty.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Nothing to view here.</Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Scan and add to get started!</Text>
+                        <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Nothing to view here.</Text>
+                        <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Scan and add to get started!</Text>
                         
                     </View>
                 :
@@ -383,7 +383,7 @@ const FileScreen = (props) => {
                     return (
 
                     <View key={i}>
-                        <Text style={{ fontFamily: 'Poppins-Regular', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>{it.name}</Text>
+                        <Text style={{ fontFamily: 'Nunito-Sans', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>{it.name}</Text>
                         <FlatList
                         data={it.files}
                         scrollEnabled={true}
