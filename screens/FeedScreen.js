@@ -337,7 +337,7 @@ const FeedScreen = ({ navigation, route }) => {
                 }
                 Content={
                     <View style={{ padding: 20 }}>
-                        {props.activity.object === 'default123' ? null : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                        {props.activity.object === 'default123' ? <View style={{marginTop:-20}}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                         {props.activity.image ? <ImageView
                             images={images}
                             imageIndex={0}
@@ -466,7 +466,7 @@ const FeedScreen = ({ navigation, route }) => {
             <SafeAreaProvider>
                 <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 10 }}>
                     <Body style={{ alignItems: 'center', marginLeft: -20 }}>
-                        <Title style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Home</Title>
+                        <Title style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 33, marginTop: 0, marginLeft: -20 }}>Genio</Title>
                     </Body>
                     <Right style={{ marginRight: 30, marginTop: 0 }}>
                         <Icon name="bell" type="Feather" />
@@ -478,7 +478,7 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="90935"
                         token={children['0']['data']['gsToken']}
                     >
-                <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View>
+                {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet
