@@ -375,13 +375,14 @@ const FeedScreen = ({ navigation, route }) => {
                             {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image.split(", ")[0] }}
                                 style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
-                            /> : <View style={{ height: 400, borderRadius: 10 }}><SliderBox
+                            /> : <View style={{ height: 340 }}><SliderBox
                                 images={props.activity.image.split(", ").filter(n => n)}
                                 dotColor="#FFEE58"
-                                style={{ borderRadius: 10 }}
                                 inactiveDotColor="#90A4AE"
                                 paginationBoxVerticalPadding={20}
-                                sliderBoxHeight={400}
+                                sliderBoxHeight={340}
+                                ImageComponentStyle={{borderRadius:10, width: width - 80, height: 340,}}
+                                circleLoop={true}
                             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
                             /></View> : <View></View>}

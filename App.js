@@ -101,24 +101,18 @@ const App = (props) => {
       <BottomNav.Navigator
         // tabBar={props => (
         //   <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
-        // )}
-      tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, }}
+        // )} 
+      tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, tabStyle:{height:80,borderWidth: 0.5,
+        borderBottomWidth: 1,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        borderColor: 'transparent',} }}
       >
-<<<<<<< HEAD
-        <BottomNav.Screen name="Feed" component={FeedScreen}  options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/Home.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />:<Image source={require("./images/Home-Outline.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />}} />
-        <BottomNav.Screen name="Search" component={SearchScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/Home.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />:<Image source={require("./images/Home-Outline.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />}} />
-        <BottomNav.Screen name="Post" style={{backgroundColor:'transparent'}} component={PostScreenNavig} options={{tabBarLabel: '', tabBarIcon:({focused})=><View  style={{borderRadius:10000, padding:8,  marginBottom:40, borderColor:'transparent', borderWidth:20}}><Icon name={'plus'} type="Feather" style={{backgroundColor:'#327FEB', borderRadius:10000, color:'white', width:54, height:54, fontSize:30, padding:12}} /></View>}} />
-        <BottomNav.Screen name="Files" component={FileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/Home.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />:<Image source={require("./images/Home-Outline.png")} style={{width:21.2, height:23.3, marginBottom:-15}} />}} />
-        <BottomNav.Screen name="Profile" component={ProfileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Image source={require("./images/User.png")} style={{width:28, height:28, marginBottom:-15}} />:<Image source={require("./images/User-Outline.png")} style={{width:28, height:28, marginBottom:-15}} />}} />
-=======
-        <BottomNav.Screen name="Feed" component={FeedScreen}  options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />:<Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />}} />
-        <BottomNav.Screen name="Search" component={SearchScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />:<Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />}} />
+        <BottomNav.Screen name="Feed" component={FeedScreen}  options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>Home</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: "grey", fontSize: 20 }} type="Feather" name="home" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>Home</Text></View>}} />
+        <BottomNav.Screen name="Search" component={SearchScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: '#000', fontSize: 20, marginRight:2 }} type="Feather" name="search" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>Search</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: 'grey', fontSize: 20, marginRight:2 }} type="Feather" name="search" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>Search</Text></View>}} />
         <BottomNav.Screen name="Post" style={{backgroundColor:'transparent'}} component={PostScreenNavig} options={{tabBarLabel: '', tabBarIcon:({focused})=><LinearGradient locations={[0.9,1]} colors={['transparent', '#f5f5f5']} style={{borderRadius:10000, padding:8,  marginBottom:40}}><Icon name={'plus'} type="Feather" style={{backgroundColor:'#327FEB', borderRadius:10000, color:'white', width:54, height:54, fontSize:30, padding:12}} /></LinearGradient>}} />
-        <BottomNav.Screen name="Files" component={FileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />:<Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />}} />
-        <BottomNav.Screen name="Profile" component={ProfileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />:<Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />}} />
-        
->>>>>>> 91fccf1c0070fdb925b89764539ab150892cec5a
-
+        <BottomNav.Screen name="Files" component={FileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: '#000', fontSize: 20 }} type="AntDesign" name="file1" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>My Files</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: 'grey', fontSize: 20 }} type="AntDesign" name="file1" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>My Files</Text></View>}} />
+        <BottomNav.Screen name="Profile" component={ProfileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>Profile</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:7}}><Icon style={{ color: 'grey', fontSize: 20 }} type="Feather" name="user" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>Profile</Text></View>}} />
         {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'Nunito-Sans', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
       </BottomNav.Navigator>
     )
