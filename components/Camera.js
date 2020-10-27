@@ -253,7 +253,7 @@ export default class ExampleApp extends PureComponent {
             <Icon type="EvilIcons" name="image" style={{color: "#000", fontSize: 50}} />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 2, alignItems: 'center', marginTop: -10}}>
-            <Icon type="Entypo" name="circle" style={{color: "#000", fontSize: 70}} />
+            <Icon type="Entypo" name="circle" style={{color: "grey", fontSize: 70}} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {
             this.props.navigation.navigate('Home', {
