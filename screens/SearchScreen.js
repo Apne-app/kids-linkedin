@@ -128,16 +128,16 @@ const SearchScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <Container>
-        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, marginTop: 20 }}>
+        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, marginTop: 35, marginBottom: 10 }}>
           
-          <Item regular style={{width: width*0.9, borderColor: "#000", height: 45, borderRadius: 10}}>
-            <Icon active name='search' type="EvilIcons" />
-            <Input placeholder='Search' onResponderStart={() => navigation.navigate('Searching')}/>
+          <Item style={{width: width*0.9, borderColor: "#000", height: 45, borderRadius: 10}}>
+            <Icon style={{fontSize: 30}} active name='search' type="EvilIcons" />
+            <Input style={{fontSize: 16}} placeholder='Search' onResponderStart={() => navigation.navigate('Searching')}/>
           </Item>
         </Header>
         <Content style={styles.container}>
           <View >
-            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 16, marginLeft: 15 }}>Kids</Text>
+            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15 }}>Kids</Text>
           </View>
           <FlatList
             data={explore}
@@ -172,7 +172,7 @@ const SearchScreen = ({ route, navigation }) => {
             keyExtractor={(item, index) => index.toString()}
           />
           <View style={{marginTop: 30}} >
-            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 16, marginLeft: 15 }}>Services</Text>
+            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15 }}>Services</Text>
           </View>
           <FlatList
             data={explore}
@@ -240,6 +240,8 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: "#fafafa",
+    marginTop: 20
     // padding: 40, 
     // paddingTop: 80
   },

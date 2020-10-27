@@ -309,8 +309,9 @@ const styles = StyleSheet.create({
   cropView: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: 'black',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
+    marginBottom: 120
   },
 
   // image: {

@@ -153,12 +153,14 @@ const styles = StyleSheet.create({
         // alignItems: 'center',
         flex: 1,
         flexDirection: 'column',
+        fontFamily: 'NunitoSans-Regular'
         // padding: 40,
         // paddingTop: 80
     },
     form: {
         marginTop: 40,
-        flex: 1
+        flex: 1,
+        fontFamily: 'NunitoSans-Regular'
         // alignSelf: 'center'
     },
     //  image: {
@@ -173,6 +175,7 @@ const styles = StyleSheet.create({
         bottom: 10,
         alignSelf: 'center',
         position: 'absolute',
+        fontFamily: 'NunitoSans-Regular'
         // flexDirection: 'row',
         // backgroundColor:'rgba(255,255,255,0.3)'
     },
@@ -184,6 +187,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 10,
         borderRadius: 15,
+        fontFamily: 'NunitoSans-Regular',
         backgroundColor: 'rgba(0,0,0,0.5)'
     },
     tinyLogo: {

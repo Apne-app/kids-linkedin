@@ -478,7 +478,7 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="90935"
                         token={children['0']['data']['gsToken']}
                     >
-                <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View>
+                <View style={{backgroundColor:'#f9f9f9', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View>
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet

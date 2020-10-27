@@ -413,7 +413,7 @@ const Upload = ({ route, navigation }) => {
           </TouchableOpacity>
         </Left>
         <Right>
-        <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center',  }}
+        <TouchableOpacity style={{ borderRadius: 20, borderWidth: 2, borderColor: "#fff", alignSelf: 'center',  }}
           onPress={() => {
             analytics.track('PDF Saved');
             setModalVisible(true);
@@ -421,7 +421,7 @@ const Upload = ({ route, navigation }) => {
         >
           <View style={styles.saveAsPDF}>
             <Text style={{ color: "#fff", flex: 1, textAlign: 'center' }}>
-              Save as PDF
+              Download PDF
             </Text>
           </View>
         </TouchableOpacity>
@@ -603,6 +603,7 @@ const Upload = ({ route, navigation }) => {
           <ScrollView style={{height: height*0.6, backgroundColor: '#f9f9f9'}}>
           <FlatList
             data={explore}
+            style={{marginLeft: width*0.05, marginRight: width*0.06, marginVertical: width*0.03}}
             renderItem={({ item }) => (
               <View>
                 {
@@ -661,7 +662,7 @@ const Upload = ({ route, navigation }) => {
         >
           <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
         </TouchableOpacity>*/}
-      <View style={{height: height*0.25, borderTopWidth: 0.2,borderLeftWidth: 0.2,borderRightWidth: 0.2, borderRadius: 10}}>
+      <View style={{height: height*0.25, borderTopWidth: 1,borderLeftWidth: 1,borderRightWidth: 1, borderColor: 'lightgrey'}}>
       <View style={{ marginTop: 10}} >
             <FlatList
               data={tags}
@@ -761,13 +762,13 @@ const styles = StyleSheet.create({
   },
   addIcon: {
     // right: width*0.15,
-    bottom: "35%",
+    bottom: "29%",
     position: 'absolute',
     alignSelf: 'center',
     flexDirection: 'row',
     padding: 20,
-    borderRadius: 8,
-    backgroundColor: '#000',
+    borderRadius: width,
+    backgroundColor: '#357feb',
     // borderWidth: 1,
     borderColor: "#fff"
     // backgroundColor:'rgba(0,0,0,0.5)'
@@ -779,19 +780,22 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    height: width * 0.45,
-    width: width * 0.45,
-    margin: width * 0.02,
+    height: width * 0.39,
+    width: width * 0.39,
+    margin: width * 0.03,
     borderRadius: 30,
 
   },
   addImg: {
-    height: width * 0.45,
-    width: width * 0.45,
-    margin: width * 0.02,
+    height: width * 0.39,
+    width: width * 0.39,
+    margin: width * 0.03,
     // borderWidth: 2,
     borderRadius: 20,
-    backgroundColor: "#327FEB"
+    borderColor: "#357feb",
+    borderWidth: 3,
+    borderStyle:"dashed",
+    backgroundColor: "#fff"
     // borderStyle: 'dashed',
   },
   save: {
@@ -811,10 +815,10 @@ const styles = StyleSheet.create({
     padding: 8,
     // margin: 5,
     backgroundColor: '#357feb',
-    borderRadius: 7,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
-    width: 120
+    width: 135
   },
   save2: {
     alignSelf: 'center',
@@ -822,7 +826,7 @@ const styles = StyleSheet.create({
     padding: 15,
     // margin: 5,
     backgroundColor: '#fff',
-    borderRadius: 6,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: "#357feb",
     width: width * 0.31
