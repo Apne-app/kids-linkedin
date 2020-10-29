@@ -872,7 +872,13 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{height: 50}}
             onPress={() => {
-               croppedi ? setcroppedi(false) : navigation.pop();
+               var ar = explore;
+               var arr = [];
+               for(var i = 1; i < ar.length; i++)
+               {
+                 arr.push({ uri: 'file://'+ar[i]["uri"] })
+               }
+               navigation.navigate('CreatePost', { images: arr })
             }}
           >
             <View style={styles.Next}>

@@ -208,6 +208,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
+        <Stack.Screen options={{ headerShown: false }} name="CreatePost" component={PostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
         <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
         <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
