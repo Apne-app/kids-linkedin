@@ -27,6 +27,27 @@ const App: () => React$Node = (props) => {
 
   React.useEffect(() => {
     setUri(props.route.params.img);
+    const saveOrigImages = async () => {
+      var arr = await AsyncStorage.getItem("OrigImages");
+      arr = JSON.parse(arr);
+
+      if(arr)
+      {
+        arr = [ ...arr , props.route.params.img ]
+      }
+      else
+      {
+        arr = [ props.route.params.img ];
+      }
+
+      console.log(arr);
+
+      await AsyncStorage.setItem("OrigImages", JSON.stringify(arr));
+
+    }
+
+    saveOrigImages();
+    
   // console.log(AsyncStorage);
   }, [])
 
@@ -148,34 +169,15 @@ const App: () => React$Node = (props) => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05, }}>
+      <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05}}>
               <Left style={{ alignItems: 'center' }}>
-              <TouchableOpacity onPress={() =>  croppedi ? setcroppedi(false) : props.navigation.pop()}><Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
+              <TouchableOpacity onPress={() =>  croppedi ? setcroppedi(false) : props.navigation.pop()}><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
           </Left>
           <Body>
              
           </Body>
           <Right>
-          {
-            !croppedi ? 
-            <TouchableOpacity onPress={async () => {
-            cropViewRef.current.saveImage(true, 90)
-              
-          }} style={{marginRight: 10}}>
-              <Icon type="Entypo" name="check" style={{ color: "#000", fontSize: 30,}} />
-            </TouchableOpacity>
-            :
-            <TouchableOpacity onPress={async () => {
-            // cropViewRef.current.saveImage(true, 90)
-              // :
-              takeShot();
-              
-              // cropViewRef.rotateImage(false);
-              
-          }} style={{marginRight: 10}}>
-              <Icon type="Entypo" name="check" style={{ color: "#000", fontSize: 30,}} />
-            </TouchableOpacity>
-          }
+          
           </Right>
       </Header>
       <View style={styles.container}>
@@ -241,6 +243,50 @@ const App: () => React$Node = (props) => {
           </View>
         }
         
+        </View>
+        <View style={{height: height*0.16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+          <TouchableOpacity
+            style={{height: 40}}
+            onPress={() => {
+               croppedi ? setcroppedi(false) : props.navigation.pop();
+            }}
+          >
+            <View style={styles.Cancel}>
+              <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                Cancel
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          {
+            !croppedi ? 
+            <TouchableOpacity style={{height: 40}} onPress={async () => {
+            cropViewRef.current.saveImage(true, 90)
+              
+          }} >
+              <View style={styles.Next}>
+                <Text style={{ color: "#fff", flex: 1, textAlign: 'center' }}>
+                  Next
+                </Text>
+              </View>
+            </TouchableOpacity>
+            :
+            <TouchableOpacity style={{height: 40}} onPress={async () => {
+            // cropViewRef.current.saveImage(true, 90)
+              // :
+              takeShot();
+              
+              // cropViewRef.rotateImage(false);
+              
+          }}>
+              <View style={styles.Next}>
+                <Text style={{ color: "#fff", flex: 1, textAlign: 'center' }}>
+                  Next
+                </Text>
+              </View>
+            </TouchableOpacity>
+          }
+
         </View>
         {/*<View style={{flex: 1}}>
         <View style={{flex: 1, backgroundColor: "#fff"}}>
@@ -311,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
     justifyContent: 'center',
-    marginBottom: 120
+    // marginBottom: 120
   },
 
   // image: {
@@ -322,6 +368,32 @@ const styles = StyleSheet.create({
   //   // borderRadius: 30,
     
   // },
+  Next: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 8,
+    // margin: 5,
+    backgroundColor: '#357feb',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+    width: 135,
+    flex: 1,
+    marginHorizontal: 20
+  },
+  Cancel: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 8,
+    // margin: 5,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#357feb",
+    width: 135,
+    flex: 1,
+    marginHorizontal: 20
+  },
 });
 
 export default App;

@@ -152,7 +152,7 @@ export default class ExampleApp extends PureComponent {
     return (
       <View style={styles.container}>
       <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05 }}>
-              <Left style={{ alignItems: 'center' }}>
+          <Left >
               <TouchableOpacity onPress={() => {
                 if(this.props.route.params)
                 {
@@ -165,10 +165,10 @@ export default class ExampleApp extends PureComponent {
                     screen: 'Feed',
                   })
                 }
-              }} ><Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
+              }} ><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
           </Left>
           <Body>
-            <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 20, marginTop: 5 }}>Take Picture</Title> 
+            <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 20, marginTop: 0 }}>Take Picture</Title> 
           </Body>
           <Right />
       </Header>
@@ -260,7 +260,7 @@ export default class ExampleApp extends PureComponent {
               screen: 'Files',
             })
           }} style={styles.capture, {flex: 1, alignItems: 'flex-end', marginRight: 20, marginTop: 10}}>
-            <Icon name="file-pdf" type="FontAwesome5" style={{color: "#000", fontSize: 30}} />
+            <Icon name="file" type="Feather" style={{color: "#000", fontSize: 30}} />
           </TouchableOpacity>
         </View>
         

@@ -79,6 +79,9 @@ const SearchScreen = ({ route, navigation }) => {
       'age': 20,
       'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
     },
+    {
+      'name': "Show All"
+    }
   ])
   const [children, setchildren] = useState('notyet')
   useEffect(() => {
@@ -143,7 +146,7 @@ const SearchScreen = ({ route, navigation }) => {
             data={explore}
             renderItem={({ item }) => (
               <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(item.name)}>
-                <View
+                { item.name != "Show All" ? <View
                   key={item.id}
                   style={{ flex: 1, }}>
                   {/*console.log(item.node.image.uri)*/}
@@ -164,11 +167,26 @@ const SearchScreen = ({ route, navigation }) => {
                   <View >
                     <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
                   </View>
-                </View>
+                </View> : 
+                <View
+                    style={styles.image}
+                    // imageStyle={{ borderRadius: width*0.2 }}
+                    // source={{
+                    //   uri: item.image,
+                    // }}
+                  >
+                    <View style={styles.personDetails}>
+                      <View >
+                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>Show </Text>
+                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>All</Text>
+                      </View>
+                    </View>
+                  </View>
+                }
               </TouchableOpacity>
             )}
             //Setting the number of column
-            numColumns={4}
+            numColumns={3}
             keyExtractor={(item, index) => index.toString()}
           />
           <View style={{marginTop: 30}} >
@@ -178,13 +196,13 @@ const SearchScreen = ({ route, navigation }) => {
             data={explore}
             renderItem={({ item }) => (
               <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(item.name)}>
-                <View
+                { item.name != "Show All" ? <View
                   key={item.id}
                   style={{ flex: 1, }}>
                   {/*console.log(item.node.image.uri)*/}
                   <ImageBackground
                     style={styles.image}
-                    imageStyle={{ borderRadius: width*0.2,backgroundColor: 'lightgrey', }}
+                    imageStyle={{ borderRadius: width*0.2 }}
                     source={{
                       uri: item.image,
                     }}
@@ -199,11 +217,26 @@ const SearchScreen = ({ route, navigation }) => {
                   <View >
                     <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
                   </View>
-                </View>
+                </View> : 
+                <View
+                    style={styles.image}
+                    // imageStyle={{ borderRadius: width*0.2 }}
+                    // source={{
+                    //   uri: item.image,
+                    // }}
+                  >
+                    <View style={styles.personDetails}>
+                      <View >
+                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>Show </Text>
+                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>All</Text>
+                      </View>
+                    </View>
+                  </View>
+                }
               </TouchableOpacity>
             )}
             //Setting the number of column
-            numColumns={4}
+            numColumns={3}
             keyExtractor={(item, index) => index.toString()}
           />
         </Content>
@@ -241,7 +274,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: "#fafafa",
-    marginTop: 20
+    marginTop: 20,
+    marginHorizontal: width*0.05
     // padding: 40, 
     // paddingTop: 80
   },
@@ -267,13 +301,13 @@ const styles = StyleSheet.create({
   },
   personDetails: {
     // right: width*0.15,
-    bottom: 10,
+    bottom: 15,
     position: 'absolute',
     alignSelf: 'center',
     flexDirection: 'row',
-    padding: 10,
+    padding: 8,
     borderRadius: 15,
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    // backgroundColor: 'rgba(255,255,255, 0.7)'
   },
   tinyLogo: {
     alignSelf: 'center',
@@ -285,7 +319,9 @@ const styles = StyleSheet.create({
     height: width * 0.2,
     width: width * 0.2,
     margin: width * 0.02,
-    borderRadius: width*0.02,
+    alignSelf: 'center',
+    backgroundColor: "#357feb",
+    borderRadius: width*0.2,
 
   },
 })

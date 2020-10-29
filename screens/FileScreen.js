@@ -16,7 +16,7 @@ import {
   CheckBox
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Container,Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab,  Footer, FooterTab, Button, Icon } from 'native-base';
+import { Container,Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
 import { Chip } from 'react-native-paper';
 import ImageView from "react-native-image-viewing";
@@ -38,7 +38,7 @@ const FileScreen = (props) => {
     const [visible, setVisible] = React.useState(false);
     const [seltopic, setSelTopic] = React.useState('');
     const [tagsPresent, setTagsPresent] = React.useState(false)
-    const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other', 'Other']);
+    const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
     const [tag, setTag] = React.useState('');
 
     const [refreshing, setRefreshing] = React.useState(false);
@@ -126,70 +126,126 @@ const FileScreen = (props) => {
             // console.log(albums);
             albums = JSON.parse(albums);
             // console.log(albums);
+
+
+        RNFS.readDir(`${dir_path}/Images`)
+            .then((result) => {
+                console.log('GOT RESULT', result.length);
+
+                var fls = [];
+
+                result.map((item, i) => {
+                    fls.push(item.path)
+                })
+
+                fls.sort();
+                var arr = [];
+                
+                for(var i = 0; i < fls.length; )
+                {
+                    // console.log(fls)
+                    var m = fls[i];
+                    // i++;
+                    var tmp = [];
+                    while( i < fls.length && fls[i].split('_')[1].split('-')[0] == m.split('_')[1].split('-')[0])
+                    {
+                        tmp.push(fls[i]);
+                        i++;
+                    }
+                    arr.push({ 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1] });
+                }
+                // console.log(arr);
+                setFiles([ ...arr ])
+
+            })
+            .catch((err) => {
+                console.log(err.message, err.code);
+        });
         
 
-        CameraRoll.getAlbums({
-                    // first: 100,
-                    assetType: 'All',
-                    })
-                    .then(async r => {
-                        // console.log(r);
+        // CameraRoll.getAlbums({
+        //             // first: 100,
+        //             assetType: 'All',
+        //             })
+        //             .then(async r => {
+        //                 // console.log(r);
 
-                        var arr = [];
-                        if(albums)
-                        {
+        //                 var arr = [];
+        //                 var fls = [];
+        //                 if(albums)
+        //                 {
 
-                        for(var i = 0; i < r.length; i++)
-                        {
-                            for(var j = 0; j < albums.length; j++)
-                            {
-                                if(albums[j]['albumName'] == r[i].title)
-                                {
-                                // console.log(albums[j], r[i].title)
-                                var y = albums[j]['albumName'];
-                                var z = albums[j]['tagName'];
-                                    await CameraRoll.getPhotos({
-                                        first: r[i].count,
-                                        assetType: 'All',
-                                        groupName: albums[j]['albumName']
-                                    })
-                                    .then(r => {
-                                        // console.log(r.edges[0].node.group_name, "asd");
-                                        for(var k = 0; k < r.edges.length; k++)
-                                        {
-                                            r.edges[k].node['checked'] = false;
-                                        }
-                                        arr.push( {'name': y, 'files': r.edges, 'tag': z} );
-                                        // setFiles([ ...files, { 'name': y, 'files': r.edges} ])
+        //                 for(var i = 0; i < r.length; i++)
+        //                 {
+        //                     for(var j = 0; j < albums.length; j++)
+        //                     {
+        //                         if(albums[j]['albumName'] == r[i].title)
+        //                         {
+        //                         // console.log(albums[j], r[i].title)
+        //                         var y = albums[j]['albumName'];
+        //                         var z = albums[j]['tagName'];
+        //                             await CameraRoll.getPhotos({
+        //                                 first: r[i].count,
+        //                                 assetType: 'All',
+        //                                 groupName: albums[j]['albumName']
+        //                             })
+        //                             .then(r => {
+        //                                 // console.log(r.edges[0].node.group_name, "asd");
+        //                                 for(var k = 0; k < r.edges.length; k++)
+        //                                 {
+        //                                     r.edges[k].node['checked'] = false;
+        //                                 }
+        //                                 arr.push( {'name': y, 'files': r.edges, 'tag': z} );
+        //                                 fls.push({...r.edges, 'tag': z});
+        //                                 // setFiles([ ...files, { 'name': y, 'files': r.edges} ])
                                         
-                                    })
-                                }
-                            }
-                        }
-                        }
+        //                             })
+        //                         }
+        //                     }
+        //                 }
+        //                 }
 
-                        console.log(arr);
-                        let tempImg = await AsyncStorage.getItem('tempImg');
-                        tempImg = JSON.parse(tempImg);
-                        // console.log(tempImg);
-                        var array = arr;
-                        if(tempImg)
-                        {
+        //                 // fls.sort(function(x, y){
+        //                 //     return x.node.timestamp - y.node.timestamp;
+        //                 // })
 
-                        // for(var i = 0; i < tempImg.files.length; i++)
-                        // {
-                        //     console.log(tempImg.files[i]);
-                        //     array.push()
-                        // }
-                        array.push(tempImg);
-                        // setFiles([ ...files, ...array ]);
-                        }
-                        setFiles([ ...array ]);
-                    })
-                    .catch((err) => {
-                        //Error Loading 
-                        console.log(err);
-                });
+        //                 console.log('aasasa',fls);
+        //                 var filesss = [];
+
+        //                 // for(var m = 0; m < fls.length; )
+        //                 // {
+        //                 //     var mb = fls[m].node.timestamp;
+        //                 //     var tempArr = [], tag = 
+        //                 //     while(fls[m].node.timestamp == mb)
+        //                 //     {
+
+        //                 //     }
+        //                 // }
+
+
+        //                 console.log(arr);
+        //                 let tempImg = await AsyncStorage.getItem('tempImg');
+        //                 tempImg = JSON.parse(tempImg);
+        //                 // console.log(tempImg);
+        //                 var array = arr;
+        //                 if(tempImg)
+        //                 {
+
+        //                 // for(var i = 0; i < tempImg.files.length; i++)
+        //                 // {
+        //                 //     console.log(tempImg.files[i]);
+        //                 //     array.push()
+        //                 // }
+                        
+        //                 array.push(tempImg);
+        //                 // setFiles([ ...files, ...array ]);
+        //                 }
+        //                 setFiles([ ...array ]);
+        //             })
+        //             .catch((err) => {
+        //                 //Error Loading 
+        //                 console.log(err);
+        //         });
 
                 
                 
@@ -268,39 +324,49 @@ const FileScreen = (props) => {
 
 
 
-    const viewImages = (topic) => {
+    const viewImages = (time) => {
 
-        var arr = files;
+        var arr = [...files];
         var arr2 = [];
         for(var i = 0; i < arr.length; i++)
         {
-            if(topic === arr[i].name)
+
+            if(time === arr[i].time)
             {
-                for(var j = 0; j < arr[i].files.length; j++)
+                for(var j = 0; j < arr[i].images.length; j++)
                 {
-                    arr2.push({ uri: arr[i].files[j].node.image.uri });
+                    arr2.push({ uri: arr[i].images[j], height: 200 });
                 }
                 break;
             }
         }
-        setSelected([ ...arr2]);
-        setSelTopic(topic);
-        setVisible(true);
+        console.log(arr2)
+        props.navigation.navigate('PostScreen', { "selected": [ ...arr2] })
+        // setSelected([ ...arr2]);
+        // setSelTopic(topic);
+        // setVisible(true);
     }
 
-    const showTags = async (selectedTag) => {
+    const showTags = async (tag) => {
 
-        var arr = await AsyncStorage.getItem('albums');
-        arr = JSON.parse(arr);
+        // var arr = await AsyncStorage.getItem('albums');
+        // arr = JSON.parse(arr);
         var z = [];
 
-        if(selectedTag == 'Other') selectedTag = 'Other';
+        if(tag == 'Other') tag = 'Other';
+
+        if(tag == 'All') 
+        {
+            showAll();
+            return;
+        }
 
         for(var i = 0; i < files.length; i++)
         {
-            if(files[i]['tag'] == selectedTag)
+            if(files[i]['tag'] == tag)
             {
-                z.push( {'name': files[i]['name'], 'files': files[i]['files'], 'tag': selectedTag} );
+                // { 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1] }
+                z.push(files[i]);
             }
         }
 
@@ -340,7 +406,7 @@ const FileScreen = (props) => {
                 {
                     !selecting ?
                     <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Your Files</Title> 
+                    <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 30, marginTop: 0 }}>Collections</Title> 
                 </Body> :
                 <Left>
                     <TouchableOpacity style={{marginLeft: 15}} onPress={() =>cancelSelection()} ><Icon style={{ fontSize: 40}} name="cross" type="Entypo" /></TouchableOpacity>
@@ -360,6 +426,7 @@ const FileScreen = (props) => {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{
                     flexGrow: 1,
+                    marginHorizontal: width*0.05
                 }}
                 // style={{marginTop: 5}}
                 renderItem={({ item, i }) => (
@@ -370,66 +437,50 @@ const FileScreen = (props) => {
                 horizontal={true}
                 />
             </View>: <View />}
-                    {
-                       pdfs.length == 0 && files.length == 0 ?
+                    
+                   { files.length != 0 ?  
+                   files.map((item, i) => {
+                    return (
+                    <View style={{paddingHorizontal: width*0.05, marginTop: 30}}>
+                        <Card >
+                            <CardItem header bordered>
+                            <Text>{Date(item["time"])}</Text>
+                            </CardItem>
+                            <CardItem style={{marginVertical: 10}}>
+                            <Body style={{flexDirection: 'row'}}>
+                            {
+                                item["images"].map((it, ind) => {
+                                    if(ind < 4)
+                                    {
+                                    return <Image style={{height: width*0.15, width: width*0.15, marginHorizontal: width*0.01}} source={{uri: "file://"+"/storage/emulated/0/Android/data/com.kids/files/Images/Genio_1603999375599-0.png"}} />;
+                                    }
+                                })
+                            }
+                            <TouchableOpacity
+                             onPress={() => {
+                                 viewImages(item["time"]);
+                                //  console.log(selected);
+                                //  
+                             }}
+                             style={{height: width*0.15, width: width*0.15, backgroundColor: "#357feb", justifyContent: 'center'}} >
+                                <Icon type="Feather" name="more-horizontal" style={{alignSelf: 'center', color: "#fff"}} />
+                            </TouchableOpacity>
+                            </Body>
+                            </CardItem>
+                            <CardItem footer bordered>
+                            <Chip key={i} style={{ backgroundColor: '#357feb' , margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: 0, borderColor: "#357feb" }} textStyle={{ color: "#fff" }}>{item.tag == 'Genio' ? 'None': item.tag }</Chip>
+                            </CardItem>
+                        </Card>
+                    </View> 
+                    )
+                   })
+                   :
                     <View style={{ backgroundColor: 'white', height: height, width: width }}>
                         <Image source={require('../assets/empty.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
                         <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Nothing to view here.</Text>
                         <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Scan and add to get started!</Text>
                         
-                    </View>
-                :
-                    files.map((it, i) => {
-                    return (
-
-                    <View key={i}>
-                        <Text style={{ fontFamily: 'Nunito-Sans', color: "#00000", fontSize: 20, marginTop: 10, marginLeft: 20 }}>{it.name}</Text>
-                        <FlatList
-                        data={it.files}
-                        scrollEnabled={true}
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{
-                            // flexGrow: 1,
-                        }}
-                        // style={{marginTop: 5}}
-                        renderItem={({ item, i }) => (
-                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => viewImages(it.name)} onLongPress={() => setSelecting(true) } >
-                                <View
-                                key={item.node.timestamp}
-                                style={{ flex: 1}}>
-                                <ImageBackground
-                                    style={{ height: width*0.40, width: width*0.40,margin: width*0.02, borderRadius: 15, alignItems: 'center', justifyContent: 'center',borderWidth: selecting? width*0.05 : 0, borderColor: "#000" }}
-                                    imageStyle={{ borderRadius: selecting ? 0 : 15, height: selecting ? width*0.3 : "auto", width: selecting ? width*0.3 : "auto",   }}
-                                    source={{
-                                    uri: item.node.image.uri,
-                                    }}
-                                >
-                                {   selecting ?
-                                    <CheckBox
-                                    value={item.node.checked}
-                                    tintColors={{ true: 'green', false: 'red' }}
-                                    onValueChange={() => {
-                                        item.node.checked = !item.node.checked;
-                                        setSelected([...selected, { uri: item.node.image.uri }]);
-                                        setFiles([ ...files ])
-                                    }}
-                                    style={{opacity: 1, alignSelf: 'flex-end', color: "#fff", position: 'absolute', top: -6}}
-                                />:
-                                    <View/>
-                                }
-                                </ImageBackground>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                        //Setting the number of column
-                        // numColumns={3}
-                        horizontal={true}
-                        keyExtractor={(item, index) => index.toString()}
-                        />
-                    </View>
-                    )
-                    })
-                    }
+                    </View>}
                     <View style={{height: height*0.07}} />
                 </ScrollView>
             {

@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
-import { ScrollView, Text, Keyboard, StyleSheet, Dimensions, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
+import { ScrollView, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
@@ -26,15 +26,15 @@ enableScreens(false);
 // create a path you want to write to
 // :warning: on iOS, you cannot write into `RNFS.MainBundlePath`,
 // but `RNFS.DocumentDirectoryPath` exists on both platforms and is writable
-var path = Platform.OS === 'ios' ? RNFS.LibraryDirectoryPath + '/test.txt' : RNFS.ExternalDirectoryPath + '/test.txt';
+var pathDir = Platform.OS === 'ios' ? RNFS.LibraryDirectoryPath : RNFS.ExternalDirectoryPath;
 
 // write the file
 
 const writeFile = () => {
 
-  console.log(path)
+  console.log(pathDir)
 
-  RNFS.writeFile(path, 'Lorem ipsum dolor sit amet', 'utf8')
+  RNFS.writeFile(pathDir, 'Lorem ipsum dolor sit amet', 'utf8')
     .then((success) => {
       console.log('FILE WRITTEN!');
     })
@@ -81,9 +81,15 @@ const Upload = ({ route, navigation }) => {
   const [uploading, setUploading] = React.useState({});
 
   const [active, setActive] = React.useState(1)
+  const [openImg, setopenImage] = React.useState(0);
 
   const [filename, setFileName] = React.useState('')
 
+  const [orig, setOrig] = React.useState('');
+  const [origImages, setOrigImages] = React.useState([])
+
+  const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
+  const [selectedTag, setTag] = React.useState('Genio');
   const [explore, setExplore] = React.useState([
     {
       'height': 0,
@@ -98,29 +104,76 @@ const Upload = ({ route, navigation }) => {
   const keyboardDidShowListener = React.useRef();
   const keyboardDidHideListener = React.useRef();
 
-  React.useEffect(() => {
-    keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
-    keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
+  // React.useEffect(() => {
+  //   keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
+  //   keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
 
-    return () => {
-      keyboardDidShowListener.current.remove();
-      keyboardDidHideListener.current.remove();
-    };
-  }, []);
+  //   return () => {
+  //     keyboardDidShowListener.current.remove();
+  //     keyboardDidHideListener.current.remove();
+  //   };
+  // }, []);
 
   React.useEffect(() => {
     analytics.screen('Post Screen')
+
+      console.log( "asddsd", route.params.selected, explore)
+    if (route.params.selected) {
+      setExplore([ { 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
+      // x = route.params.selected;
+      // console.log(x);
+      // route.params.selected = null;
+    }
+
+    // const getOrigImages = async () => {
+
+    //   var arr = await AsyncStorage.getItem("OrigImages");
+
+    //   console.log( "aaaaa", arr);
+
+    //   arr = JSON.parse(arr);
+
+    //   if(arr)
+    //   {
+    //     setOrigImages([ ...arr ]);
+    //   }
+
+
+    //   // if()
+
+    // }
+
+    // getOrigImages();
+
     // console.log("aaaa");
     // console.log(route.params.images)
   }, [])
 
 
+
   useFocusEffect(
         React.useCallback(() => {
-        const backAction = () => {
-        navigation.navigate('Home', {
-        screen: 'Feed',
-      })
+        const backAction = async () => {
+          // try {
+          //     await AsyncStorage.removeItem("OrigImages");
+          //     saveImages();
+          //     // return true;
+          // }
+          // catch(exception) {
+          //   console.log(exception)
+          //     // return false;
+          // }
+
+          Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
+                ]);
+
+        
         return true;
       };
 
@@ -156,13 +209,15 @@ const Upload = ({ route, navigation }) => {
     //   }
     // }
     // console.log(route.params.images)
-    setExplore([ ...route.params.images, { 'height': 0, 'width': '0', 'uri': '' } ])
+    setExplore([ { 'height': 0, 'width': '0', 'uri': '' } , ...route.params.images])
 
   }
 
   // console.log(route)
+  var x = []
 
   if (route.params) {
+    console.log(x)
     if (route.params.reload) {
       getImages();
       // setExplore([ route.params.images,  ])
@@ -170,10 +225,12 @@ const Upload = ({ route, navigation }) => {
       console.log("asds");
       route.params.reload = 0;
     }
-    if (route.params.selected) {
-      setExplore([...route.params.selected, { 'height': 0, 'width': '0', 'uri': '' }])
-      route.params.selected = null;
-    }
+    // if (route.params.selected) {
+    //   setExplore([ { 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
+    //   console.log(route.params.selected)
+    //   x = route.params.selected;
+    //   route.params.selected = null;
+    // }
   }
 
   const saveImages = async () => {
@@ -182,17 +239,50 @@ const Upload = ({ route, navigation }) => {
       return;
     }
     // console.log(explore[0].uri, tags[0])
+    console.log(selectedTag)
 
-    explore.map(async (item) => {
+    var arr = [...explore];
+    arr.splice(0,1);
+
+    var tm = new Date().getTime();
+
+    arr.map(async (item, i) => {
       try {
         console.log(item.uri);
-        await CameraRoll.save(item.uri, { type: 'photo', album: tag })
-          .then(res => {
-            console.log(res)
-          })
-          .catch(err => {
-            console.log(err)
-          });
+        // await CameraRoll.save(item.uri, { type: 'photo', album: "Genio" })
+        //   .then(res => {
+        //     console.log(res)
+        //   })
+        //   .catch(err => {
+        //     console.log(err)
+        //   });
+
+        const saveFile = (base64) => {
+          const albumPath = `${pathDir}/Images`;
+
+          const fileName = `${selectedTag}_${tm}-${i}.png`;
+          const filePathInCache = item.uri;
+          const filePathInAlbum = `${albumPath}/${fileName}`;
+
+          console.log(fileName);
+          console.log(filePathInCache);
+          console.log(filePathInAlbum);
+
+          return RNFS.mkdir(albumPath)
+            .then(() => {
+              RNFS.copyFile(filePathInCache, filePathInAlbum)
+                .then(() => {
+                  console.log('File Saved Successfully!');
+                });
+            })
+            .catch((error) => {
+              console.log('Could not create dir', error);
+            });
+        };
+
+        saveFile();
+
+
       } catch (error) {
         console.log(error)
       }
@@ -202,24 +292,49 @@ const Upload = ({ route, navigation }) => {
     if (albums) {
       var c = 1;
       for (var i = 0; i < albums.length; i++) {
-        if (albums[i]['albumName'] == tag) {
+        if (albums[i]['albumName'] == selectedTag) {
           c = 0;
           break;
         }
       }
       if (c) {
-        albums = [...albums, { 'albumName': tag, 'tagName': tag }];
+        albums = [...albums, { 'albumName': selectedTag, 'tagName': selectedTag }];
       }
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
     }
     else {
-      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': tag, 'tagName': tag }]));
+      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': selectedTag, 'tagName': selectedTag }]));
     }
 
     setModalVisible3(false);
     // alert('Images Saved');
 
   }
+
+  // useFocusEffect(
+  //       React.useCallback(() => {
+  //       const backAction = async () => {
+  //         try {
+  //             saveImages(); deleteOrigImages() ;
+  //             // navigation.navigate('Home', { screen: 'Feed'})
+  //             // return true;
+  //         }
+  //         catch(exception) {
+  //           console.log(exception)
+  //             // return false;
+  //         }
+  //       navigation.navigate('Home', {
+  //       screen: 'Feed',
+  //     })
+  //       return true;
+  //     };
+
+  //     const backHandler = BackHandler.addEventListener(
+  //       "hardwareBackPress",
+  //       backAction
+  //     );
+  //   }, []));
+
 
   // getImages();
 
@@ -247,7 +362,7 @@ const Upload = ({ route, navigation }) => {
     }
 
     const options = {
-      keyPrefix: email + filename + "/" + tag + "/",
+      keyPrefix: email + filename + "/" + selectedTag + "/",
       bucket: "kids-linkedin",
       region: "ap-south-1",
       accessKey: ACCESS_KEY,
@@ -322,7 +437,7 @@ const Upload = ({ route, navigation }) => {
         }
       }
       if (c) {
-        albums = [...albums, { 'albumName': filename, 'tagName': tag }];
+        albums = [...albums, { 'albumName': filename, 'tagName': selectedTag }];
       }
 
       await AsyncStorage.setItem("albums", JSON.stringify(albums));
@@ -334,8 +449,6 @@ const Upload = ({ route, navigation }) => {
     }
   }
 
-  const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
-  const [tag, setTag] = React.useState('Other');
   const [caption, setcaption] = React.useState('');
 
   if (active == 0)
@@ -393,23 +506,40 @@ const Upload = ({ route, navigation }) => {
     await user.addActivity(activity);
   }
 
-  const openImageViewer = () => {
+  const openImageViewer = (am) => {
 
+    // console.log(am);
     var selectedImg = [];
-    for(var i = 0; i < explore.length-1; i++)
+    for(var i = 1; i < explore.length; i++)
     {
-      selectedImg.push({ uri: explore[i]["uri"]});
+      selectedImg.push({ uri: "file://"+explore[i]["uri"], 'orginUri': ""});
     }
     setSelected([ ...selectedImg ]);
+    setopenImage(am-1);
+    setOrig(origImages[am-1]);
 
   }
 
+  const deleteOrigImages = async () => {
+
+    try{
+        await AsyncStorage.removeItem("OrigImages");
+        console.log("Success")
+        return true;
+    }
+    catch(exception) {
+        console.log("Exception");
+        return false;
+    }
+
+}
+
   return (
     <View style={styles.container}>
-      <Header style={{ backgroundColor: "#fff", paddingTop: 10 }} >
+      <Header style={{ backgroundColor: "#fff" }} >
         <Left>
-          <TouchableOpacity onPress={() =>  {saveImages();navigation.navigate('Home', {screen: 'Feed'})}}>
-          <Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 40 }} />
+          <TouchableOpacity onPress={() =>  {saveImages(); deleteOrigImages() ;navigation.navigate('Home', { screen: 'Feed'})}}>
+          <Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30 }} />
           </TouchableOpacity>
         </Left>
         <Right>
@@ -419,11 +549,7 @@ const Upload = ({ route, navigation }) => {
             setModalVisible(true);
           }}
         >
-          <View style={styles.saveAsPDF}>
-            <Text style={{ color: "#fff", flex: 1, textAlign: 'center' }}>
-              Download PDF
-            </Text>
-          </View>
+          <Icon name="trash" type="Feather" />
         </TouchableOpacity>
         </Right>
       </Header>
@@ -583,19 +709,47 @@ const Upload = ({ route, navigation }) => {
           </View>
           <ImageView
                 images={selected}
-                imageIndex={0}
+                imageIndex={openImg}
+                animationType={"fade"}
+                // isVisible={true}
+                backgroundColor={"#F5F5F5"}
                 visible={visible}
                 onRequestClose={() => {setSelected([]);setVisible(false);}}
                 HeaderComponent = {() => {
                     return (
                       <TouchableOpacity style={{marginTop: 20, marginLeft: 20}} onPress={() => {setSelected([]);setVisible(false);} }>
-                      <Icon type="Entypo" name="cross" style={{ color: "#fff", fontSize: 40 }} />
+                      <Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 40 }} />
                       </TouchableOpacity>
                     )
                 }}
                 FooterComponent = {() => {
                     return (
-                        <View>
+                        <View style={{height: height*0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                          <TouchableOpacity
+                            style={{height: 40}}
+                            onPress={() => {
+                              // var ar = [...explore]; ar.splice(0, 1);
+                              // navigation.navigate('Preview', {'img': orig, 'images': ar  });
+                            }}
+                          >
+                            <View style={styles.Cancel}>
+                              <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                                Edit Original
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={{height: 40}}
+                            onPress={() => {
+                              croppedi ? setcroppedi(false) : props.navigation.pop();
+                            }}
+                          >
+                            <View style={styles.Next2}>
+                              <Text style={{ color: "#fff", flex: 1, textAlign: 'center' }}>
+                                Add Text
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
                         </View>
                     )
                 }}
@@ -604,11 +758,11 @@ const Upload = ({ route, navigation }) => {
           <FlatList
             data={explore}
             style={{marginLeft: width*0.05, marginRight: width*0.06, marginVertical: width*0.03}}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <View>
                 {
                   item.height != 0 ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {openImageViewer(); setVisible(true)}}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => { openImageViewer(index); setVisible(true); }}>
                       <View
                         key={item.id}
                         style={{ flex: 1, }}>
@@ -616,7 +770,7 @@ const Upload = ({ route, navigation }) => {
                           style={styles.image}
                           imageStyle={{ opacity: uploading[item["uri"]] ? 0.5 : 1, borderRadius: 20 }}
                           source={{
-                            uri: item.uri,
+                            uri:  "file://"+item.uri,
                           }}
                         >
                           {
@@ -629,7 +783,7 @@ const Upload = ({ route, navigation }) => {
                       </View>
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => {var ar = [...explore]; ar.pop(); navigation.navigate('Camera', {"images": ar})}}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => {var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', {"images": ar})}}>
                       <View
                         key={item.uri}
                         style={{ flex: 1 }}>
@@ -673,7 +827,7 @@ const Upload = ({ route, navigation }) => {
               }}
               // style={{marginTop: 5}}
               renderItem={({ item, i }) => (
-                <Chip key={i} style={{ backgroundColor: tag == item ? '#357feb' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#357feb" }} textStyle={{ color: tag == item ? "#fff" : "#357feb" }} onPress={() => tag == item ? setTag('') : setTag(item)} >{item}</Chip>
+                <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#357feb' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#357feb" }} textStyle={{ color: selectedTag == item ? "#fff" : "#357feb" }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
               )}
               //Setting the number of column
               // numColumns={3}
@@ -681,12 +835,59 @@ const Upload = ({ route, navigation }) => {
               keyExtractor={(item, index) => index.toString()}
             />
           </View>
-      <Item last style={{ position: 'absolute', bottom: height * 0.03, width: width*0.85, alignItems: 'center', alignSelf: 'center' }} >
+      <View style={{height: height*0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+          <TouchableOpacity
+            style={{height: 50, width: width*0.3, alignItems: 'center'}}
+            onPress={() => {
+              
+            }}
+          >
+            <Icon name="share-2" type="Feather" />
+            <Text style={{fontSize: 10, fontWeight: "bold"}} >Share </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{height: 50, width: width*0.1, alignItems: 'center'}}
+            onPress={() => {
+                analytics.track('PDF Saved');
+                setModalVisible(true);
+              }}
+          >
+            <Icon name="download" type="Feather" />
+            <Text style={{fontSize: 10, fontWeight: "bold"}} >PDF </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{height: 50, width: width*0.3, alignItems: 'center'}}
+            onPress={() => {
+              saveImages(); deleteOrigImages() ;
+               navigation.navigate('Home', {
+                  screen: 'Files',
+                })
+            }}
+          >
+            <Icon name="file" type="Feather" />
+            <Text style={{fontSize: 10, fontWeight: "bold"}} >Collection  </Text>
+          </TouchableOpacity>
+      </View>
+      <View style={{height: height*0.1}}>
+          <TouchableOpacity
+            style={{height: 50}}
+            onPress={() => {
+               croppedi ? setcroppedi(false) : navigation.pop();
+            }}
+          >
+            <View style={styles.Next}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
+                Create Post
+              </Text>
+            </View>
+          </TouchableOpacity>
+      </View>
+      {/*<Item last style={{ position: 'absolute', bottom: height * 0.03, width: width*0.85, alignItems: 'center', alignSelf: 'center' }} >
         <Input onChangeText={(text) => {
           setcaption(text)
         }}value={caption} placeholder="Add a caption and hashtags"  />
         <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#357feb" }} type="FontAwesome" name='send' />
-      </Item>
+      </Item>*/}
       </View>
 
       {/*<View style={{ height: height * 0.07 }} />
@@ -868,6 +1069,45 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center"
+  },
+  Next: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 12,
+    // margin: 5,
+    backgroundColor: '#357feb',
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#fff",
+    width: 165,
+    flex: 1,
+    marginHorizontal: 20
+  },
+   Next2: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 8,
+    // margin: 5,
+    backgroundColor: '#357feb',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+    width: 135,
+    flex: 1,
+    marginHorizontal: 20
+  },
+  Cancel: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 8,
+    // margin: 5,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#357feb",
+    width: 135,
+    flex: 1,
+    marginHorizontal: 20
   },
   modalText: {
     marginVertical: 15,
