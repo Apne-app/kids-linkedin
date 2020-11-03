@@ -23,6 +23,7 @@ import ChildScreen from './screens/ChildScreen'
 import Gallery from './components/Gallery'
 import SinglePostScreen from './screens/SinglePost'
 import Searching from './screens/Searching'
+import AddText from './screens/AddText'
 import Unverified from './screens/Unverified'
 import ChildSuccess from './screens/ChildSuccess'
 import FileScreen from './screens/FileScreen'
@@ -211,6 +212,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
         <Stack.Screen options={{ headerShown: false }} name="CreatePost" component={PostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
+        <Stack.Screen options={{ headerShown: false }} name="AddText" component={AddText} />
         <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
         <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
         <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />

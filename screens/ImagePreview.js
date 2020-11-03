@@ -17,6 +17,7 @@ var halfHeight = height*0.5;
 
 const App: () => React$Node = (props) => {
   const [uri, setUri] = useState();
+  const [prevUri, setPrevUri] = useState('');
   const [dim, setDim] = useState({ height: '50', width: '50' })
   const [croppedi, setcroppedi] = React.useState(false);
   const cropViewRef = useRef();
@@ -27,6 +28,9 @@ const App: () => React$Node = (props) => {
 
   React.useEffect(() => {
     setUri(props.route.params.img);
+    if (route.params && route.params.reload) {
+      
+    }
     const saveOrigImages = async () => {
       var arr = await AsyncStorage.getItem("OrigImages");
       arr = JSON.parse(arr);
@@ -66,7 +70,7 @@ const App: () => React$Node = (props) => {
     //   console.log("do something with ", uri);
     // console.log(props.route.params);
       // await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': uri}) );
-        props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...props.route.params.images, {'height': 200, 'uri': uri} ] })
+        props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...props.route.params.images, {'height': dim.height, 'width': dim.width,  'uri': uri, 'prevImg': prevUri} ] })
     // });
   }
 
@@ -202,6 +206,7 @@ const App: () => React$Node = (props) => {
             // try {
           // await AsyncStorage.setItem('@scanImg', JSON.stringify(res) );
           console.log(res);
+          setPrevUri(uri);
           setUri(res.uri);
           setDim({ height: JSON.parse(res.height), width: JSON.parse(res.width) })
           setcroppedi(true)

@@ -71,6 +71,7 @@ const Upload = ({ route, navigation }) => {
   const [modalVisible3, setModalVisible3] = React.useState(false);
   const [modalVisible4, setModalVisible4] = React.useState(false);
   const [selected, setSelected] = React.useState([]);
+  const [visibleImg, setVisibleImg] = React.useState(0);
   const [visible, setVisible] = React.useState(false);
   const [certi, setCerti] = React.useState({
     certi_org: '',
@@ -87,6 +88,7 @@ const Upload = ({ route, navigation }) => {
 
   const [orig, setOrig] = React.useState('');
   const [origImages, setOrigImages] = React.useState([])
+  const [selecting, setSelecting] = React.useState(false);
 
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
   const [selectedTag, setTag] = React.useState('Genio');
@@ -117,12 +119,16 @@ const Upload = ({ route, navigation }) => {
   React.useEffect(() => {
     analytics.screen('Post Screen')
 
-      console.log( "asddsd", route.params.selected, explore)
+      // console.log( "asddsd", route.params.selected, explore)
     if (route.params.selected) {
+
+      for(var i = 0; i < route.params.selected.length; i++ )
+      {
+        route.params.selected[i]['selected'] = false;
+      }
+
       setExplore([ { 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
-      // x = route.params.selected;
-      // console.log(x);
-      // route.params.selected = null;
+      console.log(route.params.selected);
     }
 
     // const getOrigImages = async () => {
@@ -209,6 +215,11 @@ const Upload = ({ route, navigation }) => {
     //   }
     // }
     // console.log(route.params.images)
+    for(var i = 0; i < route.params.images.length; i++ )
+      {
+        route.params.images[i]['selected'] = false;
+      }
+      // setOrigImages([ ...origImages, { 'uri': route.params.prevImg, 'posn': explore.length-1} ])
     setExplore([ { 'height': 0, 'width': '0', 'uri': '' } , ...route.params.images])
 
   }
@@ -225,12 +236,26 @@ const Upload = ({ route, navigation }) => {
       console.log("asds");
       route.params.reload = 0;
     }
-    // if (route.params.selected) {
-    //   setExplore([ { 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
-    //   console.log(route.params.selected)
-    //   x = route.params.selected;
-    //   route.params.selected = null;
-    // }
+    else if(route.params.textAdded) {
+      var arr = [ ...explore ];
+      console.log("asdas",route.params)
+      // arr.push({ 'uri': route.params.changedimage.uri, 'height': route.params.changedimage.height, 'width': route.params.changedimage.width })
+      // setExplore([ ...arr ]);
+      for(var i = 1; i < arr.length; i++)
+      {
+        if(route.params.changedimage.prevuri.split('cache/')[1] == arr[i]['uri'].split('cache/')[1])
+        {
+          arr[i]['uri'] = route.params.changedimage.uri;
+          arr[i]['height'] = route.params.changedimage.height;
+          arr[i]['width'] = route.params.changedimage.width;
+          setExplore([ ...arr ]);
+          // console.log("Yohooo");
+          break;
+        }
+      }
+      route.params.textAdded = 0;
+
+    }
   }
 
   const saveImages = async () => {
@@ -516,6 +541,7 @@ const Upload = ({ route, navigation }) => {
     }
     setSelected([ ...selectedImg ]);
     setopenImage(am-1);
+    setVisibleImg(am-1);
     setOrig(origImages[am-1]);
 
   }
@@ -538,18 +564,40 @@ const Upload = ({ route, navigation }) => {
     <View style={styles.container}>
       <Header style={{ backgroundColor: "#fff" }} >
         <Left>
-          <TouchableOpacity onPress={() =>  {saveImages(); deleteOrigImages() ;navigation.navigate('Home', { screen: 'Feed'})}}>
+          <TouchableOpacity onPress={() =>
+            { 
+              if(selecting){
+               setSelecting(false)
+              }
+              else{
+               saveImages(); deleteOrigImages() ;navigation.navigate('Home', { screen: 'Feed'})
+              }
+            }}>
           <Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30 }} />
           </TouchableOpacity>
         </Left>
         <Right>
         <TouchableOpacity style={{ borderRadius: 20, borderWidth: 2, borderColor: "#fff", alignSelf: 'center',  }}
           onPress={() => {
-            analytics.track('PDF Saved');
-            setModalVisible(true);
+            analytics.track('Delete Images in Post');
+            setSelecting(true);
+            if(selecting)
+            {
+              var array = [...explore];
+              for(var i = 1; i < array.length; i++)
+              {
+                if(array[i]['selected'])
+                {
+                  array.splice(i, 1);
+                  i--;
+                }
+              }
+              setExplore([ ...array ]);
+              setSelecting(false);
+            }
           }}
         >
-          <Icon name="trash" type="Feather" />
+          <Icon name="trash" type="Feather" style={{ color:  selecting ? "red" : '#000' }} />
         </TouchableOpacity>
         </Right>
       </Header>
@@ -712,6 +760,11 @@ const Upload = ({ route, navigation }) => {
                 imageIndex={openImg}
                 animationType={"fade"}
                 // isVisible={true}
+                onImageIndexChange={imageIndex => {
+                  // alert("asd");
+                  setVisibleImg(imageIndex);
+                    // console.log(imageIndex);
+                }}
                 backgroundColor={"#F5F5F5"}
                 visible={visible}
                 onRequestClose={() => {setSelected([]);setVisible(false);}}
@@ -728,20 +781,36 @@ const Upload = ({ route, navigation }) => {
                           <TouchableOpacity
                             style={{height: 40}}
                             onPress={() => {
-                              // var ar = [...explore]; ar.splice(0, 1);
-                              // navigation.navigate('Preview', {'img': orig, 'images': ar  });
+                              var ar = [...explore]; ar.splice(0, 1);
+                              setSelected([]);setVisible(false);
+                              navigation.navigate('Preview', {'img': explore[visibleImg+1]['prevImg'], 'images': ar, 'reload': 1  });
+                              // console.log(explore);
                             }}
                           >
                             <View style={styles.Cancel}>
                               <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
-                                Edit Original
+                                Edit { explore[visibleImg+1]['prevImg'] ? 'Original': null}
                               </Text>
                             </View>
                           </TouchableOpacity>
                           <TouchableOpacity
                             style={{height: 40}}
                             onPress={() => {
-                              croppedi ? setcroppedi(false) : props.navigation.pop();
+                              // console.log()
+                              setSelected([]);setVisible(false);
+                              // console.log({ img: selected[visibleImg], 'height': explore[visibleImg+1]['height'], 'width': explore[visibleImg+1]['width']})
+                              // console.log(explore);
+                              if(explore[visibleImg+1]['width'] == undefined)
+                              {
+                                Image.getSize(selected[visibleImg]['uri'].includes('://file') ? selected[visibleImg]['uri'].split('://')[1] : selected[visibleImg]['uri'], (width, height) => {
+                                  navigation.navigate('AddText', { img: { 'origUri': '', 'uri': selected[visibleImg]['uri']}, 'height': height, 'width': width });
+                                });
+                                
+                              }
+                              else{
+
+                              navigation.navigate('AddText', { img: { 'origUri': '', 'uri': selected[visibleImg]['uri']}, 'height': explore[visibleImg+1]['height'], 'width': explore[visibleImg+1]['width'] });
+                              }
                             }}
                           >
                             <View style={styles.Next2}>
@@ -754,7 +823,7 @@ const Upload = ({ route, navigation }) => {
                     )
                 }}
             />
-          <ScrollView style={{height: height*0.6, backgroundColor: '#f9f9f9'}}>
+          <ScrollView style={{height: selecting ? height*0.9 : height*0.6, backgroundColor: '#f9f9f9'}}>
           <FlatList
             data={explore}
             style={{marginLeft: width*0.05, marginRight: width*0.06, marginVertical: width*0.03}}
@@ -762,20 +831,33 @@ const Upload = ({ route, navigation }) => {
               <View>
                 {
                   item.height != 0 ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => { openImageViewer(index); setVisible(true); }}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {  
+                      if(selecting)
+                      {
+                        var array = [ ...explore ];
+                        array[index]['selected'] = !array[index]['selected'];
+                        setExplore([ ...array ])
+                      }
+                      else
+                      {
+                      openImageViewer(index); setVisible(true); 
+                      }
+                      }} 
+                      onLongPress={() => setSelecting(true)}
+                    >
                       <View
                         key={item.id}
                         style={{ flex: 1, }}>
                         <ImageBackground
                           style={styles.image}
-                          imageStyle={{ opacity: uploading[item["uri"]] ? 0.5 : 1, borderRadius: 20 }}
+                          imageStyle={{ opacity: selecting ? 0.5 : 1, borderRadius: 20 }}
                           source={{
                             uri:  "file://"+item.uri,
                           }}
                         >
                           {
-                            uploading[item["uri"]] ?
-                              <Spinner color='blue' style={{ position: 'absolute', alignSelf: 'center', top: height * 0.1 }} />
+                            item.selected ?
+                              <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: item.selected ? '#fff' : '#357feb', borderWidth: item.selected ? 4 : 0, borderColor: "#357feb" , position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center'}} ></View>
                               :
                               <View />
                           }
@@ -783,7 +865,21 @@ const Upload = ({ route, navigation }) => {
                       </View>
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => {var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', {"images": ar})}}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => {
+                      if(selecting)
+                      {
+                        var array = [ ...explore ];
+                        for(var i = 1; i < array.length; i++)
+                        {
+                          array[i]['selected'] = true;
+                        }
+                        setExplore([...array])
+                      }
+                      else
+                      {
+                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', {"images": ar})
+                      }
+                      }}>
                       <View
                         key={item.uri}
                         style={{ flex: 1 }}>
@@ -792,7 +888,12 @@ const Upload = ({ route, navigation }) => {
                         >
                           <View style={styles.addIcon}>
                             <View >
-                              <Icon type="AntDesign" name="plus" style={{ color: "#fff" }} />
+                              {
+                                !selecting ?
+                                <Icon type="AntDesign" name="plus" style={{ color: "#fff" }} />
+                                :
+                                <Text style={{color: "#fff"}}>Select All</Text>
+                              }
                             </View>
                           </View>
                         </View>
@@ -816,7 +917,7 @@ const Upload = ({ route, navigation }) => {
         >
           <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
         </TouchableOpacity>*/}
-      <View style={{height: height*0.25, borderTopWidth: 1,borderLeftWidth: 1,borderRightWidth: 1, borderColor: 'lightgrey'}}>
+      <View style={{height: height*0.25, borderTopWidth: 1,borderLeftWidth: 1,borderRightWidth: 1, borderColor: 'lightgrey', display: selecting ? 'none' : 'flex'}}>
       <View style={{ marginTop: 10}} >
             <FlatList
               data={tags}

@@ -156,6 +156,7 @@ const FileScreen = (props) => {
                 }
                 // console.log(arr);
                 setFiles([ ...arr ])
+                console.log(arr)
 
             })
             .catch((err) => {
@@ -450,9 +451,10 @@ const FileScreen = (props) => {
                             <Body style={{flexDirection: 'row'}}>
                             {
                                 item["images"].map((it, ind) => {
+                                    console.log(it);
                                     if(ind < 4)
                                     {
-                                    return <Image style={{height: width*0.15, width: width*0.15, marginHorizontal: width*0.01}} source={{uri: "file://"+"/storage/emulated/0/Android/data/com.kids/files/Images/Genio_1603999375599-0.png"}} />;
+                                    return <Image style={{height: width*0.15, width: width*0.15, marginHorizontal: width*0.01}} source={{uri: "file://"+it}} />;
                                     }
                                 })
                             }
