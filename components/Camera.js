@@ -168,7 +168,7 @@ export default class ExampleApp extends PureComponent {
               }} ><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
           </Left>
           <Body>
-            <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 20, marginTop: 0 }}>Take Picture</Title> 
+            <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 20, marginTop: 0 }}>Take Picture</Title> 
           </Body>
           <Right />
       </Header>

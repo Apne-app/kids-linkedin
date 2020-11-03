@@ -55,7 +55,7 @@
 //       dropWithFirst={false}
 
 //       iconsArray={[...Array(3)].map((item, index) =>
-//         (<View style={{ alignSelf: 'center' }}><Icon style={{ fontSize: 20, alignSelf: 'center', color: "#fff" }} type="Feather" name={icons[index]} /><Text style={{ fontFamily: 'Nunito-Sans', alignSelf: 'center', fontSize: 9, display: 'flex', color: "#fff" }}>{iconstext[index]}</Text></View>)
+//         (<View style={{ alignSelf: 'center' }}><Icon style={{ fontSize: 20, alignSelf: 'center', color: "#fff" }} type="Feather" name={icons[index]} /><Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'center', fontSize: 9, display: 'flex', color: "#fff" }}>{iconstext[index]}</Text></View>)
 //       )}
 //       onPress={(btnNum) => { setnum(btnNum - 1) }}
 //       screensArray={[...Array(3)].map((item, index) =>

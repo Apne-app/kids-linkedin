@@ -92,9 +92,9 @@ const LinkedIn = ({navigation}) => {
             // permissions={['r_liteprofile']}
             renderButton={() => 
             (
-                <Button block  iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 10, height: 60, marginHorizontal:20 }} onPress={() => linkedRef.current && linkedRef.current.open()} >
+                <Button block  iconLeft style={{ marginTop: 82, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 28.5, height: 60, marginHorizontal:20 }} onPress={() => linkedRef.current && linkedRef.current.open()} >
+                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 16,}}>Login with</Text>
                   <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
-                  <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Proceed with LinkedIn</Text>
                 </Button>
             )
             }

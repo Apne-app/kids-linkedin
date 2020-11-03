@@ -1,9 +1,8 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
-import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, NotificationFeed } from 'react-native-activity-feed';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 var height = Dimensions.get('screen').height;
@@ -46,28 +45,19 @@ const NotificationScreen = ({ route, navigation }) => {
   const there = () => {
 
     return (
-      <Container>
-        <StreamApp
-          apiKey={'dfm952s3p57q'}
-          appId={'90935'}
-          token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDlpZCJ9.A89Wjxxk_7hVBFyoSREkPhLCHsYY6Vq66MrBuOTm_mQ'}
-          defaultUserData={{
-            name: 'Batman',
-            url: 'batsignal.com',
-            desc: 'Smart, violent and brutally tough solutions to crime.',
-            profileImage:
-              'https://i.kinja-img.com/gawker-media/image/upload/s--PUQWGzrn--/c_scale,f_auto,fl_progressive,q_80,w_800/yktaqmkm7ninzswgkirs.jpg',
-            coverImage:
-              'https://i0.wp.com/photos.smugmug.com/Portfolio/Full/i-mwrhZK2/0/ea7f1268/X2/GothamCity-X2.jpg?resize=1280%2C743&ssl=1',
-          }}
-        >
-          <NotificationFeed
-            // Group={this._renderGroup}
-            // navigation={this.props.navigation}
-            notify
-          />
-        </StreamApp>
-      </Container>
+      <View>
+        <Header noShadow style={{ backgroundColor: '#fff', height: 60, borderBottomWidth: 0, marginTop: 10 }}>
+          <Body style={{ alignItems: 'center', flexDirection: 'row' }}>
+            <Icon type="Feather" name="arrow-left" onPress={() => navigation.navigate('Home')} />
+            <Title style={{ fontFamily: 'NunitoSans-Regular', fontSize: 28, marginTop: -5, marginLeft: 20, color: 'black' }}>Notifications</Title>
+          </Body>
+        </Header>
+        <View style={{marginTop:'40%', alignItems:'center', padding:40}}>
+          <Icon type="Feather" name="x-circle" style={{fontSize:78}} onPress={() => navigation.navigate('Profile')} />
+          <Text style={{textAlign:'center', fontFamily:'NunitoSans-Bold', fontSize:24, marginTop:20}}>Notifications Empty</Text>
+          <Text style={{textAlign:'center', fontFamily:'NunitoSans-Regular', fontSize:16, marginTop:20}}>There are no notifications in this account, let’s discover and take a look this later.</Text>
+        </View>
+      </View>
     );
   }
   const loading = () => {
@@ -81,7 +71,7 @@ const NotificationScreen = ({ route, navigation }) => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
         <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-        <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
+        <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
         <View style={{ backgroundColor: 'white' }}>
           <Button onPress={() => send()} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
             <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
@@ -129,7 +119,7 @@ const styles = StyleSheet.create({
     // height: 80,
   },
   txt: {
-    fontFamily: 'Nunito-Sans'
+    fontFamily: 'NunitoSans-Regular'
   },
   time: {
     color: "#A9A9A9"

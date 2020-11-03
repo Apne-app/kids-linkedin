@@ -11,7 +11,7 @@ const ServiceScreen = ({ route, navigation }) => {
         <Left />
         <Left />
         <Body style={{ alignItems: 'center'}}>
-          <Title style={{fontFamily:'Nunito-Sans', color: "#000",  }}>Services</Title>
+          <Title style={{fontFamily:'NunitoSans-Regular', color: "#000",  }}>Services</Title>
         </Body>
         <Right />
       </Header>

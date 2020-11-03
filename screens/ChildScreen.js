@@ -41,19 +41,19 @@ const ChildScreen = ({ route, navigation }) => {
     const fontConfig = {
         default: {
             regular: {
-                fontFamily: 'Nunito-Sans',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             medium: {
-                fontFamily: 'Nunito-Sans',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             light: {
-                fontFamily: 'Nunito-Sans',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             thin: {
-                fontFamily: 'Nunito-Sans',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
         },
@@ -104,12 +104,12 @@ const ChildScreen = ({ route, navigation }) => {
     const inputtype = () => {
         if (current == 0) {
             return (
-                <TextInput value={name} onChangeText={(text) => setname(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Nunito-Sans', borderWidth: 1 }}></TextInput>
+                <TextInput value={name} onChangeText={(text) => setname(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'NunitoSans-Regular', borderWidth: 1 }}></TextInput>
             )
         }
         else if (current == 1) {
             return (
-                <TextInput keyboardType='numeric' value={year} onChangeText={(text) => setyear(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'Nunito-Sans', borderWidth: 1 }}></TextInput>
+                <TextInput keyboardType='numeric' value={year} onChangeText={(text) => setyear(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'NunitoSans-Regular', borderWidth: 1 }}></TextInput>
             )
         }
     }

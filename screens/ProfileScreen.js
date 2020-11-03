@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet,RefreshControl, Dimensions, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
+import { Text, StyleSheet, RefreshControl, Dimensions, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -27,13 +27,13 @@ updateStyle('activity', {
         marginVertical: height * 0.01,
         borderRadius: width * 0.05,
         backgroundColor: "#fff",
-        fontFamily: 'Nunito-Sans'
+        fontFamily: 'NunitoSans-Regular'
     },
     text: {
-        fontFamily: 'Nunito-Sans'
+        fontFamily: 'NunitoSans-Regular'
     },
     header: {
-        fontFamily: 'Nunito-Sans'
+        fontFamily: 'NunitoSans-Regular'
     }
 });
 updateStyle('flatFeed', {
@@ -75,19 +75,19 @@ var width = Dimensions.get('screen').width;
 const fontConfig = {
     default: {
         regular: {
-            fontFamily: 'Nunito-Sans',
+            fontFamily: 'NunitoSans-Regular',
             fontWeight: 'normal',
         },
         medium: {
-            fontFamily: 'Nunito-Sans',
+            fontFamily: 'NunitoSans-Regular',
             fontWeight: 'normal',
         },
         light: {
-            fontFamily: 'Nunito-Sans',
+            fontFamily: 'NunitoSans-Regular',
             fontWeight: 'normal',
         },
         thin: {
-            fontFamily: 'Nunito-Sans',
+            fontFamily: 'NunitoSans-Regular',
             fontWeight: 'normal',
         },
     },
@@ -109,7 +109,7 @@ const ProfileScreen = ({ navigation, route }) => {
         name: ''
     })
 
-    
+
 
     const renderOptions = () => (
         <View
@@ -117,78 +117,78 @@ const ProfileScreen = ({ navigation, route }) => {
             style={{
                 backgroundColor: '#fff',
                 padding: 16,
-                height: height*0.5,
+                height: height * 0.5,
             }}
         >
-            <TouchableOpacity onPress={() => {optionsRef.current.snapTo(1); setBottomType('');setOption('')}} style={{alignItems: 'center',paddingBottom: 10}}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
+            <TouchableOpacity onPress={() => { optionsRef.current.snapTo(1); setBottomType(''); setOption('') }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
             {
-            bottomType == '' && option == '' ?
-            <Button onPress={() => setOption('course')} full style={{backgroundColor: "#357feb"}}>
-                <Text>Add Course</Text>
-            </Button>  :  null    
+                bottomType == '' && option == '' ?
+                    <Button onPress={() => setOption('course')} full style={{ backgroundColor: "#357feb" }}>
+                        <Text>Add Course</Text>
+                    </Button> : null
             }
             {
-            bottomType == '' && option == 'course' ?
-            <View>
-            <TouchableOpacity onPress={() => { setOption(''); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
-                <Text >Add Course Details!</Text>
-                  <Item floatingLabel>
-                    <Label>Course Organization</Label>
-                    <Input value={course.org} onChangeText={text => setCourse({ ...course, org: text })} />
-                </Item>
-                  <Item floatingLabel>
-                    <Label>Course Name</Label>
-                    <Input value={course.name} onChangeText={text => setCourse({ ...course, name: text })} />
-                </Item>
-                  <Item floatingLabel>
-                    <Label>Course Url</Label>
-                    <Input value={course.url} onChangeText={text => setCourse({ ...course, url: text })} />
-                </Item>
-                <SpinnerButton
-                    buttonStyle={{
-                        borderRadius: 10,
-                        margin: 20,
-                        width: 200,
-                        alignSelf: 'center',
-                        backgroundColor: '#357feb'
-                    }}
-                    isLoading={Loading}
-                    spinnerType='BarIndicator'
-                    onPress={async () => {
-                        setLoading(true);
-                        var children = await AsyncStorage.getItem('children')
-                        children = JSON.parse(children)['0']
-                        var data = JSON.stringify({"gstoken":children['data']['gsToken'],"course_url":course.url,"course_name":course.name,"course_org":course.org});
+                bottomType == '' && option == 'course' ?
+                    <View>
+                        <TouchableOpacity onPress={() => { setOption(''); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
+                        <Text >Add Course Details!</Text>
+                        <Item floatingLabel>
+                            <Label>Course Organization</Label>
+                            <Input value={course.org} onChangeText={text => setCourse({ ...course, org: text })} />
+                        </Item>
+                        <Item floatingLabel>
+                            <Label>Course Name</Label>
+                            <Input value={course.name} onChangeText={text => setCourse({ ...course, name: text })} />
+                        </Item>
+                        <Item floatingLabel>
+                            <Label>Course Url</Label>
+                            <Input value={course.url} onChangeText={text => setCourse({ ...course, url: text })} />
+                        </Item>
+                        <SpinnerButton
+                            buttonStyle={{
+                                borderRadius: 10,
+                                margin: 20,
+                                width: 200,
+                                alignSelf: 'center',
+                                backgroundColor: '#357feb'
+                            }}
+                            isLoading={Loading}
+                            spinnerType='BarIndicator'
+                            onPress={async () => {
+                                setLoading(true);
+                                var children = await AsyncStorage.getItem('children')
+                                children = JSON.parse(children)['0']
+                                var data = JSON.stringify({ "gstoken": children['data']['gsToken'], "course_url": course.url, "course_name": course.name, "course_org": course.org });
 
-                        var config = {
-                        method: 'post',
-                        url: 'https://barry-2z27nzutoq-as.a.run.app/updatecourses',
-                        headers: { 
-                            'Content-Type': 'application/json'
-                        },
-                        data : data
-                        };
+                                var config = {
+                                    method: 'post',
+                                    url: 'https://barry-2z27nzutoq-as.a.run.app/updatecourses',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    data: data
+                                };
 
-                        axios(config)
-                        .then(function (response) {
-                        console.log(JSON.stringify(response.data));
-                        setLoading(false);
-                        })
-                        .catch(function (error) {
-                        alert(error);
-                        setLoading(false)
-                        });
-                    }}
-                    indicatorCount={10}
-                    >
-                    <Icon active type="Feather" name='chevron-right' style={{ color: 'black', fontWeight: 'bold' }} />
-                </SpinnerButton>
-                
-                </View> : null
+                                axios(config)
+                                    .then(function (response) {
+                                        console.log(JSON.stringify(response.data));
+                                        setLoading(false);
+                                    })
+                                    .catch(function (error) {
+                                        alert(error);
+                                        setLoading(false)
+                                    });
+                            }}
+                            indicatorCount={10}
+                        >
+                            <Icon active type="Feather" name='chevron-right' style={{ color: 'black', fontWeight: 'bold' }} />
+                        </SpinnerButton>
+
+                    </View> : null
             }
             {
-                bottomType == 'courses' ? 
-                 <FlatList
+                bottomType == 'courses' ?
+                    <FlatList
                         data={courses}
                         scrollEnabled={true}
                         showsHorizontalScrollIndicator={false}
@@ -197,19 +197,19 @@ const ProfileScreen = ({ navigation, route }) => {
                         }}
                         // style={{marginTop: 5}}
                         renderItem={({ item, i }) => (
-                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(courses) } >
+                            <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(courses)} >
                                 <View
-                                key={i}
-                                style={{ flex: 1, alignItems: 'center', borderWidth: 0.3, margin: 4, padding: 10, borderRadius: 15, backgroundColor: "#357feb"}}>
-                                    <Text style={{fontSize: 18, color: "#fff"}}>{item.org} : {item.name}</Text>
+                                    key={i}
+                                    style={{ flex: 1, alignItems: 'center', borderWidth: 0.3, margin: 4, padding: 10, borderRadius: 15, backgroundColor: "#357feb" }}>
+                                    <Text style={{ fontSize: 18, color: "#fff" }}>{item.org} : {item.name}</Text>
                                 </View>
                             </TouchableOpacity>
                         )}
                         //Setting the number of column
                         numColumns={1}
                         keyExtractor={(item, index) => index.toString()}
-                        /> 
-                 : null
+                    />
+                    : null
             }
         </View>
     );
@@ -243,33 +243,33 @@ const ProfileScreen = ({ navigation, route }) => {
                 headers: {}
             };
             axios(config)
-            .then(function (response) {
-            // console.log((response.data));
-            var arr = [];
-            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-            setCerti([ ...arr ])
-            // console.log(arr);
-            })
-            .catch(function (error) {
-            console.log(error);
-            });
+                .then(function (response) {
+                    // console.log((response.data));
+                    var arr = [];
+                    Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+                    setCerti([...arr])
+                    // console.log(arr);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
 
             config = {
-            method: 'get',
-            url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
-            headers: { }
+                method: 'get',
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
+                headers: {}
             };
 
             axios(config)
-            .then(function (response) {
-            var arr = [];
-            Object.keys(response.data).forEach(e => arr.push({"name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"]}));
-            setCourses([ ...arr ])
-            console.log(arr)
-            })
-            .catch(function (error) {
-            // console.log(error);
-            });
+                .then(function (response) {
+                    var arr = [];
+                    Object.keys(response.data).forEach(e => arr.push({ "name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"] }));
+                    setCourses([...arr])
+                    console.log(arr)
+                })
+                .catch(function (error) {
+                    // console.log(error);
+                });
 
         }
         addCerti();
@@ -302,39 +302,39 @@ const ProfileScreen = ({ navigation, route }) => {
                 headers: {}
             };
             axios(config)
-            .then(function (response) {
-            // console.log((response.data));
-            var arr = [];
-            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-            setCerti([ ...arr ])
-            // console.log(arr);
-            })
-            .catch(function (error) {
-            console.log(error);
-            });
+                .then(function (response) {
+                    // console.log((response.data));
+                    var arr = [];
+                    Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+                    setCerti([...arr])
+                    // console.log(arr);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
 
             config = {
-            method: 'get',
-            url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
-            headers: { }
+                method: 'get',
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
+                headers: {}
             };
 
             axios(config)
-            .then(function (response) {
-            var arr = [];
-            Object.keys(response.data).forEach(e => arr.push({"name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"]}));
-            setCourses([ ...arr ])
-            console.log(arr);
-            setRefreshing(false)
-            })
-            .catch(function (error) {
-            // console.log(error);
-            setRefreshing(false)
-            });
+                .then(function (response) {
+                    var arr = [];
+                    Object.keys(response.data).forEach(e => arr.push({ "name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"] }));
+                    setCourses([...arr])
+                    console.log(arr);
+                    setRefreshing(false)
+                })
+                .catch(function (error) {
+                    // console.log(error);
+                    setRefreshing(false)
+                });
 
         }
         addCerti();
-        
+
     }, []);
 
     const options = {
@@ -346,76 +346,81 @@ const ProfileScreen = ({ navigation, route }) => {
         },
     };
     const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
-    const logout = async() => {
+    const logout = async () => {
         var keys = await AsyncStorage.getAllKeys()
         await AsyncStorage.multiRemove(keys)
         navigation.navigate('Login')
     }
     const there = () => {
-        return (<View style={{ marginBottom: 80, minHeight: "93%" }}>
-        <ScrollView style={{backgroundColor: "#f9f9f9"}} >
-        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 5 }}>
+        return (<View>
+            <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
+                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 20 }}>
                     <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -20 }}>Profile</Title> 
-                </Body>
-                <Right style={{ marginRight: 10, marginTop: 0 }}>
-                    <Icon onPress={() => {optionsRef.current.snapTo(0); console.log("sad")}} style={{color: "#000", fontSize: 20}} type="Entypo" name="dots-three-vertical"  />
-                </Right>
-            </Header>
-            <StreamApp
-                apiKey={'dfm952s3p57q'}
-                appId={'90935'}
-                token={children['0']['data']['gsToken']}
-            >
-                <View style={{ marginTop: 30, flexDirection: 'row' }}>
-                    <TouchableOpacity onPress={() => pickImage()}>
-                        <Image
-                            onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
-                            source={{ uri: source }}
-                            style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
-                        />
-                    </TouchableOpacity>
-                    <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{children['0']['data']['name']}</Text>
-                            <Icon onPress={()=>logout()} style={{ fontSize: 15, marginTop: 10, marginLeft: 5 }} name="log-out" type="Feather" />
-                        </View>
-                    </View>
-                </View>
-                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                        <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Followers</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Following</Text>
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                        <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
-                        </View>
-                        <TouchableOpacity onPress={() => {optionsRef.current.snapTo(0); setBottomType('courses')}} style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
+                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -50 }}>Profile</Title>
+                    </Body>
+                    <Right style={{ marginRight: 25, marginTop: 0 }}>
+                        <Icon onPress={() => { navigation.navigate('Settings') }} style={{ color: "#000", fontSize: 25 }} type="Feather" name="settings" />
+                    </Right>
+                </Header>
+                <StreamApp
+                    apiKey={'dfm952s3p57q'}
+                    appId={'90935'}
+                    token={children['0']['data']['gsToken']}
+                >
+                    <View style={{ marginTop: 30, flexDirection: 'row' }}>
+                        <TouchableOpacity onPress={() => pickImage()} style={{ flexDirection: 'row' }}>
+                            <Image
+                                onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
+                                source={{ uri: source }}
+                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
+                            />
+                            <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: 'white', borderWidth: 2, marginLeft: -35 }}>
+                                <Icon name="camera" type="Feather" style={{ color: 'white', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
+                            </View>
                         </TouchableOpacity>
-
+                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor:'#327FEB', color:'white', width:50, textAlign:'center',  borderRadius:10 }}>{'Kid'}</Text>
+                            </View>
+                        </View>
                     </View>
-                </View>
-                <FlatFeed feedGroup="user" />
-            </StreamApp>
+                    <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                            <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                            <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => { optionsRef.current.snapTo(0); setBottomType('courses') }} style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 40, marginRight: 10 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Courses</Text>
+                            </TouchableOpacity>
+
+                        </View>
+                    </View>
+                    <FlatFeed feedGroup="user" />
+                </StreamApp>
             </ScrollView>
             <BottomSheet
                 ref={optionsRef}
-                snapPoints={[height*0.5, 0, -200]}
-                initialSnap = {2}
+                snapPoints={[height * 0.5, 0, -200]}
+                initialSnap={2}
                 enabledGestureInteraction={true}
                 borderRadius={25}
                 renderContent={renderOptions}
@@ -426,10 +431,10 @@ const ProfileScreen = ({ navigation, route }) => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-                <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
+                <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
                 <View style={{ backgroundColor: 'white' }}>
                     <Button onPress={() => navigation.navigate('Child')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
-                        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
+                        <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
                     </Button>
                 </View>
             </View>
@@ -511,7 +516,7 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     return (
         <View>
-        {children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()}
+            {children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()}
         </View>
     );
 };

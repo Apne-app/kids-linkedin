@@ -1,9 +1,9 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView } from 'react-native'
-import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
+import React, { Component, useState, useEffect, useRef } from 'react';
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native'
+import { configureFonts, DefaultTheme, Provider as PaperProvider, TextInput } from 'react-native-paper';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
 import LoginForm from '../components/Login';
@@ -32,19 +32,19 @@ const LoginScreen = ({ route, navigation }) => {
   const fontConfig = {
     default: {
       regular: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
       medium: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
       light: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
       thin: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
     },
@@ -53,11 +53,34 @@ const LoginScreen = ({ route, navigation }) => {
   const theme = {
     ...DefaultTheme,
     fonts: configureFonts(fontConfig),
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#327FEB',
+      accent: '#327FEB',
+      underlineColor:'transparent',
+    },
+    roundness: 28.5
   };
 
   const [Loading, setLoading] = useState(false)
   const [email, setemail] = useState('');
   const [everified, seteverified] = useState(false);
+  const [visible, setvisible] = useState(false);
+  const scrollcheck = useRef(null)
+  const input = useRef(null)
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        scrollcheck.current.scrollToEnd({ animated: true })
+      }
+    );
+
+
+    return () => {
+      keyboardDidShowListener.remove();
+    };
+  }, []);
   const api = () => {
     // setemail(email.split(' ')[0])
     // console.log(email)
@@ -99,10 +122,10 @@ const LoginScreen = ({ route, navigation }) => {
     text = text.split(' ')[0]
     if (text != '') {
       if (text.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)) {
-        if (text.includes('gmail.com')) { seteverified(false); return }
-        if (text.includes('yahoo.co.in')) { seteverified(false); return }
-        if (text.includes('yahoo.com')) { seteverified(false); return }
-        if (text.includes('hotmail.com')) { seteverified(false); return }
+        if (text.includes('gmail')) { seteverified(false); return }
+        if (text.includes('yahoo')) { seteverified(false); return }
+        if (text.includes('yahoo')) { seteverified(false); return }
+        if (text.includes('hotmail')) { seteverified(false); return }
         seteverified(true)
       }
       else {
@@ -114,47 +137,54 @@ const LoginScreen = ({ route, navigation }) => {
     }
   }
   return (
-    <KeyboardAvoidingView style={styles.container}>
+    <ScrollView ref={scrollcheck} style={styles.container}>
       {/* <Container style={styles.container}> */}
-      <Content >
-        <View style={{ flex: 1, marginBottom: 15, marginTop: 50, }}>
-          <Image
-            style={styles.tinyLogo}
-            source={require('../assets/link.png')}
-          />
-        </View>
-        <View>
-          <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 10 }}>{'Use Work Email-ID'}</Text>
-          </SimpleAnimation>
-          <TextInput value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ width: width - 40, borderRadius: 10, height: 60, backgroundColor: '#ededed', fontSize: 16, padding: 15, fontFamily: 'Nunito-Sans', borderColor: everified ? 'green' : 'orange', borderWidth: 0.5, alignSelf: 'center' }}></TextInput>
-          <View style={{ alignSelf: 'center' }}>
-            <SpinnerButton
-              buttonStyle={{
-                borderRadius: 10,
-                margin: 20,
-                width: 200,
-                alignSelf: 'center',
-                backgroundColor: everified ? 'lightgreen' : 'grey'
-              }}
-              isLoading={Loading}
-              spinnerType='BarIndicator'
-              onPress={() => {
-                everified ? api() : null
-              }}
-              indicatorCount={10}
-            >
-              <Icon active type="Feather" name='chevron-right' style={{ color: 'black', fontWeight: 'bold' }} />
-            </SpinnerButton>
+      <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
+        <Content >
+          <View style={{ flex: 1, marginBottom: 15, marginTop: 50, }}>
+            <Image
+              style={styles.tinyLogo}
+              source={require('../assets/link.png')}
+            />
           </View>
-          <LinkedIn navigation={navigation} />
-          <Button onPress={() => navigation.navigate('Home')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 60, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
-            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Continue as Guest User</Text>
-          </Button>
-        </View>
-      </Content>
-      {/* </Container> */}
-    </KeyboardAvoidingView>
+          <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: 0, textAlign:'center' }}>Genio</Text>
+          <View>
+            <LinkedIn navigation={navigation} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', margin: 30 }}>
+              <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "lightgrey", width: width / 3 }} />
+              <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Regular', color: 'black' }} >Or</Text>
+              <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "lightgrey", width: width / 3 }} />
+            </View>
+            <Button onPress={() => { setvisible(true); input.current.focus() }} block dark style={{ marginTop: 10, backgroundColor: 'white', borderRadius: 28.5, height: 60, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
+              <Text style={{ color: "black", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Login with Email</Text>
+            </Button>
+            <KeyboardAvoidingView behavior={'padding'}>
+              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display:'flex', width: width - 40, borderRadius: 28.5, backgroundColor: '#ededed', fontSize: 16, padding: 0, fontFamily: 'NunitoSans', borderColor: everified ? 'green' : 'orange', alignSelf: 'center', }}></TextInput>
+              <View style={{ alignSelf: 'center', }}>
+                <SpinnerButton
+                  buttonStyle={{
+                    borderRadius: 28.5,
+                    margin: 20,
+                    width: 200,
+                    alignSelf: 'center',
+                    backgroundColor: everified ? '#327FEB' : 'grey'
+                  }}
+                  isLoading={Loading}
+                  spinnerType='BarIndicator'
+                  onPress={() => {
+                    everified ? api() : null
+                  }}
+                  indicatorCount={10}
+                >
+                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Login</Text>
+                </SpinnerButton>
+              </View>
+            </KeyboardAvoidingView>
+          </View>
+        </Content>
+        {/* </Container> */}
+      </SimpleAnimation>
+    </ScrollView>
   );
 }
 
@@ -187,14 +217,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
   buttonText: {
     fontSize: 20,
     textAlign: 'center',
     color: 'white',
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: 'NunitoSans-SemiBold',
     paddingHorizontal: 20,
   },
   buttonStyle: {

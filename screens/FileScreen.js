@@ -406,7 +406,7 @@ const FileScreen = (props) => {
                 {
                     !selecting ?
                     <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'Nunito-Sans', color: "#000", fontSize: 30, marginTop: 0 }}>Collections</Title> 
+                    <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0 }}>Collections</Title> 
                 </Body> :
                 <Left>
                     <TouchableOpacity style={{marginLeft: 15}} onPress={() =>cancelSelection()} ><Icon style={{ fontSize: 40}} name="cross" type="Entypo" /></TouchableOpacity>
@@ -477,8 +477,8 @@ const FileScreen = (props) => {
                    :
                     <View style={{ backgroundColor: 'white', height: height, width: width }}>
                         <Image source={require('../assets/empty.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-                        <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Nothing to view here.</Text>
-                        <Text style={{ fontFamily: 'Nunito-Sans', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Scan and add to get started!</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Nothing to view here.</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Scan and add to get started!</Text>
                         
                     </View>}
                     <View style={{height: height*0.07}} />

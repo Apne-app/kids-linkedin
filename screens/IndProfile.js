@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import { SECRET_KEY, ACCESS_KEY } from '@env';
 import { RNS3 } from 'react-native-aws3';
+import BottomSheet from 'reanimated-bottom-sheet';
 import { connect } from 'getstream';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -26,7 +27,7 @@ const IndProfile = ({ navigation, route }) => {
     const [certi, setCerti] = useState([]);
     const [courses, setCourses] = useState([])
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
-
+    const optionsRef = React.useRef(null);
     useEffect(() => {
         // console.log(route.params)
         const addfollows = async () => {
@@ -61,33 +62,33 @@ const IndProfile = ({ navigation, route }) => {
                 headers: {}
             };
             axios(config)
-            .then(function (response) {
-            // console.log((response.data));
-            var arr = [];
-            Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-            setCerti([ ...arr ])
-            // console.log(arr);
-            })
-            .catch(function (error) {
-            console.log(error);
-            });
+                .then(function (response) {
+                    // console.log((response.data));
+                    var arr = [];
+                    Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+                    setCerti([...arr])
+                    // console.log(arr);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
 
             config = {
-            method: 'get',
-            url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${route['params']['data']['gsToken']}`,
-            headers: { }
+                method: 'get',
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${route['params']['data']['gsToken']}`,
+                headers: {}
             };
 
             axios(config)
-            .then(function (response) {
-            var arr = [];
-            Object.keys(response.data).forEach(e => arr.push({"name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"]}));
-            setCourses([ ...arr ])
-            console.log(arr)
-            })
-            .catch(function (error) {
-            // console.log(error);
-            });
+                .then(function (response) {
+                    var arr = [];
+                    Object.keys(response.data).forEach(e => arr.push({ "name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"] }));
+                    setCourses([...arr])
+                    console.log(arr)
+                })
+                .catch(function (error) {
+                    // console.log(error);
+                });
 
         }
         addCerti();
@@ -105,6 +106,7 @@ const IndProfile = ({ navigation, route }) => {
     const followid = (id) => {
         // console.log("asd");
         if (followPerson == 'Follow') {
+            console.log('http://104.199.158.211:5000/follow/' + currentid + '/' + id)
             axios.get('http://104.199.158.211:5000/follow/' + currentid + '/' + id)
                 .then(async (response) => {
                     if (response.data == 'success') {
@@ -131,6 +133,7 @@ const IndProfile = ({ navigation, route }) => {
         }
 
     }
+    const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
     const pickImage = () => {
         ImagePicker.showImagePicker(options, (response) => {
             console.log('Response = ', response);
@@ -146,7 +149,7 @@ const IndProfile = ({ navigation, route }) => {
                 const file = {
                     // `uri` can also be a file system path (i.e. file://)
                     uri: response.uri,
-                    name: children['0']['data']['gsToken'] + '.jpg',
+                    name: route['params']['data']['gsToken'] + '.jpg',
                     type: "image/png",
                 }
 
@@ -164,66 +167,79 @@ const IndProfile = ({ navigation, route }) => {
                         throw new Error("Failed to upload image to S3");
 
                 })
-                const client = connect('dfm952s3p57q', children['0']['data']['gsToken'], '90935');
-                client.user().update({ profileImage: 'https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.jpg' });
+                const client = connect('dfm952s3p57q', route['params']['data']['gsToken'], '90935');
+                client.user().update({ profileImage: 'https://d5c8j8afeo6fv.cloudfront.net/' + route['params']['data']['gsToken'] + '.jpg' });
             }
         });
     }
     return (
-        <ScrollView style={{ marginBottom: 80 }}>
-            <StreamApp
-                apiKey={'dfm952s3p57q'}
-                appId={'90935'}
-                token={route['params']['data']['gsToken']}
-            >
-                <View style={{ marginTop: 30, flexDirection: 'row' }}>
-                    <Avatar
-                        size={96}
-                        noShadow
-                        editButton
-                        onUploadButtonPress={() => pickImage()}
-                        styles={{ container: { width: 80, height: 80, borderRadius: 5, margin: 5, marginLeft: 30 } }}
-                    />
-
-                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 31 }}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20 }}>{route['params']['data']['name']}</Text>
-                            <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, marginHorizontal: 10 }}>
+        <View>
+            <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
+                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop:10, marginBottom:10 }}>
+                    <Body style={{ alignItems: 'center', flexDirection:'row' }}>
+                        <Icon type="Feather" name="arrow-left" onPress={() => navigation.navigate('Searching')} />
+                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: 20}}>Profile</Title>
+                    </Body>
+                    <Right style={{ marginRight: 25, marginTop: 0 }}>
+                        <Icon onPress={() => {}} style={{ color: "#000", fontSize: 25 }} type="Feather" name="more-vertical" />
+                    </Right>
+                </Header>
+                <StreamApp
+                    apiKey={'dfm952s3p57q'}
+                    appId={'90935'}
+                    token={route['params']['data']['gsToken']}
+                >
+                    <View style={{ marginTop: 30, flexDirection: 'row' }}>
+                        <TouchableOpacity style={{ flexDirection: 'row' }}>
+                            <Image
+                                onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + route['params']['data']['gsToken'] + '.png')}
+                                source={{ uri: source }}
+                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
+                            />
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: '#327FEB', color: 'white', width: 50, textAlign: 'center', borderRadius: 10 }}>{'Kid'}</Text>
+                            </View>
+                            <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius:10, marginLeft:-20 }}>
                                 <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                </View>
-                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                        <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                    <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                            <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                            </View>
                         </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Followers</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Following</Text>
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                        <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
-                        </View>
-                        <TouchableOpacity  style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 10, marginRight: 10 }}>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
-                            <Text style={{ fontFamily: 'Nunito-Sans', textAlign: 'center', fontSize: 14, }}>Courses completed</Text>
-                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                            <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
+                            </View>
+                            <TouchableOpacity onPress={() => { optionsRef.current.snapTo(0); setBottomType('courses') }} style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 40, marginRight: 10 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Courses</Text>
+                            </TouchableOpacity>
 
+                        </View>
                     </View>
-                </View>
-                <FlatFeed feedGroup="user" />
-            </StreamApp>
-        </ScrollView>
+                    <FlatFeed feedGroup="user" />
+                </StreamApp>
+            </ScrollView>
+        </View>
     );
 };
 

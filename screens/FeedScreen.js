@@ -392,6 +392,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         source={{ uri: props.activity.video }}
                                         navigator={navigator}
                                     /></View> : null}
+                                    <View style={{backgroundColor:'lightgreen',borderRadius:10, width:90, padding:9, marginTop:4}}><Text style={{fontFamily:'NunitoSans-Regular',  fontSize:1}}>Assignment</Text></View>
                         </TouchableOpacity>
                     </View>
                 }
@@ -470,7 +471,7 @@ const FeedScreen = ({ navigation, route }) => {
                         <Title style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 33, marginTop: 0, marginLeft: -20 }}>Genio</Title>
                     </Body>
                     <Right style={{ marginRight: 30, marginTop: 0 }}>
-                        <Icon name="bell" type="Feather" />
+                        <Icon onPress={()=>navigation.navigate('Notifications')} name="bell" type="Feather" />
                     </Right>
                 </Header>
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>

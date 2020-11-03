@@ -15,19 +15,19 @@ const LoginForm = ({ navigation }) => {
   const fontConfig = {
     default: {
       regular: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
       medium: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
       light: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
       thin: {
-        fontFamily: 'Nunito-Sans',
+        fontFamily: 'NunitoSans-Regular',
         fontWeight: 'normal',
       },
     },
@@ -59,11 +59,11 @@ const LoginForm = ({ navigation }) => {
   return (
     <View style={styles.form}>
       <Form>
-        <Label style={{ fontFamily: 'Nunito-Sans' }}>Work Mail-ID</Label>
+        <Label style={{ fontFamily: 'NunitoSans-Regular' }}>Work Mail-ID</Label>
         <Item rounded style={{ marginTop: 12, marginBottom: 12, backgroundColor: "#fff" }}>
           <Input placeholder='manoj@google.com' value={login.email} onChangeText={(txt) => setLogin({ ...login, email: txt })} style={{ paddingLeft: 30, height: 60 }} />
         </Item>
-        <Label style={{ fontFamily: 'Nunito-Sans' }}>Password</Label>
+        <Label style={{ fontFamily: 'NunitoSans-Regular' }}>Password</Label>
         <Item rounded style={{ marginTop: 12, backgroundColor: "#fff"}}>
           <Input  placeholder='*************' secureTextEntry={!login.viewPass} value={login.password} onChangeText={(txt) => setLogin({ ...login, password: txt })} style={{ paddingLeft: 30, height: 60, borderRadius:2, }} />
           {
@@ -73,7 +73,7 @@ const LoginForm = ({ navigation }) => {
           }
         </Item>
       </Form>
-      <Text style={{ textAlign: 'right', color: 'rgba(56, 56, 56, 0.8)', fontFamily: 'Nunito-Sans', marginTop:10 }}>Forgot Password?</Text>
+      <Text style={{ textAlign: 'right', color: 'rgba(56, 56, 56, 0.8)', fontFamily: 'NunitoSans-Regular', marginTop:10 }}>Forgot Password?</Text>
       <Button rounded block dark  style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 25, height: 50,  }} onPress={() => {loginApi()}}>
         <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>LOG IN</Text>
       </Button>
