@@ -118,6 +118,7 @@ const Upload = ({ route, navigation }) => {
 
   React.useEffect(() => {
     analytics.screen('Post Screen')
+    console.log(explore)
 
       // console.log( "asddsd", route.params.selected, explore)
     if (route.params.selected) {
@@ -496,7 +497,7 @@ const Upload = ({ route, navigation }) => {
     children = JSON.parse(children)['0']
     var name = ''
     for (i = 0; i < explore.length - 1; i++) {
-      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  + filename + "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
+      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
       name = name + x;
       if(tag == 'Certificate')
       {
@@ -783,7 +784,8 @@ const Upload = ({ route, navigation }) => {
                             onPress={() => {
                               var ar = [...explore]; ar.splice(0, 1);
                               setSelected([]);setVisible(false);
-                              navigation.navigate('Preview', {'img': explore[visibleImg+1]['prevImg'], 'images': ar, 'reload': 1  });
+                              // console.log({'img': explore[visibleImg+1]['prevImg'], height: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => width),  'reload': 1  });
+                              navigation.navigate('Preview', {'img': explore[visibleImg+1]['prevImg'], height: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1  });
                               // console.log(explore);
                             }}
                           >
@@ -979,7 +981,7 @@ const Upload = ({ route, navigation }) => {
                {
                  arr.push({ uri: 'file://'+ar[i]["uri"] })
                }
-               navigation.navigate('CreatePost', { images: arr })
+               navigation.navigate('CreatePost', { images: arr, tag: selectedTag })
             }}
           >
             <View style={styles.Next}>
