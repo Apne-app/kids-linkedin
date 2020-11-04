@@ -105,7 +105,7 @@ export default class App extends React.Component {
             screen: 'Post'
           })
       }} block dark style={{ marginTop: 10, backgroundColor: '#357feb', borderRadius: 30, height: 60, width: width*0.86, alignSelf: 'center', marginBottom: 10}}>
-        <Text style={{ color: "#fff", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Continue</Text>
+        <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Continue</Text>
       </Button>
     );
   };
@@ -113,7 +113,7 @@ export default class App extends React.Component {
   _renderDoneButton = () => {
     return (
       <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} block dark style={{ backgroundColor: '#fff', borderRadius: 30, width: width*0.86, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
-        <Text style={{ color: "#000", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2, alignSelf: 'center', textDecorationLine: 'underline' }}>Login</Text>
+        <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2, alignSelf: 'center', textDecorationLine: 'underline' }}>Login</Text>
       </TouchableOpacity>
     );
   };

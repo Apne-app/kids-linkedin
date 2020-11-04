@@ -41,7 +41,7 @@ const ChildSuccess = ({ navigation }) => {
             <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Succesfully added your child!</Text>
             <View style={{ backgroundColor: 'white' }}>
                 <Button block dark style={{ marginTop: 30, backgroundColor: 'lightblue', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
-                    <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Taking you to Home....</Text>
+                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Taking you to Home....</Text>
                 </Button>
             </View>
         </View>

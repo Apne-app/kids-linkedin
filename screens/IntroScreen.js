@@ -14,7 +14,7 @@ const IntroScreen = ({ route, navigation }) => {
             style={styles.tinyLogo}
             source={require('../assets/link.png')}
           />
-          <H1 style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, textAlign: 'center' }}>Bragging rights are back with a bang!</H1>
+          <H1 style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 14, textAlign: 'center' }}>Bragging rights are back with a bang!</H1>
         </View>
         <Form style={styles.form}>
           {/*<Item stackedLabel>
@@ -26,10 +26,10 @@ const IntroScreen = ({ route, navigation }) => {
               <Input />
             </Item>*/}
           <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 0, height: 50,  elevation:6}} onPress={() => navigation.navigate('Signup', {})} >
-            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>Get Started</Text>
+            <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 20, marginTop: 4 }}>Get Started</Text>
           </Button>
           <Button block dark rounded style={{ marginTop: 10, backgroundColor: 'white', borderRadius: 0, height: 50, borderColor:'#91d7ff', borderWidth:1, elevation:6}} onPress={() => navigation.navigate('Login', {})} >
-            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>Login</Text>
+            <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 20, marginTop: 4 }}>Login</Text>
           </Button>
         </Form>
         {/* <Button block rounded iconLeft primary style={{ marginTop: 30, flex: 1 }}>
@@ -38,7 +38,7 @@ const IntroScreen = ({ route, navigation }) => {
         </Button>
         <Text style={{ textAlign: 'right', margin: 10 }}>Already Registered? </Text> */}
       </Content>
-      <H1 style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, textAlign: 'center', bottom:20 }}>How does it work?</H1>
+      <H1 style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 16, textAlign: 'center', bottom:20 }}>How does it work?</H1>
     </Container>
   );
 }

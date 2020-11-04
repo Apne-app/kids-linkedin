@@ -88,12 +88,12 @@ const Unverified = ({ navigation }) => {
                 <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Please verify for becoming a part of the community</Text>
                 <View style={{ backgroundColor: 'white' }}>
                     <Button onPress={() => send()} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
-                        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Send again</Text>
+                        <Text style={{ color: "black", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Send again</Text>
                     </Button>
                     <Button onPress={() => navigation.navigate('Home')} block dark style={{ marginTop: 10, backgroundColor: 'lightgreen', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
-                        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 2 }}>Continue without verification*</Text>
+                        <Text style={{ color: "black", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Continue without verification*</Text>
                     </Button>
-                    <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 10, textAlign: 'center' }}>*You wont be able to use the social network</Text>
+                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center' }}>*You wont be able to use the social network</Text>
                 </View>
             </View>
         );

@@ -21,6 +21,7 @@ import { Snackbar } from 'react-native-paper';
 import analytics from '@segment/analytics-react-native';
 import { Chip } from 'react-native-paper';
 import { clockRunning, set } from 'react-native-reanimated';
+import YouTube from 'react-native-youtube';
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
@@ -337,7 +338,7 @@ const FeedScreen = ({ navigation, route }) => {
                 }
                 Content={
                     <View style={{ padding: 20 }}>
-                        {props.activity.object === 'default123' ? <View style={{marginTop:-20}}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                        {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                         {props.activity.image ? <ImageView
                             images={images}
                             imageIndex={0}
@@ -381,7 +382,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 inactiveDotColor="#90A4AE"
                                 paginationBoxVerticalPadding={20}
                                 sliderBoxHeight={340}
-                                ImageComponentStyle={{borderRadius:10, width: width - 80, height: 340,}}
+                                ImageComponentStyle={{ borderRadius: 10, width: width - 80, height: 340, }}
                                 circleLoop={true}
                             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
@@ -392,7 +393,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         source={{ uri: props.activity.video }}
                                         navigator={navigator}
                                     /></View> : null}
-                                    <View style={{backgroundColor:'lightgreen',borderRadius:10, width:90, padding:9, marginTop:4}}><Text style={{fontFamily:'NunitoSans-Regular',  fontSize:1}}>Assignment</Text></View>
+                            <View style={{ backgroundColor: 'lightgreen', borderRadius: 10, width: 90, padding: 9, marginTop: 4 }}><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 1 }}>Assignment</Text></View>
                         </TouchableOpacity>
                     </View>
                 }
@@ -471,16 +472,25 @@ const FeedScreen = ({ navigation, route }) => {
                         <Title style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 33, marginTop: 0, marginLeft: -20 }}>Genio</Title>
                     </Body>
                     <Right style={{ marginRight: 30, marginTop: 0 }}>
-                        <Icon onPress={()=>navigation.navigate('Notifications')} name="bell" type="Feather" />
+                        <Icon onPress={() => navigation.navigate('Notifications')} name="bell" type="Feather" />
                     </Right>
                 </Header>
+                <YouTube
+                    videoId="KVZ-P-ZI6W4" // The YouTube video ID
+                    apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
+                    // onReady={e => this.setState({ isReady: true })}
+                    // onChangeState={e => this.setState({ status: e.state })}
+                    // onChangeQuality={e => this.setState({ quality: e.quality })}
+                    // onError={e => this.setState({ error: e.error })}
+                    style={{ alignSelf: 'stretch', height: 300 }}
+                />
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         apiKey="dfm952s3p57q"
                         appId="90935"
                         token={children['0']['data']['gsToken']}
                     >
-                {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}
+                        {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet

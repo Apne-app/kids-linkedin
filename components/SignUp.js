@@ -72,7 +72,7 @@ const SignUpForm = ({ navigation }) => {
       </Form>
       <Text style={{ textAlign: 'right', color: 'rgba(56, 56, 56, 0.8)', fontFamily: 'NunitoSans-Regular', marginTop: 10 }}>Forgot Password?</Text>
       <Button block dark rounded style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 25, height: 50, }} onPress={() => { loginApi() }}>
-        <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 20, marginTop: 4 }}>SIGN UP</Text>
+        <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 20, marginTop: 4 }}>SIGN UP</Text>
       </Button>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
         <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "rgba(56, 56, 56, 0.8);" }} />
@@ -81,7 +81,7 @@ const SignUpForm = ({ navigation }) => {
       </View>
       <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#91d7ff', backgroundColor: '#2867B2', borderWidth: 1, borderRadius: 25, height: 50, }} onPress={() => navigation.navigate('Home', {})} >
         <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
-        <Text style={{ color: "white", fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 4 }}>Signup with LinkedIn</Text>
+        <Text style={{ color: "white", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 4 }}>Signup with LinkedIn</Text>
       </Button>
 
     </View>

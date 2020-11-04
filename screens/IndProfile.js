@@ -205,7 +205,7 @@ const IndProfile = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: '#327FEB', color: 'white', width: 50, textAlign: 'center', borderRadius: 10 }}>{'Kid'}</Text>
                             </View>
                             <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius:10, marginLeft:-20 }}>
-                                <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
+                                <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

@@ -114,7 +114,7 @@ const Searching = ({ route, navigation }) => {
                         <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  3 Posts </Text>
                         </View>
                         {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
-                            <Text style={{ color: "black", fontFamily: 'Poppins-SemiBold', fontSize: 12, marginTop: 2 }}>{follows && follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
+                            <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, marginTop: 2 }}>{follows && follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
                         </TouchableOpacity>*/}
                     </TouchableOpacity>
                 </StreamApp>

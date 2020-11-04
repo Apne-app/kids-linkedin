@@ -68,6 +68,7 @@
     "react-native-video-controls": "^2.6.0",
     "react-native-view-shot": "^3.1.2",
     "react-native-webview": "^8.0.0",
+    "react-native-youtube": "^2.0.1",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "switch-button-react-native": "^1.0.3"
   },

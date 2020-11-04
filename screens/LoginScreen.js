@@ -122,7 +122,7 @@ const LoginScreen = ({ route, navigation }) => {
     text = text.split(' ')[0]
     if (text != '') {
       if (text.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)) {
-        if (text.includes('gmail')) { seteverified(false); return }
+        // if (text.includes('gmail')) { seteverified(false); return }
         if (text.includes('yahoo')) { seteverified(false); return }
         if (text.includes('yahoo')) { seteverified(false); return }
         if (text.includes('hotmail')) { seteverified(false); return }
