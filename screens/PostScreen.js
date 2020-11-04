@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, ScrollView, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity } from 'react-native'
+import { StyleSheet, ScrollView, Keyboard, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Textarea } from 'native-base';
 import axios from 'axios';
@@ -9,6 +9,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useFocusEffect } from "@react-navigation/native";
 import { SliderBox } from "react-native-image-slider-box";
+import { SECRET_KEY, ACCESS_KEY } from '@env'
+import { RNS3 } from 'react-native-aws3';
+import { connect } from 'getstream';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -37,7 +40,133 @@ const PostScreen = ({ navigation, route }) => {
 
         const [images, setImages] = useState([]);
         const [selection, setSelection] = useState([])
+        const [tag, setTag] = useState('');
+        const [caption, setCaption] = useState('')
         const [last, setLast] = useState(0);
+        const [keyboardOffset, setKeyboardOffset] = useState(0);
+        const keyboardDidShowListener = React.useRef();
+        const keyboardDidHideListener = React.useRef();
+        const onKeyboardShow = event => setKeyboardOffset(event.endCoordinates.height);
+        const onKeyboardHide = () => setKeyboardOffset(0);
+
+        React.useEffect(() => {
+          keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
+          keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
+
+          return () => {
+            keyboardDidShowListener.current.remove();
+            keyboardDidHideListener.current.remove();
+          };
+        }, []);
+        function randomStr(len, arr) {
+    var ans = '';
+    for (var i = len; i > 0; i--) {
+      ans +=
+        arr[Math.floor(Math.random() * arr.length)];
+    }
+    return ans;
+  }
+
+
+        const uploadToS3 = (i, email) => {
+
+          // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
+          var name = randomStr(20, '12345abcdepq75xyz') + '.' + images[i].uri[images[i].uri.length - 3] + images[i].uri[images[i].uri.length - 2] + images[i].uri[images[i].uri.length - 1]
+          const file = {
+            // `uri` can also be a file system path (i.e. file://)
+            uri: images[i].uri,
+            name: name,
+            type: "image/png",
+          }
+
+          const options = {
+            keyPrefix: email + "/" + tag + "/",
+            bucket: "kids-linkedin",
+            region: "ap-south-1",
+            accessKey: ACCESS_KEY,
+            secretKey: SECRET_KEY,
+            successActionStatus: 201
+          }
+
+          RNS3.put(file, options).then(response => {
+            console.log("dassd")
+            if (response.status !== 201)
+              throw new Error("Failed to upload image to S3");
+            console.log(response.body);
+
+            // var obj = { ...uploading };
+            // var a = 0;
+            // if (!a) {
+            //   a++;
+            //   obj[explore[i].uri] = false;
+            // }
+
+            // console.log(obj, i);
+
+            // setUploading({
+            //   ...obj
+            // })
+
+            if (i == images.length - 2) alert("Uploaded");
+
+          })
+            .catch(err => {
+              console.log(err);
+            })
+            ;
+          return name;
+        }
+
+        const PostUpload = async () => {
+          var i;  
+          // setTimeout(() => {
+          //   setModalVisible4(false)
+          // }, 300);
+          // var obj = { ...uploading };
+          // for (i = 0; i < explore.length - 1; i++) {
+          //   obj[(explore[i].uri)] = true;
+          //   setUploading({
+          //     ...obj
+          //   });
+          // }
+          var children = await AsyncStorage.getItem('children')
+          children = JSON.parse(children)['0']
+          var name = ''
+          for (i = 0; i < images.length - 1; i++) {
+            var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  +  "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
+            name = name + x;
+          //   if(tag == 'Certificate')
+          //   {
+          //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
+          //     var config = {
+          //       method: 'post',
+          //       url: 'https://barry-2z27nzutoq-as.a.run.app/updatecerti',
+          //       headers: { 
+          //         'Content-Type': 'application/json'
+          //       },
+          //       data : data
+          //     };
+
+          //     axios(config).then(res => {
+          //       if(res == "success")
+          //       {
+          //         console.log("success")
+          //       }
+          //     }).catch(err => {
+          //       console.log(err);
+          //     })
+          //   }
+
+          }
+          // setModalVisible4(false);
+
+          const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+          var activity = { "image": name, "object": caption==''?'default123':caption, "verb": "post" }
+          // var user = client.feed('timeline', '103id');
+          // user.follow('user', '49id');
+          var user = client.feed('user', String(String(children['id']) + String("id")));
+          await user.addActivity(activity);
+        }
 
         useEffect(() => {
             setImages([ ...route.params.images ]);
@@ -138,23 +267,24 @@ const PostScreen = ({ navigation, route }) => {
                 <View style={{height: height*0.3, borderTopWidth: 1,borderLeftWidth: 1,borderRightWidth: 1, borderColor: 'lightgrey'}}>
                   <Content padder>
                     <Form>
-                      <Textarea rowSpan={4} placeholder="Add Caption" />
+                      <Textarea value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
                     </Form>
                     <TouchableOpacity
                       style={{height: 50}}
                       onPress={() => {
-                        var ar = explore;
-                        var arr = [];
-                        for(var i = 1; i < ar.length; i++)
-                        {
-                          arr.push({ uri: 'file://'+ar[i]["uri"] })
-                        }
-                        navigation.navigate('CreatePost', { images: arr })
+                        PostUpload();
+                        // var ar = explore;
+                        // var arr = [];
+                        // for(var i = 1; i < ar.length; i++)
+                        // {
+                        //   arr.push({ uri: 'file://'+ar[i]["uri"] })
+                        // }
+                        // navigation.navigate('CreatePost', { images: arr })
                       }}
                     >
                       <View style={styles.Next}>
                         <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
-                          Create Post
+                          Post
                         </Text>
                       </View>
                     </TouchableOpacity>

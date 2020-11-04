@@ -19,6 +19,7 @@ const App: () => React$Node = (props) => {
   const [uri, setUri] = useState();
   const [prevUri, setPrevUri] = useState('');
   const [dim, setDim] = useState({ height: '50', width: '50' })
+  const [editing, setEditing] = useState(false);
   const [croppedi, setcroppedi] = React.useState(false);
   const cropViewRef = useRef();
 
@@ -28,7 +29,7 @@ const App: () => React$Node = (props) => {
 
   React.useEffect(() => {
     setUri(props.route.params.img);
-    if (route.params && route.params.reload) {
+    if (props.route.params && props.route.params.reload) {
       
     }
     const saveOrigImages = async () => {
@@ -84,14 +85,28 @@ const App: () => React$Node = (props) => {
       props.navigation.navigate('Camera')
     }
   }
+  const refresh = () => {
+        if(props.route.params.editing)
+        {
+          setUri(props.route.params.img);
+          setDim({height: props.route.params.height, width: props.route.params.width});
+          setcroppedi(false)
+          setEditing(true);
+        }
+        props.route.params.editing = 0;
+      }
+  refresh();
 
   useFocusEffect(
+
         React.useCallback(() => {
         const backAction = () => {
           // console.log(croppedi)
           backBehavior();
         return true;
       };
+
+      
 
       const backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
@@ -175,7 +190,7 @@ const App: () => React$Node = (props) => {
       <StatusBar barStyle="dark-content" />
       <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05}}>
               <Left style={{ alignItems: 'center' }}>
-              <TouchableOpacity onPress={() =>  croppedi ? setcroppedi(false) : props.navigation.pop()}><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
+              <TouchableOpacity onPress={() =>  croppedi && editing ? setcroppedi(false) : editing ? props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...props.route.params.images] }) : props.navigation.pop()}><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
           </Left>
           <Body>
              
@@ -253,7 +268,7 @@ const App: () => React$Node = (props) => {
           <TouchableOpacity
             style={{height: 40}}
             onPress={() => {
-               croppedi ? setcroppedi(false) : props.navigation.pop();
+               croppedi && editing ? setcroppedi(false) : editing ? props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...props.route.params.images] }) : props.navigation.pop()
             }}
           >
             <View style={styles.Cancel}>
