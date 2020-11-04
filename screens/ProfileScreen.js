@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, RefreshControl, Dimensions, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
+import { Text, StyleSheet, RefreshControl, Dimensions, Linking, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -414,6 +414,17 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         </View>
                     </View>
+                        <TouchableOpacity
+                         onPress={() => {
+                            Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])
+                            .catch(err => {
+                                console.error("Failed opening page because: ", err)
+                                alert('Failed to open page')
+                        })}}
+            
+                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor:'#327FEB', color:'white', width:100, textAlign:'center', padding: 3,  borderRadius:15 }}>{'Website'}</Text>
+                        </TouchableOpacity>
                     <FlatFeed feedGroup="user" />
                 </StreamApp>
             </ScrollView>
@@ -520,5 +531,21 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+Next: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    padding: 12,
+    // margin: 5,
+    backgroundColor: '#357feb',
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "#fff",
+    width: 165,
+    flex: 1,
+    marginHorizontal: 20
+  },
+})
 
 export default ProfileScreen;
