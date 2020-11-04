@@ -475,7 +475,7 @@ const FeedScreen = ({ navigation, route }) => {
                         <Icon onPress={() => navigation.navigate('Notifications')} name="bell" type="Feather" />
                     </Right>
                 </Header>
-                <YouTube
+                {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
                     // onReady={e => this.setState({ isReady: true })}
@@ -483,7 +483,7 @@ const FeedScreen = ({ navigation, route }) => {
                     // onChangeQuality={e => this.setState({ quality: e.quality })}
                     // onError={e => this.setState({ error: e.error })}
                     style={{ alignSelf: 'stretch', height: 300 }}
-                />
+                /> */}
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         apiKey="dfm952s3p57q"
