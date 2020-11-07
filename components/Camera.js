@@ -5,6 +5,9 @@ import { RNCamera } from 'react-native-camera';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail,  List, ListItem,  Separator, Left, Body, Right, Title} from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
 import Gallery from './Gallery'
+import Svg, {
+  Use,
+} from 'react-native-svg';
 import ZoomView from './ZoomView';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useFocusEffect } from "@react-navigation/native";
@@ -210,11 +213,11 @@ export default class ExampleApp extends PureComponent {
           onPinchProgress={this._onPinchProgress}
         >  
           <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 10, left: 10}}>
-              <Image style={{height: 50, width: 50, color: "#fff",}} source={require('../assets/switchcam.png')} />
+              <Image style={{height: 50, width: 50, backgroundColor: "transparent",}} source={require('../assets/switchcam.png')} />
           </TouchableOpacity>
           
           <TouchableOpacity onPress={this.changeFlash.bind(this)} style={styles.capture, {flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 15, right: 10}}>
-              { this.state.flash == RNCamera.Constants.FlashMode.off ? <Icon name="flash" type="FontAwesome" style={{color: "#000", fontSize: 30}} /> : <Icon name="flash-off" type="MaterialIcons" style={{color: "#000", fontSize: 30}} />}
+              { this.state.flash == RNCamera.Constants.FlashMode.off ? <Icon name="flash" type="FontAwesome" style={{color: "#fff", fontSize: 30}} /> : <Icon name="flash-off" type="MaterialIcons" style={{color: "#fff", fontSize: 30}} />}
           </TouchableOpacity>
         </ZoomView>
         </RNCamera>
@@ -249,7 +252,7 @@ export default class ExampleApp extends PureComponent {
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => {this.sheetRef.snapTo(0); this.setState({ ...this.state, isGalleryOpen: true });}} style={styles.capture, {flex: 1, alignItems: 'flex-start', marginLeft: 15, marginTop: 6}}>
+          <TouchableOpacity onPress={() => {this.sheetRef.snapTo(0); this.setState({ ...this.state, isGalleryOpen: true });}} style={styles.capture, {flex: 1, alignItems: 'flex-start', marginLeft: width*0.15, marginTop: 6}}>
             <Icon type="EvilIcons" name="image" style={{color: "#000", fontSize: 50}} />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, {flex: 2, alignItems: 'center', marginTop: -10}}>
@@ -259,7 +262,7 @@ export default class ExampleApp extends PureComponent {
             this.props.navigation.navigate('Home', {
               screen: 'Files',
             })
-          }} style={styles.capture, {flex: 1, alignItems: 'flex-end', marginRight: 20, marginTop: 10}}>
+          }} style={styles.capture, {flex: 1, alignItems: 'flex-end', marginRight: width*0.15, marginTop: 10}}>
             <Icon name="file" type="Feather" style={{color: "#000", fontSize: 30}} />
           </TouchableOpacity>
         </View>

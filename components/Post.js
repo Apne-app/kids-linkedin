@@ -86,6 +86,8 @@ const Upload = ({ route, navigation }) => {
 
   const [filename, setFileName] = React.useState('')
 
+  const [deleteCount, setDeleteCount] = React.useState(0)
+
   const [orig, setOrig] = React.useState('');
   const [origImages, setOrigImages] = React.useState([])
   const [selecting, setSelecting] = React.useState(false);
@@ -119,6 +121,40 @@ const Upload = ({ route, navigation }) => {
   React.useEffect(() => {
     analytics.screen('Post Screen')
     console.log(explore)
+    const backAction = async () => {
+          // try {
+          //     await AsyncStorage.removeItem("OrigImages");
+          //     saveImages();
+          //     // return true;
+          // }
+          // catch(exception) {
+          //   console.log(exception)
+          //     // return false;
+          // }
+
+          // Alert.alert("Hold on!", "Are you sure you want to Et?", [
+          //           {
+          //               text: "Cancel",
+          //               onPress: () => null,
+          //               style: "cancel"
+          //           },
+          //           { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
+          //       ]);
+
+        if(selecting){
+         setSelecting(false)
+        }
+        else{
+         saveImages(); deleteOrigImages() ;navigation.navigate('Home', { screen: 'Feed'})
+        }
+
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
 
       // console.log( "asddsd", route.params.selected, explore)
     if (route.params.selected) {
@@ -158,37 +194,37 @@ const Upload = ({ route, navigation }) => {
 
 
 
-  useFocusEffect(
-        React.useCallback(() => {
-        const backAction = async () => {
-          // try {
-          //     await AsyncStorage.removeItem("OrigImages");
-          //     saveImages();
-          //     // return true;
-          // }
-          // catch(exception) {
-          //   console.log(exception)
-          //     // return false;
-          // }
+  // useFocusEffect(
+  //       React.useCallback(() => {
+  //       const backAction = async () => {
+  //         // try {
+  //         //     await AsyncStorage.removeItem("OrigImages");
+  //         //     saveImages();
+  //         //     // return true;
+  //         // }
+  //         // catch(exception) {
+  //         //   console.log(exception)
+  //         //     // return false;
+  //         // }
 
-          Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-                    {
-                        text: "Cancel",
-                        onPress: () => null,
-                        style: "cancel"
-                    },
-                    { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
-                ]);
+  //         Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+  //                   {
+  //                       text: "Cancel",
+  //                       onPress: () => null,
+  //                       style: "cancel"
+  //                   },
+  //                   { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
+  //               ]);
 
         
-        return true;
-      };
+  //       return true;
+  //     };
 
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
-    }, []));
+  //     const backHandler = BackHandler.addEventListener(
+  //       "hardwareBackPress",
+  //       backAction
+  //     );
+  //   }, []));
 
 
 
@@ -771,8 +807,8 @@ const Upload = ({ route, navigation }) => {
                 onRequestClose={() => {setSelected([]);setVisible(false);}}
                 HeaderComponent = {() => {
                     return (
-                      <TouchableOpacity style={{marginTop: 20, marginLeft: 20}} onPress={() => {setSelected([]);setVisible(false);} }>
-                      <Icon type="Entypo" name="cross" style={{ color: "#000", fontSize: 40 }} />
+                      <TouchableOpacity style={{marginTop: 10, marginLeft: 10}} onPress={() => {setSelected([]);setVisible(false);} }>
+                      <Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30 }} />
                       </TouchableOpacity>
                     )
                 }}
@@ -837,6 +873,14 @@ const Upload = ({ route, navigation }) => {
                       if(selecting)
                       {
                         var array = [ ...explore ];
+                        if(array[index]['selected'])
+                        {
+                          setDeleteCount(deleteCount-1);
+                        }
+                        else
+                        {
+                          setDeleteCount(deleteCount+1);
+                        }
                         array[index]['selected'] = !array[index]['selected'];
                         setExplore([ ...array ])
                       }
@@ -858,8 +902,10 @@ const Upload = ({ route, navigation }) => {
                           }}
                         >
                           {
-                            item.selected ?
-                              <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: item.selected ? '#fff' : '#357feb', borderWidth: item.selected ? 4 : 0, borderColor: "#357feb" , position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center'}} ></View>
+                            selecting ?
+                              <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center'}} >
+                                { item.selected ? <Icon type="Feather" name="check" style={{color: "#357feb", fontWeight: "bold"}} /> : null}
+                              </View>
                               :
                               <View />
                           }
@@ -919,6 +965,34 @@ const Upload = ({ route, navigation }) => {
         >
           <Icon name="arrow-down-circle" type="Feather" style={{color: "#3cb979", fontSize: 50}} />
         </TouchableOpacity>*/}
+
+      {
+        selecting ?
+          <TouchableOpacity
+            style={{height: 50, position: 'absolute', bottom: 15, alignSelf: 'center'}}
+            onPress={() => {
+               var array = [...explore];
+                for(var i = 1; i < array.length; i++)
+                {
+                  if(array[i]['selected'])
+                  {
+                    array.splice(i, 1);
+                    i--;
+                  }
+                }
+                setExplore([ ...array ]);
+                setSelecting(false);
+            }}
+          >
+            <View style={styles.Next}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
+                Delete {deleteCount} items
+              </Text>
+            </View>
+          </TouchableOpacity>
+        : null
+      }
+
       <View style={{height: height*0.25, borderTopWidth: 1,borderLeftWidth: 1,borderRightWidth: 1, borderColor: 'lightgrey', display: selecting ? 'none' : 'flex'}}>
       <View style={{ marginTop: 10}} >
             <FlatList
