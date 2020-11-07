@@ -131,9 +131,9 @@ const SearchScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <Container>
-        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, marginTop: 35, marginBottom: 10 }}>
+        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 81, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2  }}>
           
-          <Item style={{width: width*0.9, borderColor: "#000", height: 45, borderRadius: 10}}>
+          <Item style={{width: width*0.9, borderColor: "#000", height: 36, borderRadius: 10}}>
             <Icon style={{fontSize: 30}} active name='search' type="EvilIcons" />
             <Input showSoftInputOnFocus={false} style={{fontSize: 16}} placeholder='Search' onResponderStart={() => navigation.navigate('Searching')}/>
           </Item>

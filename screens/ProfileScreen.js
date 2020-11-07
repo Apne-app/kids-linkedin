@@ -354,12 +354,12 @@ const ProfileScreen = ({ navigation, route }) => {
     const there = () => {
         return (<View>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 20 }}>
+                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 73, borderBottomWidth: 0, paddingTop: 25, paddingBottom: 20, elevation: 2 }}>
                     <Body style={{ alignItems: 'center' }}>
-                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -50 }}>Profile</Title>
+                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 28, marginTop: 0, marginLeft: -50 }}>Profile</Title>
                     </Body>
-                    <Right style={{ marginRight: 25, marginTop: 0 }}>
-                        <Icon onPress={() => { navigation.navigate('Settings') }} style={{ color: "#000", fontSize: 25 }} type="Feather" name="settings" />
+                    <Right style={{ marginRight: 25}}>
+                        <Icon onPress={() => { navigation.navigate('Settings') }} style={{ color: "#000", fontSize: 28 }} type="Feather" name="settings" />
                     </Right>
                 </Header>
                 <StreamApp

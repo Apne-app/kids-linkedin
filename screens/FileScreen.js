@@ -403,18 +403,18 @@ const FileScreen = (props) => {
                 refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> }
             >
-            <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 20 }}>
+            <Header  style={{ backgroundColor: '#fff', flexDirection: 'row',  height: 73, paddingTop: 25, paddingBottom: 20, elevation: 2 }}>
                 {
                     !selecting ?
                     <Body style={{ alignItems: 'center' }}>
-                    <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0 }}>Collections</Title> 
+                    <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 28, marginTop: 0 }}>Collections</Title> 
                 </Body> :
                 <Left>
-                    <TouchableOpacity style={{marginLeft: 15}} onPress={() =>cancelSelection()} ><Icon style={{ fontSize: 40}} name="cross" type="Entypo" /></TouchableOpacity>
+                    <TouchableOpacity style={{marginLeft: 15}} onPress={() =>cancelSelection()} ><Icon style={{ fontSize: 40}} name="x" type="Feather" /></TouchableOpacity>
                 </Left>
                 }
-                <Right style={{ marginRight: 30, marginTop: 0 }}>
-                    <Icon onPress={() => { navigation.toggleDrawer(); }} name="bell" type="Feather" />
+                <Right style={{ marginRight: 30,}}>
+                    <Icon style={{fontSize: 28}} onPress={() => { navigation.toggleDrawer(); }} name="bell" type="Feather" />
                 </Right>
             </Header>
             
@@ -443,36 +443,39 @@ const FileScreen = (props) => {
                    files.map((item, i) => {
                     return (
                     <View style={{paddingHorizontal: width*0.05, marginTop: 30}}>
-                        <Card >
-                            <CardItem header bordered>
-                            <Text>{Date(item["time"])}</Text>
-                            </CardItem>
-                            <CardItem style={{marginVertical: 10}}>
+                    <TouchableOpacity
+                    style={{borderRadius: 20}}
+                        onPress={() => {
+                            viewImages(item["time"]);
+                           //  console.log(selected);
+                           //  
+                        }}>
+                        <Card style={{borderRadius: 20}} >
+                            <CardItem style={{marginVertical: 5, flexDirection: 'column', borderRadius: 20}}>
+                            <Text style={{fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10}}>{Date(item["time"].split("GMT")[0])}</Text>
                             <Body style={{flexDirection: 'row'}}>
                             {
                                 item["images"].map((it, ind) => {
                                     console.log(it);
-                                    if(ind < 4)
+                                    if(ind < 2 || item["images"].length == 3 )
                                     {
-                                    return <Image style={{height: width*0.15, width: width*0.15, marginHorizontal: width*0.01}} source={{uri: "file://"+it}} />;
+                                    return <Image style={{height: width*0.24, width: width*0.24, marginHorizontal: width*0.01, borderRadius: 20}} source={{uri: "file://"+it}} />;
                                     }
                                 })
                             }
-                            <TouchableOpacity
-                             onPress={() => {
-                                 viewImages(item["time"]);
-                                //  console.log(selected);
-                                //  
-                             }}
-                             style={{height: width*0.15, width: width*0.15, backgroundColor: "#357feb", justifyContent: 'center'}} >
-                                <Icon type="Feather" name="more-horizontal" style={{alignSelf: 'center', color: "#fff"}} />
-                            </TouchableOpacity>
+                            { item["images"].length-2 > 0 && item["images"].length > 3 ? <View
+                             style={{height: width*0.24, width: width*0.24, marginHorizontal: width*0.01, borderColor: "#357feb", borderWidth: 3,borderStyle:"dashed",borderRadius: 20, justifyContent: 'center'}} >
+                                <View style={{backgroundColor: "#fff", width: width*0.15, alignItems: 'center', alignSelf: 'center', borderRadius: width*0.15, height: width*0.15, justifyContent: 'center'}}>
+                                    <Text style={{color: "#000", fontFamily: 'NunitoSans-Regular',}}>+ {item["images"].length-2} more</Text>
+                                    <Text style={{color: "#000"}}>More</Text>
+                                </View>
+                            </View> : null}
                             </Body>
-                            </CardItem>
-                            <CardItem footer bordered>
-                            <Chip key={i} style={{ backgroundColor: '#357feb' , margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: 0, borderColor: "#357feb" }} textStyle={{ color: "#fff" }}>{item.tag == 'Genio' ? 'None': item.tag }</Chip>
+                            { item.tag !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#357feb' , margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#357feb", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item.tag == 'Genio' ? 'None': item.tag }</Chip> : null}
+                            
                             </CardItem>
                         </Card>
+                    </TouchableOpacity>
                     </View> 
                     )
                    })

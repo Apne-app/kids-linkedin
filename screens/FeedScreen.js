@@ -32,6 +32,8 @@ updateStyle('activity', {
         marginVertical: height * 0.01,
         borderRadius: width * 0.05,
         backgroundColor: "#fff",
+        marginHorizontal: 15,
+        elevation: 0.2,
         fontFamily: 'NunitoSans-Regular'
     },
     text: {
@@ -467,12 +469,12 @@ const FeedScreen = ({ navigation, route }) => {
     const there = (props) => {
         return (
             <SafeAreaProvider>
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 10 }}>
-                    <Body style={{ alignItems: 'center', marginLeft: -20 }}>
-                        <Title style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 33, marginTop: 0, marginLeft: -20 }}>Genio</Title>
+                <Header style={{ backgroundColor: '#fff', flexDirection: 'row', height: 73, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2}}>
+                    <Body style={{ alignItems: 'center', marginLeft: -20, }}>
+                        <Title style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 36, lineSpacing: 7, marginTop: 0, marginLeft: -20 }}>Genio</Title>
                     </Body>
-                    <Right style={{ marginRight: 30, marginTop: 0 }}>
-                        <Icon onPress={() => navigation.navigate('Notifications')} name="bell" type="Feather" />
+                    <Right style={{ marginRight: 30, }}>
+                        <Icon style={{fontSize: 28}} onPress={() => navigation.navigate('Notifications')} name="bell" type="Feather" />
                     </Right>
                 </Header>
                 {/* <YouTube
@@ -486,6 +488,7 @@ const FeedScreen = ({ navigation, route }) => {
                 /> */}
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
+                        style={{marginTop: 20}}
                         apiKey="dfm952s3p57q"
                         appId="90935"
                         token={children['0']['data']['gsToken']}
@@ -513,7 +516,7 @@ const FeedScreen = ({ navigation, route }) => {
                 </SafeAreaView>
                 <Snackbar
                     visible={showToast}
-                    style={{ marginBottom: height * 0.08 }}
+                    style={{ marginBottom: height * 0.04 }}
                     duration={1500}
                     onDismiss={() => setShowToast(false)}
                     action={{
