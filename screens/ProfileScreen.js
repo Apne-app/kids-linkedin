@@ -354,9 +354,9 @@ const ProfileScreen = ({ navigation, route }) => {
     const there = () => {
         return (<View>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 20 }}>
+                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 13, marginBottom:13 }}>
                     <Body style={{ alignItems: 'center' }}>
-                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -50 }}>Profile</Title>
+                        <Title style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 30, marginTop: 0, marginLeft: -50 }}>Profile</Title>
                     </Body>
                     <Right style={{ marginRight: 25, marginTop: 0 }}>
                         <Icon onPress={() => { navigation.navigate('Settings') }} style={{ color: "#000", fontSize: 25 }} type="Feather" name="settings" />
@@ -370,20 +370,20 @@ const ProfileScreen = ({ navigation, route }) => {
                     <View style={{ marginTop: 30, flexDirection: 'row' }}>
                         <TouchableOpacity onPress={() => pickImage()} style={{ flexDirection: 'row' }}>
                             <Image
-                                onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
-                                source={{ uri: source }}
-                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
+                                onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/profile.png')}
+                                source={{ uri: 'https://d5c8j8afeo6fv.cloudfront.net/profile.png' }}
+                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
                             />
                             <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: 'white', borderWidth: 2, marginLeft: -35 }}>
                                 <Icon name="camera" type="Feather" style={{ color: 'white', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
                             </View>
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
-                            <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
+                            <View style={{ flexDirection: 'row', height:33, marginBottom:4 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor:'#327FEB', color:'white', width:50, textAlign:'center',  borderRadius:10 }}>{'Kid'}</Text>
+                            <View style={{ flexDirection: 'row', }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor:'white', color:'#327FEB', width:50, textAlign:'center',  borderRadius:28.5, borderColor:'#327FEB', borderWidth:1}}>{'Kid'}</Text>
                             </View>
                         </View>
                     </View>

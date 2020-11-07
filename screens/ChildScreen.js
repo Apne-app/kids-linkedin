@@ -133,11 +133,11 @@ const ChildScreen = ({ route, navigation }) => {
             <Content>
                 <View>
                     <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', paddingHorizontal: 20 }}>Help us out with a few details </Text>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20 }}>Help us out with a few details </Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
                     </SimpleAnimation>
                     <KeyboardAvoidingView>
-                        <View style={{ alignSelf: 'center' }}>
+                        <View>
                             {inputtype()}
                         </View>
                         <View style={{ alignSelf: 'center', display:current?'flex':'none' }}>

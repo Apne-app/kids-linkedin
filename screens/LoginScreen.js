@@ -1,8 +1,8 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native'
-import { configureFonts, DefaultTheme, Provider as PaperProvider, TextInput } from 'react-native-paper';
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput} from 'react-native'
+import { configureFonts, DefaultTheme, Provider as PaperProvider,  } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
@@ -155,11 +155,9 @@ const LoginScreen = ({ route, navigation }) => {
               <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Regular', color: 'black' }} >Or</Text>
               <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "lightgrey", width: width / 3 }} />
             </View>
-            <Button onPress={() => { setvisible(true); input.current.focus() }} block dark style={{ marginTop: 10, backgroundColor: 'white', borderRadius: 28.5, height: 60, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
-              <Text style={{ color: "black", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Login with Email</Text>
-            </Button>
+              <Text style={{ color: "#3E3E3E", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, paddingLeft:20, marginBottom:20, }}>Enter Email</Text>
             <KeyboardAvoidingView behavior={'padding'}>
-              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display:'flex', width: width - 40, borderRadius: 28.5, backgroundColor: '#ededed', fontSize: 16, padding: 0, fontFamily: 'NunitoSans', borderColor: everified ? 'green' : 'orange', alignSelf: 'center', }}></TextInput>
+              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display:'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft:20,  shadowColor:'', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height:55 }}></TextInput>
               <View style={{ alignSelf: 'center', }}>
                 <SpinnerButton
                   buttonStyle={{
@@ -167,7 +165,7 @@ const LoginScreen = ({ route, navigation }) => {
                     margin: 20,
                     width: 200,
                     alignSelf: 'center',
-                    backgroundColor: everified ? '#327FEB' : 'grey'
+                    backgroundColor: '#327FEB'
                   }}
                   isLoading={Loading}
                   spinnerType='BarIndicator'
@@ -194,7 +192,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     padding: 20,
     // marginTop: 40,
-    backgroundColor: "#f9f9f9",
   },
   form: {
     marginTop: 40,

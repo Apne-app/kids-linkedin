@@ -308,7 +308,7 @@ const FeedScreen = ({ navigation, route }) => {
         var images = []
         const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
         // console.log(props.activity.id)
-        props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null)
+        props.activity.image?props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null):null
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
             <Activity
@@ -322,7 +322,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1)}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data?props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1):null}</Text>
                             </View>
                             <ActionSheet
                                 ref={refActionSheet}
@@ -356,7 +356,7 @@ const FeedScreen = ({ navigation, route }) => {
                                             style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data.name}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data?props.activity.actor.data.name:null}</Text>
                                             <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
                                         </View>
                                         <ActionSheet
