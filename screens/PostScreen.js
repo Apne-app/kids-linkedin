@@ -135,6 +135,7 @@ const PostScreen = ({ navigation, route }) => {
           for (i = 0; i < images.length - 1; i++) {
             var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  +  "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
             name = name + x;
+
           //   if(tag == 'Certificate')
           //   {
           //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
@@ -166,6 +167,7 @@ const PostScreen = ({ navigation, route }) => {
           // user.follow('user', '49id');
           var user = client.feed('user', String(String(children['id']) + String("id")));
           await user.addActivity(activity);
+          navigation.pop();
         }
 
         useEffect(() => {
@@ -253,7 +255,9 @@ const PostScreen = ({ navigation, route }) => {
                         // console.log(ar, arr);
                         setImages([ ...ar ]);
                     }}>
-                        <View style={{width: 20, height: 20, borderRadius: 20, backgroundColor: item.selected ? '#fff' : '#327FEB', borderWidth: item.selected ? 4 : 0, borderColor: "#327FEB" , position: 'absolute', opacity: 1, zIndex: 100, top: 3, right: 2, alignItems: 'center', justifyContent: 'center'}} ></View>
+                        <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 6, right: 6, alignItems: 'center', justifyContent: 'center'}} >
+                          { item.selected ? <Icon type="Feather" name="check" style={{color: "#327FEB", fontWeight: "bold"}} /> : null}
+                        </View>
                         <Image source={{uri: item.uri}} style={{width: width*0.25, height: width*0.25, opacity: selection[index]['selected'] ? 0.6 : 1}} />
                     </TouchableOpacity>
                   )}

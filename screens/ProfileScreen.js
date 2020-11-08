@@ -100,6 +100,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const [certi, setCerti] = useState([]);
     const [Loading, setLoading] = useState(false)
     const [option, setOption] = useState('');
+    const [token, setToken] = useState('');
     const [courses, setCourses] = useState([])
     const [refreshing, setRefreshing] = React.useState(false);
     const [bottomType, setBottomType] = useState('')
@@ -162,7 +163,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                                 var config = {
                                     method: 'post',
-                                    url: 'https://barry-2z27nzutoq-as.a.run.app/updatecourses',
+                                    url: 'https://barry-2z27nzutoq-as.a.run.app/updatecourses/${token}',
                                     headers: {
                                         'Content-Type': 'application/json'
                                     },
@@ -219,6 +220,28 @@ const ProfileScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
+
+        var data = JSON.stringify({"username":"Shashwat","password":"GenioKaPassword"});
+
+        var config = {
+        method: 'post',
+        url: 'http://104.199.146.206:5000/getToken',
+        headers: { 
+            'Content-Type': 'application/json'
+        },
+        data : data
+        };
+
+        axios(config)
+        .then(function (response) {
+        // console.log(JSON.stringify(response.data.token));
+        setToken(response.data.token)
+        })
+        .catch(function (error) {
+        console.log(error);
+        });
+
+
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
             children = JSON.parse(children)['0']
@@ -248,7 +271,7 @@ const ProfileScreen = ({ navigation, route }) => {
             children = JSON.parse(children)['0']
             var config = {
                 method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}`,
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}/${token}`,
                 headers: {}
             };
             axios(config)
@@ -265,7 +288,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
             config = {
                 method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}/${token}`,
                 headers: {}
             };
 
@@ -307,7 +330,7 @@ const ProfileScreen = ({ navigation, route }) => {
             children = JSON.parse(children)['0']
             var config = {
                 method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}`,
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}/${token}`,
                 headers: {}
             };
             axios(config)
@@ -324,7 +347,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
             config = {
                 method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}`,
+                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}/${token}`,
                 headers: {}
             };
 
