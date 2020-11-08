@@ -36,6 +36,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
 import messaging from '@react-native-firebase/messaging';
 import IndProfile from './screens/IndProfile';
+import GalleryScreen from './screens/GalleryScreen';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
@@ -196,6 +197,7 @@ const App = (props) => {
       />
       <Stack.Navigator initialRouteName={'IntroSlider'}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
         <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />

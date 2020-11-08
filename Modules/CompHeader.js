@@ -1,4 +1,3 @@
-
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect, useRef } from 'react';
@@ -6,10 +5,14 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvo
 import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
 const CompHeader = (props) => {
+    const images = {
+        close: require('../Icons/close.png'),
+        back: require('../Icons/back.png'),
+    };
     return (<Header style={{ backgroundColor: 'white', height: 90 }}>
-        <View style={{ flexDirection: 'row', marginTop: 40, flex:1 }}>
-            <TouchableOpacity><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30, }} /></TouchableOpacity>
-            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, marginLeft: 20 }}>{props.screen}</Text>
+        <View style={{ flexDirection: 'row', marginTop: 42, flex: 1 }}>
+            <TouchableOpacity onPress={() => props.goback()}><Image style={{ height: 30, width: 30, backgroundColor: "transparent",  marginLeft:1, marginTop: 3.5 }} source={(props.icon=='back'?images.back:images.close)} /></TouchableOpacity>
+            <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 22, marginLeft: 10 }}>{props.screen}</Text>
         </View>
         <Body>
         </Body>

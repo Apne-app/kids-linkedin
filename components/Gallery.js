@@ -1,5 +1,5 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
-//*This is an Example of Grid Image Gallery in React Native*/
+/* eslint-disable */
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -70,15 +70,13 @@ const Gallery = (props) =>  {
         func();
     }, [])
 
-  
-
    
       return (
         <ScrollView style={styles.container}>
             <FlatList
             data={gallery}
             renderItem={({ item }) => (
-              <View style={{ flex: 1, flexDirection: 'column', margin: 1 }}>
+              <View style={{ flex: 1, flexDirection: 'column',justifyContent:'space-evenly' }}>
                 <TouchableOpacity
                   key={item.id}
                   style={{ flex: 1 }}
@@ -115,6 +113,10 @@ const styles = StyleSheet.create({
   image: {
     height: 120,
     width: 120,
+    marginLeft:10,
+    marginRight:-10,
+    marginTop:1,
+    marginBottom:1
   },
   fullImageStyle: {
     justifyContent: 'center',
