@@ -87,7 +87,7 @@ const ChildScreen = ({ route, navigation }) => {
             var pro = await AsyncStorage.getItem('profile');
             pro = JSON.parse(pro);
             console.log(pro, "sad");
-            axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email)
+            axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email+'/child/')
                 .then(async (response) => {
                     if (response.data.split(', ').length == 2) {
                         await AsyncStorage.setItem('status', '3')

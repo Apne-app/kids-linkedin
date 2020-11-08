@@ -32,7 +32,7 @@
 //       height={170}
 //       screensBackground={'white'}
 //       topGap={15}
-//       tabColor={'#357feb'}
+//       tabColor={'#327FEB'}
 //       backgroundColor={'white'}
 //       duration={500}
 //       sidesRadius={1}
@@ -142,7 +142,7 @@
 //     flexDirection: 'row',
 //     padding: 15,
 //     // margin: 5,
-//     backgroundColor: '#357feb',
+//     backgroundColor: '#327FEB',
 //     borderRadius: 6,
 //     borderWidth: 1,
 //     borderColor: "#fff",
@@ -156,7 +156,7 @@
 //     backgroundColor: '#fff',
 //     borderRadius: 6,
 //     borderWidth: 1,
-//     borderColor: "#357feb",
+//     borderColor: "#327FEB",
 //     width: width*0.31
 //   },
 //   centeredView: {

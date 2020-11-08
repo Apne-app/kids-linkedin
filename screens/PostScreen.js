@@ -160,7 +160,7 @@ const PostScreen = ({ navigation, route }) => {
           }
           // setModalVisible4(false);
 
-          const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+          const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
           var activity = { "image": name, "object": caption==''?'default123':caption, "verb": "post" }
           // var user = client.feed('timeline', '103id');
           // user.follow('user', '49id');
@@ -187,7 +187,7 @@ const PostScreen = ({ navigation, route }) => {
                   images.length > 1 ?
                   <SliderBox
                     images={images}
-                    dotColor="#357feb"
+                    dotColor="#327FEB"
                     inactiveDotColor="#90A4AE"
                     paginationBoxVerticalPadding={20}
                     sliderBoxHeight={height*0.5}
@@ -199,7 +199,7 @@ const PostScreen = ({ navigation, route }) => {
                   images.length == 1 ?
                   <SliderBox
                     images={images}
-                    dotColor="#357feb"
+                    dotColor="#327FEB"
                     inactiveDotColor="#90A4AE"
                     paginationBoxVerticalPadding={20}
                     sliderBoxHeight={height*0.5}
@@ -211,7 +211,7 @@ const PostScreen = ({ navigation, route }) => {
                 :
                 <SliderBox
                     images={[""]}
-                    dotColor="#357feb"
+                    dotColor="#327FEB"
                     inactiveDotColor="#90A4AE"
                     paginationBoxVerticalPadding={20}
                     sliderBoxHeight={height*0.5}
@@ -253,7 +253,7 @@ const PostScreen = ({ navigation, route }) => {
                         // console.log(ar, arr);
                         setImages([ ...ar ]);
                     }}>
-                        <View style={{width: 20, height: 20, borderRadius: 20, backgroundColor: item.selected ? '#fff' : '#357feb', borderWidth: item.selected ? 4 : 0, borderColor: "#357feb" , position: 'absolute', opacity: 1, zIndex: 100, top: 3, right: 2, alignItems: 'center', justifyContent: 'center'}} ></View>
+                        <View style={{width: 20, height: 20, borderRadius: 20, backgroundColor: item.selected ? '#fff' : '#327FEB', borderWidth: item.selected ? 4 : 0, borderColor: "#327FEB" , position: 'absolute', opacity: 1, zIndex: 100, top: 3, right: 2, alignItems: 'center', justifyContent: 'center'}} ></View>
                         <Image source={{uri: item.uri}} style={{width: width*0.25, height: width*0.25, opacity: selection[index]['selected'] ? 0.6 : 1}} />
                     </TouchableOpacity>
                   )}
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 20,
     borderRadius: width,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     // borderWidth: 1,
     borderColor: "#fff"
     // backgroundColor:'rgba(0,0,0,0.5)'
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     margin: width * 0.03,
     // borderWidth: 2,
     borderRadius: 20,
-    borderColor: "#357feb",
+    borderColor: "#327FEB",
     borderWidth: 3,
     borderStyle:"dashed",
     backgroundColor: "#fff"
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 15,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 6,
     borderWidth: 1,
     borderColor: "#fff",
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 8,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#357feb",
+    borderColor: "#327FEB",
     width: width * 0.31
   },
   save3: {
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     // margin: 5,
-    // backgroundColor: '#357feb',
+    // backgroundColor: '#327FEB',
     // borderRadius: 30,
     // borderWidth: 5,
     // borderColor: "#3cb979",
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 8,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#357feb",
+    borderColor: "#327FEB",
     width: 135,
     flex: 1,
     marginHorizontal: 20

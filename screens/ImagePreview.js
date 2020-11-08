@@ -177,7 +177,7 @@ const App: () => React$Node = (props) => {
           </ScrollView>
         <View style={{alignItems: 'center',flexDirection: 'row'}}>
         <View style={{flex: 1, alignItems: 'center'}}>
-        <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{width: width*0.2, backgroundColor: "#357feb", alignSelf: 'center', padding: 12, borderRadius: 20,}}>
+        <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{width: width*0.2, backgroundColor: "#327FEB", alignSelf: 'center', padding: 12, borderRadius: 20,}}>
             <Text style={{color: "#fff",  textAlign: 'center'}}>Done</Text>
           </TouchableOpacity>
         </View>
@@ -272,7 +272,7 @@ const App: () => React$Node = (props) => {
             }}
           >
             <View style={styles.Cancel}>
-              <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+              <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
                 Cancel
               </Text>
             </View>
@@ -348,7 +348,7 @@ const App: () => React$Node = (props) => {
           <TouchableOpacity onPress={() => {
             sheetRef.current.snapTo(0);
             // takeShot();
-          }} style={{position: 'absolute', bottom: height*0.04, width: width*0.6, backgroundColor: "#357feb", alignSelf: 'center', padding: 12, borderRadius: 20,}}>
+          }} style={{position: 'absolute', bottom: height*0.04, width: width*0.6, backgroundColor: "#327FEB", alignSelf: 'center', padding: 12, borderRadius: 20,}}>
             <Text style={{color: "#fff",  textAlign: 'center'}}>Add Kid's Details</Text>
           </TouchableOpacity>
         </View>:
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 8,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#357feb",
+    borderColor: "#327FEB",
     width: 135,
     flex: 1,
     marginHorizontal: 20

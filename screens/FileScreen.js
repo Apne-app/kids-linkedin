@@ -391,7 +391,7 @@ const FileScreen = (props) => {
                 FooterComponent = {() => {
                     return (
                         <View>
-                            <TouchableOpacity style={{ marginBottom: height*0.06, marginLeft: width*0.83, width: 60,zIndex: 1000000, backgroundColor: "#357feb", borderRadius: 30, height: 60, justifyContent: 'center', alignItems: 'center'}} onPress={() => {
+                            <TouchableOpacity style={{ marginBottom: height*0.06, marginLeft: width*0.83, width: 60,zIndex: 1000000, backgroundColor: "#327FEB", borderRadius: 30, height: 60, justifyContent: 'center', alignItems: 'center'}} onPress={() => {
                                 setSelected([]); cancelSelection(); setVisible(false);setSelTopic(''); setSelecting(false)
                                 props.navigation.navigate('PostScreen', { "selected": selected })
                             }}><Icon type="FontAwesome" name='send' style={{color: "#fff", fontSize: 35, marginRight: 4 }} /></TouchableOpacity>
@@ -431,7 +431,7 @@ const FileScreen = (props) => {
                 }}
                 // style={{marginTop: 5}}
                 renderItem={({ item, i }) => (
-                    <Chip key={i} style={{ backgroundColor: tag == item ? '#357feb' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#357feb" }} textStyle={{ color: tag == item ? "#fff" : "#357feb" }} onPress={() => {tag == item ? setTag(''): setTag(item); tag == item ? showAll() : showTags(item); setTagsPresent(true); }} >{item}</Chip>
+                    <Chip key={i} style={{ backgroundColor: tag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: tag == item ? "#fff" : "#327FEB" }} onPress={() => {tag == item ? setTag(''): setTag(item); tag == item ? showAll() : showTags(item); setTagsPresent(true); }} >{item}</Chip>
                 )}
                 //Setting the number of column
                 // numColumns={3}
@@ -464,14 +464,14 @@ const FileScreen = (props) => {
                                 })
                             }
                             { item["images"].length-2 > 0 && item["images"].length > 3 ? <View
-                             style={{height: width*0.24, width: width*0.24, marginHorizontal: width*0.01, borderColor: "#357feb", borderWidth: 3,borderStyle:"dashed",borderRadius: 20, justifyContent: 'center'}} >
+                             style={{height: width*0.24, width: width*0.24, marginHorizontal: width*0.01, borderColor: "#327FEB", borderWidth: 3,borderStyle:"dashed",borderRadius: 20, justifyContent: 'center'}} >
                                 <View style={{backgroundColor: "#fff", width: width*0.15, alignItems: 'center', alignSelf: 'center', borderRadius: width*0.15, height: width*0.15, justifyContent: 'center'}}>
                                     <Text style={{color: "#000", fontFamily: 'NunitoSans-Regular',}}>+ {item["images"].length-2} more</Text>
                                     <Text style={{color: "#000"}}>More</Text>
                                 </View>
                             </View> : null}
                             </Body>
-                            { item.tag !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#357feb' , margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#357feb", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item.tag == 'Genio' ? 'None': item.tag }</Chip> : null}
+                            { item.tag !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB' , margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item.tag == 'Genio' ? 'None': item.tag }</Chip> : null}
                             
                             </CardItem>
                         </Card>
@@ -494,7 +494,7 @@ const FileScreen = (props) => {
                 active={selecting}
                 direction="up"
                 containerStyle={{ right: 8 }}
-                style={{ backgroundColor: '#357feb', bottom: height*0.08}}
+                style={{ backgroundColor: '#327FEB', bottom: height*0.08}}
                 position="bottomRight"
                 onPress={() => setVisible(true)}
                 >

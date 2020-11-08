@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React from 'react'
-import { StyleSheet, View, Text, Dimensions } from 'react-native'
+import { StyleSheet, View, Text, Dimensions, Image } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
 import LinkedInModal from 'react-native-linkedin';
@@ -93,8 +93,8 @@ const LinkedIn = ({navigation}) => {
             renderButton={() => 
             (
                 <Button block  iconLeft style={{ marginTop: 82, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 28.5, height: 60, marginHorizontal:20, borderBottomColor:'#2477ed',borderBottomWidth:2 }} onPress={() => linkedRef.current && linkedRef.current.open()} >
-                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 16,}}>Login with</Text>
-                  <Icon type="FontAwesome" name="linkedin" style={{ color: 'white', marginRight: 20 }} />
+                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 16,}}>Sign In with</Text>
+                  <Image source={require('../images/Ln-Logo.png')} style={{width:100,  height:100, resizeMode: 'contain', marginLeft:10}}  />
                 </Button>
             )
             }

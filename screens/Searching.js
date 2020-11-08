@@ -50,7 +50,7 @@ const Searching = ({ route, navigation }) => {
             var children = await AsyncStorage.getItem('children')
             console.log(children)
             children = JSON.parse(children)['0']
-            const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
             var user = client.feed('timeline', children['id'] + 'id');
             var follows = await user.following()
             var data = []
@@ -99,19 +99,18 @@ const Searching = ({ route, navigation }) => {
         return (
             <View key={item.id} style={{ alignSelf: 'center', margin: 1 }}>
                 <StreamApp
-                    apiKey={'dfm952s3p57q'}
-                    appId={'90935'}
+                    apiKey={'9ecz2uw6ezt9'}
+                    appId={'96078'}
                     token={item['data']['gsToken']}
                 >
-                    <TouchableOpacity style={{ width: width*0.85, height: 100, flexDirection: 'row',  borderRadius: 20, alignSelf: 'center' }} onPress={() => {navigation.navigate('IndProf',{'data':item.data, 'id':item.id}); analytics.track('Child Search')}}>
-                        <Avatar
-                            size={60}
-                            noShadow
-                            styles={{ container: { alignSelf: 'center' } }}
+                    <TouchableOpacity style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={() => { navigation.navigate('IndProf', { 'data': item.data, 'id': item.id }); analytics.track('Child Search') }}>
+                        <Image
+                            source={{ uri: item['data']['image'] }}
+                            style={{ width: 60, height: 60, borderRadius: 306, }}
                         />
-                        <View style={{marginTop: 20, marginLeft: 20, flexDirection: 'column'}}>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'][0].toUpperCase()+item['data']['name'].substring(1)}</Text>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  3 Posts </Text>
+                        <View style={{  marginLeft: 20, flexDirection: 'column' }}>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  3 Posts </Text>
                         </View>
                         {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
                             <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, marginTop: 2 }}>{follows && follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
@@ -127,13 +126,13 @@ const Searching = ({ route, navigation }) => {
     return (
         <Container>
             <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, marginTop: 20 }}>
-                <Item style={{width: width*0.9, borderColor: "#000", height: 45, borderRadius: 10}}>
-                    <Icon active name={ searchQuery == ""?  'search' : 'close'} type={  searchQuery == ""?  "EvilIcons" : "AntDesign"} />
-                    <Input 
+                <Item style={{ width: width * 0.9, borderColor: "#000", height: 45, borderRadius: 10 }}>
+                    <Icon active name={searchQuery == "" ? 'search' : 'close'} type={searchQuery == "" ? "EvilIcons" : "AntDesign"} />
+                    <Input
                         autoFocus={true}
                         onChangeText={onChangeSearch}
                         value={searchQuery}
-                        placeholder='Search'/>
+                        placeholder='Search' />
                 </Item>
             </Header>
             {searchQuery == '' ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>Search for children to follow</Text> : (result.length != 0 ? (<View><FlatList

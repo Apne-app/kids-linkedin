@@ -167,7 +167,7 @@ const FeedScreen = ({ navigation, route }) => {
                 }}
                 // style={{marginTop: 5}}
                 renderItem={({ item, i }) => (
-                    <Chip key={i} style={{ backgroundColor: reportType == item ? 'red' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10, height: 35 }} textStyle={{ color: "#fff" }} onPress={() => reportType == item ? setReportType('') : setReportType(item)} >{item}</Chip>
+                    <Chip key={i} style={{ backgroundColor: reportType == item ? 'red' : '#327FEB', margin: 4, paddingLeft: 10, paddingRight: 10, height: 35 }} textStyle={{ color: "#fff" }} onPress={() => reportType == item ? setReportType('') : setReportType(item)} >{item}</Chip>
                 )}
                 //Setting the number of column
                 // numColumns={3}
@@ -489,8 +489,8 @@ const FeedScreen = ({ navigation, route }) => {
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{marginTop: 20}}
-                        apiKey="dfm952s3p57q"
-                        appId="90935"
+                        apiKey="9ecz2uw6ezt9"
+                        appId="96078"
                         token={children['0']['data']['gsToken']}
                     >
                         {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}

@@ -102,7 +102,7 @@ const App = (props) => {
     return (
       <BottomNav.Navigator
         // tabBar={props => (
-        //   <AnimatedTabBar dotColor={"#357feb"} barColor={'white'} tabs={tabs} {...props} />
+        //   <AnimatedTabBar dotColor={"#327FEB"} barColor={'white'} tabs={tabs} {...props} />
         // )} 
       tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, tabStyle:{height:80,borderWidth: 0.5,
         borderBottomWidth: 1,
@@ -129,10 +129,6 @@ const App = (props) => {
       var x = await AsyncStorage.getItem('status');
       // console.log(x);
       if (x) {
-        if (x == '0') {
-          containerRef.current?.navigate('Unverified')
-          setinit('Unverified')
-        }
         if (x == '2') {
           containerRef.current?.navigate('Child')
           setinit('Child')
@@ -196,7 +192,7 @@ const App = (props) => {
     <NavigationContainer ref={containerRef}>
       <StatusBar
         barStyle="light-content"
-        backgroundColor="#357feb"
+        backgroundColor="#327FEB"
       />
       <Stack.Navigator initialRouteName={'Login'}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />

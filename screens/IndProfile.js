@@ -26,15 +26,39 @@ const IndProfile = ({ navigation, route }) => {
     const [currentid, setcurrentid] = React.useState('');
     const [certi, setCerti] = useState([]);
     const [courses, setCourses] = useState([])
-    const [data, setdata] = useState({ 'followers': [], 'following': [] })
+    const [data, setdata] = useState({ 'followers': [], 'following': [], 'type': 'loading' })
     const optionsRef = React.useRef(null);
+    useEffect(() => {
+        const addfollows = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
+            var user = client.feed('user', children['id'] + 'id');
+            var follows = await user.followers()
+            var user = client.feed('timeline', children['id'] + 'id');
+            var following = await user.following()
+            console.log(follows)
+            setdata({ 'followers': follows['results'], 'following': following['results'], type: children['data']['type'] })
+            // console.log(follows)
+        }
+        addfollows()
+    }, [])
+    useEffect(() => {
+        const profileImage = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            setsource(children['data']['image'])
+            // console.log(follows)
+        }
+        profileImage()
+    }, [])
     useEffect(() => {
         // console.log(route.params)
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
             console.log(children)
             children = JSON.parse(children)['0']
-            const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
             var user = client.feed('timeline', children['id'] + 'id');
             var follows = await user.following()
             // var profile = client.feed('user', route['params']['id']+'id');
@@ -167,7 +191,7 @@ const IndProfile = ({ navigation, route }) => {
                         throw new Error("Failed to upload image to S3");
 
                 })
-                const client = connect('dfm952s3p57q', route['params']['data']['gsToken'], '90935');
+                const client = connect('9ecz2uw6ezt9', route['params']['data']['gsToken'], '96078');
                 client.user().update({ profileImage: 'https://d5c8j8afeo6fv.cloudfront.net/' + route['params']['data']['gsToken'] + '.jpg' });
             }
         });
@@ -175,24 +199,23 @@ const IndProfile = ({ navigation, route }) => {
     return (
         <View>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop:10, marginBottom:10 }}>
-                    <Body style={{ alignItems: 'center', flexDirection:'row' }}>
+                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 10, marginBottom: 10 }}>
+                    <Body style={{ alignItems: 'center', flexDirection: 'row' }}>
                         <Icon type="Feather" name="arrow-left" onPress={() => navigation.navigate('Searching')} />
-                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: 20}}>Profile</Title>
+                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: 20 }}>Profile</Title>
                     </Body>
                     <Right style={{ marginRight: 25, marginTop: 0 }}>
-                        <Icon onPress={() => {}} style={{ color: "#000", fontSize: 25 }} type="Feather" name="more-vertical" />
+                        <Icon onPress={() => { }} style={{ color: "#000", fontSize: 25 }} type="Feather" name="more-vertical" />
                     </Right>
                 </Header>
                 <StreamApp
-                    apiKey={'dfm952s3p57q'}
-                    appId={'90935'}
+                    apiKey={'9ecz2uw6ezt9'}
+                    appId={'96078'}
                     token={route['params']['data']['gsToken']}
                 >
                     <View style={{ marginTop: 30, flexDirection: 'row' }}>
                         <TouchableOpacity style={{ flexDirection: 'row' }}>
                             <Image
-                                onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + route['params']['data']['gsToken'] + '.png')}
                                 source={{ uri: source }}
                                 style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
                             />
@@ -202,9 +225,9 @@ const IndProfile = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: '#327FEB', color: 'white', width: 50, textAlign: 'center', borderRadius: 10 }}>{'Kid'}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{data.type}</Text>
                             </View>
-                            <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius:10, marginLeft:-20 }}>
+                            <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius: 10, marginLeft: -20 }}>
                                 <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
                             </TouchableOpacity>
                         </View>
