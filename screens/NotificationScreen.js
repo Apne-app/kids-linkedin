@@ -22,17 +22,20 @@ const NotificationScreen = ({ route, navigation }) => {
   }, [])
   useEffect(() => {
     const check = async () => {
-      var pro = await AsyncStorage.getItem('profile')
-      if (pro !== null) {
-        pro = JSON.parse(pro)
-        axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
-          .then(async (response) => {
-            setchildren(response.data)
-            await AsyncStorage.setItem('children', JSON.stringify(response.data))
-          })
-          .catch((error) => {
-            console.log(error)
-          })
+      var st = await AsyncStorage.getItem('status')
+      if (st == '3') {
+        var pro = await AsyncStorage.getItem('profile')
+        if (pro !== null) {
+          pro = JSON.parse(pro)
+          axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+            .then(async (response) => {
+              setchildren(response.data)
+              await AsyncStorage.setItem('children', JSON.stringify(response.data))
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
       }
       else {
         // console.log('helo')
@@ -52,10 +55,10 @@ const NotificationScreen = ({ route, navigation }) => {
             <Title style={{ fontFamily: 'NunitoSans-Regular', fontSize: 28, marginTop: -5, marginLeft: 20, color: 'black' }}>Notifications</Title>
           </Body>
         </Header>
-        <View style={{marginTop:'40%', alignItems:'center', padding:40}}>
-          <Icon type="Feather" name="x-circle" style={{fontSize:78}} onPress={() => navigation.navigate('Profile')} />
-          <Text style={{textAlign:'center', fontFamily:'NunitoSans-Bold', fontSize:24, marginTop:20}}>Notifications Empty</Text>
-          <Text style={{textAlign:'center', fontFamily:'NunitoSans-Regular', fontSize:16, marginTop:20}}>There are no notifications in this account, let’s discover and take a look this later.</Text>
+        <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
+          <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
+          <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
+          <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, let’s discover and take a look this later.</Text>
         </View>
       </View>
     );
