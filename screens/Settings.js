@@ -44,7 +44,7 @@ const Settings = ({ navigation }) => {
                         <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                     </Button>
                     <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => logout()} >
-                        <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Logout</Text>
+                        <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Logout</Text>
                     </Button>
                 </View>
             </View>

@@ -35,6 +35,7 @@
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-aws3": "0.0.9",
     "react-native-camera": "^2.5.0",
+    "react-native-countdown-component": "^2.7.1",
     "react-native-curved-bottom-tabbar": "0.0.3",
     "react-native-dotenv": "^2.4.0",
     "react-native-draggable": "^3.3.0",

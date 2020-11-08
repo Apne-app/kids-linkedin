@@ -23,8 +23,8 @@ export default function SinglePostScreen({ navigation, route }) {
     return (
         <SafeAreaView style={styles.container}>
             <StreamApp
-                apiKey={'dfm952s3p57q'}
-                appId={'90935'}
+                apiKey={'9ecz2uw6ezt9'}
+                appId={'96078'}
                 token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDdpZCJ9.f3hGhw0QrYAeqF8TDTNY5E0JqMF0zI6CyUmMumpWdfI'}
             >
                 <SinglePost

@@ -104,7 +104,7 @@ export default class App extends React.Component {
           this.props.navigation.navigate('Home', {
             screen: 'Post'
           })
-      }} block dark style={{ marginTop: 10, backgroundColor: '#357feb', borderRadius: 30, height: 60, width: width*0.86, alignSelf: 'center', marginBottom: 10}}>
+      }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width*0.86, alignSelf: 'center', marginBottom: 10}}>
         <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Continue</Text>
       </Button>
     );
@@ -130,7 +130,7 @@ export default class App extends React.Component {
           renderNextButton={this._renderNextButton}
           renderDoneButton={this._renderNextButton}
           bottomButton={true}
-          activeDotStyle={{backgroundColor: "#357feb"}}
+          activeDotStyle={{backgroundColor: "#327FEB"}}
           showSkipButton={true}
         //   showDoneButton={f}
           showPrevButton={true}

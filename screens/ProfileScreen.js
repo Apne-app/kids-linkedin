@@ -95,8 +95,7 @@ const fontConfig = {
 const ProfileScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState('notyet')
     const [place, setplace] = useState('')
-    const [data, setdata] = useState({ 'followers': [], 'following': [] })
-
+    const [data, setdata] = useState({ 'followers': [], 'following': [], type:'loading' })
     const [certi, setCerti] = useState([]);
     const [Loading, setLoading] = useState(false)
     const [option, setOption] = useState('');
@@ -123,7 +122,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <TouchableOpacity onPress={() => { optionsRef.current.snapTo(1); setBottomType(''); setOption('') }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
             {
                 bottomType == '' && option == '' ?
-                    <Button onPress={() => setOption('course')} full style={{ backgroundColor: "#357feb" }}>
+                    <Button onPress={() => setOption('course')} full style={{ backgroundColor: "#327FEB" }}>
                         <Text>Add Course</Text>
                     </Button> : null
             }
@@ -150,7 +149,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                 margin: 20,
                                 width: 200,
                                 alignSelf: 'center',
-                                backgroundColor: '#357feb'
+                                backgroundColor: '#327FEB'
                             }}
                             isLoading={Loading}
                             spinnerType='BarIndicator'
@@ -200,7 +199,7 @@ const ProfileScreen = ({ navigation, route }) => {
                             <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => console.log(courses)} >
                                 <View
                                     key={i}
-                                    style={{ flex: 1, alignItems: 'center', borderWidth: 0.3, margin: 4, padding: 10, borderRadius: 15, backgroundColor: "#357feb" }}>
+                                    style={{ flex: 1, alignItems: 'center', borderWidth: 0.3, margin: 4, padding: 10, borderRadius: 15, backgroundColor: "#327FEB" }}>
                                     <Text style={{ fontSize: 18, color: "#fff" }}>{item.org} : {item.name}</Text>
                                 </View>
                             </TouchableOpacity>
@@ -222,16 +221,25 @@ const ProfileScreen = ({ navigation, route }) => {
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
             children = JSON.parse(children)['0']
-            const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
             var user = client.feed('user', children['id'] + 'id');
             var follows = await user.followers()
             var user = client.feed('timeline', children['id'] + 'id');
             var following = await user.following()
             console.log(follows)
-            setdata({ 'followers': follows['results'], 'following': following['results'] })
+            setdata({ 'followers': follows['results'], 'following': following['results'], type:children['data']['type'] })
             // console.log(follows)
         }
         addfollows()
+    }, [])
+    useEffect(() => {
+        const profileImage = async () => {
+            var children = await AsyncStorage.getItem('children')
+            children = JSON.parse(children)['0']
+            setsource(children['data']['image'])
+            // console.log(follows)
+        }
+        profileImage()
     }, [])
     useEffect(() => {
         const addCerti = async () => {
@@ -282,7 +290,7 @@ const ProfileScreen = ({ navigation, route }) => {
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
             children = JSON.parse(children)['0']
-            const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
             var user = client.feed('user', children['id'] + 'id');
             var follows = await user.followers()
             var user = client.feed('timeline', children['id'] + 'id');
@@ -345,7 +353,7 @@ const ProfileScreen = ({ navigation, route }) => {
             path: 'images',
         },
     };
-    const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
+    const [source, setsource] = useState('')
     const logout = async () => {
         var keys = await AsyncStorage.getAllKeys()
         await AsyncStorage.multiRemove(keys)
@@ -356,34 +364,33 @@ const ProfileScreen = ({ navigation, route }) => {
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                 <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 73, borderBottomWidth: 0, paddingTop: 25, paddingBottom: 20, elevation: 2 }}>
                     <Body style={{ alignItems: 'center' }}>
-                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 28, marginTop: 0, marginLeft: -50 }}>Profile</Title>
+                        <Title style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 28, marginTop: 0, marginLeft: -50 }}>Profile</Title>
                     </Body>
                     <Right style={{ marginRight: 25}}>
                         <Icon onPress={() => { navigation.navigate('Settings') }} style={{ color: "#000", fontSize: 28 }} type="Feather" name="settings" />
                     </Right>
                 </Header>
                 <StreamApp
-                    apiKey={'dfm952s3p57q'}
-                    appId={'90935'}
+                    apiKey={'9ecz2uw6ezt9'}
+                    appId={'96078'}
                     token={children['0']['data']['gsToken']}
                 >
                     <View style={{ marginTop: 30, flexDirection: 'row' }}>
                         <TouchableOpacity onPress={() => pickImage()} style={{ flexDirection: 'row' }}>
                             <Image
-                                onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
                                 source={{ uri: source }}
-                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
+                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
                             />
                             <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: 'white', borderWidth: 2, marginLeft: -35 }}>
                                 <Icon name="camera" type="Feather" style={{ color: 'white', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
                             </View>
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
-                            <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
+                            <View style={{ flexDirection: 'row', height:33, marginBottom:4 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor:'#327FEB', color:'white', width:50, textAlign:'center',  borderRadius:10 }}>{'Kid'}</Text>
+                            <View style={{ flexDirection: 'row', }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor:'white', color:'#327FEB',  textAlign:'center',  borderRadius:28.5, borderColor:'#327FEB', borderWidth:1, paddingHorizontal:10}}>{data.type}</Text>
                             </View>
                         </View>
                     </View>
@@ -538,7 +545,7 @@ Next: {
     flexDirection: 'row',
     padding: 12,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",

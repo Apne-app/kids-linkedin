@@ -167,7 +167,7 @@ const FeedScreen = ({ navigation, route }) => {
                 }}
                 // style={{marginTop: 5}}
                 renderItem={({ item, i }) => (
-                    <Chip key={i} style={{ backgroundColor: reportType == item ? 'red' : '#357feb', margin: 4, paddingLeft: 10, paddingRight: 10, height: 35 }} textStyle={{ color: "#fff" }} onPress={() => reportType == item ? setReportType('') : setReportType(item)} >{item}</Chip>
+                    <Chip key={i} style={{ backgroundColor: reportType == item ? 'red' : '#327FEB', margin: 4, paddingLeft: 10, paddingRight: 10, height: 35 }} textStyle={{ color: "#fff" }} onPress={() => reportType == item ? setReportType('') : setReportType(item)} >{item}</Chip>
                 )}
                 //Setting the number of column
                 // numColumns={3}
@@ -310,7 +310,7 @@ const FeedScreen = ({ navigation, route }) => {
         var images = []
         const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
         // console.log(props.activity.id)
-        props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null)
+        props.activity.image?props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null):null
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
             <Activity
@@ -324,7 +324,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1)}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data?props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1):null}</Text>
                             </View>
                             <ActionSheet
                                 ref={refActionSheet}
@@ -358,7 +358,7 @@ const FeedScreen = ({ navigation, route }) => {
                                             style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data.name}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data?props.activity.actor.data.name:null}</Text>
                                             <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
                                         </View>
                                         <ActionSheet
@@ -489,8 +489,8 @@ const FeedScreen = ({ navigation, route }) => {
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{marginTop: 20}}
-                        apiKey="dfm952s3p57q"
-                        appId="90935"
+                        apiKey="9ecz2uw6ezt9"
+                        appId="96078"
                         token={children['0']['data']['gsToken']}
                     >
                         {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}

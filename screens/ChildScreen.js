@@ -87,7 +87,7 @@ const ChildScreen = ({ route, navigation }) => {
             var pro = await AsyncStorage.getItem('profile');
             pro = JSON.parse(pro);
             console.log(pro, "sad");
-            axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email)
+            axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email+'/child/')
                 .then(async (response) => {
                     if (response.data.split(', ').length == 2) {
                         await AsyncStorage.setItem('status', '3')
@@ -133,11 +133,11 @@ const ChildScreen = ({ route, navigation }) => {
             <Content>
                 <View>
                     <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', paddingHorizontal: 20 }}>Help us out with a few details </Text>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20 }}>Help us out with a few details </Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
                     </SimpleAnimation>
                     <KeyboardAvoidingView>
-                        <View style={{ alignSelf: 'center' }}>
+                        <View>
                             {inputtype()}
                         </View>
                         <View style={{ alignSelf: 'center', display:current?'flex':'none' }}>

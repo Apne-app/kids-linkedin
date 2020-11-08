@@ -560,7 +560,7 @@ const Upload = ({ route, navigation }) => {
     }
     // setModalVisible4(false);
 
-    const client = connect('dfm952s3p57q', children['data']['gsToken'], '90935');
+    const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
     var activity = { "image": name, "object": caption==''?'default123':caption, "verb": "post" }
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
@@ -664,7 +664,7 @@ const Upload = ({ route, navigation }) => {
                       }}
                     >
                       <View style={styles.save2}>
-                        <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
                           Save
                         </Text>
                       </View>
@@ -702,7 +702,7 @@ const Upload = ({ route, navigation }) => {
                       }}
                     >
                       <View style={styles.save2}>
-                        <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
                           Save
                         </Text>
                       </View>
@@ -737,7 +737,7 @@ const Upload = ({ route, navigation }) => {
                       }}
                     >
                       <View style={styles.save2}>
-                        <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
                           Save
                         </Text>
                       </View>
@@ -782,7 +782,7 @@ const Upload = ({ route, navigation }) => {
                       }}
                     >
                       <View style={styles.save2}>
-                        <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
                           Upload
                         </Text>
                       </View>
@@ -826,7 +826,7 @@ const Upload = ({ route, navigation }) => {
                             }}
                           >
                             <View style={styles.Cancel}>
-                              <Text style={{ color: "#357feb", flex: 1, textAlign: 'center' }}>
+                              <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
                                 Edit { explore[visibleImg+1]['prevImg'] ? 'Original': null}
                               </Text>
                             </View>
@@ -904,7 +904,7 @@ const Upload = ({ route, navigation }) => {
                           {
                             selecting ?
                               <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center'}} >
-                                { item.selected ? <Icon type="Feather" name="check" style={{color: "#357feb", fontWeight: "bold"}} /> : null}
+                                { item.selected ? <Icon type="Feather" name="check" style={{color: "#327FEB", fontWeight: "bold"}} /> : null}
                               </View>
                               :
                               <View />
@@ -1004,7 +1004,7 @@ const Upload = ({ route, navigation }) => {
               }}
               // style={{marginTop: 5}}
               renderItem={({ item, i }) => (
-                <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#357feb' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#357feb" }} textStyle={{ color: selectedTag == item ? "#fff" : "#357feb" }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
+                <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB" }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
               )}
               //Setting the number of column
               // numColumns={3}
@@ -1069,7 +1069,7 @@ const Upload = ({ route, navigation }) => {
         <Input onChangeText={(text) => {
           setcaption(text)
         }}value={caption} placeholder="Add a caption and hashtags"  />
-        <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#357feb" }} type="FontAwesome" name='send' />
+        <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#327FEB" }} type="FontAwesome" name='send' />
       </Item>*/}
       </View>
 
@@ -1152,7 +1152,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 20,
     borderRadius: width,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     // borderWidth: 1,
     borderColor: "#fff"
     // backgroundColor:'rgba(0,0,0,0.5)'
@@ -1176,7 +1176,7 @@ const styles = StyleSheet.create({
     margin: width * 0.03,
     // borderWidth: 2,
     borderRadius: 20,
-    borderColor: "#357feb",
+    borderColor: "#327FEB",
     borderWidth: 3,
     borderStyle:"dashed",
     backgroundColor: "#fff"
@@ -1187,7 +1187,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 15,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 6,
     borderWidth: 1,
     borderColor: "#fff",
@@ -1198,7 +1198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 8,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
@@ -1212,7 +1212,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#357feb",
+    borderColor: "#327FEB",
     width: width * 0.31
   },
   save3: {
@@ -1220,7 +1220,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     // margin: 5,
-    // backgroundColor: '#357feb',
+    // backgroundColor: '#327FEB',
     // borderRadius: 30,
     // borderWidth: 5,
     // borderColor: "#3cb979",
@@ -1258,7 +1258,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",
@@ -1271,7 +1271,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 8,
     // margin: 5,
-    backgroundColor: '#357feb',
+    backgroundColor: '#327FEB',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
@@ -1287,7 +1287,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#357feb",
+    borderColor: "#327FEB",
     width: 135,
     flex: 1,
     marginHorizontal: 20

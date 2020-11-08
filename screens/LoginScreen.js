@@ -1,8 +1,8 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native'
-import { configureFonts, DefaultTheme, Provider as PaperProvider, TextInput } from 'react-native-paper';
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput} from 'react-native'
+import { configureFonts, DefaultTheme, Provider as PaperProvider,  } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
@@ -14,6 +14,7 @@ import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
 import analytics from '@segment/analytics-react-native';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
+import { Snackbar } from 'react-native-paper';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const LoginScreen = ({ route, navigation }) => {
@@ -119,13 +120,14 @@ const LoginScreen = ({ route, navigation }) => {
 
   }
   const checkemail = (text) => {
+    setvisible(false)
     text = text.split(' ')[0]
     if (text != '') {
       if (text.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/)) {
         // if (text.includes('gmail')) { seteverified(false); return }
-        if (text.includes('yahoo')) { seteverified(false); return }
-        if (text.includes('yahoo')) { seteverified(false); return }
-        if (text.includes('hotmail')) { seteverified(false); return }
+        // if (text.includes('yahoo')) { seteverified(false); return }
+        // if (text.includes('yahoo')) { seteverified(false); return }
+        // if (text.includes('hotmail')) { seteverified(false); return }
         seteverified(true)
       }
       else {
@@ -144,7 +146,7 @@ const LoginScreen = ({ route, navigation }) => {
           <View style={{ flex: 1, marginBottom: 15, marginTop: 50, }}>
             <Image
               style={styles.tinyLogo}
-              source={require('../assets/link.png')}
+              source={require('../images/Logo.png')}
             />
           </View>
           <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: 0, textAlign:'center' }}>Genio</Text>
@@ -152,31 +154,30 @@ const LoginScreen = ({ route, navigation }) => {
             <LinkedIn navigation={navigation} />
             <View style={{ flexDirection: 'row', alignItems: 'center', margin: 30 }}>
               <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "lightgrey", width: width / 3 }} />
-              <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Regular', color: 'black' }} >Or</Text>
+              <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold', color: 'black' }} >Or</Text>
               <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "lightgrey", width: width / 3 }} />
             </View>
-            <Button onPress={() => { setvisible(true); input.current.focus() }} block dark style={{ marginTop: 10, backgroundColor: 'white', borderRadius: 28.5, height: 60, width: width - 40, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
-              <Text style={{ color: "black", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Login with Email</Text>
-            </Button>
+              <Text style={{ color: "#3E3E3E", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, paddingLeft:20, marginBottom:20, }}>Enter Email</Text>
             <KeyboardAvoidingView behavior={'padding'}>
-              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display:'flex', width: width - 40, borderRadius: 28.5, backgroundColor: '#ededed', fontSize: 16, padding: 0, fontFamily: 'NunitoSans', borderColor: everified ? 'green' : 'orange', alignSelf: 'center', }}></TextInput>
-              <View style={{ alignSelf: 'center', }}>
+              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display:'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft:20,  shadowColor:'', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height:55 }}></TextInput>
+              <Text style={{fontFamily:'NunitoSans-Regular',  paddingLeft:30, color:'red', marginTop:10, display:visible?'flex':'none'}}>*Please enter a valid email ID</Text>
+              <View style={{ alignSelf: 'center',  }}>
                 <SpinnerButton
                   buttonStyle={{
                     borderRadius: 28.5,
                     margin: 20,
                     width: 200,
                     alignSelf: 'center',
-                    backgroundColor: everified ? '#327FEB' : 'grey'
+                    backgroundColor: '#327FEB'
                   }}
                   isLoading={Loading}
                   spinnerType='BarIndicator'
                   onPress={() => {
-                    everified ? api() : null
+                    everified ? api() : setvisible(true)
                   }}
                   indicatorCount={10}
                 >
-                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Login</Text>
+                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Next</Text>
                 </SpinnerButton>
               </View>
             </KeyboardAvoidingView>
@@ -194,7 +195,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     padding: 20,
     // marginTop: 40,
-    backgroundColor: "#f9f9f9",
   },
   form: {
     marginTop: 40,
