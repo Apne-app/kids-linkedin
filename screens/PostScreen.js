@@ -255,7 +255,9 @@ const PostScreen = ({ navigation, route }) => {
                         // console.log(ar, arr);
                         setImages([ ...ar ]);
                     }}>
-                        <View style={{width: 20, height: 20, borderRadius: 20, backgroundColor: item.selected ? '#fff' : '#327FEB', borderWidth: item.selected ? 4 : 0, borderColor: "#327FEB" , position: 'absolute', opacity: 1, zIndex: 100, top: 3, right: 2, alignItems: 'center', justifyContent: 'center'}} ></View>
+                        <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 6, right: 6, alignItems: 'center', justifyContent: 'center'}} >
+                          { item.selected ? <Icon type="Feather" name="check" style={{color: "#327FEB", fontWeight: "bold"}} /> : null}
+                        </View>
                         <Image source={{uri: item.uri}} style={{width: width*0.25, height: width*0.25, opacity: selection[index]['selected'] ? 0.6 : 1}} />
                     </TouchableOpacity>
                   )}
