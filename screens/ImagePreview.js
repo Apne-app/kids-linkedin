@@ -254,9 +254,9 @@ const App: () => React$Node = (props) => {
       </View>
       {
         !croppedi &&
-        <View>
-          <TouchableOpacity><Image style={{ height: 100, width: 100, backgroundColor: "white", marginLeft: 1, marginTop: 3.5 }} source={'../Icons/rotate_left.png'} /></TouchableOpacity>
-          <TouchableOpacity><Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 1, marginTop: 3.5 }} source={'../Icons/rotate_right.png'} /></TouchableOpacity>
+        <View style={{flexDirection:'row', alignSelf:'center', backgroundColor: '#efefef', height:50, marginTop:20}}>
+          <TouchableOpacity style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360, marginRight: 50,}} source={require('../Icons/rotate_left.png')} /></TouchableOpacity>
+          <TouchableOpacity  style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360,  }} source={require('../Icons/rotate_right.png')} /></TouchableOpacity>
           </View>
       }
       <View style={{ height: height * 0.16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: '#efefef' }}>

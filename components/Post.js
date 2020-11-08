@@ -17,6 +17,7 @@ import analytics from '@segment/analytics-react-native'
 import ImageView from "react-native-image-viewing";
 import { connect } from 'getstream';
 import axios from 'axios'
+import CompHeader from '../Modules/CompHeader';
 
 // require the module
 var RNFS = require('react-native-fs');
@@ -122,49 +123,48 @@ const Upload = ({ route, navigation }) => {
     analytics.screen('Post Screen')
     console.log(explore)
     const backAction = async () => {
-          // try {
-          //     await AsyncStorage.removeItem("OrigImages");
-          //     saveImages();
-          //     // return true;
-          // }
-          // catch(exception) {
-          //   console.log(exception)
-          //     // return false;
-          // }
+      // try {
+      //     await AsyncStorage.removeItem("OrigImages");
+      //     saveImages();
+      //     // return true;
+      // }
+      // catch(exception) {
+      //   console.log(exception)
+      //     // return false;
+      // }
 
-          // Alert.alert("Hold on!", "Are you sure you want to Et?", [
-          //           {
-          //               text: "Cancel",
-          //               onPress: () => null,
-          //               style: "cancel"
-          //           },
-          //           { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
-          //       ]);
+      // Alert.alert("Hold on!", "Are you sure you want to Et?", [
+      //           {
+      //               text: "Cancel",
+      //               onPress: () => null,
+      //               style: "cancel"
+      //           },
+      //           { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
+      //       ]);
 
-        if(selecting){
-         setSelecting(false)
-        }
-        else{
-         saveImages(); deleteOrigImages() ;navigation.navigate('Home', { screen: 'Feed'})
-        }
+      if (selecting) {
+        setSelecting(false)
+      }
+      else {
+        saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+      }
 
-        return true;
-      };
+      return true;
+    };
 
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
-      // console.log( "asddsd", route.params.selected, explore)
+    // console.log( "asddsd", route.params.selected, explore)
     if (route.params.selected) {
 
-      for(var i = 0; i < route.params.selected.length; i++ )
-      {
+      for (var i = 0; i < route.params.selected.length; i++) {
         route.params.selected[i]['selected'] = false;
       }
 
-      setExplore([ { 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
+      setExplore([{ 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
       console.log(route.params.selected);
     }
 
@@ -216,7 +216,7 @@ const Upload = ({ route, navigation }) => {
   //                   { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
   //               ]);
 
-        
+
   //       return true;
   //     };
 
@@ -252,12 +252,11 @@ const Upload = ({ route, navigation }) => {
     //   }
     // }
     // console.log(route.params.images)
-    for(var i = 0; i < route.params.images.length; i++ )
-      {
-        route.params.images[i]['selected'] = false;
-      }
-      // setOrigImages([ ...origImages, { 'uri': route.params.prevImg, 'posn': explore.length-1} ])
-    setExplore([ { 'height': 0, 'width': '0', 'uri': '' } , ...route.params.images])
+    for (var i = 0; i < route.params.images.length; i++) {
+      route.params.images[i]['selected'] = false;
+    }
+    // setOrigImages([ ...origImages, { 'uri': route.params.prevImg, 'posn': explore.length-1} ])
+    setExplore([{ 'height': 0, 'width': '0', 'uri': '' }, ...route.params.images])
 
   }
 
@@ -273,19 +272,17 @@ const Upload = ({ route, navigation }) => {
       console.log("asds");
       route.params.reload = 0;
     }
-    else if(route.params.textAdded) {
-      var arr = [ ...explore ];
-      console.log("asdas",route.params)
+    else if (route.params.textAdded) {
+      var arr = [...explore];
+      console.log("asdas", route.params)
       // arr.push({ 'uri': route.params.changedimage.uri, 'height': route.params.changedimage.height, 'width': route.params.changedimage.width })
       // setExplore([ ...arr ]);
-      for(var i = 1; i < arr.length; i++)
-      {
-        if(route.params.changedimage.prevuri.split('cache/')[1] == arr[i]['uri'].split('cache/')[1])
-        {
+      for (var i = 1; i < arr.length; i++) {
+        if (route.params.changedimage.prevuri.split('cache/')[1] == arr[i]['uri'].split('cache/')[1]) {
           arr[i]['uri'] = route.params.changedimage.uri;
           arr[i]['height'] = route.params.changedimage.height;
           arr[i]['width'] = route.params.changedimage.width;
-          setExplore([ ...arr ]);
+          setExplore([...arr]);
           // console.log("Yohooo");
           break;
         }
@@ -304,7 +301,7 @@ const Upload = ({ route, navigation }) => {
     console.log(selectedTag)
 
     var arr = [...explore];
-    arr.splice(0,1);
+    arr.splice(0, 1);
 
     var tm = new Date().getTime();
 
@@ -466,7 +463,7 @@ const Upload = ({ route, navigation }) => {
     setTimeout(() => {
       setModalVisible(false);
 
-    }, 300)  
+    }, 300)
 
     try {
 
@@ -535,21 +532,19 @@ const Upload = ({ route, navigation }) => {
     for (i = 0; i < explore.length - 1; i++) {
       var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
       name = name + x;
-      if(tag == 'Certificate')
-      {
-        var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
+      if (tag == 'Certificate') {
+        var data = JSON.stringify({ "gstoken": children['data']['gsToken'], "certi_url": certi.certi_url, "certi_org": certi.certi_org, "certi_path": x });
         var config = {
           method: 'post',
           url: 'https://barry-2z27nzutoq-as.a.run.app/updatecerti',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json'
           },
-          data : data
+          data: data
         };
 
         axios(config).then(res => {
-          if(res == "success")
-          {
+          if (res == "success") {
             console.log("success")
           }
         }).catch(err => {
@@ -561,7 +556,7 @@ const Upload = ({ route, navigation }) => {
     // setModalVisible4(false);
 
     const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-    var activity = { "image": name, "object": caption==''?'default123':caption, "verb": "post" }
+    var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post" }
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
     var user = client.feed('user', String(String(children['id']) + String("id")));
@@ -572,43 +567,59 @@ const Upload = ({ route, navigation }) => {
 
     // console.log(am);
     var selectedImg = [];
-    for(var i = 1; i < explore.length; i++)
-    {
-      selectedImg.push({ uri: "file://"+explore[i]["uri"], 'orginUri': ""});
+    for (var i = 1; i < explore.length; i++) {
+      selectedImg.push({ uri: "file://" + explore[i]["uri"], 'orginUri': "" });
     }
-    setSelected([ ...selectedImg ]);
-    setopenImage(am-1);
-    setVisibleImg(am-1);
-    setOrig(origImages[am-1]);
+    setSelected([...selectedImg]);
+    setopenImage(am - 1);
+    setVisibleImg(am - 1);
+    setOrig(origImages[am - 1]);
 
   }
 
   const deleteOrigImages = async () => {
 
-    try{
-        await AsyncStorage.removeItem("OrigImages");
-        console.log("Success")
-        return true;
+    try {
+      await AsyncStorage.removeItem("OrigImages");
+      console.log("Success")
+      return true;
     }
-    catch(exception) {
-        console.log("Exception");
-        return false;
+    catch (exception) {
+      console.log("Exception");
+      return false;
     }
 
-}
-
+  }
+  const goback = () => {
+    if (selecting) {
+      setSelecting(false)
+    }
+    else {
+      saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+    }
+  }
+  const deletes = () => {
+    analytics.track('Delete Images in Post');
+    setSelecting(true);
+    if (selecting) {
+      var array = [...explore];
+      for (var i = 1; i < array.length; i++) {
+        if (array[i]['selected']) {
+          array.splice(i, 1);
+          i--;
+        }
+      }
+      setExplore([...array]);
+      setSelecting(false);
+    }
+  }
   return (
     <View style={styles.container}>
-      <Header style={{ backgroundColor: "#fff" }} >
+      {/* <Header style={{ backgroundColor: "#fff" }} >
         <Left>
           <TouchableOpacity onPress={() =>
             { 
-              if(selecting){
-               setSelecting(false)
-              }
-              else{
-               saveImages(); deleteOrigImages() ;navigation.navigate('Home', { screen: 'Feed'})
-              }
+              
             }}>
           <Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30 }} />
           </TouchableOpacity>
@@ -637,258 +648,256 @@ const Upload = ({ route, navigation }) => {
           <Icon name="trash" type="Feather" style={{ color:  selecting ? "red" : '#000' }} />
         </TouchableOpacity>
         </Right>
-      </Header>
-        <View style={{ backgroundColor: "#fff" }}>
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => { setModalVisible(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
-                  <Text style={styles.modalText}>Save as pdf!</Text>
-                  <Item floatingLabel>
-                    <Label>Collection Name</Label>
-                    <Input value={filename} onChangeText={text => setFileName(text)} />
-                  </Item>
-                  <View>
-                  </View>
-                  <View style={{ flexDirection: 'row' }} >
-                    <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
-                      onPress={() => {
-                        analytics.track('PDF Saved');
-                        myAsyncPDFFunction()
-                        // console.log(explore)
-                      }}
-                    >
-                      <View style={styles.save2}>
-                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                          Save
+      </Header> */}
+      <CompHeader goback={goback} icon="close" screen={selecting ? "Delete" : "Preview"} right={true} delete={deletes} selecting={selecting} />
+      <View style={{ backgroundColor: "#fff" }}>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity onPress={() => { setModalVisible(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ></TouchableOpacity>
+                <Text style={styles.modalText}>Save as a PDF</Text>
+                <Item floatingLabel>
+                  <Label style={{fontFamily:'NunitoSans-Regular'}}>Collection Name</Label>
+                  <Input style={{fontFamily:'NunitoSans-Regular'}} value={filename} onChangeText={text => setFileName(text)} />
+                </Item>
+                <View>
+                </View>
+                <View style={{ flexDirection: 'row' }} >
+                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
+                    onPress={() => {
+                      analytics.track('PDF Saved');
+                      myAsyncPDFFunction()
+                      // console.log(explore)
+                    }}
+                  >
+                    <View style={styles.save2}>
+                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
+                        Save
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </Modal>
-          </View>
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible4}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => { setModalVisible4(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
-                  <Text style={styles.modalText}>Information about your certificate!</Text>
-                  <Item floatingLabel>
-                    <Label>Certificate Organization</Label>
-                    <Input value={certi.certi_org} onChangeText={text => setCerti({ ...certi, certi_org: text })} />
-                  </Item>
-                  <Item floatingLabel>
-                    <Label>Certificate Url</Label>
-                    <Input value={certi.certi_url} onChangeText={text => setCerti({ ...certi, certi_url: text })} />
-                  </Item>
-                  <View>
-                  </View>
-                  <View style={{ flexDirection: 'row' }} >
-                    <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
-                      onPress={() => {
-                        analytics.track('Certificate Upload');
-                        PostUpload();
-                      }}
-                    >
-                      <View style={styles.save2}>
-                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                          Save
+            </View>
+          </Modal>
+        </View>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible4}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity onPress={() => { setModalVisible4(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Image style={{ height: 30, width: 30, backgroundColor: "transparent", }} source={require('../Icons/close.png')} /></TouchableOpacity>
+                <Text style={styles.modalText}>Information about your certificate!</Text>
+                <Item floatingLabel>
+                  <Label>Certificate Organization</Label>
+                  <Input value={certi.certi_org} onChangeText={text => setCerti({ ...certi, certi_org: text })} />
+                </Item>
+                <Item floatingLabel>
+                  <Label>Certificate Url</Label>
+                  <Input value={certi.certi_url} onChangeText={text => setCerti({ ...certi, certi_url: text })} />
+                </Item>
+                <View>
+                </View>
+                <View style={{ flexDirection: 'row' }} >
+                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
+                    onPress={() => {
+                      analytics.track('Certificate Upload');
+                      PostUpload();
+                    }}
+                  >
+                    <View style={styles.save2}>
+                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
+                        Save
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </Modal>
-          </View>
+            </View>
+          </Modal>
+        </View>
 
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible3}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => { setModalVisible3(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
-                  <Text style={styles.modalText}>Save in gallery!</Text>
-                  <Item floatingLabel>
-                    <Label>Collection Name</Label>
-                    <Input value={filename} onChangeText={text => setFileName(text)} />
-                  </Item>
-                  <View>
-                  </View>
-                  <View style={{ flexDirection: 'row' }} >
-                    <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
-                      onPress={() => {
-                        analytics.track('Saved to Gallery')
-                        saveImages();
-                      }}
-                    >
-                      <View style={styles.save2}>
-                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                          Save
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible3}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity onPress={() => { setModalVisible3(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
+                <Text style={styles.modalText}>Save in gallery!</Text>
+                <Item floatingLabel>
+                  <Label>Collection Name</Label>
+                  <Input value={filename} onChangeText={text => setFileName(text)} />
+                </Item>
+                <View>
+                </View>
+                <View style={{ flexDirection: 'row' }} >
+                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
+                    onPress={() => {
+                      analytics.track('Saved to Gallery')
+                      saveImages();
+                    }}
+                  >
+                    <View style={styles.save2}>
+                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
+                        Save
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </Modal>
-          </View>
+            </View>
+          </Modal>
+        </View>
 
-          <View style={styles.centeredView}>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible2}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <TouchableOpacity onPress={() => { setModalVisible2(false) }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
-                  <Text style={styles.modalText}>Upload to cloud!</Text>
-                  <View style={{ flexDirection: 'row' }} >
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible2}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <TouchableOpacity onPress={() => { setModalVisible2(false) }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
+                <Text style={styles.modalText}>Upload to cloud!</Text>
+                <View style={{ flexDirection: 'row' }} >
 
-                    <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15 }}
-                      onPress={() => {
-                        analytics.track('Cloud Storage')
-                        // console.log(randomStr(20, '12345abcdepq75xyz'));
-                        var i;
-                        setTimeout(() => {
-                          setModalVisible2(false)
-                        }, 300);
-                        var obj = { ...uploading };
-                        for (i = 0; i < explore.length - 1; i++) {
-                          obj[(explore[i].uri)] = true;
-                          setUploading({
-                            ...obj
-                          });
-                        }
-                        for (i = 0; i < explore.length - 1; i++) {
-                          uploadToS3(i);
-                        }
+                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15 }}
+                    onPress={() => {
+                      analytics.track('Cloud Storage')
+                      // console.log(randomStr(20, '12345abcdepq75xyz'));
+                      var i;
+                      setTimeout(() => {
+                        setModalVisible2(false)
+                      }, 300);
+                      var obj = { ...uploading };
+                      for (i = 0; i < explore.length - 1; i++) {
+                        obj[(explore[i].uri)] = true;
+                        setUploading({
+                          ...obj
+                        });
+                      }
+                      for (i = 0; i < explore.length - 1; i++) {
+                        uploadToS3(i);
+                      }
 
-                      }}
-                    >
-                      <View style={styles.save2}>
-                        <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                          Upload
+                    }}
+                  >
+                    <View style={styles.save2}>
+                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Regular' }}>
+                        Upload
                         </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </Modal>
-          </View>
-          <ImageView
-                images={selected}
-                imageIndex={openImg}
-                animationType={"fade"}
-                // isVisible={true}
-                onImageIndexChange={imageIndex => {
-                  // alert("asd");
-                  setVisibleImg(imageIndex);
-                    // console.log(imageIndex);
-                }}
-                backgroundColor={"#F5F5F5"}
-                visible={visible}
-                onRequestClose={() => {setSelected([]);setVisible(false);}}
-                HeaderComponent = {() => {
-                    return (
-                      <TouchableOpacity style={{marginTop: 10, marginLeft: 10}} onPress={() => {setSelected([]);setVisible(false);} }>
-                      <Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30 }} />
-                      </TouchableOpacity>
-                    )
-                }}
-                FooterComponent = {() => {
-                    return (
-                        <View style={{height: height*0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                          <TouchableOpacity
-                            style={{height: 40}}
-                            onPress={() => {
-                              var ar = [...explore]; ar.splice(0, 1);
-                              setSelected([]);setVisible(false);
-                              // console.log({'img': explore[visibleImg+1]['prevImg'], height: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => width),  'reload': 1  });
-                              navigation.navigate('Preview', {'img': explore[visibleImg+1]['prevImg'], height: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1  });
-                              // console.log(explore);
-                            }}
-                          >
-                            <View style={styles.Cancel}>
-                              <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                                Edit { explore[visibleImg+1]['prevImg'] ? 'Original': null}
+            </View>
+          </Modal>
+        </View>
+        <ImageView
+          images={selected}
+          imageIndex={openImg}
+          animationType={"fade"}
+          // isVisible={true}
+          onImageIndexChange={imageIndex => {
+            // alert("asd");
+            setVisibleImg(imageIndex);
+            // console.log(imageIndex);
+          }}
+          backgroundColor={"#F5F5F5"}
+          visible={visible}
+          onRequestClose={() => { setSelected([]); setVisible(false); }}
+          HeaderComponent={() => {
+            return (<Header style={{ backgroundColor: 'white', height: 60 }}>
+              <View style={{ flexDirection: 'row', marginTop: 14, flex: 1 }}>
+                <TouchableOpacity onPress={() => {setSelected([]);setVisible(false);}}><Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 1, marginTop: 3.5 }} source={require('../Icons/close.png')} /></TouchableOpacity>
+              </View>
+              <Body>
+              </Body>
+            </Header>)
+          }}
+          FooterComponent={() => {
+            return (
+              <View style={{ height: height * 0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                <TouchableOpacity
+                  style={{ height: 40 }}
+                  onPress={() => {
+                    var ar = [...explore]; ar.splice(0, 1);
+                    setSelected([]); setVisible(false);
+                    // console.log({'img': explore[visibleImg+1]['prevImg'], height: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => width),  'reload': 1  });
+                    navigation.navigate('Preview', { 'img': explore[visibleImg + 1]['prevImg'], height: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1 });
+                    // console.log(explore);
+                  }}
+                >
+                  <View style={styles.Cancel}>
+                    <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center', fontFamily:'NunitoSans-Bold' }}>
+                      Edit {explore[visibleImg + 1]['prevImg'] ? 'Original' : null}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ height: 40 }}
+                  onPress={() => {
+                    // console.log()
+                    setSelected([]); setVisible(false);
+                    // console.log({ img: selected[visibleImg], 'height': explore[visibleImg+1]['height'], 'width': explore[visibleImg+1]['width']})
+                    // console.log(explore);
+                    if (explore[visibleImg + 1]['width'] == undefined) {
+                      Image.getSize(selected[visibleImg]['uri'].includes('://file') ? selected[visibleImg]['uri'].split('://')[1] : selected[visibleImg]['uri'], (width, height) => {
+                        navigation.navigate('AddText', { img: { 'origUri': '', 'uri': selected[visibleImg]['uri'] }, 'height': height, 'width': width });
+                      });
+
+                    }
+                    else {
+
+                      navigation.navigate('AddText', { img: { 'origUri': '', 'uri': selected[visibleImg]['uri'] }, 'height': explore[visibleImg + 1]['height'], 'width': explore[visibleImg + 1]['width'] });
+                    }
+                  }}
+                >
+                  <View style={styles.Next2}>
+                    <Text style={{ color: "#fff", flex: 1, textAlign: 'center',  fontFamily:'NunitoSans-Bold' }}>
+                      Add Text
                               </Text>
-                            </View>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={{height: 40}}
-                            onPress={() => {
-                              // console.log()
-                              setSelected([]);setVisible(false);
-                              // console.log({ img: selected[visibleImg], 'height': explore[visibleImg+1]['height'], 'width': explore[visibleImg+1]['width']})
-                              // console.log(explore);
-                              if(explore[visibleImg+1]['width'] == undefined)
-                              {
-                                Image.getSize(selected[visibleImg]['uri'].includes('://file') ? selected[visibleImg]['uri'].split('://')[1] : selected[visibleImg]['uri'], (width, height) => {
-                                  navigation.navigate('AddText', { img: { 'origUri': '', 'uri': selected[visibleImg]['uri']}, 'height': height, 'width': width });
-                                });
-                                
-                              }
-                              else{
-
-                              navigation.navigate('AddText', { img: { 'origUri': '', 'uri': selected[visibleImg]['uri']}, 'height': explore[visibleImg+1]['height'], 'width': explore[visibleImg+1]['width'] });
-                              }
-                            }}
-                          >
-                            <View style={styles.Next2}>
-                              <Text style={{ color: "#fff", flex: 1, textAlign: 'center' }}>
-                                Add Text
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                    )
-                }}
-            />
-          <ScrollView style={{height: selecting ? height*0.9 : height*0.6, backgroundColor: '#f9f9f9'}}>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )
+          }}
+        />
+        <ScrollView style={{ height: selecting ? height * 0.9 : height * 0.6, backgroundColor: '#f9f9f9' }}>
           <FlatList
             data={explore}
-            style={{marginLeft: width*0.05, marginRight: width*0.06, marginVertical: width*0.03}}
+            style={{ marginLeft: width * 0.05, marginRight: width * 0.06, marginVertical: width * 0.03 }}
             renderItem={({ item, index }) => (
               <View>
                 {
                   item.height != 0 ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {  
-                      if(selecting)
-                      {
-                        var array = [ ...explore ];
-                        if(array[index]['selected'])
-                        {
-                          setDeleteCount(deleteCount-1);
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {
+                      if (selecting) {
+                        var array = [...explore];
+                        if (array[index]['selected']) {
+                          setDeleteCount(deleteCount - 1);
                         }
-                        else
-                        {
-                          setDeleteCount(deleteCount+1);
+                        else {
+                          setDeleteCount(deleteCount + 1);
                         }
                         array[index]['selected'] = !array[index]['selected'];
-                        setExplore([ ...array ])
+                        setExplore([...array])
                       }
-                      else
-                      {
-                      openImageViewer(index); setVisible(true); 
+                      else {
+                        openImageViewer(index); setVisible(true);
                       }
-                      }} 
+                    }}
                       onLongPress={() => setSelecting(true)}
                     >
                       <View
@@ -898,13 +907,13 @@ const Upload = ({ route, navigation }) => {
                           style={styles.image}
                           imageStyle={{ opacity: selecting ? 0.5 : 1, borderRadius: 20 }}
                           source={{
-                            uri:  "file://"+item.uri,
+                            uri: "file://" + item.uri,
                           }}
                         >
                           {
                             selecting ?
-                              <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center'}} >
-                                { item.selected ? <Icon type="Feather" name="check" style={{color: "#327FEB", fontWeight: "bold"}} /> : null}
+                              <View style={{ width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center' }} >
+                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#327FEB", fontWeight: "bold" }} /> : null}
                               </View>
                               :
                               <View />
@@ -914,20 +923,17 @@ const Upload = ({ route, navigation }) => {
                     </TouchableOpacity>
                     :
                     <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => {
-                      if(selecting)
-                      {
-                        var array = [ ...explore ];
-                        for(var i = 1; i < array.length; i++)
-                        {
+                      if (selecting) {
+                        var array = [...explore];
+                        for (var i = 1; i < array.length; i++) {
                           array[i]['selected'] = true;
                         }
                         setExplore([...array])
                       }
-                      else
-                      {
-                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', {"images": ar})
+                      else {
+                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', { "images": ar })
                       }
-                      }}>
+                    }}>
                       <View
                         key={item.uri}
                         style={{ flex: 1 }}>
@@ -938,9 +944,9 @@ const Upload = ({ route, navigation }) => {
                             <View >
                               {
                                 !selecting ?
-                                <Icon type="AntDesign" name="plus" style={{ color: "#fff" }} />
-                                :
-                                <Text style={{color: "#fff"}}>Select All</Text>
+                                  <Icon type="AntDesign" name="plus" style={{ color: "#fff" }} />
+                                  :
+                                  <Text style={{ color: "#fff", fontFamily: 'NunitoSans-Bold' }}>Select All</Text>
                               }
                             </View>
                           </View>
@@ -954,8 +960,8 @@ const Upload = ({ route, navigation }) => {
             numColumns={2}
             keyExtractor={(item, index) => index.toString()}
           />
-          </ScrollView>
-        </View>
+        </ScrollView>
+      </View>
 
 
       {/*        <TouchableOpacity style={{position: 'absolute', bottom: height*0.15, right: 6}}
@@ -969,103 +975,101 @@ const Upload = ({ route, navigation }) => {
       {
         selecting ?
           <TouchableOpacity
-            style={{height: 50, position: 'absolute', bottom: 15, alignSelf: 'center'}}
+            style={{ height: 50, position: 'absolute', bottom: 15, alignSelf: 'center' }}
             onPress={() => {
-               var array = [...explore];
-                for(var i = 1; i < array.length; i++)
-                {
-                  if(array[i]['selected'])
-                  {
-                    array.splice(i, 1);
-                    i--;
-                  }
+              var array = [...explore];
+              for (var i = 1; i < array.length; i++) {
+                if (array[i]['selected']) {
+                  array.splice(i, 1);
+                  i--;
                 }
-                setExplore([ ...array ]);
-                setSelecting(false);
+              }
+              setExplore([...array]);
+              setSelecting(false);
             }}
           >
             <View style={styles.Next}>
-              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold' }}>
                 Delete {deleteCount} items
               </Text>
             </View>
           </TouchableOpacity>
-        : null
+          : null
       }
 
-      <View style={{height: height*0.25, borderTopWidth: 1,borderLeftWidth: 1,borderRightWidth: 1, borderColor: 'lightgrey', display: selecting ? 'none' : 'flex'}}>
-      <View style={{ marginTop: 10}} >
-            <FlatList
-              data={tags}
-              scrollEnabled={true}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                flexGrow: 1,
-              }}
-              // style={{marginTop: 5}}
-              renderItem={({ item, i }) => (
-                <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB" }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
-              )}
-              //Setting the number of column
-              // numColumns={3}
-              horizontal={true}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-      <View style={{height: height*0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ height: height * 0.25, borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: 'lightgrey', display: selecting ? 'none' : 'flex' }}>
+        <View style={{ marginTop: 10 }} >
+          <FlatList
+            data={tags}
+            scrollEnabled={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              flexGrow: 1,
+              marginLeft: 10
+            }}
+            // style={{marginTop: 5}}
+            renderItem={({ item, i }) => (
+              <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB", borderRadius:30 }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB", fontFamily: 'NunitoSans-Regular' }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
+            )}
+            //Setting the number of column
+            // numColumns={3}
+            horizontal={true}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+        <View style={{ height: height * 0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity
-            style={{height: 50, width: width*0.3, alignItems: 'center'}}
+            style={{ height: 50, width: width * 0.3, alignItems: 'center' }}
             onPress={() => {
-              
+
             }}
           >
             <Icon name="share-2" type="Feather" />
-            <Text style={{fontSize: 10, fontWeight: "bold"}} >Share </Text>
+            <Text style={{ fontSize: 10, fontWeight: "bold", fontFamily: 'NunitoSans-Bold' }} >Share </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{height: 50, width: width*0.1, alignItems: 'center'}}
+            style={{ height: 50, width: width * 0.1, alignItems: 'center' }}
             onPress={() => {
-                analytics.track('PDF Saved');
-                setModalVisible(true);
-              }}
+              analytics.track('PDF Saved');
+              setModalVisible(true);
+            }}
           >
             <Icon name="download" type="Feather" />
-            <Text style={{fontSize: 10, fontWeight: "bold"}} >PDF </Text>
+            <Text style={{ fontSize: 10, fontWeight: "bold", fontFamily: 'NunitoSans-Bold' }} >PDF </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{height: 50, width: width*0.3, alignItems: 'center'}}
+            style={{ height: 50, width: width * 0.3, alignItems: 'center' }}
             onPress={() => {
-              saveImages(); deleteOrigImages() ;
-               navigation.navigate('Home', {
-                  screen: 'Files',
-                })
+              saveImages(); deleteOrigImages();
+              navigation.navigate('Home', {
+                screen: 'Files',
+              })
             }}
           >
             <Icon name="file" type="Feather" />
-            <Text style={{fontSize: 10, fontWeight: "bold"}} >Collection  </Text>
+            <Text style={{ fontSize: 10, fontWeight: "bold", fontFamily: 'NunitoSans-Bold' }} >Collection  </Text>
           </TouchableOpacity>
-      </View>
-      <View style={{height: height*0.1}}>
+        </View>
+        <View style={{ height: height * 0.1 }}>
           <TouchableOpacity
-            style={{height: 50}}
+            style={{ height: 50 }}
             onPress={() => {
-               var ar = explore;
-               var arr = [];
-               for(var i = 1; i < ar.length; i++)
-               {
-                 arr.push({ uri: 'file://'+ar[i]["uri"] })
-               }
-               navigation.navigate('CreatePost', { images: arr, tag: selectedTag })
+              var ar = explore;
+              var arr = [];
+              for (var i = 1; i < ar.length; i++) {
+                arr.push({ uri: 'file://' + ar[i]["uri"] })
+              }
+              navigation.navigate('CreatePost', { images: arr, tag: selectedTag })
             }}
           >
             <View style={styles.Next}>
-              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold' }}>
                 Create Post
               </Text>
             </View>
           </TouchableOpacity>
-      </View>
-      {/*<Item last style={{ position: 'absolute', bottom: height * 0.03, width: width*0.85, alignItems: 'center', alignSelf: 'center' }} >
+        </View>
+        {/*<Item last style={{ position: 'absolute', bottom: height * 0.03, width: width*0.85, alignItems: 'center', alignSelf: 'center' }} >
         <Input onChangeText={(text) => {
           setcaption(text)
         }}value={caption} placeholder="Add a caption and hashtags"  />
@@ -1150,11 +1154,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     flexDirection: 'row',
-    padding: 20,
+    padding: 14,
     borderRadius: width,
     backgroundColor: '#327FEB',
     // borderWidth: 1,
-    borderColor: "#fff"
+    borderColor: "#fff",
+    marginBottom: 10
     // backgroundColor:'rgba(0,0,0,0.5)'
   },
   tinyLogo: {
@@ -1178,7 +1183,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: "#327FEB",
     borderWidth: 3,
-    borderStyle:"dashed",
+    borderStyle: "dashed",
     backgroundColor: "#fff"
     // borderStyle: 'dashed',
   },
@@ -1266,7 +1271,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 20
   },
-   Next2: {
+  Next2: {
     alignSelf: 'center',
     flexDirection: 'row',
     padding: 8,
@@ -1295,7 +1300,8 @@ const styles = StyleSheet.create({
   modalText: {
     marginVertical: 15,
     fontSize: 20,
-    textAlign: "center"
+    textAlign: "center",
+    fontFamily:'NunitoSans-Regular'
   }
 })
 
