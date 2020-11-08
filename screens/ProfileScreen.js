@@ -94,6 +94,7 @@ const fontConfig = {
 };
 const ProfileScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState('notyet')
+    const [status, setstatus] = useState('0')
     const [place, setplace] = useState('')
     const [data, setdata] = useState({ 'followers': [], 'following': [], type:'loading' })
     const [certi, setCerti] = useState([]);
@@ -493,17 +494,20 @@ const ProfileScreen = ({ navigation, route }) => {
     }, [])
     useEffect(() => {
         const check = async () => {
-            var pro = await AsyncStorage.getItem('profile')
-            if (pro !== null) {
-                pro = JSON.parse(pro)
-                axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
-                    .then(async (response) => {
-                        setchildren(response.data)
-                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
+            var st = await AsyncStorage.getItem('status')
+            if (st == '3') {
+                var pro = await AsyncStorage.getItem('profile')
+                if (pro !== null) {
+                    pro = JSON.parse(pro)
+                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+                        .then(async (response) => {
+                            setchildren(response.data)
+                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                }
             }
             else {
                 // console.log('helo')

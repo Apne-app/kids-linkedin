@@ -90,19 +90,19 @@ const Unverified = ({ navigation, route }) => {
             <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>We've sent a verification mail to{"\n"}<Text style={{ fontFamily:'NunitoSans-Bold',fontSize:20 }}>{profile.email} {"\n"}</Text><TouchableOpacity onPress={() => navigation.navigate('Login')} style={{flexDirection:'row'}}><Text style={{fontFamily:'NunitoSans-Bold',fontSize:18, color:'#327FEB'}}>(</Text><Text style={{fontFamily:'NunitoSans-Bold',fontSize:18, color:'#327FEB', textDecorationColor:'#327FEB', textDecorationLine:'underline'}}>Change</Text><Text style={{fontFamily:'NunitoSans-Bold',fontSize:18, color:'#327FEB'}}>)</Text></TouchableOpacity></Text>
             <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Please verify for becoming a part of the community</Text>
             <View style={{ backgroundColor: 'white' }}>
-                <Button block style={{ marginTop: 20, borderColor: active ? '#327FEB' : 'grey', backgroundColor: active ? '#327FEB' : 'grey', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center' }} onPress={() => send()}>
-                    <View style={{flexDirection:'row'}}><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Send again (</Text><View style={{ marginTop:0, marginHorizontal:-2 }}><CountDown
+                <Button block style={{ marginTop: 20, borderColor: active ? '#327FEB' : 'grey', backgroundColor: active ? '#327FEB' : 'grey', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height:60 }} onPress={() => send()}>
+                    <View style={{flexDirection:'row'}}><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Send again (</Text><View style={{ marginTop:0, marginHorizontal:-2 }}><CountDown
                         until={45}
                         onFinish={() => setactive(true)}
                         size={10}
                         digitStyle={{ borderColor: '#327FEB' }}
-                        digitTxtStyle={{ fontFamily: 'NunitoSans-Bold', fontSize: 17 }}
+                        digitTxtStyle={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}
                         timeToShow={['S']}
                         timeLabels={{ s: '' }}
-                    /></View><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>s)</Text></View>
+                    /></View><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>s)</Text></View>
                 </Button>
-                <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center' }} onPress={() => navigation.navigate('Home')} >
-                    <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Continue without verification*</Text>
+                <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height:60 }} onPress={() => navigation.navigate('Home')} >
+                    <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Continue without verification*</Text>
                 </Button>
                 <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20 }}>*You wont be able to use the social network</Text>
             </View>

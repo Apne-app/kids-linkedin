@@ -1,9 +1,9 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput} from 'react-native'
-import { configureFonts, DefaultTheme, Provider as PaperProvider,  } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title } from 'native-base';
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput, TouchableOpacity } from 'react-native'
+import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-native-paper';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body,  Right } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
 import LoginForm from '../components/Login';
@@ -15,6 +15,7 @@ import { SimpleAnimation } from 'react-native-simple-animations';
 import analytics from '@segment/analytics-react-native';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { Snackbar } from 'react-native-paper';
+import CompHeader from '../Modules/CompHeader'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const LoginScreen = ({ route, navigation }) => {
@@ -58,7 +59,7 @@ const LoginScreen = ({ route, navigation }) => {
       ...DefaultTheme.colors,
       primary: '#327FEB',
       accent: '#327FEB',
-      underlineColor:'transparent',
+      underlineColor: 'transparent',
     },
     roundness: 28.5
   };
@@ -140,16 +141,17 @@ const LoginScreen = ({ route, navigation }) => {
   }
   return (
     <ScrollView ref={scrollcheck} style={styles.container}>
+      <CompHeader type={'Login'} />
       {/* <Container style={styles.container}> */}
       <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
         <Content >
-          <View style={{ flex: 1, marginBottom: 15, marginTop: 50, }}>
+          <View style={{ flex: 1,  marginTop: 50, }}>
             <Image
               style={styles.tinyLogo}
               source={require('../images/Logo.png')}
             />
           </View>
-          <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: 0, textAlign:'center' }}>Genio</Text>
+          <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: -20, marginBottom:-10,  textAlign: 'center' }}>Genio</Text>
           <View>
             <LinkedIn navigation={navigation} />
             <View style={{ flexDirection: 'row', alignItems: 'center', margin: 30 }}>
@@ -157,18 +159,19 @@ const LoginScreen = ({ route, navigation }) => {
               <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold', color: 'black' }} >Or</Text>
               <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "lightgrey", width: width / 3 }} />
             </View>
-              <Text style={{ color: "#3E3E3E", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, paddingLeft:20, marginBottom:20, }}>Enter Email</Text>
+            <Text style={{ color: "#3E3E3E", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, paddingLeft: 20, marginBottom: 20, }}>Enter Email</Text>
             <KeyboardAvoidingView behavior={'padding'}>
-              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display:'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft:20,  shadowColor:'', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height:55 }}></TextInput>
-              <Text style={{fontFamily:'NunitoSans-Regular',  paddingLeft:30, color:'red', marginTop:10, display:visible?'flex':'none'}}>*Please enter a valid email ID</Text>
-              <View style={{ alignSelf: 'center',  }}>
+              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55 }}></TextInput>
+              <Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 30, color: 'red', marginTop: 10, display: visible ? 'flex' : 'none' }}>*Please enter a valid email ID</Text>
+              <View style={{ alignSelf: 'center', }}>
                 <SpinnerButton
                   buttonStyle={{
                     borderRadius: 28.5,
                     margin: 20,
                     width: 200,
                     alignSelf: 'center',
-                    backgroundColor: '#327FEB'
+                    backgroundColor: '#327FEB',
+                    height: 60
                   }}
                   isLoading={Loading}
                   spinnerType='BarIndicator'
@@ -177,7 +180,7 @@ const LoginScreen = ({ route, navigation }) => {
                   }}
                   indicatorCount={10}
                 >
-                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 16, marginTop: 2 }}>Next</Text>
+                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 2 }}>Next</Text>
                 </SpinnerButton>
               </View>
             </KeyboardAvoidingView>
@@ -208,8 +211,8 @@ const styles = StyleSheet.create({
   },
   tinyLogo: {
     alignSelf: 'center',
-    width: 100,
-    height: 100
+    width: 150,
+    height: 150
   },
   safeArea: {
     backgroundColor: '#F5FCFF',

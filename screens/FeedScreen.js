@@ -65,6 +65,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [type, settype] = useState('like');
     const [display, setdisplay] = useState('none');
     const [children, setchildren] = useState('notyet')
+    const [status, setstatus] = useState('0')
     const [options, setoptions] = useState({})
     const sheetRefLike = React.useRef(null);
     const [showToast, setShowToast] = useState(false)
@@ -310,7 +311,7 @@ const FeedScreen = ({ navigation, route }) => {
         var images = []
         const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
         // console.log(props.activity.id)
-        props.activity.image?props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null):null
+        props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
             <Activity
@@ -324,7 +325,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data?props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1):null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
                             </View>
                             <ActionSheet
                                 ref={refActionSheet}
@@ -358,7 +359,7 @@ const FeedScreen = ({ navigation, route }) => {
                                             style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data?props.activity.actor.data.name:null}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data ? props.activity.actor.data.name : null}</Text>
                                             <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
                                         </View>
                                         <ActionSheet
@@ -435,6 +436,13 @@ const FeedScreen = ({ navigation, route }) => {
     }
     useEffect(() => {
         const check = async () => {
+            var st = await AsyncStorage.getItem('status')
+            setstatus(status)
+        }
+        check()
+    }, [])
+    useEffect(() => {
+        const check = async () => {
             var child = await AsyncStorage.getItem('children')
             // console.log(child)
             if (child != null) {
@@ -444,19 +452,23 @@ const FeedScreen = ({ navigation, route }) => {
         }
         check()
     }, [])
+
     useEffect(() => {
         const check = async () => {
-            var pro = await AsyncStorage.getItem('profile')
-            if (pro !== null) {
-                pro = JSON.parse(pro)
-                axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
-                    .then(async (response) => {
-                        setchildren(response.data)
-                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
+            var st = await AsyncStorage.getItem('status')
+            if (st == '3') {
+                var pro = await AsyncStorage.getItem('profile')
+                if (pro !== null) {
+                    pro = JSON.parse(pro)
+                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+                        .then(async (response) => {
+                            setchildren(response.data)
+                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                }
             }
             else {
                 // console.log('helo')
@@ -469,12 +481,12 @@ const FeedScreen = ({ navigation, route }) => {
     const there = (props) => {
         return (
             <SafeAreaProvider>
-                <Header style={{ backgroundColor: '#fff', flexDirection: 'row', height: 73, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2}}>
+                <Header style={{ backgroundColor: '#fff', flexDirection: 'row', height: 73, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2 }}>
                     <Body style={{ alignItems: 'center', marginLeft: -20, }}>
                         <Title style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 36, lineSpacing: 7, marginTop: 0, marginLeft: -20 }}>Genio</Title>
                     </Body>
                     <Right style={{ marginRight: 30, }}>
-                        <Icon style={{fontSize: 28}} onPress={() => navigation.navigate('Notifications')} name="bell" type="Feather" />
+                        <Icon style={{ fontSize: 28 }} onPress={() => navigation.navigate('Notifications')} name="bell" type="Feather" />
                     </Right>
                 </Header>
                 {/* <YouTube
@@ -488,7 +500,7 @@ const FeedScreen = ({ navigation, route }) => {
                 /> */}
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
-                        style={{marginTop: 20}}
+                        style={{ marginTop: 20 }}
                         apiKey="9ecz2uw6ezt9"
                         appId="96078"
                         token={children['0']['data']['gsToken']}
@@ -551,7 +563,7 @@ const FeedScreen = ({ navigation, route }) => {
         )
     }
     return (
-        children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
+        children == 'notyet' && status == '3' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
 
     );
 };

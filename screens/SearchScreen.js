@@ -84,6 +84,7 @@ const SearchScreen = ({ route, navigation }) => {
     }
   ])
   const [children, setchildren] = useState('notyet')
+  const [status, setstatus] = useState('0')
   useEffect(() => {
     const check = async () => {
       var child = await AsyncStorage.getItem('children')
@@ -108,17 +109,20 @@ const SearchScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const check = async () => {
-      var pro = await AsyncStorage.getItem('profile')
-      if (pro !== null) {
-        pro = JSON.parse(pro)
-        axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
-          .then(async (response) => {
-            setchildren(response.data)
-            await AsyncStorage.setItem('children', JSON.stringify(response.data))
-          })
-          .catch((error) => {
-            console.log(error)
-          })
+      var st = await AsyncStorage.getItem('status')
+      if (st == '3') {
+        var pro = await AsyncStorage.getItem('profile')
+        if (pro !== null) {
+          pro = JSON.parse(pro)
+          axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+            .then(async (response) => {
+              setchildren(response.data)
+              await AsyncStorage.setItem('children', JSON.stringify(response.data))
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
       }
       else {
         // console.log('helo')
@@ -131,11 +135,11 @@ const SearchScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <Container>
-        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 81, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2  }}>
-          
-          <Item style={{width: width*0.9, borderColor: "#000", height: 36, borderRadius: 10}}>
-            <Icon style={{fontSize: 30}} active name='search' type="EvilIcons" />
-            <Input showSoftInputOnFocus={false} style={{fontSize: 16}} placeholder='Search' onResponderStart={() => navigation.navigate('Searching')}/>
+        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 81, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2 }}>
+
+          <Item style={{ width: width * 0.9, borderColor: "#000", height: 36, borderRadius: 10 }}>
+            <Icon style={{ fontSize: 30 }} active name='search' type="EvilIcons" />
+            <Input showSoftInputOnFocus={false} style={{ fontSize: 16 }} placeholder='Search' onResponderStart={() => navigation.navigate('Searching')} />
           </Item>
         </Header>
         <Content style={styles.container}>
@@ -152,7 +156,7 @@ const SearchScreen = ({ route, navigation }) => {
                   {/*console.log(item.node.image.uri)*/}
                   <ImageBackground
                     style={styles.image}
-                    imageStyle={{ borderRadius: width*0.2 }}
+                    imageStyle={{ borderRadius: width * 0.2 }}
                     source={{
                       uri: item.image,
                     }}
@@ -167,13 +171,13 @@ const SearchScreen = ({ route, navigation }) => {
                   <View >
                     <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
                   </View>
-                </View> : 
-                <View
+                </View> :
+                  <View
                     style={styles.image}
-                    // imageStyle={{ borderRadius: width*0.2 }}
-                    // source={{
-                    //   uri: item.image,
-                    // }}
+                  // imageStyle={{ borderRadius: width*0.2 }}
+                  // source={{
+                  //   uri: item.image,
+                  // }}
                   >
                     <View style={styles.personDetails}>
                       <View >
@@ -189,7 +193,7 @@ const SearchScreen = ({ route, navigation }) => {
             numColumns={3}
             keyExtractor={(item, index) => index.toString()}
           />
-          <View style={{marginTop: 30}} >
+          <View style={{ marginTop: 30 }} >
             <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15 }}>Services</Text>
           </View>
           <FlatList
@@ -202,7 +206,7 @@ const SearchScreen = ({ route, navigation }) => {
                   {/*console.log(item.node.image.uri)*/}
                   <ImageBackground
                     style={styles.image}
-                    imageStyle={{ borderRadius: width*0.2 }}
+                    imageStyle={{ borderRadius: width * 0.2 }}
                     source={{
                       uri: item.image,
                     }}
@@ -217,13 +221,13 @@ const SearchScreen = ({ route, navigation }) => {
                   <View >
                     <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
                   </View>
-                </View> : 
-                <View
+                </View> :
+                  <View
                     style={styles.image}
-                    // imageStyle={{ borderRadius: width*0.2 }}
-                    // source={{
-                    //   uri: item.image,
-                    // }}
+                  // imageStyle={{ borderRadius: width*0.2 }}
+                  // source={{
+                  //   uri: item.image,
+                  // }}
                   >
                     <View style={styles.personDetails}>
                       <View >
@@ -275,7 +279,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: "#fafafa",
     marginTop: 20,
-    marginHorizontal: width*0.05
+    marginHorizontal: width * 0.05
     // padding: 40, 
     // paddingTop: 80
   },
@@ -321,7 +325,7 @@ const styles = StyleSheet.create({
     margin: width * 0.02,
     alignSelf: 'center',
     backgroundColor: "#327FEB",
-    borderRadius: width*0.2,
+    borderRadius: width * 0.2,
 
   },
 })
