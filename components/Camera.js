@@ -1,4 +1,5 @@
-'use strict';
+/* eslint-disable eslint-comments/no-unlimited-disable */
+/* eslint-disable */
 import React, { PureComponent } from 'react';
 import { AppRegistry, ScrollView,Alert, TextInput, Platform, Dimensions,BackHandler, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
@@ -11,6 +12,7 @@ import Svg, {
 import ZoomView from './ZoomView';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { useFocusEffect } from "@react-navigation/native";
+import CompHeader from '../Modules/CompHeader';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -154,27 +156,7 @@ export default class ExampleApp extends PureComponent {
 
     return (
       <View style={styles.container}>
-      <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05 }}>
-          <Left >
-              <TouchableOpacity onPress={() => {
-                if(this.props.route.params)
-                {
-                  this.props.navigation.navigate('PostScreen', { "reload": 1, "images": [ ...this.props.route.params.images] })
-                  console.log(this.props.route.params);
-                }
-                else 
-                {
-                  this.props.navigation.navigate('Home', {
-                    screen: 'Feed',
-                  })
-                }
-              }} ><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>
-          </Left>
-          <Body>
-            <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 20, marginTop: 0 }}>Take Picture</Title> 
-          </Body>
-          <Right />
-      </Header>
+      <CompHeader screen={'Camera'} />
       <BottomSheet
           ref={ref => {
             this.sheetRef = ref;

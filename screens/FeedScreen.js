@@ -563,7 +563,7 @@ const FeedScreen = ({ navigation, route }) => {
         )
     }
     return (
-        children == 'notyet' && status == '3' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
+        children == 'notyet'  ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
 
     );
 };
