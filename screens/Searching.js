@@ -44,6 +44,7 @@ const Searching = ({ route, navigation }) => {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [result, setresult] = React.useState([]);
     const [follows, setfollows] = React.useState([]);
+    const [token, setToken] = React.useState('');
     const [currentid, setcurrentid] = React.useState('');
     useEffect(() => {
         const addfollows = async () => {
@@ -62,6 +63,27 @@ const Searching = ({ route, navigation }) => {
         addfollows()
     }, [])
     useEffect(() => {
+
+        var data = JSON.stringify({"username":"Shashwat","password":"GenioKaPassword"});
+
+        var config = {
+        method: 'post',
+        url: 'http://104.199.146.206:5000/getToken',
+        headers: { 
+            'Content-Type': 'application/json'
+        },
+        data : data
+        };
+
+        axios(config)
+        .then(function (response) {
+        // console.log(JSON.stringify(response.data.token));
+        setToken(response.data.token)
+        })
+        .catch(function (error) {
+        console.log(error);
+        });
+
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
             console.log(children)
@@ -72,7 +94,7 @@ const Searching = ({ route, navigation }) => {
     }, [])
     const onChangeSearch = query => {
         if (query != '') {
-            axios.get('http://35.221.164.203:5000/keyword/' + query.toLowerCase() + '/0')
+            axios.get('http://35.221.164.203:5000/keyword/' + query.toLowerCase() + `/0?token=${token}`)
                 .then(async (response) => {
                     setresult([])
                     var keys = Object.keys(response.data)

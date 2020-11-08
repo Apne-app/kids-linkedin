@@ -135,6 +135,7 @@ const PostScreen = ({ navigation, route }) => {
           for (i = 0; i < images.length - 1; i++) {
             var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  +  "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
             name = name + x;
+
           //   if(tag == 'Certificate')
           //   {
           //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
@@ -166,6 +167,7 @@ const PostScreen = ({ navigation, route }) => {
           // user.follow('user', '49id');
           var user = client.feed('user', String(String(children['id']) + String("id")));
           await user.addActivity(activity);
+          navigation.pop();
         }
 
         useEffect(() => {
