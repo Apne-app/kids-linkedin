@@ -10,6 +10,7 @@ var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
 
   const [children, setchildren] = useState('notyet')
+  const [status, setstatus] = useState('0')
   useEffect(() => {
     const check = async () => {
       var child = await AsyncStorage.getItem('children')
@@ -20,6 +21,13 @@ const NotificationScreen = ({ route, navigation }) => {
     }
     check()
   }, [])
+  useEffect(() => {
+    const check = async () => {
+        var st = await AsyncStorage.getItem('status')
+        setstatus(status)
+    }
+    check()
+}, [])
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
@@ -84,7 +92,7 @@ const NotificationScreen = ({ route, navigation }) => {
     )
   }
   return (
-    children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
+    children == 'notyet'  ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
   );
 }
 

@@ -96,7 +96,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState('notyet')
     const [status, setstatus] = useState('0')
     const [place, setplace] = useState('')
-    const [data, setdata] = useState({ 'followers': [], 'following': [], type:'loading' })
+    const [data, setdata] = useState({ 'followers': [], 'following': [], type: 'loading' })
     const [certi, setCerti] = useState([]);
     const [Loading, setLoading] = useState(false)
     const [option, setOption] = useState('');
@@ -228,7 +228,7 @@ const ProfileScreen = ({ navigation, route }) => {
             var user = client.feed('timeline', children['id'] + 'id');
             var following = await user.following()
             console.log(follows)
-            setdata({ 'followers': follows['results'], 'following': following['results'], type:children['data']['type'] })
+            setdata({ 'followers': follows['results'], 'following': following['results'], type: children['data']['type'] })
             // console.log(follows)
         }
         addfollows()
@@ -367,7 +367,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     <Body style={{ alignItems: 'center' }}>
                         <Title style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 28, marginTop: 0, marginLeft: -50 }}>Profile</Title>
                     </Body>
-                    <Right style={{ marginRight: 25}}>
+                    <Right style={{ marginRight: 25 }}>
                         <Icon onPress={() => { navigation.navigate('Settings') }} style={{ color: "#000", fontSize: 28 }} type="Feather" name="settings" />
                     </Right>
                 </Header>
@@ -387,11 +387,11 @@ const ProfileScreen = ({ navigation, route }) => {
                             </View>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
-                            <View style={{ flexDirection: 'row', height:33, marginBottom:4 }}>
+                            <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor:'white', color:'#327FEB',  textAlign:'center',  borderRadius:28.5, borderColor:'#327FEB', borderWidth:1, paddingHorizontal:10}}>{data.type}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{data.type}</Text>
                             </View>
                         </View>
                     </View>
@@ -422,17 +422,18 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         </View>
                     </View>
-                        <TouchableOpacity
-                         onPress={() => {
+                    <TouchableOpacity
+                        onPress={() => {
                             Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])
-                            .catch(err => {
-                                console.error("Failed opening page because: ", err)
-                                alert('Failed to open page')
-                        })}}
-            
-                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor:'#327FEB', color:'white', width:100, textAlign:'center', padding: 3,  borderRadius:15 }}>{'Website'}</Text>
-                        </TouchableOpacity>
+                                .catch(err => {
+                                    console.error("Failed opening page because: ", err)
+                                    alert('Failed to open page')
+                                })
+                        }}
+
+                        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: 'white', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
+                    </TouchableOpacity>
                     <FlatFeed feedGroup="user" />
                 </StreamApp>
             </ScrollView>
@@ -466,6 +467,13 @@ const ProfileScreen = ({ navigation, route }) => {
                 child = JSON.parse(child)
                 setchildren(child)
             }
+        }
+        check()
+    }, [])
+    useEffect(() => {
+        const check = async () => {
+            var st = await AsyncStorage.getItem('status')
+            setstatus(status)
         }
         check()
     }, [])
@@ -538,25 +546,25 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     return (
         <View>
-            {children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()}
+            {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-Next: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    padding: 12,
-    // margin: 5,
-    backgroundColor: '#327FEB',
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "#fff",
-    width: 165,
-    flex: 1,
-    marginHorizontal: 20
-  },
+    Next: {
+        alignSelf: 'center',
+        flexDirection: 'row',
+        padding: 12,
+        // margin: 5,
+        backgroundColor: '#327FEB',
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: "#fff",
+        width: 165,
+        flex: 1,
+        marginHorizontal: 20
+    },
 })
 
 export default ProfileScreen;

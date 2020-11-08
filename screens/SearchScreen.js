@@ -106,7 +106,13 @@ const SearchScreen = ({ route, navigation }) => {
   // const _keyboardDidShow = () => {
   //   navigation.navigate('Searching') 
   // };
-
+  useEffect(() => {
+    const check = async () => {
+        var st = await AsyncStorage.getItem('status')
+        setstatus(status)
+    }
+    check()
+}, [])
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
@@ -268,7 +274,7 @@ const SearchScreen = ({ route, navigation }) => {
     );
   }
   return (
-    children == 'notyet' ? loading() : Object.keys(children).length > 0 ? there() : notthere()
+    children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3'? there() : notthere()
   );
 }
 
