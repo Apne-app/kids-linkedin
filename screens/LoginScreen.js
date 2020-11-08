@@ -68,9 +68,30 @@ const LoginScreen = ({ route, navigation }) => {
   const [email, setemail] = useState('');
   const [everified, seteverified] = useState(false);
   const [visible, setvisible] = useState(false);
+  const [token, setToken] = useState('');
   const scrollcheck = useRef(null)
   const input = useRef(null)
   useEffect(() => {
+
+    var data = JSON.stringify({"username":"Shashwat","password":"GenioKaPassword"});
+
+    var config = {
+    method: 'post',
+    url: 'http://104.199.146.206:5000/getToken',
+    headers: { 
+        'Content-Type': 'application/json'
+    },
+    data : data
+    };
+    axios(config)
+    .then(function (response) {
+    // console.log(JSON.stringify(response.data.token));
+    setToken(response.data.token)
+    })
+    .catch(function (error) {
+    console.log(error);
+    });
+
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
@@ -87,7 +108,7 @@ const LoginScreen = ({ route, navigation }) => {
     // setemail(email.split(' ')[0])
     // console.log(email)
     setLoading(true);
-    axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + '/default/')
+    axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + `/default/?token=${token}`)
       .then((response) => {
         const storeProfile = async () => {
           try {
@@ -153,7 +174,7 @@ const LoginScreen = ({ route, navigation }) => {
           </View>
           <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: -20, marginBottom:-10,  textAlign: 'center' }}>Genio</Text>
           <View>
-            <LinkedIn navigation={navigation} />
+            <LinkedIn navigation={navigation} token={token} />
             <View style={{ flexDirection: 'row', alignItems: 'center', margin: 30 }}>
               <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "lightgrey", width: width / 3 }} />
               <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold', color: 'black' }} >Or</Text>

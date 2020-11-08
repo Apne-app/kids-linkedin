@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
 })
  
-const LinkedIn = ({navigation}) => {
+const LinkedIn = ({navigation, token}) => {
 
     let a, b;
     let i = 0;
@@ -47,7 +47,7 @@ const LinkedIn = ({navigation}) => {
           // setLoading(false);
           console.log(response.data.elements[0]['handle~'].emailAddress);
             c =  response.data.elements[0]['handle~'].emailAddress,
-            axios.get('http://104.199.146.206:5000/authLinkedin/' + c + '/' + b + '/' + a)
+            axios.get('http://104.199.146.206:5000/authLinkedin/' + c + '/' + b + '/' + a + `?token=${token}`)
               .then(async (response) => {
                 console.log(response.data)
                 
