@@ -134,6 +134,10 @@ const App = (props) => {
           containerRef.current?.navigate('Child')
           setinit('Child')
         }
+        if (x == '-1') {
+          containerRef.current?.navigate('Home')
+          setinit('Home')
+        }
         if (x == '3') {
           containerRef.current?.navigate('Home')
           setinit('Home')
@@ -200,7 +204,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
         <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
-        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+        <Stack.Screen options={{ headerShown: false, gestureDirection:'vertical', transitionSpec:{open:{animation:'timing', config:{duration:700}}, close:{animation:'timing', config:{duration:700}}} }} name="Login" component={LoginScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
         <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />

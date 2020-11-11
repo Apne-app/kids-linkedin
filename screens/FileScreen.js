@@ -43,7 +43,7 @@ const FileScreen = (props) => {
     const [seltopic, setSelTopic] = React.useState('');
     const [tagsPresent, setTagsPresent] = React.useState(false)
     const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
-    const [tag, setTag] = React.useState('');
+    const [tag, setTag] = React.useState('All');
 
     const [refreshing, setRefreshing] = React.useState(false);
 
@@ -405,7 +405,8 @@ const FileScreen = (props) => {
                         showsHorizontalScrollIndicator={false}
                         contentContainerStyle={{
                             flexGrow: 1,
-                            marginHorizontal: width * 0.05
+                            marginHorizontal: 20,
+                            marginTop:20
                         }}
                         // style={{marginTop: 5}}
                         renderItem={({ item, i }) => (
@@ -420,7 +421,7 @@ const FileScreen = (props) => {
                 {files.length != 0 ?
                     files.map((item, i) => {
                         return (
-                            <View style={{ paddingHorizontal: width * 0.05, marginTop: 30 }}>
+                            <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
                                 <TouchableOpacity
                                     style={{ borderRadius: 20 }}
                                     onPress={() => {

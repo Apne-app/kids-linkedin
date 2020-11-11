@@ -9,6 +9,7 @@ import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, upd
 import axios from 'axios';
 import analytics from '@segment/analytics-react-native';
 import { connect } from 'getstream';
+import CompButton from '../Modules/CompButton';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -144,12 +145,19 @@ const Searching = ({ route, navigation }) => {
 
         );
     };
-
+    const [status, setstatus] = useState('3')
+    useEffect(()=>{
+        const data = () => {
+            var st = AsyncStorage.getItem('status')
+            setstatus(st)
+        }
+        data()
+    },[])
     return (
         <Container>
-            <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, marginTop: 20 }}>
-                <Item style={{ width: width * 0.9, borderColor: "#000", height: 45, borderRadius: 10 }}>
-                    <Icon active name={searchQuery == "" ? 'search' : 'close'} type={searchQuery == "" ? "EvilIcons" : "AntDesign"} />
+            <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'white', height: 110,  }}>
+                <Item style={{ width: width * 0.9, borderColor: "#000", height: 45, borderRadius: 10, marginTop:50 }}>
+                    <Icon active name={searchQuery == "" ? 'search' : 'x'} type={'Feather'} />
                     <Input
                         autoFocus={true}
                         onChangeText={onChangeSearch}
@@ -157,14 +165,15 @@ const Searching = ({ route, navigation }) => {
                         placeholder='Search' />
                 </Item>
             </Header>
-            {searchQuery == '' ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>Search for children to follow</Text> : (result.length != 0 ? (<View><FlatList
+            {status=='3'?null:<CompButton message={'Signup/Login to find other kids'}  />}
+            {searchQuery == '' ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status=='3'?'Search for children to follow':null}</Text> :  (<View><FlatList
                 data={result}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.gsToken}
                 numColumns={1}
-                style={{ alignSelf: 'center' }}
+                style={{ alignSelf: 'center', marginTop:10 }}
             />
-            </View>) : <View style={{ backgroundColor: 'lightgrey', height: 60, width: width - 40, alignSelf: 'center', borderRadius: 10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 20, marginTop: 18 }}>Search for "{searchQuery}"</Text></View>)}
+            </View>)}
         </Container>
     );
 }

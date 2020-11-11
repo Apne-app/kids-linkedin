@@ -483,14 +483,7 @@ const FeedScreen = ({ navigation, route }) => {
     const there = (props) => {
         return (
             <SafeAreaProvider>
-                <Header style={{ backgroundColor: '#fff', flexDirection: 'row', height: 73, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2 }}>
-                    <Body style={{ alignItems: 'center', marginLeft: -20, }}>
-                        <Title style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 36, lineSpacing: 7, marginTop: 0, marginLeft: -20 }}>Genio</Title>
-                    </Body>
-                    <Right style={{ marginRight: 30, }}>
-                        <Icon style={{ fontSize: 28 }} onPress={() => navigation.navigate('Notifications')} name="bell" type="Feather" />
-                    </Right>
-                </Header>
+                <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
                 {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
@@ -553,14 +546,64 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const notthere = () => {
         return (
-            <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <ScreenHeader screen={'Genio'} icon={'bell'}/>
-                <CompButton  message={'Signup/Login to view posts from other kids'}  />
-            </View>
+            <SafeAreaProvider>
+                <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
+                <TouchableOpacity onPress={()=>navigation.navigate('Login')}><CompButton message={'Signup/Login to view posts from other kids'} /></TouchableOpacity>
+                {/* <YouTube
+                    videoId="KVZ-P-ZI6W4" // The YouTube video ID
+                    apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
+                    // onReady={e => this.setState({ isReady: true })}
+                    // onChangeState={e => this.setState({ status: e.state })}
+                    // onChangeQuality={e => this.setState({ quality: e.quality })}
+                    // onError={e => this.setState({ error: e.error })}
+                    style={{ alignSelf: 'stretch', height: 300 }}
+                /> */}
+                <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
+                    <StreamApp
+                        style={{ marginTop: 20 }}
+                        apiKey="9ecz2uw6ezt9"
+                        appId="96078"
+                        token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA'}
+                    >
+                        {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}
+                        <FlatFeed Footer={() => {
+                            return (
+                                <BottomSheet
+                                    ref={sheetRefLike}
+                                    snapPoints={[height - 200, 400, 0]}
+                                    initialSnap={2}
+                                    borderRadius={25}
+                                    renderContent={renderLikes}
+                                />
+                            )
+                        }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                    </StreamApp>
+                    <BottomSheet
+                        ref={sheetRefReport}
+                        snapPoints={[height - 200, 400, 0]}
+                        initialSnap={2}
+                        borderRadius={25}
+                        renderContent={renderReport}
+                    />
+                </SafeAreaView>
+                <Snackbar
+                    visible={showToast}
+                    style={{ marginBottom: height * 0.04 }}
+                    duration={1500}
+                    onDismiss={() => setShowToast(false)}
+                    action={{
+                        label: 'Done',
+                        onPress: () => {
+                            // Do something
+                        },
+                    }}>
+                    Post Reported
+                </Snackbar>
+            </SafeAreaProvider>
         )
     }
     return (
-        children == 'notyet'  ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
+        children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
 
     );
 };

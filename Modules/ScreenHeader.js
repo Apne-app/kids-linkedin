@@ -9,17 +9,17 @@ const CompHeader = (props) => {
         close: require('../Icons/close.png'),
         back: require('../Icons/back.png'),
     };
-    return (<Header style={{ backgroundColor: 'white', height: 90, }}>
-        <View style={{ flexDirection: 'row', marginTop: 42, flex: 1 }}>
-            <Text style={{ fontFamily: props.screen == 'Genio' ? 'FingerPaint-Regular' : 'NunitoSans-Regular', fontSize: 22, marginLeft: 10, color: props.screen == 'Genio' ? '#327FEB' : 'black', width:200 }}>{props.screen}</Text>
+    return (<Header style={{ backgroundColor: 'white', height: 110, }}>
+        <View style={{ flexDirection: 'row', marginTop: props.screen == 'Genio'?40:46, flex: 1 }}>
+            <Text style={{ fontFamily: props.screen == 'Genio' ? 'FingerPaint-Regular' : 'NunitoSans-Bold', fontSize: props.screen == 'Genio' ?40:30, marginLeft: 10, color: props.screen == 'Genio' ? '#327FEB' : 'black', width: 200 }}>{props.screen}</Text>
         </View>
         <Body>
         </Body>
         <Right>
-            <TouchableOpacity style={{ borderRadius: 20, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', marginTop: 30, marginRight: 10 }}
-                onPress={() => props.delete()}
+            <TouchableOpacity style={{ borderRadius: 20, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', marginTop: 34, marginRight: 10 }}
+                onPress={() => props.fun()}
             >
-                <Icon name={props.icon} type="Feather"  />
+                <Icon name={props.icon} type="Feather" />
             </TouchableOpacity>
         </Right>
     </Header>

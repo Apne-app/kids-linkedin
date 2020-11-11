@@ -5,6 +5,8 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput }
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import CompHeader from '../Modules/CompHeader';
+import CompButton from '../Modules/CompButton'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
@@ -23,11 +25,11 @@ const NotificationScreen = ({ route, navigation }) => {
   }, [])
   useEffect(() => {
     const check = async () => {
-        var st = await AsyncStorage.getItem('status')
-        setstatus(status)
+      var st = await AsyncStorage.getItem('status')
+      setstatus(status)
     }
     check()
-}, [])
+  }, [])
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
@@ -57,12 +59,7 @@ const NotificationScreen = ({ route, navigation }) => {
 
     return (
       <View>
-        <Header noShadow style={{ backgroundColor: '#fff', height: 60, borderBottomWidth: 0, marginTop: 10 }}>
-          <Body style={{ alignItems: 'center', flexDirection: 'row' }}>
-            <Icon type="Feather" name="arrow-left" onPress={() => navigation.navigate('Home')} />
-            <Title style={{ fontFamily: 'NunitoSans-Regular', fontSize: 28, marginTop: -5, marginLeft: 20, color: 'black' }}>Notifications</Title>
-          </Body>
-        </Header>
+        <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
         <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
           <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
           <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
@@ -81,18 +78,13 @@ const NotificationScreen = ({ route, navigation }) => {
   const notthere = () => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-        <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
-        <View style={{ backgroundColor: 'white' }}>
-          <Button onPress={() => send()} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
-            <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
-          </Button>
-        </View>
+        <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
+        <CompButton message={'Signup/Login to view/recieve notifications'} />
       </View>
     )
   }
   return (
-    children == 'notyet'  ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
+    children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
   );
 }
 

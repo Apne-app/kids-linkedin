@@ -258,7 +258,7 @@ const SearchScreen = ({ route, navigation }) => {
   const notthere = () => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <ScreenHeader screen={'Search'} icon={'search'} />
+        <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
         <CompButton message={'Signup/Login to find other kids'} />
       </View>
     )

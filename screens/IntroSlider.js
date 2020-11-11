@@ -5,6 +5,7 @@ import {View, SafeAreaView, Text, Image, StyleSheet, TouchableOpacity, StatusBar
 // import Icon from 'react-native-vector-icons/Ionicons';
 import {Icon, Button} from 'native-base'
 import AppIntroSlider from 'react-native-app-intro-slider';
+import AsyncStorage from '@react-native-community/async-storage';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -102,10 +103,11 @@ export default class App extends React.Component {
 
   _renderNextButton = () => {
     return (
-      <Button onPress={() => {
+      <Button onPress={async () => {
           this.props.navigation.navigate('Home', {
             screen: 'Post'
-          })
+          });
+          await AsyncStorage.setItem('status', '-1')
       }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width*0.86, alignSelf: 'center', marginBottom: 10}}>
         <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Continue</Text>
       </Button>

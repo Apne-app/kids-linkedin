@@ -12,7 +12,7 @@ const CompHeader = (props) => {
   return (<Header style={{ backgroundColor: 'white', height: 90, }}>
     <View style={{ flexDirection: 'row', marginTop: 42, flex: 1 }}>
       <TouchableOpacity onPress={() => props.goback()}><Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 1, marginTop: 3.5 }} source={(props.icon == 'back' ? images.back : images.close)} /></TouchableOpacity>
-      <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 22, marginLeft: 10 }}>{props.screen}</Text>
+      <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 22, marginLeft: 10,  width:200 }}>{props.screen}</Text>
     </View>
     <Body>
     </Body>

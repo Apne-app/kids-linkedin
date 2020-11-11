@@ -10,11 +10,7 @@ const CompButton = (props) => {
         close: require('../Icons/close.png'),
         back: require('../Icons/back.png'),
     };
-    return (<Button onPress={() => {
-        this.props.navigation.navigate('Home', {
-            screen: 'Post'
-        })
-    }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
+    return (<Button block dark style={{  backgroundColor: '#327FEB', borderRadius: 30, height: 50, width: width+400, alignSelf: 'center'}}>
         <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 14 }}>{props.message}</Text>
     </Button>
     )
