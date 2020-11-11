@@ -12,6 +12,7 @@ import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
 import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
+import BottomSheet from 'reanimated-bottom-sheet';
 import Gallery from './Gallery';
 import analytics from '@segment/analytics-react-native'
 import ImageView from "react-native-image-viewing";
@@ -109,6 +110,8 @@ const Upload = ({ route, navigation }) => {
   const keyboardDidShowListener = React.useRef();
   const keyboardDidHideListener = React.useRef();
 
+  const sheetRef = React.useRef(null);
+
   // React.useEffect(() => {
   //   keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
   //   keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
@@ -118,6 +121,32 @@ const Upload = ({ route, navigation }) => {
   //     keyboardDidHideListener.current.remove();
   //   };
   // }, []);
+
+  const backButtonChange = () => {
+
+    const backAction = async () => {
+      
+        setSelecting(false);
+
+        const backNew = () => {
+          saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+        }
+
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backNew
+        );
+
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+  }
 
   React.useEffect(() => {
     analytics.screen('Post Screen')
@@ -157,6 +186,8 @@ const Upload = ({ route, navigation }) => {
       backAction
     );
 
+    
+
     // console.log( "asddsd", route.params.selected, explore)
     if (route.params.selected) {
 
@@ -167,6 +198,13 @@ const Upload = ({ route, navigation }) => {
       setExplore([{ 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
       console.log(route.params.selected);
     }
+
+    return () => {
+      BackHandler.removeEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+    };
 
     // const getOrigImages = async () => {
 
@@ -471,7 +509,7 @@ const Upload = ({ route, navigation }) => {
 
       explore.map(item => {
         if (item.uri.length > 10)
-          arr.push(item.uri.slice(5, item.uri.length));
+          arr.push(item.uri);
       })
       // console.log(arr);
 
@@ -490,11 +528,12 @@ const Upload = ({ route, navigation }) => {
       let albums = JSON.parse(x);
       var c = 1;
       for (var i = 0; i < albums.length; i++) {
-        if (album[i]['albumName'] == filename) {
+        if (albums[i]['albumName'] == filename) {
           c = 0;
           break;
         }
       }
+
       if (c) {
         albums = [...albums, { 'albumName': filename, 'tagName': selectedTag }];
       }
@@ -503,8 +542,10 @@ const Upload = ({ route, navigation }) => {
 
       console.log(pdf.filePath);
       alert('PDF Saved');
+      sheetRef.current.snapTo(1)
     } catch (e) {
       console.log(e);
+      sheetRef.current.snapTo(1)
     }
   }
 
@@ -613,6 +654,49 @@ const Upload = ({ route, navigation }) => {
       setSelecting(false);
     }
   }
+
+  const renderContent = () => (
+    <View
+      scrollEnabled={false}
+      style={{
+        backgroundColor: 'white',
+        padding: 16,
+        height: height*0.4,
+      }}
+    >
+      <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
+      <Text style={{ margin: 15, fontSize: 18, fontWeight: "bold" }}>Download PDF</Text>
+      
+      <Form>
+          <Item floatingLabel>
+            <Label>PDF Name</Label>
+            <Input 
+              onChangeText={text => setFileName(text)}
+              value={filename} />
+          </Item>
+      </Form>
+      <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: height*0.12 }}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <TouchableOpacity
+            style={{ height: 60 }}
+            onPress={() => {
+              analytics.track('PDF Saved');
+              myAsyncPDFFunction()
+              // console.log(explore)
+            }}
+          >
+            <View style={styles.Next}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>
+                Download
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
+
   return (
     <View style={styles.container}>
       {/* <Header style={{ backgroundColor: "#fff" }} >
@@ -898,22 +982,22 @@ const Upload = ({ route, navigation }) => {
                         openImageViewer(index); setVisible(true);
                       }
                     }}
-                      onLongPress={() => setSelecting(true)}
+                      onLongPress={() => {setSelecting(true); backButtonChange();}}
                     >
                       <View
                         key={item.id}
                         style={{ flex: 1, }}>
                         <ImageBackground
                           style={styles.image}
-                          imageStyle={{ opacity: selecting ? 0.5 : 1, borderRadius: 20 }}
+                          imageStyle={{ opacity: selecting && item.selected ? 0.5 : 1, borderRadius: 20 }}
                           source={{
                             uri: "file://" + item.uri,
                           }}
                         >
                           {
                             selecting ?
-                              <View style={{ width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center' }} >
-                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#327FEB", fontWeight: "bold" }} /> : null}
+                              <View style={{ width: 25, height: 25, borderRadius: 20, backgroundColor: item.selected ? "#327feb" : "#fff", borderColor: "#327feb", borderWidth: item.selected ? 0 : 3, position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center' }} >
+                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#fff",  }} /> : null}
                               </View>
                               :
                               <View />
@@ -961,6 +1045,7 @@ const Upload = ({ route, navigation }) => {
             keyExtractor={(item, index) => index.toString()}
           />
         </ScrollView>
+        
       </View>
 
 
@@ -1031,7 +1116,9 @@ const Upload = ({ route, navigation }) => {
             style={{ height: 50, width: width * 0.1, alignItems: 'center' }}
             onPress={() => {
               analytics.track('PDF Saved');
-              setModalVisible(true);
+              // setModalVisible(true);
+              setFileName(new Date().toISOString().split('T')[0])
+              sheetRef.current.snapTo(0)
             }}
           >
             <Icon name="download" type="Feather" />
@@ -1101,6 +1188,14 @@ const Upload = ({ route, navigation }) => {
           <Icon name="upload-cloud" type="Feather" style={{ color: "#fff" }} />
         </Button>
       </Fab>*/}
+      <BottomSheet
+          ref={sheetRef}
+          snapPoints={[height*0.4, -200]}
+          initialSnap = {1}
+          enabledGestureInteraction={false}
+          borderRadius={25}
+          renderContent={renderContent}
+        />
 
     </View>
   );
@@ -1267,7 +1362,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",
-    width: 165,
+    width: width*0.8,
     flex: 1,
     marginHorizontal: 20
   },
