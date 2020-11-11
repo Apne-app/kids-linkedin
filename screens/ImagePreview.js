@@ -210,10 +210,11 @@ const App: () => React$Node = (props) => {
             // try {
             // await AsyncStorage.setItem('@scanImg', JSON.stringify(res) );
             console.log(res);
-            setPrevUri(uri);
-            setUri(res.uri);
+            // setPrevUri(uri);
+            // setUri(res.uri);
             setDim({ height: JSON.parse(res.height), width: JSON.parse(res.width) })
             setcroppedi(true)
+            props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri }] })
 
 
             // scannedImg = await AsyncStorage.getItem('@scanImg');
