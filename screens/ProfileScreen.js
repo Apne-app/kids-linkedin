@@ -468,7 +468,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <ScreenHeader screen={'Profile'} icon={'more-vertical'} />
+                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={()=>status=='3'?navigation.navigate('Settings'):navigation.navigate('Login')} />
                 <CompButton message={'Signup/Login to create profile'} />
             </View>
         )

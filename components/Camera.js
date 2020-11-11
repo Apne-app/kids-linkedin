@@ -259,7 +259,7 @@ export default class ExampleApp extends PureComponent {
             })
           }} style={styles.capture, { flex: 1, alignItems: 'flex-end', marginRight: width * 0.15, marginTop: 4 }}>
             <View>
-              <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/myfiles.png')} />
+              <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6, }} source={require('../Icons/myfiles.png')} />
               <Text style={{ fontFamily: 'NunitoSans-Regular' }}>My Files</Text>
             </View>
           </TouchableOpacity>

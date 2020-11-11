@@ -125,17 +125,17 @@ const Upload = ({ route, navigation }) => {
   const backButtonChange = () => {
 
     const backAction = async () => {
-      
-        setSelecting(false);
 
-        const backNew = () => {
-          saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
-        }
+      setSelecting(false);
 
-        const backHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
-          backNew
-        );
+      const backNew = () => {
+        saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+      }
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backNew
+      );
 
 
       return true;
@@ -186,7 +186,7 @@ const Upload = ({ route, navigation }) => {
       backAction
     );
 
-    
+
 
     // console.log( "asddsd", route.params.selected, explore)
     if (route.params.selected) {
@@ -661,24 +661,27 @@ const Upload = ({ route, navigation }) => {
       style={{
         backgroundColor: 'white',
         padding: 16,
-        height: height*0.4,
+        height: 300,
+        elevation:20
       }}
     >
-      <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
-      <Text style={{ margin: 15, fontSize: 18, fontWeight: "bold" }}>Download PDF</Text>
-      
+      <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
+        <View style={{backgroundColor:'lightgrey', borderRadius:20, width:100, height:5, marginTop:-4}}></View>
+      </TouchableOpacity>
+      <Text style={{ margin: 15, marginTop:20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Download PDF</Text>
+
       <Form>
-          <Item floatingLabel>
-            <Label>PDF Name</Label>
-            <Input 
-              onChangeText={text => setFileName(text)}
-              value={filename} />
-          </Item>
+        <Item floatingLabel>
+          <Label style={{ fontFamily: 'NuntoSans-Regular' }}>PDF Name</Label>
+          <Input
+            onChangeText={text => setFileName(text)}
+            value={filename} />
+        </Item>
       </Form>
-      <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: height*0.12 }}>
+      <View style={{ alignItems: 'center', flexDirection: 'row', marginTop:40}}>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <TouchableOpacity
-            style={{ height: 60 }}
+            style={{ height: 50 }}
             onPress={() => {
               analytics.track('PDF Saved');
               myAsyncPDFFunction()
@@ -686,7 +689,7 @@ const Upload = ({ route, navigation }) => {
             }}
           >
             <View style={styles.Next}>
-              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom:4 }}>
                 Download
               </Text>
             </View>
@@ -746,8 +749,8 @@ const Upload = ({ route, navigation }) => {
                 <TouchableOpacity onPress={() => { setModalVisible(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ></TouchableOpacity>
                 <Text style={styles.modalText}>Save as a PDF</Text>
                 <Item floatingLabel>
-                  <Label style={{fontFamily:'NunitoSans-Regular'}}>Collection Name</Label>
-                  <Input style={{fontFamily:'NunitoSans-Regular'}} value={filename} onChangeText={text => setFileName(text)} />
+                  <Label style={{ fontFamily: 'NunitoSans-Regular' }}>Collection Name</Label>
+                  <Input style={{ fontFamily: 'NunitoSans-Regular' }} value={filename} onChangeText={text => setFileName(text)} />
                 </Item>
                 <View>
                 </View>
@@ -904,7 +907,7 @@ const Upload = ({ route, navigation }) => {
           HeaderComponent={() => {
             return (<Header style={{ backgroundColor: 'white', height: 60 }}>
               <View style={{ flexDirection: 'row', marginTop: 14, flex: 1 }}>
-                <TouchableOpacity onPress={() => {setSelected([]);setVisible(false);}}><Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 1, marginTop: 3.5 }} source={require('../Icons/close.png')} /></TouchableOpacity>
+                <TouchableOpacity onPress={() => { setSelected([]); setVisible(false); }}><Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 1, marginTop: 3.5 }} source={require('../Icons/close.png')} /></TouchableOpacity>
               </View>
               <Body>
               </Body>
@@ -924,7 +927,7 @@ const Upload = ({ route, navigation }) => {
                   }}
                 >
                   <View style={styles.Cancel}>
-                    <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center', fontFamily:'NunitoSans-Bold' }}>
+                    <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold' }}>
                       Edit {explore[visibleImg + 1]['prevImg'] ? 'Original' : null}
                     </Text>
                   </View>
@@ -949,7 +952,7 @@ const Upload = ({ route, navigation }) => {
                   }}
                 >
                   <View style={styles.Next2}>
-                    <Text style={{ color: "#fff", flex: 1, textAlign: 'center',  fontFamily:'NunitoSans-Bold' }}>
+                    <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold' }}>
                       Add Text
                               </Text>
                   </View>
@@ -982,7 +985,7 @@ const Upload = ({ route, navigation }) => {
                         openImageViewer(index); setVisible(true);
                       }
                     }}
-                      onLongPress={() => {setSelecting(true); backButtonChange();}}
+                      onLongPress={() => { setSelecting(true); backButtonChange(); }}
                     >
                       <View
                         key={item.id}
@@ -997,7 +1000,7 @@ const Upload = ({ route, navigation }) => {
                           {
                             selecting ?
                               <View style={{ width: 25, height: 25, borderRadius: 20, backgroundColor: item.selected ? "#327feb" : "#fff", borderColor: "#327feb", borderWidth: item.selected ? 0 : 3, position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center' }} >
-                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#fff",  }} /> : null}
+                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#fff", }} /> : null}
                               </View>
                               :
                               <View />
@@ -1045,7 +1048,7 @@ const Upload = ({ route, navigation }) => {
             keyExtractor={(item, index) => index.toString()}
           />
         </ScrollView>
-        
+
       </View>
 
 
@@ -1094,7 +1097,7 @@ const Upload = ({ route, navigation }) => {
             }}
             // style={{marginTop: 5}}
             renderItem={({ item, i }) => (
-              <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB", borderRadius:30 }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB", fontFamily: 'NunitoSans-Regular' }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
+              <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB", fontFamily: 'NunitoSans-Regular' }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
             )}
             //Setting the number of column
             // numColumns={3}
@@ -1110,7 +1113,7 @@ const Upload = ({ route, navigation }) => {
             }}
           >
             <Icon name="share-2" type="Feather" />
-            <Text style={{ fontSize: 10, fontWeight: "bold", fontFamily: 'NunitoSans-Bold' }} >Share </Text>
+            <Text style={{ fontSize: 10, fontFamily: 'NunitoSans-Bold', marginLeft: 10 }} >Share </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{ height: 50, width: width * 0.1, alignItems: 'center' }}
@@ -1122,7 +1125,7 @@ const Upload = ({ route, navigation }) => {
             }}
           >
             <Icon name="download" type="Feather" />
-            <Text style={{ fontSize: 10, fontWeight: "bold", fontFamily: 'NunitoSans-Bold' }} >PDF </Text>
+            <Text style={{ fontSize: 10, fontFamily: 'NunitoSans-Bold', marginLeft: 2 }} >PDF </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{ height: 50, width: width * 0.3, alignItems: 'center' }}
@@ -1134,7 +1137,7 @@ const Upload = ({ route, navigation }) => {
             }}
           >
             <Icon name="file" type="Feather" />
-            <Text style={{ fontSize: 10, fontWeight: "bold", fontFamily: 'NunitoSans-Bold' }} >Collection  </Text>
+            <Text style={{ fontSize: 10, fontFamily: 'NunitoSans-Bold', marginLeft: 10 }} >Collection  </Text>
           </TouchableOpacity>
         </View>
         <View style={{ height: height * 0.1 }}>
@@ -1189,13 +1192,13 @@ const Upload = ({ route, navigation }) => {
         </Button>
       </Fab>*/}
       <BottomSheet
-          ref={sheetRef}
-          snapPoints={[height*0.4, -200]}
-          initialSnap = {1}
-          enabledGestureInteraction={false}
-          borderRadius={25}
-          renderContent={renderContent}
-        />
+        ref={sheetRef}
+        snapPoints={[300, -200]}
+        initialSnap={1}
+        enabledGestureInteraction={true}
+        borderRadius={30}
+        renderContent={renderContent}
+      />
 
     </View>
   );
@@ -1356,13 +1359,13 @@ const styles = StyleSheet.create({
   Next: {
     alignSelf: 'center',
     flexDirection: 'row',
-    padding: 12,
-    // margin: 5,
+    padding: 10,
+    marginBottom:4,
     backgroundColor: '#327FEB',
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",
-    width: width*0.8,
+    width: width * 0.8,
     flex: 1,
     marginHorizontal: 20
   },
@@ -1396,7 +1399,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     fontSize: 20,
     textAlign: "center",
-    fontFamily:'NunitoSans-Regular'
+    fontFamily: 'NunitoSans-Regular'
   }
 })
 

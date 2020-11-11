@@ -53,9 +53,9 @@ const DrawNav = createDrawerNavigator();
 
 //   return (
 //     <DrawNav.Navigator drawerPosition={"right"} initialRouteName="Home" >
-//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
+//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: '#327FEB', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: '#327FEB', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
+//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: '#327FEB', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
 //       {/* <DrawNav.Screen name="Tickets" component={Tickets} />
 //       <DrawNav.Screen name="Shipping" component={Shipping} /> */}
 //     </DrawNav.Navigator>
@@ -73,22 +73,22 @@ const App = (props) => {
 
   const tabs: TabsConfigsType = {
     Feed: {
-      icon: () => <Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" />
+      icon: () => <Icon style={{ color: "#327FEB", fontSize:24 }} type="Feather" name="home" />
     },
     Search: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="search" />
+      icon: () => <Icon style={{ color: '#327FEB', fontSize:24 }} type="Feather" name="search" />
     },
     Post: {
-      icon: ({ progress }) => <Icon onPress={() => console.log('navigate')} style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="scan1" />
+      icon: ({ progress }) => <Icon onPress={() => console.log('navigate')} style={{ color: '#327FEB', fontSize:24, }} type="AntDesign" name="scan1" />
     },
     Files: {
-      icon: ({ progress }) => <Icon style={{ color: '#000', fontSize: 20, }} type="AntDesign" name="file1" />
+      icon: ({ progress }) => <Icon style={{ color: '#327FEB', fontSize:24, }} type="AntDesign" name="file1" />
     },
     Notifications: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="bell" />
+      icon: () => <Icon style={{ color: '#327FEB', fontSize:24 }} type="Feather" name="bell" />
     },
     Profile: {
-      icon: () => <Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" />
+      icon: () => <Icon style={{ color: '#327FEB', fontSize:24 }} type="Feather" name="user" />
     }
   }
 
@@ -105,18 +105,19 @@ const App = (props) => {
         // tabBar={props => (
         //   <AnimatedTabBar dotColor={"#327FEB"} barColor={'white'} tabs={tabs} {...props} />
         // )} 
-      tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, tabStyle:{height:80,borderWidth: 0.5,
+      tabBarOptions={{ activeTintColor: 'purple', adaptive: true, allowFontScaling: true, style:{height:65,borderWidth: 0.5,
         borderBottomWidth: 1,
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
-        borderColor: 'transparent',} }}
+        borderColor: 'transparent',
+      elevation:20} }}
       >
-        <BottomNav.Screen name="Feed" component={FeedScreen}  options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: "#000", fontSize: 20 }} type="Feather" name="home" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>Home</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: "grey", fontSize: 20 }} type="Feather" name="home" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>Home</Text></View>}} />
-        <BottomNav.Screen name="Search" component={SearchScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: '#000', fontSize: 20, marginRight:2 }} type="Feather" name="search" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>Search</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: 'grey', fontSize: 20, marginRight:2 }} type="Feather" name="search" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>Search</Text></View>}} />
-        <BottomNav.Screen name="Post" style={{backgroundColor:'transparent'}} component={PostScreenNavig} options={{tabBarLabel: '', tabBarIcon:({focused})=><LinearGradient locations={[0.9,1]} colors={['transparent', '#f5f5f5']} style={{borderRadius:10000,marginBottom:65, }}><Icon name={'plus'} type="Feather" style={{backgroundColor:'#327FEB', borderRadius:10000, color:'white', width:54, height:54, fontSize:30, padding:12,}} /></LinearGradient>}} />
-        <BottomNav.Screen name="Files" component={FileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: '#000', fontSize: 20 }} type="AntDesign" name="file1" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>My Files</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: 'grey', fontSize: 20 }} type="AntDesign" name="file1" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>My Files</Text></View>}} />
-        <BottomNav.Screen name="Profile" component={ProfileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: '#000', fontSize: 20 }} type="Feather" name="user" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:10, color: "#000",}}>Profile</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:15}}><Icon style={{ color: 'grey', fontSize: 20 }} type="Feather" name="user" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:10, color: "grey",}}>Profile</Text></View>}} />
-        {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: 'black', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
+        <BottomNav.Screen name="Feed" component={FeedScreen}  options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: "#327FEB", fontSize:24 }} type="Feather" name="home" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:13, color: "#327FEB",}}>Home</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: "grey", fontSize:24 }} type="Feather" name="home" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:13, color: "grey",}}>Home</Text></View>}} />
+        <BottomNav.Screen name="Search" component={SearchScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: '#327FEB', fontSize:24, marginRight:2 }} type="Feather" name="search" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:13, color: "#327FEB",}}>Search</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: 'grey', fontSize:24, marginRight:2 }} type="Feather" name="search" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:13, color: "grey",}}>Search</Text></View>}} />
+        <BottomNav.Screen name="Post" style={{backgroundColor:'transparent'}} component={PostScreenNavig} options={{tabBarLabel: '', tabBarIcon:({focused})=><LinearGradient locations={[0.9,1]} colors={['transparent', '#f5f5f5']} style={{borderRadius:10000,marginBottom:45, }}><Icon name={'camera'} type="Feather" style={{backgroundColor:'#327FEB', borderRadius:10000, color:'white', width:65, height:65, fontSize:25, padding:20.5, marginBottom:4}} /></LinearGradient>}} />
+        <BottomNav.Screen name="Files" component={FileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: '#327FEB', fontSize:24 }} type="AntDesign" name="file1" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:13, color: "#327FEB",}}>My Files</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: 'grey', fontSize:24 }} type="AntDesign" name="file1" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:13, color: "grey",}}>My Files</Text></View>}} />
+        <BottomNav.Screen name="Profile" component={ProfileScreen} options={{tabBarLabel: '', tabBarIcon:({focused})=>focused?<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: '#327FEB', fontSize:24 }} type="Feather" name="user" /><Text style={{fontFamily:'NunitoSans-Bold',fontSize:13, color: "#327FEB",}}>Profile</Text></View>:<View style={{flexDirection:'column', alignItems:'center', marginBottom:-14}}><Icon style={{ color: 'grey', fontSize:24 }} type="Feather" name="user" /><Text style={{fontFamily:'NunitoSans-Regular',fontSize:13, color: "grey",}}>Profile</Text></View>}} />
+        {/* <BottomNav.Screen name="Scan" component={PostFolder} options={{ tabBarIcon: ({ focused, size }) => (<Icon style={{ color: '#327FEB', fontSize: size }} type="AntDesign" name="scan1" />), tabBarLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 10, marginTop: -5 }}>Scan</Text>) }} /> */}
       </BottomNav.Navigator>
     )
   }
