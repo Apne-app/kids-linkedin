@@ -19,6 +19,8 @@ import { RNS3 } from 'react-native-aws3';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { connect } from 'getstream';
 import { set } from 'react-native-reanimated';
+import ScreenHeader from '../Modules/ScreenHeader'
+import CompButton from '../Modules/CompButton'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
@@ -221,25 +223,25 @@ const ProfileScreen = ({ navigation, route }) => {
 
     useEffect(() => {
 
-        var data = JSON.stringify({"username":"Shashwat","password":"GenioKaPassword"});
+        var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
 
         var config = {
-        method: 'post',
-        url: 'http://104.199.146.206:5000/getToken',
-        headers: { 
-            'Content-Type': 'application/json'
-        },
-        data : data
+            method: 'post',
+            url: 'http://104.199.146.206:5000/getToken',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
         };
 
         axios(config)
-        .then(function (response) {
-        // console.log(JSON.stringify(response.data.token));
-        setToken(response.data.token)
-        })
-        .catch(function (error) {
-        console.log(error);
-        });
+            .then(function (response) {
+                // console.log(JSON.stringify(response.data.token));
+                setToken(response.data.token)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
 
         const addfollows = async () => {
@@ -386,14 +388,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const there = () => {
         return (<View>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 73, borderBottomWidth: 0, paddingTop: 25, paddingBottom: 20, elevation: 2 }}>
-                    <Body style={{ alignItems: 'center' }}>
-                        <Title style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 28, marginTop: 0, marginLeft: -50 }}>Profile</Title>
-                    </Body>
-                    <Right style={{ marginRight: 25 }}>
-                        <Icon onPress={() => { navigation.navigate('Settings') }} style={{ color: "#000", fontSize: 28 }} type="Feather" name="settings" />
-                    </Right>
-                </Header>
+                <ScreenHeader screen={'Profile'} icon={'more-vertical'} />
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
                     appId={'96078'}
@@ -473,13 +468,8 @@ const ProfileScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
-                <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
-                <View style={{ backgroundColor: 'white' }}>
-                    <Button onPress={() => navigation.navigate('Child')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
-                        <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
-                    </Button>
-                </View>
+                <ScreenHeader screen={'Profile'} icon={'more-vertical'} />
+                <CompButton message={'Signup/Login to create profile'} />
             </View>
         )
     }

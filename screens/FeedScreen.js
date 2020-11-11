@@ -22,6 +22,8 @@ import analytics from '@segment/analytics-react-native';
 import { Chip } from 'react-native-paper';
 import { clockRunning, set } from 'react-native-reanimated';
 import YouTube from 'react-native-youtube';
+import ScreenHeader from '../Modules/ScreenHeader'
+import CompButton from '../Modules/CompButton'
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
@@ -552,13 +554,8 @@ const FeedScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <Image source={require('../assets/locked.gif')} style={{ height: 300, width: 300, alignSelf: 'center' }} />
-                <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>You haven't added your child's details yet. Please add to use the social network</Text>
-                <View style={{ backgroundColor: 'white' }}>
-                    <Button onPress={() => navigation.navigate('Child')} block dark style={{ marginTop: 30, backgroundColor: '#91d7ff', borderRadius: 10, height: 50, width: width - 40, alignSelf: 'center', marginHorizontal: 20 }}>
-                        <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, marginTop: 2 }}>Add child's details</Text>
-                    </Button>
-                </View>
+                <ScreenHeader screen={'Genio'} icon={'bell'}/>
+                <CompButton  message={'Signup/Login to view posts from other kids'}  />
             </View>
         )
     }
