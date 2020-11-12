@@ -244,7 +244,7 @@ export default class ExampleApp extends PureComponent {
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => { this.props.navigation.navigate('GalleryScreen')}} style={styles.capture, { flex: 1, alignItems: 'flex-start', marginLeft: width * 0.15, marginTop: 5 }}>
+          <TouchableOpacity onPress={() => { this.props.navigation.navigate('GalleryScreen') }} style={styles.capture, { flex: 1, alignItems: 'flex-start', marginLeft: width * 0.15, marginTop: 5 }}>
             <View>
               <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/gallery.png')} />
               <Text style={{ fontFamily: 'NunitoSans-Regular' }}>Gallery</Text>
@@ -257,10 +257,10 @@ export default class ExampleApp extends PureComponent {
             this.props.navigation.navigate('Home', {
               screen: 'Files',
             })
-          }} style={styles.capture, { flex: 1, alignItems: 'flex-end', marginRight: width * 0.15, marginTop: 4 }}>
+          }} style={styles.capture, { flex: 1, alignItems: 'flex-end', marginRight: width * 0.1, marginTop: 9 }}>
             <View>
-              <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6, }} source={require('../Icons/myfiles.png')} />
-              <Text style={{ fontFamily: 'NunitoSans-Regular' }}>My Files</Text>
+              <Icon style={{ color: 'black', fontSize: 24, alignSelf:'center' }} type="AntDesign" name="file1" />
+              <Text style={{ fontFamily: 'NunitoSans-Regular', marginTop: 6 }}>Collections</Text>
             </View>
           </TouchableOpacity>
         </View>

@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
@@ -82,6 +82,14 @@ const Upload = ({ route, navigation }) => {
   })
 
   const [uploading, setUploading] = React.useState({});
+  const [status, setstatus] = useState('1')
+  useEffect(() => {
+    const check = async () => {
+      var st = await AsyncStorage.getItem('status')
+      setstatus(status)
+    }
+    check()
+  }, [])
 
   const [active, setActive] = React.useState(1)
   const [openImg, setopenImage] = React.useState(0);
@@ -662,13 +670,13 @@ const Upload = ({ route, navigation }) => {
         backgroundColor: 'white',
         padding: 16,
         height: 300,
-        elevation:20
+        elevation: 20
       }}
     >
       <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
-        <View style={{backgroundColor:'lightgrey', borderRadius:20, width:100, height:5, marginTop:-4}}></View>
+        <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, width: 100, height: 5, marginTop: -4 }}></View>
       </TouchableOpacity>
-      <Text style={{ margin: 15, marginTop:20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Download PDF</Text>
+      <Text style={{ margin: 15, marginTop: 20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Download PDF</Text>
 
       <Form>
         <Item floatingLabel>
@@ -678,7 +686,7 @@ const Upload = ({ route, navigation }) => {
             value={filename} />
         </Item>
       </Form>
-      <View style={{ alignItems: 'center', flexDirection: 'row', marginTop:40}}>
+      <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 40 }}>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <TouchableOpacity
             style={{ height: 50 }}
@@ -689,7 +697,7 @@ const Upload = ({ route, navigation }) => {
             }}
           >
             <View style={styles.Next}>
-              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom:4 }}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom: 4 }}>
                 Download
               </Text>
             </View>
@@ -1144,12 +1152,12 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50 }}
             onPress={() => {
-              var ar = explore;
+             var ar = explore;
               var arr = [];
               for (var i = 1; i < ar.length; i++) {
                 arr.push({ uri: 'file://' + ar[i]["uri"] })
               }
-              navigation.navigate('CreatePost', { images: arr, tag: selectedTag })
+              status==='3'?navigation.navigate('CreatePost', { images: arr, tag: selectedTag }):navigation.navigate('Login')
             }}
           >
             <View style={styles.Next}>
@@ -1360,7 +1368,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     padding: 10,
-    marginBottom:4,
+    marginBottom: 4,
     backgroundColor: '#327FEB',
     borderRadius: 30,
     borderWidth: 1,
