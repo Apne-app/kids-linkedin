@@ -86,7 +86,7 @@ const SearchScreen = ({ route, navigation }) => {
     }
   ])
   const [children, setchildren] = useState('notyet')
-  const [status, setstatus] = useState('0')
+  const [status, setstatus] = useState('3')
   useEffect(() => {
     const check = async () => {
       var child = await AsyncStorage.getItem('children')
@@ -111,7 +111,7 @@ const SearchScreen = ({ route, navigation }) => {
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
-      setstatus(status)
+      setstatus(st)
     }
     check()
   }, [])
@@ -143,13 +143,7 @@ const SearchScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <Container>
-        <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 81, borderBottomWidth: 0, paddingBottom: 20, paddingTop: 25, elevation: 2 }}>
-
-          <Item style={{ width: width * 0.9, borderColor: "#000", height: 36, borderRadius: 10 }}>
-            <Icon style={{ fontSize: 30 }} active name='search' type="EvilIcons" />
-            <Input showSoftInputOnFocus={false} style={{ fontSize: 16 }} placeholder='Search' onResponderStart={() => navigation.navigate('Searching')} />
-          </Item>
-        </Header>
+        <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
         <Content style={styles.container}>
           <View >
             <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15 }}>Kids</Text>

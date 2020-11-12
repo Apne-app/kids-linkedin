@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -44,10 +44,17 @@ const FileScreen = (props) => {
     const [tagsPresent, setTagsPresent] = React.useState(false)
     const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
     const [tag, setTag] = React.useState('All');
+    const [status, setstatus] = React.useState('3');
 
     const [refreshing, setRefreshing] = React.useState(false);
 
-
+    useEffect(() => {
+        const check = async () => {
+            var st = await AsyncStorage.getItem('status')
+            setstatus(st)
+        }
+        check()
+    }, [])
     const uploadToS3 = (i, email) => {
 
         // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
@@ -374,7 +381,7 @@ const FileScreen = (props) => {
     return (
         <Container>
             <ScreenHeader screen={'Collections'}  />
-            <CompButton message={'Signup/Login to backup your collections'} />
+            {status==='3'?null:<CompButton message={'Signup/Login to backup your collections'} />}
             <ImageView
                 images={selected}
                 imageIndex={0}

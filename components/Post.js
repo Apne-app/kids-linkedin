@@ -86,7 +86,7 @@ const Upload = ({ route, navigation }) => {
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
-      setstatus(status)
+      setstatus(st)
     }
     check()
   }, [])

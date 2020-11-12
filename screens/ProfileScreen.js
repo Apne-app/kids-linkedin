@@ -96,7 +96,7 @@ const fontConfig = {
 };
 const ProfileScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState('notyet')
-    const [status, setstatus] = useState('0')
+    const [status, setstatus] = useState('3')
     const [place, setplace] = useState('')
     const [data, setdata] = useState({ 'followers': [], 'following': [], type: 'loading' })
     const [certi, setCerti] = useState([]);
@@ -486,7 +486,7 @@ const ProfileScreen = ({ navigation, route }) => {
     useEffect(() => {
         const check = async () => {
             var st = await AsyncStorage.getItem('status')
-            setstatus(status)
+            setstatus(st)
         }
         check()
     }, [])
