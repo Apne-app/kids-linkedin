@@ -36,6 +36,8 @@ target 'kids' do
 
   pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot'
 
+  pod 'RNShare', :path => '../node_modules/react-native-share'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing

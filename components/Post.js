@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
+import Share from 'react-native-share';
 import { ScrollView, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -95,6 +96,7 @@ const Upload = ({ route, navigation }) => {
   const [openImg, setopenImage] = React.useState(0);
 
   const [filename, setFileName] = React.useState('')
+  const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
 
   const [deleteCount, setDeleteCount] = React.useState(0)
 
@@ -119,6 +121,7 @@ const Upload = ({ route, navigation }) => {
   const keyboardDidHideListener = React.useRef();
 
   const sheetRef = React.useRef(null);
+  const closeRef = React.useRef(null);
 
   // React.useEffect(() => {
   //   keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
@@ -130,14 +133,62 @@ const Upload = ({ route, navigation }) => {
   //   };
   // }, []);
 
+  const shareImage = async () => {
+    var ar = explore;
+    var arr = [];
+    for (var i = 1; i < ar.length; i++) {
+      // var base64data = await RNFS.readFile('file://' + ar[i]["uri"], 'base64').then();
+      arr.push('file://' + ar[i]["uri"])
+    }
+    const shareOptions = {
+          title: 'Genio',
+          subject: 'Check out my collection. Create your own such collections at Genio',
+          message: 'Check out my collection. Create your own such collections at Genio',
+          urls: arr,
+        };
+    return Share.open(shareOptions);
+};
+
   const backButtonChange = () => {
 
     const backAction = async () => {
 
       setSelecting(false);
 
+
       const backNew = () => {
-        saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+        // saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+        
+          setBottomSheetOpen(true)
+          closeRef.current.snapTo(0)
+      }
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backNew
+      );
+
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+  }
+
+  const backButtonChange2 = () => {
+
+    const backAction = async () => {
+
+      sheetRef.current.snapTo(1);
+
+      const backNew = () => {
+        // saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+        
+          closeRef.current.snapTo(0)
       }
 
       const backHandler = BackHandler.addEventListener(
@@ -160,31 +211,9 @@ const Upload = ({ route, navigation }) => {
     analytics.screen('Post Screen')
     console.log(explore)
     const backAction = async () => {
-      // try {
-      //     await AsyncStorage.removeItem("OrigImages");
-      //     saveImages();
-      //     // return true;
-      // }
-      // catch(exception) {
-      //   console.log(exception)
-      //     // return false;
-      // }
+      
+      closeRef.current.snapTo(0)
 
-      // Alert.alert("Hold on!", "Are you sure you want to Et?", [
-      //           {
-      //               text: "Cancel",
-      //               onPress: () => null,
-      //               style: "cancel"
-      //           },
-      //           { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
-      //       ]);
-
-      if (selecting) {
-        setSelecting(false)
-      }
-      else {
-        saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
-      }
 
       return true;
     };
@@ -238,39 +267,6 @@ const Upload = ({ route, navigation }) => {
     // console.log(route.params.images)
   }, [])
 
-
-
-  // useFocusEffect(
-  //       React.useCallback(() => {
-  //       const backAction = async () => {
-  //         // try {
-  //         //     await AsyncStorage.removeItem("OrigImages");
-  //         //     saveImages();
-  //         //     // return true;
-  //         // }
-  //         // catch(exception) {
-  //         //   console.log(exception)
-  //         //     // return false;
-  //         // }
-
-  //         Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-  //                   {
-  //                       text: "Cancel",
-  //                       onPress: () => null,
-  //                       style: "cancel"
-  //                   },
-  //                   { text: "YES", onPress: () => {saveImages();navigation.navigate('Home', {screen: 'Feed'})} }
-  //               ]);
-
-
-  //       return true;
-  //     };
-
-  //     const backHandler = BackHandler.addEventListener(
-  //       "hardwareBackPress",
-  //       backAction
-  //     );
-  //   }, []));
 
 
 
@@ -416,29 +412,21 @@ const Upload = ({ route, navigation }) => {
 
   }
 
-  // useFocusEffect(
-  //       React.useCallback(() => {
-  //       const backAction = async () => {
-  //         try {
-  //             saveImages(); deleteOrigImages() ;
-  //             // navigation.navigate('Home', { screen: 'Feed'})
-  //             // return true;
-  //         }
-  //         catch(exception) {
-  //           console.log(exception)
-  //             // return false;
-  //         }
-  //       navigation.navigate('Home', {
-  //       screen: 'Feed',
-  //     })
-  //       return true;
-  //     };
+  useFocusEffect(
+        React.useCallback(() => {
+        const backAction = async () => {
+      
+          closeRef.current.snapTo(0)
 
-  //     const backHandler = BackHandler.addEventListener(
-  //       "hardwareBackPress",
-  //       backAction
-  //     );
-  //   }, []));
+
+          return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction
+        );
+    }, []));
 
 
   // getImages();
@@ -699,6 +687,58 @@ const Upload = ({ route, navigation }) => {
             <View style={styles.Next}>
               <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom: 4 }}>
                 Download
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
+  const renderClosing = () => (
+    <View
+      scrollEnabled={false}
+      style={{
+        backgroundColor: 'white',
+        padding: 16,
+        height: 300,
+        elevation: 20
+      }}
+    >
+      <TouchableOpacity onPress={() => closeRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
+        <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, width: 100, height: 5, marginTop: -4 }}></View>
+      </TouchableOpacity>
+      <Text style={{ margin: 15, marginTop: 20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Save your collection?</Text>
+
+      <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 100 }}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <TouchableOpacity
+            style={{ height: 50 }}
+            onPress={() => {
+              analytics.track('Didn"t save collection');
+              navigation.navigate('Home', { screen: 'Feed' })
+              // console.log(explore)
+            }}
+          >
+            <View style={styles.Next}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom: 4 }}>
+                No
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <TouchableOpacity
+            style={{ height: 50 }}
+            onPress={() => {
+              analytics.track('Collection Saved');
+              saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+              // console.log(explore)
+            }}
+          >
+            <View style={styles.Next}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom: 4 }}>
+                Yes
               </Text>
             </View>
           </TouchableOpacity>
@@ -1117,7 +1157,7 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50, width: width * 0.3, alignItems: 'center' }}
             onPress={() => {
-
+              shareImage();
             }}
           >
             <Icon name="share-2" type="Feather" />
@@ -1128,8 +1168,10 @@ const Upload = ({ route, navigation }) => {
             onPress={() => {
               analytics.track('PDF Saved');
               // setModalVisible(true);
+              setBottomSheetOpen(true);
               setFileName(new Date().toISOString().split('T')[0])
               sheetRef.current.snapTo(0)
+              backButtonChange2();
             }}
           >
             <Icon name="download" type="Feather" />
@@ -1203,9 +1245,23 @@ const Upload = ({ route, navigation }) => {
         ref={sheetRef}
         snapPoints={[300, -200]}
         initialSnap={1}
+        onCloseEnd={() => {
+          setBottomSheetOpen(false);
+        }}
         enabledGestureInteraction={true}
         borderRadius={30}
         renderContent={renderContent}
+      />
+      <BottomSheet
+        ref={closeRef}
+        snapPoints={[300, -200]}
+        initialSnap={1}
+        onCloseEnd={() => {
+          setBottomSheetOpen(false);
+        }}
+        enabledGestureInteraction={true}
+        borderRadius={30}
+        renderContent={renderClosing}
       />
 
     </View>
@@ -1373,7 +1429,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",
-    width: width * 0.8,
+    width: width * 0.4,
     flex: 1,
     marginHorizontal: 20
   },

@@ -40,15 +40,16 @@ const Gallery = (props) =>  {
                 PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
                 {
                     'title': 'Access Storage',
-                    'message': 'Access Storage for the pictures'
+                    'message': 'Access Storage for the pictures',
+                    'buttonPositive': 'Ok'
                 }
                 )
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log("You can use read from the storage");
+                console.log("You can use read from the storage 1");
 
                  CameraRoll.getPhotos({
                     first: 100,
-                    assetType: 'All',
+                    assetType: 'Photos',
                     })
                     .then(r => {
                     setGallery([ ...r.edges ]);
@@ -82,7 +83,7 @@ const Gallery = (props) =>  {
                   style={{ flex: 1 }}
                   onPress={() => {
                     setSelected(item.node.image.uri)
-                    props.navigation.navigate('Preview', {'img': item.node.image.uri});
+                    props.navigation.navigate('Preview', { 'img': item.node.image.uri, 'height': Image.getSize(item.node.image.uri, (width, height) => {return height;}), 'width': Image.getSize(item.node.image.uri, (width, height) => {return width;}), 'images': props.images ? props.images : [] });
                     // console.log(props.navigation);  
                   }}>
                   {/*console.log(item.node.image.uri)*/}

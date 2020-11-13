@@ -8,7 +8,8 @@ import CameraRoll from "@react-native-community/cameraroll";
 import Gallery from '../components/Gallery'
 import CompHeader from '../Modules/CompHeader';
 var height = Dimensions.get('screen').height;
-const GalleryScreen = ({navigation}) => {
+const GalleryScreen = ({navigation, route}) => {
+    console.log(route.params)
     return (
         <View
             // scrollEnabled={false}
@@ -18,7 +19,7 @@ const GalleryScreen = ({navigation}) => {
             }}
         >
             <CompHeader screen={'Gallery'} />
-            <Gallery navigation={navigation} />
+            <Gallery images={route.params.images} navigation={navigation} />
         </View>
     )
 }

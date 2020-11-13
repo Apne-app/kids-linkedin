@@ -147,6 +147,7 @@ const FileScreen = (props) => {
                 })
 
                 fls.sort();
+                fls.reverse();
                 var arr = [];
 
                 for (var i = 0; i < fls.length;) {
@@ -170,93 +171,6 @@ const FileScreen = (props) => {
             });
 
 
-        // CameraRoll.getAlbums({
-        //             // first: 100,
-        //             assetType: 'All',
-        //             })
-        //             .then(async r => {
-        //                 // console.log(r);
-
-        //                 var arr = [];
-        //                 var fls = [];
-        //                 if(albums)
-        //                 {
-
-        //                 for(var i = 0; i < r.length; i++)
-        //                 {
-        //                     for(var j = 0; j < albums.length; j++)
-        //                     {
-        //                         if(albums[j]['albumName'] == r[i].title)
-        //                         {
-        //                         // console.log(albums[j], r[i].title)
-        //                         var y = albums[j]['albumName'];
-        //                         var z = albums[j]['tagName'];
-        //                             await CameraRoll.getPhotos({
-        //                                 first: r[i].count,
-        //                                 assetType: 'All',
-        //                                 groupName: albums[j]['albumName']
-        //                             })
-        //                             .then(r => {
-        //                                 // console.log(r.edges[0].node.group_name, "asd");
-        //                                 for(var k = 0; k < r.edges.length; k++)
-        //                                 {
-        //                                     r.edges[k].node['checked'] = false;
-        //                                 }
-        //                                 arr.push( {'name': y, 'files': r.edges, 'tag': z} );
-        //                                 fls.push({...r.edges, 'tag': z});
-        //                                 // setFiles([ ...files, { 'name': y, 'files': r.edges} ])
-
-        //                             })
-        //                         }
-        //                     }
-        //                 }
-        //                 }
-
-        //                 // fls.sort(function(x, y){
-        //                 //     return x.node.timestamp - y.node.timestamp;
-        //                 // })
-
-        //                 console.log('aasasa',fls);
-        //                 var filesss = [];
-
-        //                 // for(var m = 0; m < fls.length; )
-        //                 // {
-        //                 //     var mb = fls[m].node.timestamp;
-        //                 //     var tempArr = [], tag = 
-        //                 //     while(fls[m].node.timestamp == mb)
-        //                 //     {
-
-        //                 //     }
-        //                 // }
-
-
-        //                 console.log(arr);
-        //                 let tempImg = await AsyncStorage.getItem('tempImg');
-        //                 tempImg = JSON.parse(tempImg);
-        //                 // console.log(tempImg);
-        //                 var array = arr;
-        //                 if(tempImg)
-        //                 {
-
-        //                 // for(var i = 0; i < tempImg.files.length; i++)
-        //                 // {
-        //                 //     console.log(tempImg.files[i]);
-        //                 //     array.push()
-        //                 // }
-
-        //                 array.push(tempImg);
-        //                 // setFiles([ ...files, ...array ]);
-        //                 }
-        //                 setFiles([ ...array ]);
-        //             })
-        //             .catch((err) => {
-        //                 //Error Loading 
-        //                 console.log(err);
-        //         });
-
-
-
-
     }
 
 
@@ -274,7 +188,8 @@ const FileScreen = (props) => {
                     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
                     {
                         'title': 'Access Storage',
-                        'message': 'Access Storage for the pictures'
+                        'message': 'Access Storage for the pictures',
+                        'buttonPositive': 'Ok'
                     }
                 )
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -306,7 +221,8 @@ const FileScreen = (props) => {
                     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
                     {
                         'title': 'Access Storage',
-                        'message': 'Access Storage for the pictures'
+                        'message': 'Access Storage for the pictures',
+                        'buttonPositive': 'Ok'
                     }
                 )
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {

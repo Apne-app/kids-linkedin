@@ -3,7 +3,7 @@
 import React, { PureComponent } from 'react';
 import { AppRegistry, ScrollView, Alert, TextInput, Platform, Dimensions, BackHandler, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
+import { Container, Header, Content, Spinner, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
 import Gallery from './Gallery'
 import Svg, {
@@ -24,7 +24,7 @@ export default class ExampleApp extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = { zoom: 0.0, gallery: new Array(), side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false };
+    this.state = { zoom: 0.0, gallery: new Array(), imagetaken: false, side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false };
   }
   _onPinchStart = () => {
     this._prevPinch = 1
@@ -51,25 +51,31 @@ export default class ExampleApp extends PureComponent {
 
 
 
+  
+
   componentDidMount() {
 
 
     const func = async () => {
 
+
+
       try {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
             'title': 'Access Storage',
-            'message': 'Access Storage for the pictures'
-          }
+            'message': 'Access Storage for the pictures',
+            'buttonPositive': 'Ok'
+        }
         )
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use read from the storage");
+          console.log("You can use read from the storage 2");
+          // requestCameraPermission();
 
           CameraRoll.getPhotos({
             first: 100,
-            assetType: 'All',
+            assetType: 'Photos',
           })
             .then(r => {
               // setGallery([ ...r.edges ]);
@@ -88,12 +94,19 @@ export default class ExampleApp extends PureComponent {
 
         } else {
           console.log("Storage permission denied")
+          // requestCameraPermission();
         }
       } catch (err) {
         console.warn(err)
       }
     }
     func();
+
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener("focus", () => {      
+    // Call ur function here.. or add logic.  
+    this.setState({ ...this.state, imagetaken: false })   
+    });
 
     this.focusListener = this.props.navigation.addListener("focus", () => {
 
@@ -130,6 +143,9 @@ export default class ExampleApp extends PureComponent {
     }, 5000);
 
   };
+//   componentDidMount(){
+    
+// }
 
 
   render() {
@@ -145,7 +161,7 @@ export default class ExampleApp extends PureComponent {
         }}
       >
         <TouchableOpacity onPress={() => { this.sheetRef.snapTo(1); this.setState({ ...this.state, isGalleryOpen: false }); }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon style={{ color: "black" }} name="chevron-small-down" type="Entypo" /></TouchableOpacity>
-        <Gallery navigation={this.props.navigation} />
+        
       </View>
     );
 
@@ -244,15 +260,18 @@ export default class ExampleApp extends PureComponent {
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => { this.props.navigation.navigate('GalleryScreen') }} style={styles.capture, { flex: 1, alignItems: 'flex-start', marginLeft: width * 0.15, marginTop: 5 }}>
+          <TouchableOpacity onPress={() => { this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] }) }} style={styles.capture, { flex: 1, alignItems: 'flex-start', marginLeft: width * 0.15, marginTop: 5 }}>
             <View>
               <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/gallery.png')} />
               <Text style={{ fontFamily: 'NunitoSans-Regular' }}>Gallery</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, { flex: 2, alignItems: 'center', marginTop: -10 }}>
+          { !this.state.imagetaken ? <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, { flex: 2, alignItems: 'center', marginTop: -10 }}>
             <Icon type="Entypo" name="circle" style={{ color: "grey", fontSize: 70 }} />
           </TouchableOpacity>
+          :
+          <Spinner color='blue' style={{justifyContent: 'center', marginBottom: 5}} />
+          }
           <TouchableOpacity onPress={() => {
             this.props.navigation.navigate('Home', {
               screen: 'Files',
@@ -271,6 +290,7 @@ export default class ExampleApp extends PureComponent {
 
   takePicture = async () => {
     // console.log(this.state.gallery);
+    this.setState({ ...this.state, imagetaken: true });
     if (this.camera) {
       const options = { quality: 0.5, base64: true, fixOrientation: true };
       const data = await this.camera.takePictureAsync(options);
