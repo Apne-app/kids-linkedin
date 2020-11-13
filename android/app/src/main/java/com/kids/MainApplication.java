@@ -37,18 +37,14 @@ import org.unimodules.adapters.react.ModuleRegistryAdapter;
 import org.unimodules.adapters.react.ReactModuleRegistryProvider;
 import org.unimodules.core.interfaces.SingletonModule;
 
-<<<<<<< HEAD
 public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
   @Override
   public String getFileProviderAuthority() {
          return BuildConfig.APPLICATION_ID + ".provider";
   }
-
-=======
-public class MainApplication extends Application implements ReactApplication {
   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
->>>>>>> ada886eaf12317534fbe6bd36a262cbaf1cd5fdc
+
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override
@@ -118,3 +114,4 @@ public class MainApplication extends Application implements ReactApplication {
     }
   }
 }
+
