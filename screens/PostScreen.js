@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, ScrollView, Keyboard, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Textarea } from 'native-base';
+import { Container, Header, Content, Form, Item, Spinner, Input, Toast, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Textarea } from 'native-base';
 import axios from 'axios';
+import { Snackbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useFocusEffect } from "@react-navigation/native";
@@ -43,6 +44,8 @@ const PostScreen = ({ navigation, route }) => {
         const [tag, setTag] = useState('');
         const [caption, setCaption] = useState('')
         const [last, setLast] = useState(0);
+        const [showToast, setShowToast] = useState(false)
+        const [loading, setLoading] = useState(false);
         const [keyboardOffset, setKeyboardOffset] = useState(0);
         const keyboardDidShowListener = React.useRef();
         const keyboardDidHideListener = React.useRef();
@@ -107,7 +110,8 @@ const PostScreen = ({ navigation, route }) => {
             //   ...obj
             // })
 
-            if (i == images.length - 2) alert("Uploaded");
+            // if (i == images.length - 2) alert("Uploaded");
+            setShowToast(true);
 
           })
             .catch(err => {
@@ -118,6 +122,7 @@ const PostScreen = ({ navigation, route }) => {
         }
 
         const PostUpload = async (tagged) => {
+          setLoading(true);
           console.log(tagged)
           var i;  
           // setTimeout(() => {
@@ -170,7 +175,11 @@ const PostScreen = ({ navigation, route }) => {
           var user = client.feed('user', String(String(children['id']) + String("id")));
           var dat = await user.addActivity(activity);
           console.log(activity)
+          setLoading(false);
+          setShowToast(true);
+          setTimeout(() => {
           navigation.pop();
+          }, 1500)
         }
 
         useEffect(() => {
@@ -188,6 +197,21 @@ const PostScreen = ({ navigation, route }) => {
 
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
+            <Snackbar
+                visible={showToast}
+                style={{ marginBottom: height * 0.1 }}
+                duration={1500}
+                onDismiss={() => setShowToast(false)}
+                action={{
+                    label: 'Done',
+                    onPress: () => {
+                        // Do something
+                    },
+                }}>
+                Post Reported
+            </Snackbar>
+            
+            {loading ? <Spinner color='blue' style={styles.loading} /> : null}
                 {
                   images.length > 1 ?
                   <SliderBox
@@ -258,9 +282,9 @@ const PostScreen = ({ navigation, route }) => {
                         // console.log(ar, arr);
                         setImages([ ...ar ]);
                     }}>
-                        <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 6, right: 6, alignItems: 'center', justifyContent: 'center'}} >
-                          { item.selected ? <Icon type="Feather" name="check" style={{color: "#327FEB", fontWeight: "bold"}} /> : null}
-                        </View>
+                        <View style={{ width: 25, height: 25, borderRadius: 20, backgroundColor: item.selected ? "#327feb" : "#fff", borderColor: "#327feb", borderWidth: item.selected ? 0 : 3, position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center' }} >
+                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#fff", }} /> : null}
+                              </View>
                         <Image source={{uri: item.uri}} style={{width: width*0.25, height: width*0.25, opacity: selection[index]['selected'] ? 0.6 : 1}} />
                     </TouchableOpacity>
                   )}
@@ -433,6 +457,18 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     alignItems: "center",
     // marginTop: 22
+  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 1000,
+    backgroundColor: 'rgba(0, 0,0, 0.4)',
+    height: height,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   modalView: {
     margin: 20,
