@@ -255,7 +255,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 var user = client.feed('timeline', children['id'] + 'id');
                 var following = await user.following()
                 console.log(follows)
-                setdata({ 'cfollowers': follows['results'], 'following': following['results'], type: children['data']['type'] })
+                setdata({ 'cfollowers': follows['results'], 'following': following['results'], type: children['data']['type'], followers:follows })
             }
             // console.log(follows)
         }
