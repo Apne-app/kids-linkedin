@@ -105,7 +105,7 @@ const Upload = ({ route, navigation }) => {
   const [selecting, setSelecting] = React.useState(false);
 
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
-  const [selectedTag, setTag] = React.useState('Other');
+  const [selectedTag, setTag] = React.useState('Genio');
   const [explore, setExplore] = React.useState([
     {
       'height': 0,
@@ -784,7 +784,7 @@ const Upload = ({ route, navigation }) => {
         </TouchableOpacity>
         </Right>
       </Header> */}
-      <CompHeader goback={goback} icon="close" screen={selecting ? "Delete" : "Preview"} right={true} delete={deletes} selecting={selecting} />
+      <CompHeader goback={goback} icon="close"  screen={selecting ? "Delete" : "Preview"} right={true} delete={deletes} selecting={selecting} />
       <View style={{ backgroundColor: "#fff" }}>
         <View style={styles.centeredView}>
           <Modal
