@@ -6,7 +6,7 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 import FastImage from 'react-native-fast-image'
 import ImagePicker from 'react-native-image-picker';
@@ -17,6 +17,7 @@ import CameraRoll from "@react-native-community/cameraroll";
 import { SECRET_KEY, ACCESS_KEY } from '@env';
 import { RNS3 } from 'react-native-aws3';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'getstream';
 import { set } from 'react-native-reanimated';
 import ScreenHeader from '../Modules/ScreenHeader'
@@ -246,14 +247,16 @@ const ProfileScreen = ({ navigation, route }) => {
 
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
-            children = JSON.parse(children)['0']
-            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-            var user = client.feed('user', children['id'] + 'id');
-            var follows = await user.followers()
-            var user = client.feed('timeline', children['id'] + 'id');
-            var following = await user.following()
-            console.log(follows)
-            setdata({ 'followers': follows['results'], 'following': following['results'], type: children['data']['type'] })
+            if (children != null) {
+                children = JSON.parse(children)['0']
+                const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
+                var user = client.feed('user', children['id'] + 'id');
+                var follows = await user.followers()
+                var user = client.feed('timeline', children['id'] + 'id');
+                var following = await user.following()
+                console.log(follows)
+                setdata({ 'cfollowers': follows['results'], 'following': following['results'], type: children['data']['type'] })
+            }
             // console.log(follows)
         }
         addfollows()
@@ -261,8 +264,10 @@ const ProfileScreen = ({ navigation, route }) => {
     useEffect(() => {
         const profileImage = async () => {
             var children = await AsyncStorage.getItem('children')
-            children = JSON.parse(children)['0']
-            setsource(children['data']['image'])
+            if (children != null) {
+                children = JSON.parse(children)['0']
+                setsource(children['data']['image'])
+            }
             // console.log(follows)
         }
         profileImage()
@@ -270,41 +275,43 @@ const ProfileScreen = ({ navigation, route }) => {
     useEffect(() => {
         const addCerti = async () => {
             var children = await AsyncStorage.getItem('children')
-            children = JSON.parse(children)['0']
-            var config = {
-                method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}/${token}`,
-                headers: {}
-            };
-            axios(config)
-                .then(function (response) {
-                    // console.log((response.data));
-                    var arr = [];
-                    Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-                    setCerti([...arr])
-                    // console.log(arr);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            if (children != null) {
+                children = JSON.parse(children)['0']
+                var config = {
+                    method: 'get',
+                    url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}/${token}`,
+                    headers: {}
+                };
+                axios(config)
+                    .then(function (response) {
+                        // console.log((response.data));
+                        var arr = [];
+                        Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+                        setCerti([...arr])
+                        // console.log(arr);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
 
-            config = {
-                method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}/${token}`,
-                headers: {}
-            };
+                config = {
+                    method: 'get',
+                    url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${children['data']['gsToken']}/${token}`,
+                    headers: {}
+                };
 
-            axios(config)
-                .then(function (response) {
-                    var arr = [];
-                    Object.keys(response.data).forEach(e => arr.push({ "name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"] }));
-                    setCourses([...arr])
-                    console.log(arr)
-                })
-                .catch(function (error) {
-                    // console.log(error);
-                });
+                axios(config)
+                    .then(function (response) {
+                        var arr = [];
+                        Object.keys(response.data).forEach(e => arr.push({ "name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"] }));
+                        setCourses([...arr])
+                        console.log(arr)
+                    })
+                    .catch(function (error) {
+                        // console.log(error);
+                    });
 
+            }
         }
         addCerti();
     }, [])
@@ -388,7 +395,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const there = () => {
         return (<View>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <ScreenHeader screen={'Profile'} icon={'more-vertical'} />
+                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
                     appId={'96078'}
@@ -468,8 +475,8 @@ const ProfileScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={()=>status=='3'?navigation.navigate('Settings'):navigation.navigate('Login')} />
-                <CompButton message={'Signup/Login to create profile'} />
+                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
+                <TouchableOpacity onPress={()=>navigation.navigate('Login')}><CompButton message={'Signup/Login to create profile'}  /></TouchableOpacity>
             </View>
         )
     }
@@ -479,6 +486,9 @@ const ProfileScreen = ({ navigation, route }) => {
             if (child != null) {
                 child = JSON.parse(child)
                 setchildren(child)
+            }
+            else{
+                setchildren({})
             }
         }
         check()

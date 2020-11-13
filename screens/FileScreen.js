@@ -6,7 +6,6 @@ import {
     Text,
     View,
     Image,
-    TouchableOpacity,
     Dimensions,
     FlatList,
     RefreshControl,
@@ -25,6 +24,7 @@ import ImageView from "react-native-image-viewing";
 import { RNS3 } from 'react-native-aws3';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 var RNFS = require('react-native-fs');
 
 var height = Dimensions.get('screen').height;
@@ -381,7 +381,7 @@ const FileScreen = (props) => {
     return (
         <Container>
             <ScreenHeader screen={'Collections'}  />
-            {status==='3'?null:<CompButton message={'Signup/Login to backup your collections'} />}
+            {status==='3'?null:<TouchableOpacity onPress={()=>props.navigation.navigate('Login')}><CompButton message={'Signup/Login to backup your collections'} /></TouchableOpacity>}
             <ImageView
                 images={selected}
                 imageIndex={0}

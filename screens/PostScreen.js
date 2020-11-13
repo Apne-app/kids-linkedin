@@ -68,7 +68,7 @@ const PostScreen = ({ navigation, route }) => {
   }
 
 
-        const uploadToS3 = (i, email) => {
+        const uploadToS3 = (i, email, tagged) => {
 
           // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
           var name = randomStr(20, '12345abcdepq75xyz') + '.' + images[i].uri[images[i].uri.length - 3] + images[i].uri[images[i].uri.length - 2] + images[i].uri[images[i].uri.length - 1]
@@ -80,7 +80,7 @@ const PostScreen = ({ navigation, route }) => {
           }
 
           const options = {
-            keyPrefix: email + "/" + tag + "/",
+            keyPrefix: email + "/" + tagged + "/",
             bucket: "kids-linkedin",
             region: "ap-south-1",
             accessKey: ACCESS_KEY,
@@ -117,7 +117,8 @@ const PostScreen = ({ navigation, route }) => {
           return name;
         }
 
-        const PostUpload = async () => {
+        const PostUpload = async (tagged) => {
+          console.log(tagged)
           var i;  
           // setTimeout(() => {
           //   setModalVisible4(false)
@@ -132,8 +133,9 @@ const PostScreen = ({ navigation, route }) => {
           var children = await AsyncStorage.getItem('children')
           children = JSON.parse(children)['0']
           var name = ''
-          for (i = 0; i < images.length - 1; i++) {
-            var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  +  "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
+          console.log(images)
+          for (i = 0; i < images.length; i++) {
+            var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  +  "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged) + ', ';
             name = name + x;
 
           //   if(tag == 'Certificate')
@@ -166,7 +168,8 @@ const PostScreen = ({ navigation, route }) => {
           // var user = client.feed('timeline', '103id');
           // user.follow('user', '49id');
           var user = client.feed('user', String(String(children['id']) + String("id")));
-          await user.addActivity(activity);
+          var dat = await user.addActivity(activity);
+          console.log(activity)
           navigation.pop();
         }
 
@@ -276,7 +279,7 @@ const PostScreen = ({ navigation, route }) => {
                     <TouchableOpacity
                       style={{height: 50}}
                       onPress={() => {
-                        PostUpload();
+                        PostUpload(route.params.tag);
                         // var ar = explore;
                         // var arr = [];
                         // for(var i = 1; i < ar.length; i++)

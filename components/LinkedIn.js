@@ -92,7 +92,7 @@ const LinkedIn = ({navigation, token}) => {
             // permissions={['r_liteprofile']}
             renderButton={() => 
             (
-                <Button block  iconLeft style={{ marginTop: 82, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 28.5, height: 60, marginHorizontal:20, borderBottomColor:'#2477ed',borderBottomWidth:2 }} onPress={() => linkedRef.current && linkedRef.current.open()} >
+                <Button block  iconLeft style={{ marginTop: 82, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 28.5, height: 50, marginHorizontal:20, borderBottomColor:'#2477ed',borderBottomWidth:2 }} onPress={() => linkedRef.current && linkedRef.current.open()} >
                   <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18,}}>Sign In with</Text>
                   <Image source={require('../images/Ln-Logo.png')} style={{width:100,  height:100, resizeMode: 'contain', marginLeft:10}}  />
                 </Button>
