@@ -11,7 +11,7 @@ const CompHeader = (props) => {
     close: require('../Icons/close.png'),
     back: require('../Icons/back.png'),
   };
-  return (<Appbar.Header style={{ backgroundColor: 'white' }} statusBarHeight={18}>
+  return (<Appbar.Header style={{ backgroundColor: 'white' }} statusBarHeight={Constants.statusBarHeight}>
     <StatusBar />
     <View style={{ flexDirection: 'row', flex: 1, marginLeft: 10 }}>
       <TouchableOpacity onPress={() => props.goback()}>
