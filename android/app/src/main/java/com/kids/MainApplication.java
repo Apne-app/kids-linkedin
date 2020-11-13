@@ -13,6 +13,7 @@ import com.horcrux.svg.SvgPackage;
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
 import com.rnfs.RNFSPackage;
+import com.myapp.generated.BasePackageList;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -32,7 +33,12 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Arrays;
+import org.unimodules.adapters.react.ModuleRegistryAdapter;
+import org.unimodules.adapters.react.ReactModuleRegistryProvider;
+import org.unimodules.core.interfaces.SingletonModule;
 
+<<<<<<< HEAD
 public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
   @Override
@@ -40,6 +46,10 @@ public class MainApplication extends Application implements ShareApplication, Re
          return BuildConfig.APPLICATION_ID + ".provider";
   }
 
+=======
+public class MainApplication extends Application implements ReactApplication {
+  private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
+>>>>>>> ada886eaf12317534fbe6bd36a262cbaf1cd5fdc
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override
@@ -53,6 +63,10 @@ public class MainApplication extends Application implements ShareApplication, Re
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
+            new ModuleRegistryAdapter(mModuleRegistryProvider)
+          );
+          packages.addAll(unimodules);
           return packages;
         }
 

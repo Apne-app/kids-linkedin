@@ -105,7 +105,7 @@ const Upload = ({ route, navigation }) => {
   const [selecting, setSelecting] = React.useState(false);
 
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
-  const [selectedTag, setTag] = React.useState('Genio');
+  const [selectedTag, setTag] = React.useState('Other');
   const [explore, setExplore] = React.useState([
     {
       'height': 0,

@@ -191,7 +191,6 @@ const FeedScreen = ({ navigation, route }) => {
 
     }
     const CustomActivity = (props) => {
-
         let img = props.activity.image ? props.activity.image.split(", ").length - 1 > 1 ? props.activity.image.split(", ").pop : props.activity.image : '';
 
         const [commentVisible, setCmv] = React.useState('none');
@@ -322,12 +321,12 @@ const FeedScreen = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image
-                                // onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
-                                source={{ uri: props.activity.user ? props.activity.user.data.profileImage : 'https://d5c8j8afeo6fv.cloudfront.net/profile.png' }}
+                                source={{ uri: children['0']['data']['image'] }}
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{children['0']['data']['type']}</Text>
                             </View>
                             <ActionSheet
                                 ref={refActionSheet}
@@ -356,13 +355,12 @@ const FeedScreen = ({ navigation, route }) => {
                                 return (
                                     <View><View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 40, padding: 10 }}>
                                         <Image
-                                            onLoad={() => setsource('https://d5c8j8afeo6fv.cloudfront.net/' + children['0']['data']['gsToken'] + '.png')}
-                                            source={{ uri: source }}
-                                            style={{ width: 60, height: 60, borderRadius: 1000, marginLeft: 10 }}
+                                            source={{ uri: children['0']['data']['image'] }}
+                                            style={{ width: 42, height: 42, borderRadius: 1000, marginLeft: 10 }}
                                         />
-                                        <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                                        <View style={{ flexDirection: 'column', marginLeft: 15 }}>
                                             <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.data ? props.activity.actor.data.name : null}</Text>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0].replace('-', '/')}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white' }}>{props.activity.actor.created_at.split('T')[0]}</Text>
                                         </View>
                                         <ActionSheet
                                             ref={refActionSheet}
@@ -451,6 +449,9 @@ const FeedScreen = ({ navigation, route }) => {
                 child = JSON.parse(child)
                 setchildren(child)
             }
+            else{
+                setchildren({})
+            }
         }
         check()
     }, [])
@@ -500,7 +501,6 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="96078"
                         token={children['0']['data']['gsToken']}
                     >
-                        {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet
@@ -511,7 +511,7 @@ const FeedScreen = ({ navigation, route }) => {
                                     renderContent={renderLikes}
                                 />
                             )
-                        }} notify navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                        }} notify={true} navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                     </StreamApp>
                     <BottomSheet
                         ref={sheetRefReport}
@@ -548,7 +548,7 @@ const FeedScreen = ({ navigation, route }) => {
         return (
             <SafeAreaProvider>
                 <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('Login')}><CompButton message={'Signup/Login to view posts from other kids'} /></TouchableOpacity>
+                <TouchableOpacity onPress={()=>navigation.navigate('Login')}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableOpacity>
                 {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}

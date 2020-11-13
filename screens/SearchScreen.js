@@ -1,13 +1,14 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList, Keyboard } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, FlatList, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -94,6 +95,7 @@ const SearchScreen = ({ route, navigation }) => {
         child = JSON.parse(child)
         setchildren(child)
       }
+      setchildren({})
     }
     check()
   }, [])
@@ -253,7 +255,7 @@ const SearchScreen = ({ route, navigation }) => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
         <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
-        <CompButton message={'Signup/Login to find other kids'} />
+        <TouchableOpacity onPress={()=>navigation.navigate('Login')}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
       </View>
     )
   }

@@ -162,16 +162,16 @@ const LoginScreen = ({ route, navigation }) => {
   }
   return (
     <ScrollView ref={scrollcheck} style={styles.container}>
-      <CompHeader screen={'Login'} goback={() => navigation.navigate('Home')} />
+      <CompHeader screen={'Login'} goback={() => navigation.pop()} />
       {/* <Container style={styles.container}> */}
       <Content >
-        <View style={{ flex: 1, marginTop: 50, }}>
+        <View style={{ flex: 1, marginTop: 30, }}>
           <Image
             style={styles.tinyLogo}
             source={require('../images/Logo.png')}
           />
         </View>
-        <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: -20, marginBottom: -10, textAlign: 'center' }}>Genio</Text>
+        <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: -20, marginBottom: -50, textAlign: 'center' }}>Genio</Text>
         <View>
           <LinkedIn navigation={navigation} token={token} />
           <View style={{ flexDirection: 'row', alignItems: 'center', margin: 30 }}>
@@ -181,7 +181,7 @@ const LoginScreen = ({ route, navigation }) => {
           </View>
           <Text style={{ color: "#3E3E3E", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, paddingLeft: 20, marginBottom: 20, }}>Enter Email</Text>
           <KeyboardAvoidingView behavior={'padding'}>
-            <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55 }}></TextInput>
+            <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation:1 }}></TextInput>
             <Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 30, color: 'red', marginTop: 10, display: visible ? 'flex' : 'none' }}>*Please enter a valid email ID</Text>
             <View style={{ alignSelf: 'center', }}>
               <SpinnerButton
@@ -191,7 +191,7 @@ const LoginScreen = ({ route, navigation }) => {
                   width: 200,
                   alignSelf: 'center',
                   backgroundColor: '#327FEB',
-                  height: 60
+                  height: 50
                 }}
                 isLoading={Loading}
                 spinnerType='BarIndicator'
@@ -200,7 +200,7 @@ const LoginScreen = ({ route, navigation }) => {
                 }}
                 indicatorCount={10}
               >
-                <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 2 }}>Next</Text>
+                <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
               </SpinnerButton>
             </View>
           </KeyboardAvoidingView>
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // justifyContent: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#efefef',
   },
   buttonText: {
     fontSize: 20,
