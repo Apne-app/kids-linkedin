@@ -66,9 +66,9 @@ const App = (props) => {
     console.log("aaa", props);
   }, [])
 
-  useEffect(() => {
-    StatusBar.setTranslucent(true)
-  })
+  // useEffect(() => {
+  //   StatusBar.setTranslucent(true)
+  // })
 
   const containerRef = React.useRef();
 

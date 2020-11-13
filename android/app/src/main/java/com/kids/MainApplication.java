@@ -1,5 +1,4 @@
 package com.kids;
-
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -13,7 +12,7 @@ import com.horcrux.svg.SvgPackage;
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
 import com.rnfs.RNFSPackage;
-import com.myapp.generated.BasePackageList;
+import com.kids.generated.BasePackageList;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
