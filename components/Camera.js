@@ -270,7 +270,9 @@ export default class ExampleApp extends PureComponent {
             <Icon type="Entypo" name="circle" style={{ color: "grey", fontSize: 70 }} />
           </TouchableOpacity>
           :
-          <Spinner color='blue' style={{justifyContent: 'center', marginBottom: 5}} />
+          <View style={{ marginBottom: 5}}>
+          <Spinner color='blue' style={{height: 30, width: 30}} />
+          </View>
           }
           <TouchableOpacity onPress={() => {
             this.props.navigation.navigate('Home', {
