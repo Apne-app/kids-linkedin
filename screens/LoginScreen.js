@@ -3,7 +3,7 @@
 import React, { Component, useState, useEffect, useRef } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput, TouchableOpacity } from 'react-native'
 import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, Spinner, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
 import LoginForm from '../components/Login';
@@ -70,6 +70,7 @@ const LoginScreen = ({ route, navigation }) => {
   const [visible, setvisible] = useState(false);
   const [token, setToken] = useState('');
   const scrollcheck = useRef(null)
+  const [loader, setLoader] = useState(false);
   const input = useRef(null)
   useEffect(() => {
 
@@ -162,6 +163,7 @@ const LoginScreen = ({ route, navigation }) => {
   }
   return (
     <ScrollView ref={scrollcheck} style={styles.container}>
+    {loader ? <Spinner color='blue' style={styles.loading} /> : null}
       <CompHeader screen={'Login'} goback={() => navigation.pop()} />
       {/* <Container style={styles.container}> */}
       <Content >
@@ -173,7 +175,7 @@ const LoginScreen = ({ route, navigation }) => {
         </View>
         <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: -20, marginBottom: -50, textAlign: 'center' }}>Genio</Text>
         <View>
-          <LinkedIn navigation={navigation} token={token} />
+          <LinkedIn navigation={navigation} authtoken={token} loaderHandler={() => setLoader(true)} />
           <View style={{ flexDirection: 'row', alignItems: 'center', margin: 30 }}>
             <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "lightgrey", width: width / 3 }} />
             <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold', color: 'black' }} >Or</Text>
@@ -212,12 +214,12 @@ const LoginScreen = ({ route, navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    padding: 20,
-    // marginTop: 40,
-  },
+  // container: {
+  //   flex: 1,
+  //   flexDirection: 'column',
+  //   // padding: 20,
+  //   // marginTop: 40,
+  // },
   form: {
     marginTop: 40,
     flex: 1
@@ -240,6 +242,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     backgroundColor: '#efefef',
+    height: height
   },
   buttonText: {
     fontSize: 20,
@@ -253,6 +256,18 @@ const styles = StyleSheet.create({
     margin: 20,
     width: 100,
     alignSelf: 'center'
+  },
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 1000,
+    backgroundColor: 'rgba(0, 0,0, 0.4)',
+    height: "100%",
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   instructions: {
     textAlign: 'center',

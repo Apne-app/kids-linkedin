@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, upd
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 import FastImage from 'react-native-fast-image'
+import { useFocusEffect } from "@react-navigation/native";
 import ImagePicker from 'react-native-image-picker';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
@@ -117,6 +118,25 @@ const IndProfile = ({ navigation, route }) => {
         }
         addCerti();
     }, [])
+
+    useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+            // Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+            //     {
+            //         text: "Cancel",
+            //         onPress: () => null,
+            //         style: "cancel"
+            //     },
+            //     { text: "YES", onPress: () => BackHandler.exitApp() }
+            // ]);
+            navigation.pop()
+            return true;
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
 
     useEffect(() => {
         const addfollows = async () => {

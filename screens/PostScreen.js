@@ -206,6 +206,7 @@ const PostScreen = ({ navigation, route }) => {
                     label: 'Done',
                     onPress: () => {
                         // Do something
+                        navigation.pop();
                     },
                 }}>
                 Post Reported

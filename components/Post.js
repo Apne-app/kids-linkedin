@@ -168,6 +168,9 @@ const Upload = ({ route, navigation }) => {
         backNew
       );
 
+      return () =>
+          BackHandler.removeEventListener("hardwareBackPress", backNew);
+
 
       return true;
     };
@@ -176,6 +179,9 @@ const Upload = ({ route, navigation }) => {
       "hardwareBackPress",
       backAction
     );
+
+    return () =>
+          BackHandler.removeEventListener("hardwareBackPress", backAction);
 
   }
 
@@ -196,6 +202,9 @@ const Upload = ({ route, navigation }) => {
         backNew
       );
 
+      return () =>
+          BackHandler.removeEventListener("hardwareBackPress", backNew);
+
 
       return true;
     };
@@ -204,6 +213,9 @@ const Upload = ({ route, navigation }) => {
       "hardwareBackPress",
       backAction
     );
+
+    return () =>
+          BackHandler.removeEventListener("hardwareBackPress", backAction);
 
   }
 
@@ -426,6 +438,10 @@ const Upload = ({ route, navigation }) => {
           "hardwareBackPress",
           backAction
         );
+
+        return () =>
+          BackHandler.removeEventListener("hardwareBackPress", backAction);
+        
     }, []));
 
 

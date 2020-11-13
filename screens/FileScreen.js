@@ -10,6 +10,7 @@ import {
     FlatList,
     RefreshControl,
     PermissionsAndroid,
+    BackHandler,
     Modal,
     Platform,
     ImageBackground,
@@ -22,6 +23,7 @@ import CameraRoll from "@react-native-community/cameraroll";
 import { Chip } from 'react-native-paper';
 import ImageView from "react-native-image-viewing";
 import { RNS3 } from 'react-native-aws3';
+import { useFocusEffect } from "@react-navigation/native";
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -47,6 +49,17 @@ const FileScreen = (props) => {
     const [status, setstatus] = React.useState('3');
 
     const [refreshing, setRefreshing] = React.useState(false);
+
+    useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+            props.navigation.navigate('Home', { screen: 'Feed' })
+            return true;
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
 
     useEffect(() => {
         const check = async () => {
@@ -266,6 +279,7 @@ const FileScreen = (props) => {
         // setSelTopic(topic);
         // setVisible(true);
     }
+    
 
     const showTags = async (tag) => {
 

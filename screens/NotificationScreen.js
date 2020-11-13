@@ -1,18 +1,31 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TextInput } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, BackHandler, TextInput } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import CompHeader from '../Modules/CompHeader';
 import CompButton from '../Modules/CompButton'
+import { useFocusEffect } from "@react-navigation/native";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
 
   const [children, setchildren] = useState('notyet')
   const [status, setstatus] = useState('0')
+
+  useFocusEffect(
+  React.useCallback(() => {
+      const onBackPress = () => {
+          navigation.navigate('Home', { screen: 'Feed' })
+          return true;
+      };
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      return () =>
+          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  }, []));
+
   useEffect(() => {
     const check = async () => {
       var child = await AsyncStorage.getItem('children')

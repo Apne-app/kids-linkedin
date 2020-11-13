@@ -3,7 +3,7 @@
 import React from 'react'
 import { StyleSheet, View, Text, Dimensions, Image } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Segment, Thumbnail } from 'native-base';
 import LinkedInModal from 'react-native-linkedin';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
@@ -18,10 +18,11 @@ const styles = StyleSheet.create({
   },
 })
  
-const LinkedIn = ({navigation, token}) => {
+const LinkedIn = ({navigation, authtoken, loaderHandler}) => {
 
-    let a, b;
+    let a, b, c;
     let i = 0;
+    let tk = "";
     // const [token, setToken] = React.useState('');
 
     const [linkedinInfo, setLinkedInfo] = React.useState({
@@ -31,8 +32,9 @@ const LinkedIn = ({navigation, token}) => {
     })
     
     async function getInfo(token) {
-      // console.log(token);
-      // await 
+      
+      loaderHandler();
+      tk = token;
       await axios.get("https://api.linkedin.com/v2/me/?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))", { headers: { 'Authorization': "Bearer " + token } })
       .then(response => {
         // console.log(response.data);
@@ -40,31 +42,45 @@ const LinkedIn = ({navigation, token}) => {
           b = response.data.lastName.localized.en_US;
       })
       .then(async () => {
+        // console.log(tk);
         await axios.get(
-          "https://api.linkedin.com/v2/clientAwareMemberHandles?q=members&projection=(elements*(primary,type,handle~))", { headers: { 'Authorization': "Bearer " + token } })
+          "https://api.linkedin.com/v2/clientAwareMemberHandles?q=members&projection=(elements*(primary,type,handle~))", { headers: { 'Authorization': "Bearer " + tk } })
         .then(response => {
           // setInfo(response.data);
           // setLoading(false);
-          console.log(response.data.elements[0]['handle~'].emailAddress);
+          // console.log(response.data);
             c =  response.data.elements[0]['handle~'].emailAddress,
-            axios.get('http://104.199.146.206:5000/authLinkedin/' + c + '/' + b + '/' + a + `?token=${token}`)
+            axios.get('http://104.199.146.206:5000/authLinkedin/' + c + '/' + b + '/' + a + `?token=${authtoken}`)
               .then(async (response) => {
-                console.log(response.data)
+                console.log(response.data, "aaaa")
                 
                   try {
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data));
-                  navigation.navigate('Child');
+                  axios.get('http://104.199.158.211:5000/getchild/' + response.data.email + '/')
+                  .then(async (response) => {
+                      await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                      if (Object.keys(response.data).length) {
+                          await AsyncStorage.setItem('status', '3')
+                          navigation.navigate('Home')
+                      }
+                      else {
+                          await AsyncStorage.setItem('status', '2')
+                          navigation.navigate('Child')
+                      }
+                      console.log(response.data)
+                  })
+                  // navigation.navigate('Child');
                 } catch (e) {
                   // saving error
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log(err, "aa"))
         })
-        .catch(error => console.log(error));
+        .catch(error => console.log(error, "bb"));
       })
       .then(() => console.log(linkedinInfo))
       .catch(err => {
-        console.log(err)
+        console.log(err, "cc")
         if(!i)
         {
           i++;
@@ -82,9 +98,9 @@ const LinkedIn = ({navigation, token}) => {
     return (
         <LinkedInModal
             ref={linkedRef}
-            clientID="86mwd6nlgj5elt"
-            clientSecret="wcQBhM67qpbi6yqY"
-            redirectUri="https://www.apne.app/"
+            clientID="86eyqhqu84z2db"
+            clientSecret="DaHDCXhoYqJwp6sN"
+            redirectUri="https://genio.app/"
             onSuccess={(data) => {
                 // setToken(data.access_token);
                 getInfo(data.access_token);
