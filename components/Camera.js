@@ -259,14 +259,14 @@ export default class ExampleApp extends PureComponent {
             keyExtractor={(item, index) => index.toString()}
           />
         </View>
-        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={() => { this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] }) }} style={styles.capture, { flex: 1, alignItems: 'flex-start', marginLeft: width * 0.15, marginTop: 5 }}>
+        <View style={{ flex: 1, flexDirection: 'row', justifyContent:'center' }}>
+          <TouchableOpacity onPress={() => { this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] }) }} style={styles.capture, { flex: 1, alignItems: 'flex-start',  marginTop: 5, width:width/3, marginLeft:width/8, alignItems:'center' }}>
             <View>
               <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/gallery.png')} />
               <Text style={{ fontFamily: 'NunitoSans-Regular' }}>Gallery</Text>
             </View>
           </TouchableOpacity>
-          { !this.state.imagetaken ? <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, { flex: 2, alignItems: 'center', marginTop: -10 }}>
+          { !this.state.imagetaken ? <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, { flex: 2, alignItems: 'center', marginTop: -10, width:width/6, alignItems:'center' }}>
             <Icon type="Entypo" name="circle" style={{ color: "grey", fontSize: 70 }} />
           </TouchableOpacity>
           :
@@ -276,7 +276,7 @@ export default class ExampleApp extends PureComponent {
             this.props.navigation.navigate('Home', {
               screen: 'Files',
             })
-          }} style={styles.capture, { flex: 1, alignItems: 'flex-end', marginRight: width * 0.1, marginTop: 9 }}>
+          }} style={styles.capture, { flex: 1, alignItems: 'flex-end', marginTop: 9, width:width/3,marginRight:width/8, alignItems:'center' }}>
             <View>
               <Icon style={{ color: 'black', fontSize: 24, alignSelf:'center' }} type="AntDesign" name="file1" />
               <Text style={{ fontFamily: 'NunitoSans-Regular', marginTop: 6 }}>Collections</Text>
