@@ -413,12 +413,12 @@ const ProfileScreen = ({ navigation, route }) => {
     const logout = async () => {
         var keys = await AsyncStorage.getAllKeys()
         await AsyncStorage.multiRemove(keys)
-        navigation.navigate('Login')
+        navigation.navigate('Login', {screen:'Profile'})
     }
     const there = () => {
         return (<View style={{height: height}}>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
+                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login', {screen:'Profile'})} />
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
                     appId={'96078'}
@@ -504,7 +504,7 @@ const ProfileScreen = ({ navigation, route }) => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('Login')}><CompButton message={'Signup/Login to create profile'}  /></TouchableOpacity>
+                <TouchableOpacity onPress={()=>navigation.navigate('Login', {screen:'Profile'})}><CompButton message={'Signup/Login to create profile'}  /></TouchableOpacity>
             </View>
         )
     }

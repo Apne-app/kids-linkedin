@@ -50,7 +50,7 @@ const Unverified = ({ navigation }) => {
         const getData = async () => {
 
             var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
-
+            var token = '';
             var config = {
             method: 'post',
             url: 'http://104.199.146.206:5000/getToken',
@@ -69,11 +69,11 @@ const Unverified = ({ navigation }) => {
                         await AsyncStorage.setItem('children', JSON.stringify(response.data))
                         if (Object.keys(response.data).length) {
                             await AsyncStorage.setItem('status', '3')
-                            navigation.navigate('Home')
+                            navigation.navigate(route.params.screen)
                         }
                         else {
                             await AsyncStorage.setItem('status', '2')
-                            navigation.navigate('Child')
+                            navigation.navigate('Child', {screen:route.params.screen})
                         }
                         console.log(response.data)
                     })

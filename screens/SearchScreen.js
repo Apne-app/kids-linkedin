@@ -298,7 +298,7 @@ const SearchScreen = ({ route, navigation }) => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
         <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login', {screen:'Search'})}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
       </View>
     )
   }

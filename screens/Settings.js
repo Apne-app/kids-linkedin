@@ -40,7 +40,7 @@ const Settings = ({ navigation }) => {
         })
         var arr = await AsyncStorage.getAllKeys()
         await AsyncStorage.multiRemove(arr)
-        navigation.navigate('Login')
+        navigation.navigate('Login', {screen:'Home'})
 
     }
 

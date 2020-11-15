@@ -24,7 +24,7 @@ const KidUser = ({ navigation, route }) => {
                 <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Go Back</Text>
             </Button>
             <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60 }} onPress={() => navigation.navigate('Home')} >
-                <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Continue without verification*</Text>
+                <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Continue as guest</Text>
             </Button>
         </View>
     );
