@@ -110,7 +110,7 @@ const LoginScreen = ({ route, navigation }) => {
     // console.log(email)
     setLoading(true);
     axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + `/default/?token=${token}`)
-      .then((response) => {
+      .then(async (response) => {
         const storeProfile = async () => {
           try {
             await AsyncStorage.setItem('profile', JSON.stringify(response.data))
@@ -131,13 +131,27 @@ const LoginScreen = ({ route, navigation }) => {
           }
         }
         storeProfile()
-        console.log(response.data)
+        axios.get('http://35.229.160.51:80/send/' + response.data.uuid + '/' + response.data.email + '/')
+          .then((response) => {
+            console.log(response.data)
+            if (response.data == 'wrong id!') {
+              alert('There was an error, please try again')
+            }
+            else {
+              navigation.navigate('Unverified')
+            }
+          })
+          .catch((response) => {
+            console.log(response)
+            alert('There was an error, please try again')
+          })
         setLoading(false);
-        navigation.navigate('Unverified')
+
       })
       .catch((error) => {
         console.log(error)
         setLoading(false);
+        alert('There was an error, please try again')
       })
 
 
@@ -162,8 +176,8 @@ const LoginScreen = ({ route, navigation }) => {
     }
   }
   return (
-    <ScrollView ref={scrollcheck} style={styles.container}>
-    {loader ? <Spinner color='blue' style={styles.loading} /> : null}
+    <ScrollView ref={scrollcheck} style={styles.container} keyboardShouldPersistTaps='handled'>
+      {loader ? <Spinner color='blue' style={styles.loading} /> : null}
       <CompHeader screen={'Login'} goback={() => navigation.pop()} />
       {/* <Container style={styles.container}> */}
       <Content >
@@ -183,7 +197,7 @@ const LoginScreen = ({ route, navigation }) => {
           </View>
           <Text style={{ color: "#3E3E3E", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, paddingLeft: 20, marginBottom: 20, }}>Enter Email</Text>
           <KeyboardAvoidingView behavior={'padding'}>
-            <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation:1 }}></TextInput>
+            <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
             <Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 30, color: 'red', marginTop: 10, display: visible ? 'flex' : 'none' }}>*Please enter a valid email ID</Text>
             <View style={{ alignSelf: 'center', }}>
               <SpinnerButton

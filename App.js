@@ -67,7 +67,6 @@ const App = (props) => {
   React.useEffect(() => {
     console.log("aaa", props);
   }, [])
-alert('hello')
   useEffect(() => {
     StatusBar.setBarStyle('dark-content')
   })
