@@ -810,7 +810,7 @@ const FeedScreen = ({ navigation, route }) => {
         return (
             <SafeAreaProvider>
                 <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Login', {screen:'Feed'})}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableOpacity>
                 {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}

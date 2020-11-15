@@ -49,7 +49,7 @@ const Unverified = ({ navigation, route }) => {
         var pro = await AsyncStorage.getItem('profile')
         pro = JSON.parse(pro)
         if (link.url.includes(pro.uuid)) {
-            navigation.navigate('Verified', {screen:route.params.screen})
+            navigation.navigate('Verified', { screen: Object.keys(route.params).includes('screen') ? route.params.screen : 'Home' })
         }
     };
     useEffect(() => {
@@ -160,9 +160,8 @@ const Unverified = ({ navigation, route }) => {
                             timeLabels={{ s: '' }}
                         /></View><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>s)</Text></View>
                 </Button>
-                <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60 }} onPress={() => navigation.navigate('Home'
-                )} >
-                    <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Continue without verification*</Text>
+                <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60 }} onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} >
+                    <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Continue as a guest*</Text>
                 </Button>
                 <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20 }}>*You wont be able to use the social network</Text>
             </View>

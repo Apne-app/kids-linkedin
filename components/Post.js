@@ -1098,7 +1098,7 @@ const Upload = ({ route, navigation }) => {
               for (var i = 1; i < ar.length; i++) {
                 arr.push({ uri: 'file://' + ar[i]["uri"] })
               }
-              status==='3'?navigation.navigate('CreatePost', { images: arr, tag: selectedTag }):navigation.navigate('Login')
+              status==='3'?navigation.navigate('CreatePost', { images: arr, tag: selectedTag }):navigation.navigate('Login', {screen:'Post'})
             }}
           >
             <View style={styles.Next}>

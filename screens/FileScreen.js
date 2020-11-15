@@ -324,7 +324,7 @@ const FileScreen = (props) => {
     return (
         <Container>
             <ScreenHeader screen={'Collections'}  />
-            {status==='3'?null:<TouchableOpacity onPress={()=>props.navigation.navigate('Login')}><CompButton message={'Signup/Login to backup your collections'} /></TouchableOpacity>}
+            {status==='3'?null:<TouchableOpacity onPress={()=>props.navigation.navigate('Login', {screen:'Files'})}><CompButton message={'Signup/Login to backup your collections'} /></TouchableOpacity>}
             <ImageView
                 images={selected}
                 imageIndex={0}

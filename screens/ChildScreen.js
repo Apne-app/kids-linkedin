@@ -90,7 +90,7 @@ const ChildScreen = ({ route, navigation }) => {
             var x = await AsyncStorage.getItem('profile');
             analytics.track('Child Name Entered', {
                 userID: x ? JSON.parse(x)['uuid'] : null,
-                deviceID: getUniqueId() 
+                deviceID: getUniqueId()
             })
             if (name == '') {
                 settext('*Please Enter a valid name')
@@ -106,7 +106,7 @@ const ChildScreen = ({ route, navigation }) => {
             var x = await AsyncStorage.getItem('profile');
             analytics.track('Child Birth Year Entered', {
                 userID: x ? JSON.parse(x)['uuid'] : null,
-                deviceID: getUniqueId() 
+                deviceID: getUniqueId()
             })
             if (year == 0) {
                 settext('*Please enter a valid year')
@@ -151,10 +151,10 @@ const ChildScreen = ({ route, navigation }) => {
                         var x = await AsyncStorage.getItem('profile');
                         analytics.track('I am a Kid', {
                             userID: x ? JSON.parse(x)['uuid'] : null,
-                            deviceID: getUniqueId() 
+                            deviceID: getUniqueId()
                         })
                         navigation.navigate('KidUser');
-                        }} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10, width: 180, marginRight: 10, height: 170 }}>
+                    }} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10, width: 180, marginRight: 10, height: 170 }}>
                         <Image source={require('../images/kids.png')} style={{ width: 130, height: 114, alignSelf: 'center', marginTop: 13 }} />
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', paddingHorizontal: 20 }}>I am a kid</Text>
                     </TouchableOpacity>
@@ -162,10 +162,10 @@ const ChildScreen = ({ route, navigation }) => {
                         var x = await AsyncStorage.getItem('profile');
                         analytics.track('I am a parent', {
                             userID: x ? JSON.parse(x)['uuid'] : null,
-                            deviceID: getUniqueId() 
+                            deviceID: getUniqueId()
                         })
                         setcurrent(1);
-                        }} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10, width: 180, height: 170 }}>
+                    }} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10, width: 180, height: 170 }}>
                         <Image source={require('../images/parent.png')} style={{ width: 130, height: 130, alignSelf: 'center' }} />
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', paddingHorizontal: 20 }}>I am a parent</Text>
                     </TouchableOpacity>
@@ -220,6 +220,9 @@ const ChildScreen = ({ route, navigation }) => {
                     </View>
                 </View>
             </KeyboardAvoidingView>
+            <TouchableOpacity onPress={async() => {await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home')}} block dark style={{ alignSelf:'flex-end'}}>
+                <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Continue as guest</Text>
+            </TouchableOpacity>
         </ScrollView>
     );
 }
