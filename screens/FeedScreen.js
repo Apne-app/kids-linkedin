@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -840,6 +840,10 @@ const FeedScreen = ({ navigation, route }) => {
             </SafeAreaProvider>
         )
     }
+    useEffect(() => {
+        StatusBar.setBarStyle('dark-content')
+      })
+    
     return (
         children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
 

@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
 import axios from 'axios';
 import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { connect } from 'getstream';
 import { useFocusEffect } from "@react-navigation/native";
 import CompButton from '../Modules/CompButton';
@@ -145,7 +146,15 @@ const Searching = ({ route, navigation }) => {
                     appId={'96078'}
                     token={item['data']['gsToken']}
                 >
-                    <TouchableOpacity style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={() => { navigation.navigate('IndProf', { 'data': item.data, 'id': item.id }); analytics.track('Child Search') }}>
+                    <TouchableOpacity style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => 
+                    { 
+                        navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
+                        var x = await AsyncStorage.getItem('profile');
+                        analytics.track('Searched Kid Opened', {
+                            userID: x ? JSON.parse(x)['uuid'] : null,
+                            deviceID: getUniqueId() 
+                        })
+                        }}>
                         <Image
                             source={{ uri: item['data']['image'] }}
                             style={{ width: 60, height: 60, borderRadius: 306, }}

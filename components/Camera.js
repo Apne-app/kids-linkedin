@@ -10,7 +10,10 @@ import Svg, {
   Use,
 } from 'react-native-svg';
 import ZoomView from './ZoomView';
+import AsyncStorage from '@react-native-community/async-storage';
 import BottomSheet from 'reanimated-bottom-sheet';
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader';
 
@@ -58,6 +61,11 @@ export default class ExampleApp extends PureComponent {
 
     const func = async () => {
 
+      var x = await AsyncStorage.getItem('profile');
+      analytics.screen('Camera Screen', {
+        userID: x ? JSON.parse(x)['uuid'] : null,
+        deviceID: getUniqueId() 
+      })
 
 
       try {
@@ -260,7 +268,14 @@ export default class ExampleApp extends PureComponent {
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent:'center' }}>
-          <TouchableOpacity onPress={() => { this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] }) }} style={styles.capture, { flex: 1, alignItems: 'flex-start',  marginTop: 5, width:width/3, marginLeft:width/8, alignItems:'center' }}>
+          <TouchableOpacity onPress={async () => 
+          { 
+            var x = await AsyncStorage.getItem('profile');
+            analytics.track('Navigation from camera to Gallery', {
+              userID: x ? JSON.parse(x)['uuid'] : null,
+              deviceID: getUniqueId() 
+            })
+            this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] }) }} style={styles.capture, { flex: 1, alignItems: 'flex-start',  marginTop: 5, width:width/3, marginLeft:width/8, alignItems:'center' }}>
             <View>
               <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/gallery.png')} />
               <Text style={{ fontFamily: 'NunitoSans-Regular' }}>Gallery</Text>
@@ -274,7 +289,13 @@ export default class ExampleApp extends PureComponent {
           <Spinner color='blue' style={{height: 30, width: 30}} />
           </View>
           }
-          <TouchableOpacity onPress={() => {
+          <TouchableOpacity onPress={async () => {
+            var x = await AsyncStorage.getItem('profile');
+            analytics.track('Navigation from camera to Collections', {
+              userID: x ? JSON.parse(x)['uuid'] : null,
+              deviceID: getUniqueId() 
+            })
+
             this.props.navigation.navigate('Home', {
               screen: 'Files',
             })
@@ -292,6 +313,11 @@ export default class ExampleApp extends PureComponent {
 
   takePicture = async () => {
     // console.log(this.state.gallery);
+    var x = await AsyncStorage.getItem('profile');
+    analytics.track('Image Taken', {
+      userID: x ? JSON.parse(x)['uuid'] : null,
+      deviceID: getUniqueId() 
+    })
     this.setState({ ...this.state, imagetaken: true });
     if (this.camera) {
       const options = { quality: 0.5, base64: true, fixOrientation: true };

@@ -15,7 +15,8 @@ import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
 import BottomSheet from 'reanimated-bottom-sheet';
 import Gallery from './Gallery';
-import analytics from '@segment/analytics-react-native'
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import ImageView from "react-native-image-viewing";
 import { connect } from 'getstream';
 import axios from 'axios'
@@ -220,7 +221,16 @@ const Upload = ({ route, navigation }) => {
   }
 
   React.useEffect(() => {
-    analytics.screen('Post Screen')
+
+    const sevent = async () => {
+
+    var x = await AsyncStorage.getItem('profile');
+    analytics.screen('Post Screen', {
+        userID: x ? JSON.parse(x)['uuid'] : null,
+        deviceID: getUniqueId() 
+      })
+    }
+    sevent();
     console.log(explore)
     const backAction = async () => {
       
@@ -521,9 +531,14 @@ const Upload = ({ route, navigation }) => {
 
       explore.map(item => {
         if (item.uri.length > 10)
-          arr.push(item.uri);
+        {
+          var a = item.uri;
+          a = a.replace('file:///', '');
+          a = a.replace('file:/', '');
+          arr.push(a);
+        }
       })
-      // console.log(arr);
+      console.log(arr);
 
       const options = {
         imagePaths: arr,
@@ -651,8 +666,12 @@ const Upload = ({ route, navigation }) => {
       saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
     }
   }
-  const deletes = () => {
-    analytics.track('Delete Images in Post');
+  const deletes = async () => {
+    var x = await AsyncStorage.getItem('profile');
+    analytics.track('Delete Images', {
+        userID: x ? JSON.parse(x)['uuid'] : null,
+        deviceID: getUniqueId() 
+      })
     setSelecting(true);
     if (selecting) {
       var array = [...explore];
@@ -694,8 +713,12 @@ const Upload = ({ route, navigation }) => {
         <View style={{ flex: 1, alignItems: 'center' }}>
           <TouchableOpacity
             style={{ height: 50 }}
-            onPress={() => {
-              analytics.track('PDF Saved');
+            onPress={async () => {
+              var x = await AsyncStorage.getItem('profile');
+              analytics.track('PDF Saved', {
+                  userID: x ? JSON.parse(x)['uuid'] : null,
+                  deviceID: getUniqueId() 
+                })
               myAsyncPDFFunction()
               // console.log(explore)
             }}
@@ -730,8 +753,12 @@ const Upload = ({ route, navigation }) => {
         <View style={{ flex: 1, alignItems: 'center' }}>
           <TouchableOpacity
             style={{ height: 50 }}
-            onPress={() => {
-              analytics.track('Didn"t save collection');
+            onPress={async () => {
+              var x = await AsyncStorage.getItem('profile');
+              analytics.track('Did not save collection', {
+                  userID: x ? JSON.parse(x)['uuid'] : null,
+                  deviceID: getUniqueId() 
+                })
               navigation.navigate('Home', { screen: 'Feed' })
               // console.log(explore)
             }}
@@ -746,8 +773,12 @@ const Upload = ({ route, navigation }) => {
         <View style={{ flex: 1, alignItems: 'center' }}>
           <TouchableOpacity
             style={{ height: 50 }}
-            onPress={() => {
-              analytics.track('Collection Saved');
+            onPress={async () => {
+              var x = await AsyncStorage.getItem('profile');
+              analytics.track('Collection Saved', {
+                  userID: x ? JSON.parse(x)['uuid'] : null,
+                  deviceID: getUniqueId() 
+                })
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
               // console.log(explore)
             }}
@@ -802,159 +833,7 @@ const Upload = ({ route, navigation }) => {
       </Header> */}
       <CompHeader goback={goback} icon="close"  screen={selecting ? "Delete" : "Preview"} right={true} delete={deletes} selecting={selecting} />
       <View style={{ backgroundColor: "#fff" }}>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TouchableOpacity onPress={() => { setModalVisible(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ></TouchableOpacity>
-                <Text style={styles.modalText}>Save as a PDF</Text>
-                <Item floatingLabel>
-                  <Label style={{ fontFamily: 'NunitoSans-Regular' }}>Collection Name</Label>
-                  <Input style={{ fontFamily: 'NunitoSans-Regular' }} value={filename} onChangeText={text => setFileName(text)} />
-                </Item>
-                <View>
-                </View>
-                <View style={{ flexDirection: 'row' }} >
-                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
-                    onPress={() => {
-                      analytics.track('PDF Saved');
-                      myAsyncPDFFunction()
-                      // console.log(explore)
-                    }}
-                  >
-                    <View style={styles.save2}>
-                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                        Save
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </View>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible4}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TouchableOpacity onPress={() => { setModalVisible4(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Image style={{ height: 30, width: 30, backgroundColor: "transparent", }} source={require('../Icons/close.png')} /></TouchableOpacity>
-                <Text style={styles.modalText}>Information about your certificate!</Text>
-                <Item floatingLabel>
-                  <Label>Certificate Organization</Label>
-                  <Input value={certi.certi_org} onChangeText={text => setCerti({ ...certi, certi_org: text })} />
-                </Item>
-                <Item floatingLabel>
-                  <Label>Certificate Url</Label>
-                  <Input value={certi.certi_url} onChangeText={text => setCerti({ ...certi, certi_url: text })} />
-                </Item>
-                <View>
-                </View>
-                <View style={{ flexDirection: 'row' }} >
-                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
-                    onPress={() => {
-                      analytics.track('Certificate Upload');
-                      PostUpload();
-                    }}
-                  >
-                    <View style={styles.save2}>
-                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                        Save
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </View>
-
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible3}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TouchableOpacity onPress={() => { setModalVisible3(false); }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
-                <Text style={styles.modalText}>Save in gallery!</Text>
-                <Item floatingLabel>
-                  <Label>Collection Name</Label>
-                  <Input value={filename} onChangeText={text => setFileName(text)} />
-                </Item>
-                <View>
-                </View>
-                <View style={{ flexDirection: 'row' }} >
-                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 5 }}
-                    onPress={() => {
-                      analytics.track('Saved to Gallery')
-                      saveImages();
-                    }}
-                  >
-                    <View style={styles.save2}>
-                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center' }}>
-                        Save
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </View>
-
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible2}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <TouchableOpacity onPress={() => { setModalVisible2(false) }} style={{ justifyContent: 'flex-end', alignSelf: 'flex-end' }} ><Icon name="cross" type="Entypo" /></TouchableOpacity>
-                <Text style={styles.modalText}>Upload to cloud!</Text>
-                <View style={{ flexDirection: 'row' }} >
-
-                  <TouchableOpacity style={{ borderRadius: 6, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', margin: 15 }}
-                    onPress={() => {
-                      analytics.track('Cloud Storage')
-                      // console.log(randomStr(20, '12345abcdepq75xyz'));
-                      var i;
-                      setTimeout(() => {
-                        setModalVisible2(false)
-                      }, 300);
-                      var obj = { ...uploading };
-                      for (i = 0; i < explore.length - 1; i++) {
-                        obj[(explore[i].uri)] = true;
-                        setUploading({
-                          ...obj
-                        });
-                      }
-                      for (i = 0; i < explore.length - 1; i++) {
-                        uploadToS3(i);
-                      }
-
-                    }}
-                  >
-                    <View style={styles.save2}>
-                      <Text style={{ color: "#327FEB", flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Regular' }}>
-                        Upload
-                        </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </View>
+        
         <ImageView
           images={selected}
           imageIndex={openImg}
@@ -1172,7 +1051,12 @@ const Upload = ({ route, navigation }) => {
         <View style={{ height: height * 0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity
             style={{ height: 50, width: width * 0.3, alignItems: 'center' }}
-            onPress={() => {
+            onPress={async () => {
+              var x = await AsyncStorage.getItem('profile');
+              analytics.track('Collection Shared', {
+                  userID: x ? JSON.parse(x)['uuid'] : null,
+                  deviceID: getUniqueId() 
+                }) 
               shareImage();
             }}
           >
@@ -1182,7 +1066,6 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50, width: width * 0.1, alignItems: 'center' }}
             onPress={() => {
-              analytics.track('PDF Saved');
               // setModalVisible(true);
               setBottomSheetOpen(true);
               setFileName(new Date().toISOString().split('T')[0])

@@ -7,6 +7,8 @@ import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Sea
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import ScreenHeader from '../Modules/ScreenHeader'
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import CompButton from '../Modules/CompButton'
 import { useFocusEffect } from "@react-navigation/native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -91,6 +93,11 @@ const SearchScreen = ({ route, navigation }) => {
   const [status, setstatus] = useState('3')
   useEffect(() => {
     const check = async () => {
+      var x = await AsyncStorage.getItem('profile');
+      analytics.screen('Search Screen', {
+          userID: x ? JSON.parse(x)['uuid'] : null,
+          deviceID: getUniqueId() 
+      })
       var child = await AsyncStorage.getItem('children')
       if (child != null) {
         child = JSON.parse(child)
