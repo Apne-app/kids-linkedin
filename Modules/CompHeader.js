@@ -12,12 +12,11 @@ const CompHeader = (props) => {
     back: require('../Icons/back.png'),
   };
   return (<Appbar.Header style={{ backgroundColor: 'white' }} statusBarHeight={Constants.statusBarHeight}>
-    <StatusBar />
     <View style={{ flexDirection: 'row', flex: 1, marginLeft: 10 }}>
       <TouchableOpacity onPress={() => props.goback()}>
-        <Image style={{ height: 30, width: 30, backgroundColor: "transparent", }} source={(props.icon == 'back' ? images.back : images.close)} />
+        <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginTop:0 }} source={(props.icon == 'back' ? images.back : images.close)} />
       </TouchableOpacity>
-      <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 24, marginLeft: 10, width: 200, marginTop: '-4%' }}>{props.screen}</Text>
+      <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 24, marginLeft: 10, width: 200, marginTop: -5 }}>{props.screen}</Text>
     </View>
     <Body>
     </Body>

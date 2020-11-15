@@ -11,7 +11,7 @@ const CompHeader = (props) => {
         close: require('../Icons/close.png'),
         back: require('../Icons/back.png'),
     };
-    return (<Appbar.Header style={{backgroundColor:'white'}} statusBarHeight={Constants.statusBarHeight}>
+    return (<Appbar.Header style={{backgroundColor:'white'}} statusBarHeight={Constants.statusBarHeight+10}>
         <View style={{ flexDirection: 'row', marginTop: props.screen == 'Genio' ? 0 : 6, flex: 1, marginBottom:10, marginLeft:10 }}>
             <Text style={{ fontFamily: props.screen == 'Genio' ? 'FingerPaint-Regular' : 'NunitoSans-Bold', fontSize: props.screen == 'Genio' ? 40 : 30, marginLeft: 10, color: props.screen == 'Genio' ? '#327FEB' : 'black', width: 200 }}>{props.screen}</Text>
         </View>

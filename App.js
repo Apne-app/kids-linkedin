@@ -41,6 +41,7 @@ import GalleryScreen from './screens/GalleryScreen';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
+import codePush from "react-native-code-push";
 
 
 const Stack = createStackNavigator();
@@ -66,9 +67,9 @@ const App = (props) => {
   React.useEffect(() => {
     console.log("aaa", props);
   }, [])
-
+alert('hello')
   useEffect(() => {
-    StatusBar.setBackgroundColor('white')
+    StatusBar.setBarStyle('dark-content')
   })
 
   const containerRef = React.useRef();
@@ -234,4 +235,4 @@ const App = (props) => {
   );
 };
 
-export default App;
+export default codePush(App);
