@@ -13,6 +13,7 @@ import LinkedIn from '../components/LinkedIn'
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
 import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { Snackbar } from 'react-native-paper';
 import CompHeader from '../Modules/CompHeader'
@@ -74,6 +75,15 @@ const LoginScreen = ({ route, navigation }) => {
   const input = useRef(null)
   useEffect(() => {
 
+    const analyse = async () => {
+      var x = await AsyncStorage.getItem('profile');
+      analytics.screen('Login Screen', {
+        userID: x ? JSON.parse(x)['uuid'] : null,
+        deviceID: getUniqueId() 
+      })
+    }
+    analyse();
+
     var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
 
     var config = {
@@ -105,9 +115,14 @@ const LoginScreen = ({ route, navigation }) => {
       keyboardDidShowListener.remove();
     };
   }, []);
-  const api = () => {
+  const api = async () => {
     // setemail(email.split(' ')[0])
     // console.log(email)
+    var x = await AsyncStorage.getItem('profile');
+    analytics.track('Login Via Email', {
+        userID: x ? JSON.parse(x)['uuid'] : null,
+        deviceID: getUniqueId() 
+    })
     setLoading(true);
     axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + `/default/?token=${token}`)
       .then(async (response) => {
@@ -124,7 +139,6 @@ const LoginScreen = ({ route, navigation }) => {
               email: response.data.email
             })
 
-            analytics.track('Login')
 
           } catch (e) {
             // saving error

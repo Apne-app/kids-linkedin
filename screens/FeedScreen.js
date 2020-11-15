@@ -19,6 +19,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
 import { Snackbar } from 'react-native-paper';
 import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { Chip } from 'react-native-paper';
 import { clockRunning, set } from 'react-native-reanimated';
 import YouTube from 'react-native-youtube';
@@ -100,9 +101,25 @@ const FeedScreen = ({ navigation, route }) => {
 
         }, []));
 
-    const report = (x) => {
+        useEffect(() => {
+            const analyse = async () => {
+                var x = await AsyncStorage.getItem('profile');
+                analytics.screen('Feed Screen', {
+                userID: x ? JSON.parse(x)['uuid'] : null,
+                deviceID: getUniqueId() 
+                })
+            }
+            analyse();
+        })
+
+    const report = async (x) => {
 
         // console.log(children);
+        var x = await AsyncStorage.getItem('profile');
+        analytics.track('Post Reported', {
+          userID: x ? JSON.parse(x)['uuid'] : null,
+          deviceID: getUniqueId() 
+        })
         var now = new Date();
         var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
         datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
@@ -214,7 +231,14 @@ const FeedScreen = ({ navigation, route }) => {
                         counts={props.activity.reaction_counts}
                         kind="comment"
                         width={-80}
-                        onPress={() => { analytics.track('Comment'); console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] }) }}
+                        onPress={async () => 
+                        { 
+                            var x = await AsyncStorage.getItem('profile');
+                            analytics.track('Comment', {
+                            userID: x ? JSON.parse(x)['uuid'] : null,
+                            deviceID: getUniqueId() 
+                            });
+                            console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] }) }}
                     />
                     <Icon onPress={() => {
                         Linking.openURL('whatsapp://send?text=check').then((data) => {

@@ -24,6 +24,8 @@ import { Chip } from 'react-native-paper';
 import ImageView from "react-native-image-viewing";
 import { RNS3 } from 'react-native-aws3';
 import { useFocusEffect } from "@react-navigation/native";
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -63,6 +65,11 @@ const FileScreen = (props) => {
 
     useEffect(() => {
         const check = async () => {
+            var x = await AsyncStorage.getItem('profile');
+            analytics.screen('Collections Screen', {
+                userID: x ? JSON.parse(x)['uuid'] : null,
+                deviceID: getUniqueId() 
+            })
             var st = await AsyncStorage.getItem('status')
             setstatus(st)
         }
@@ -260,7 +267,13 @@ const FileScreen = (props) => {
 
 
 
-    const viewImages = (time) => {
+    const viewImages = async (time) => {
+
+        var x = await AsyncStorage.getItem('profile');
+        analytics.track('A collection Selected to view', {
+            userID: x ? JSON.parse(x)['uuid'] : null,
+            deviceID: getUniqueId() 
+        })
 
         var arr = [...files];
         var arr2 = [];
@@ -347,7 +360,13 @@ const FileScreen = (props) => {
                         }}
                         // style={{marginTop: 5}}
                         renderItem={({ item, i }) => (
-                            <Chip key={i} style={{ backgroundColor: tag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: tag == item ? "#fff" : "#327FEB" }} onPress={() => { tag == item ? setTag('') : setTag(item); tag == item ? showAll() : showTags(item); setTagsPresent(true); }} >{item}</Chip>
+                            <Chip key={i} style={{ backgroundColor: tag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: tag == item ? "#fff" : "#327FEB" }} onPress={async () => { 
+                                var x = await AsyncStorage.getItem('profile');
+                                analytics.screen('Collection Chip Pressed', {
+                                    userID: x ? JSON.parse(x)['uuid'] : null,
+                                    deviceID: getUniqueId() 
+                                })
+                                tag == item ? setTag('') : setTag(item); tag == item ? showAll() : showTags(item); setTagsPresent(true); }} >{item}</Chip>
                         )}
                         //Setting the number of column
                         // numColumns={3}

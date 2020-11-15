@@ -17,6 +17,8 @@ import CameraRoll from "@react-native-community/cameraroll";
 import { SECRET_KEY, ACCESS_KEY } from '@env';
 import { useFocusEffect } from "@react-navigation/native";
 import { RNS3 } from 'react-native-aws3';
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'getstream';
@@ -235,6 +237,15 @@ const ProfileScreen = ({ navigation, route }) => {
 
 
     useEffect(() => {
+
+        const analyse = async () => {
+            var x = await AsyncStorage.getItem('profile');
+            analytics.screen('Profile Screen', {
+                userID: x ? JSON.parse(x)['uuid'] : null,
+                deviceID: getUniqueId() 
+            })
+        }
+        analyse();
 
         var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
 
@@ -460,7 +471,12 @@ const ProfileScreen = ({ navigation, route }) => {
                         </View>
                     </View>
                     <TouchableOpacity
-                        onPress={() => {
+                        onPress={async () => {
+                            var x = await AsyncStorage.getItem('profile');
+                            analytics.track('Opened website', {
+                                userID: x ? JSON.parse(x)['uuid'] : null,
+                                deviceID: getUniqueId() 
+                            })
                             Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])
                                 .catch(err => {
                                     console.error("Failed opening page because: ", err)

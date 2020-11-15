@@ -6,6 +6,8 @@ import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } fr
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Segment, Thumbnail } from 'native-base';
 import LinkedInModal from 'react-native-linkedin';
 import AsyncStorage from '@react-native-community/async-storage';
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import axios from 'axios';
 
 var height = Dimensions.get('screen').height;
@@ -101,8 +103,13 @@ const LinkedIn = ({navigation, authtoken, loaderHandler}) => {
             clientID="86eyqhqu84z2db"
             clientSecret="DaHDCXhoYqJwp6sN"
             redirectUri="https://genio.app/"
-            onSuccess={(data) => {
+            onSuccess={async (data) => {
                 // setToken(data.access_token);
+                var x = await AsyncStorage.getItem('profile');
+                analytics.track('Login Via Linkedin', {
+                    userID: x ? JSON.parse(x)['uuid'] : null,
+                    deviceID: getUniqueId() 
+                })
                 getInfo(data.access_token);
             }}
             // permissions={['r_liteprofile']}
