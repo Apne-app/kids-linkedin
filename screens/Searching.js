@@ -166,8 +166,8 @@ const Searching = ({ route, navigation }) => {
     };
     const [status, setstatus] = useState('3')
     useEffect(()=>{
-        const data = () => {
-            var st = AsyncStorage.getItem('status')
+        const data = async () => {
+            var st = await AsyncStorage.getItem('status')
             setstatus(st)
         }
         data()

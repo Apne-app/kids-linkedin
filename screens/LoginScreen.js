@@ -138,6 +138,7 @@ const LoginScreen = ({ route, navigation }) => {
               alert('There was an error, please try again')
             }
             else {
+              setLoading(false);
               navigation.navigate('Unverified')
             }
           })
@@ -145,7 +146,6 @@ const LoginScreen = ({ route, navigation }) => {
             console.log(response)
             alert('There was an error, please try again')
           })
-        setLoading(false);
 
       })
       .catch((error) => {

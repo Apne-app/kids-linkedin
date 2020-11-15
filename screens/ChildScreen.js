@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect, useRef } from 'react';
 import { Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native'
 import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
@@ -13,10 +13,11 @@ import LinkedIn from '../components/LinkedIn'
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
 import { useFocusEffect } from "@react-navigation/native";
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const ChildScreen = ({ route, navigation }) => {
+    const scrollcheck = useRef(null)
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -37,7 +38,6 @@ const ChildScreen = ({ route, navigation }) => {
                 BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
         }, []));
-
 
     const fontConfig = {
         default: {
@@ -81,37 +81,66 @@ const ChildScreen = ({ route, navigation }) => {
     const [year, setyear] = useState(0);
     const [school, setschool] = useState('');
     const [grade, setgrade] = useState('');
+    const [active, setactive] = useState(false);
+    const [text, settext] = useState();
     const api = async () => {
-        if (current == flow.length - 1) {
-            Keyboard.dismiss
-            var pro = await AsyncStorage.getItem('profile');
-            pro = JSON.parse(pro);
-            console.log(pro, "sad");
-            axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email+'/child/')
-                .then(async (response) => {
-                    if (response.data.split(', ').length == 2) {
-                        await AsyncStorage.setItem('status', '3')
-                        // console.log(response.data)
-                        navigation.navigate('ChildSuccess')
-                    }
-                })
+        if (current == 1) {
+            if (name == '') {
+                settext('*Please Enter a valid name')
+                setactive(true)
+                return
+            }
+            else {
+                setactive(false)
+                setcurrent(2)
+            }
         }
-        else {
-            setcurrent(current + 1)
-            setLoading(false)
+        else if (current == 2) {
+            if (year == 0) {
+                settext('*Please enter a valid year')
+                setactive(true)
+                return
+            }
+            else if (year > parseInt(new Date().getFullYear())) {
+                settext('*Please enter a valid year')
+                setactive(true)
+                return
+            }
+            else if (year < parseInt(new Date().getFullYear()) - 13) {
+                navigation.navigate('KidsAge')
+                return
+            }
+            else {
+                setactive(false)
+                setLoading(true)
+                Keyboard.dismiss()
+                var pro = await AsyncStorage.getItem('profile');
+                pro = JSON.parse(pro);
+                console.log(pro, "sad");
+                axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email + '/child/')
+                    .then(async (response) => {
+                        if (response.data.split(', ').length == 2) {
+                            await AsyncStorage.setItem('status', '3')
+                            // console.log(response.data)
+                            navigation.navigate('ChildSuccess')
+                        }
+                    })
+
+            }
+
         }
 
     }
     const inputtype = () => {
         if (current == 0) {
             return (
-                <View style={{ flexDirection: 'row', justifyContent:'space-evenly',}}>
-                    <TouchableOpacity onPress={()=>setcurrent(1)} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10,  width: 180, marginRight:10 }}>
-                        <Image source={require('../images/kids.png')} style={{ width: 130, height: 114, alignSelf:'center', marginTop:13 }} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('KidUser')} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10, width: 180, marginRight: 10, height: 170 }}>
+                        <Image source={require('../images/kids.png')} style={{ width: 130, height: 114, alignSelf: 'center', marginTop: 13 }} />
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', paddingHorizontal: 20 }}>I am a kid</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity  onPress={()=>setcurrent(1)} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10, width: 180  }}>
-                        <Image source={require('../images/parent.png')} style={{ width: 130, height: 130, alignSelf:'center' }} />
+                    <TouchableOpacity onPress={() => setcurrent(1)} style={{ borderColor: 'lightgrey', borderWidth: 2, borderRadius: 10, width: 180, height: 170 }}>
+                        <Image source={require('../images/parent.png')} style={{ width: 130, height: 130, alignSelf: 'center' }} />
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', paddingHorizontal: 20 }}>I am a parent</Text>
                     </TouchableOpacity>
                 </View>
@@ -119,61 +148,57 @@ const ChildScreen = ({ route, navigation }) => {
         }
         else if (current == 1) {
             return (
-                <TextInput value={name} onChangeText={(text) => setname(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'NunitoSans-Regular', borderWidth: 1 }}></TextInput>
+                <TextInput value={name} onChangeText={(text) => { setname(text); setactive(false) }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
             )
         }
         else if (current == 2) {
             return (
-                <TextInput keyboardType='numeric' value={year} onChangeText={(text) => setyear(text)} style={{ width: width - 40, borderRadius: 10, height: 70, backgroundColor: '#ededed', fontSize: 20, padding: 10, fontFamily: 'NunitoSans-Regular', borderWidth: 1 }}></TextInput>
+                <TextInput keyboardType='numeric' value={year} onChangeText={(text) => { setyear(text); setactive(false) }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
             )
         }
     }
     return (
-        <Container style={styles.container}>
-            <Content>
+        <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+        }} ref={scrollcheck} style={styles.container}>
+            <KeyboardAvoidingView>
                 <View>
-                    <SimpleAnimation delay={500} duration={1000} fade staticType='zoom'>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20 }}>Help us out with a few details </Text>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
-                    </SimpleAnimation>
-                    <KeyboardAvoidingView>
-                        <View>
-                            {inputtype()}
-                        </View>
-                        <View style={{ alignSelf: 'center', display:current?'flex':'none' }}>
-                            <SpinnerButton
-                                buttonStyle={{
-                                    borderRadius: 10,
-                                    margin: 20,
-                                    width: 100,
-                                    alignSelf: 'center',
-                                    backgroundColor: name != '' && current != 2 ? 'lightblue' : parseInt(year) > 2010 ? 'lightblue' : 'grey'
-                                }}
-                                isLoading={Loading}
-                                spinnerType='BarIndicator'
-                                onPress={() => {
-                                    setLoading(true); api()
-                                }}
-                                indicatorCount={10}
-                            >
-                                <Icon active type="Feather" name='chevron-right' />
-                                {/* <Text style={styles.buttonText}>Next</Text> */}
-                            </SpinnerButton>
-                        </View>
-                    </KeyboardAvoidingView>
+                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20 }}>Help us out with a few details </Text>
+                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
+                    <View>
+                        {inputtype()}
+                        <Text style={{ color: "red", fontFamily: 'NunitoSans-Bold', fontSize: 12, marginTop: 4, display: active ? 'flex' : 'none', marginLeft: 20 }}>{text}</Text>
+                    </View>
+                    <View style={{ alignSelf: 'center', display: current ? 'flex' : 'none' }}>
+                        <SpinnerButton
+                            buttonStyle={{
+                                borderRadius: 28.5,
+                                margin: 20,
+                                width: 200,
+                                alignSelf: 'center',
+                                backgroundColor: '#327FEB',
+                                height: 50
+                            }}
+                            isLoading={Loading}
+                            spinnerType='BarIndicator'
+                            onPress={() => {
+                                api()
+                            }}
+                            indicatorCount={10}
+                        >
+                            <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
+                            {/* <Text style={styles.buttonText}>Next</Text> */}
+                        </SpinnerButton>
+                    </View>
                 </View>
-            </Content>
-        </Container>
+            </KeyboardAvoidingView>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        padding: 20,
-        backgroundColor: "#f9f9f9",
-    },
     form: {
         marginTop: 40,
         flex: 1
@@ -194,10 +219,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        // justifyContent: 'center',
-        paddingTop: height / 4,
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        backgroundColor: '#efefef',
     },
     buttonText: {
         fontSize: 20,
