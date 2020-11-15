@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { useFocusEffect } from "@react-navigation/native";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-const Unverified = ({ navigation }) => {
+const Unverified = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
@@ -69,7 +69,7 @@ const Unverified = ({ navigation }) => {
                         await AsyncStorage.setItem('children', JSON.stringify(response.data))
                         if (Object.keys(response.data).length) {
                             await AsyncStorage.setItem('status', '3')
-                            navigation.navigate(route.params.screen)
+                            navigation.navigate(route.params.screen === "IntroSlider" ? navigation.navigate('Home') : navigation.navigate(route.params.screen))
                         }
                         else {
                             await AsyncStorage.setItem('status', '2')
