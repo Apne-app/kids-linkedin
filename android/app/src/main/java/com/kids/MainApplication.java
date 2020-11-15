@@ -47,7 +47,7 @@ public class MainApplication extends Application implements ShareApplication, Re
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
-        @Override
+         @Override
         protected String getJSBundleFile() {
             return CodePush.getJSBundleFile();
         }
