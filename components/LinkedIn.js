@@ -58,7 +58,7 @@ const LinkedIn = ({navigation, authtoken, loaderHandler}) => {
                 
                   try {
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data));
-                  axios.get('http://104.199.158.211:5000/getchild/' + response.data.email + '/')
+                  axios.get('http://104.199.158.211:5000/getchild/' + response.data.email + '/' + `?token=${authtoken}`)
                   .then(async (response) => {
                       await AsyncStorage.setItem('children', JSON.stringify(response.data))
                       if (Object.keys(response.data).length) {

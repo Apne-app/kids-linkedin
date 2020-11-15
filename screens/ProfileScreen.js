@@ -535,7 +535,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 var pro = await AsyncStorage.getItem('profile')
                 if (pro !== null) {
                     pro = JSON.parse(pro)
-                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${token}`)
                         .then(async (response) => {
                             setchildren(response.data)
                             await AsyncStorage.setItem('children', JSON.stringify(response.data))

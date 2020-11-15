@@ -129,7 +129,21 @@ const ChildScreen = ({ route, navigation }) => {
                 var pro = await AsyncStorage.getItem('profile');
                 pro = JSON.parse(pro);
                 console.log(pro, "sad");
-                axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email + '/child/')
+                var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+
+                var config = {
+                    method: 'post',
+                    url: 'http://104.199.146.206:5000/getToken',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+                };
+
+                axios(config)
+                .then(function (response) {
+                    // console.log(JSON.stringify(response.data.token));
+                    axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email + '/child/' + `?token=${response.data.token}`)
                     .then(async (response) => {
                         if (response.data.split(', ').length == 2) {
                             await AsyncStorage.setItem('status', '3')
@@ -137,6 +151,11 @@ const ChildScreen = ({ route, navigation }) => {
                             navigation.navigate('ChildSuccess')
                         }
                     })
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+                
 
             }
 

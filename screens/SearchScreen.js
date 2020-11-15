@@ -146,14 +146,34 @@ const SearchScreen = ({ route, navigation }) => {
         var pro = await AsyncStorage.getItem('profile')
         if (pro !== null) {
           pro = JSON.parse(pro)
-          axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
-            .then(async (response) => {
-              await AsyncStorage.setItem('children', JSON.stringify(response.data))
-              // setchildren(response.data)
-            })
-            .catch((error) => {
-              console.log(error)
-            })
+          // var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+
+          // var config = {
+          //   method: 'post',
+          //   url: 'http://104.199.146.206:5000/getToken',
+          //   headers: {
+          //     'Content-Type': 'application/json'
+          //   },
+          //   data: data
+          // };
+          // axios(config)
+          //   .then(async function (response) {
+          //     console.log(JSON.stringify(response.data.token));
+          //     axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
+          //     .then(async (response) => {
+          //       await AsyncStorage.setItem('children', JSON.stringify(response.data))
+          //       // setchildren(response.data)
+          //       console.log(response)
+          //     })
+          //     .catch((error) => {
+          //       console.log(error)
+          //     })
+          //   })
+          //   .catch(function (error) {
+          //     console.log(error);
+          //   });
+
+          
         }
       }
       else {
