@@ -1,9 +1,9 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React from 'react';
-import {View, SafeAreaView, Text, Image, StyleSheet, TouchableOpacity, StatusBar, Dimensions} from 'react-native';
+import { View, SafeAreaView, Text, Image, StyleSheet, TouchableOpacity, StatusBar, Dimensions } from 'react-native';
 // import Icon from 'react-native-vector-icons/Ionicons';
-import {Icon, Button} from 'native-base'
+import { Icon, Button } from 'native-base'
 import AppIntroSlider from 'react-native-app-intro-slider';
 import AsyncStorage from '@react-native-community/async-storage';
 var height = Dimensions.get('screen').height;
@@ -12,21 +12,21 @@ var width = Dimensions.get('screen').width;
 
 const data = [
   {
-    title: 'We connect kids ',
-    text: 'Description. Say something cool ',
-    image: require('../assets/intro.png'),
+    title: 'Get Inspired',
+    text: 'Check out what other kids are learning',
+    image: require('../images/Welcome.png'),
     bg: '#59b2ab',
   },
   {
-    title: 'Title 2',
-    text: 'Other cool stuff ',
-    image: require('../assets/intro.png'),
+    title: 'Create',
+    text: 'Upload what you have done',
+    image: require('../images/Science.png'),
     bg: '#febe29',
   },
   {
-    title: 'Rocket guy',
-    text: "I'm already out of descriptions. Lorem ipsum bla bla bla ",
-    image: require('../assets/intro.png'),
+    title: 'Get Feedback',
+    text: "From kids around the world!",
+    image: require('../images/Searching.png'),
     bg: '#22bcb5',
   },
 ];
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: width,
-    height: height*0.55,
+    height: height * 0.55,
     // marginVertical: 32,
   },
   text: {
@@ -51,17 +51,18 @@ const styles = StyleSheet.create({
     width: 325,
     fontWeight: "normal",
     lineHeight: 26,
+    fontFamily:'NunitoSans-SemiBold',
     marginTop: 20
   },
   title: {
     fontSize: 24,
-    fontWeight: "700",
     color: '#383838',
     marginTop: 20,
     width: 218,
     lineHeight: 33,
     textAlign: 'center',
-    
+    fontFamily:'NunitoSans-Bold'
+
   },
   buttonCircle: {
     width: 44,
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
 });
 
 export default class App extends React.Component {
-  _renderItem = ({item}: {item: Item}) => {
+  _renderItem = ({ item }: { item: Item }) => {
     return (
       <View
         style={[
@@ -91,7 +92,7 @@ export default class App extends React.Component {
           },
         ]}>
         <View style={styles.imagecontainer}>
-        <Image source={item.image} style={styles.image} />
+          <Image source={item.image} style={styles.image} />
         </View>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.text}>{item.text}</Text>
@@ -104,11 +105,11 @@ export default class App extends React.Component {
   _renderNextButton = () => {
     return (
       <Button onPress={async () => {
-          this.props.navigation.navigate('Home', {
-            screen: 'Post'
-          });
-          await AsyncStorage.setItem('status', '-1')
-      }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width*0.86, alignSelf: 'center', marginBottom: 10}}>
+        this.props.navigation.navigate('Home', {
+          screen: 'Post'
+        });
+        await AsyncStorage.setItem('status', '-1')
+      }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
         <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Continue</Text>
       </Button>
     );
@@ -116,7 +117,7 @@ export default class App extends React.Component {
 
   _renderDoneButton = () => {
     return (
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('Login', {'screen':'IntroSlider'})} block dark style={{ backgroundColor: '#fff', borderRadius: 30, width: width*0.86, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('Login', { 'screen': 'IntroSlider' })} block dark style={{ backgroundColor: '#fff', borderRadius: 30, width: width * 0.86, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
         <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Sign up/Login</Text>
       </TouchableOpacity>
     );
@@ -124,7 +125,7 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <StatusBar translucent backgroundColor="transparent" />
         <AppIntroSlider
           keyExtractor={this._keyExtractor}
@@ -134,9 +135,8 @@ export default class App extends React.Component {
           renderNextButton={this._renderNextButton}
           renderDoneButton={this._renderNextButton}
           bottomButton={true}
-          activeDotStyle={{backgroundColor: "#327FEB"}}
+          activeDotStyle={{ backgroundColor: "#327FEB", width:20 }}
           showSkipButton={true}
-        //   showDoneButton={f}
           showPrevButton={true}
           data={data}
         />
