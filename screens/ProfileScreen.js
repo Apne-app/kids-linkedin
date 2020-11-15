@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, RefreshControl, Dimensions, Linking, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
+import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import CameraRoll from "@react-native-community/cameraroll";
 import { SECRET_KEY, ACCESS_KEY } from '@env';
+import { useFocusEffect } from "@react-navigation/native";
 import { RNS3 } from 'react-native-aws3';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -113,6 +114,17 @@ const ProfileScreen = ({ navigation, route }) => {
         name: ''
     })
 
+
+    useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+            navigation.navigate('Home', { screen: 'Feed' })
+            return true;
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
 
 
     const renderOptions = () => (
@@ -393,7 +405,7 @@ const ProfileScreen = ({ navigation, route }) => {
         navigation.navigate('Login')
     }
     const there = () => {
-        return (<View>
+        return (<View style={{height: height}}>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                 <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
                 <StreamApp

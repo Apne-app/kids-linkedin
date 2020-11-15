@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image, TouchableOpacity, FlatList } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -9,6 +9,7 @@ import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, upd
 import axios from 'axios';
 import analytics from '@segment/analytics-react-native';
 import { connect } from 'getstream';
+import { useFocusEffect } from "@react-navigation/native";
 import CompButton from '../Modules/CompButton';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -63,6 +64,24 @@ const Searching = ({ route, navigation }) => {
         }
         addfollows()
     }, [])
+    useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+            // Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+            //     {
+            //         text: "Cancel",
+            //         onPress: () => null,
+            //         style: "cancel"
+            //     },
+            //     { text: "YES", onPress: () => BackHandler.exitApp() }
+            // ]);
+            navigation.pop()
+            return true;
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
     useEffect(() => {
 
         var data = JSON.stringify({"username":"Shashwat","password":"GenioKaPassword"});

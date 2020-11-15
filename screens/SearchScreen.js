@@ -1,13 +1,14 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, FlatList, Keyboard } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, FlatList, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
+import { useFocusEffect } from "@react-navigation/native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -99,6 +100,18 @@ const SearchScreen = ({ route, navigation }) => {
     }
     check()
   }, [])
+
+  useFocusEffect(
+  React.useCallback(() => {
+      const onBackPress = () => {
+          navigation.navigate('Home', { screen: 'Feed' })
+          return true;
+      };
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      return () =>
+          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+  }, []));
+
   // useEffect(() => {
   //   Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
 
