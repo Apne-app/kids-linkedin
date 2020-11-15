@@ -329,7 +329,7 @@ const ProfileScreen = ({ navigation, route }) => {
             var user = client.feed('timeline', children['id'] + 'id');
             var following = await user.following()
             console.log(follows)
-            setdata({ 'followers': follows['results'], 'following': following['results'] })
+            setdata({ 'followers': follows['results'], 'following': following['results'], followers:follows })
             // console.log(follows)
         }
         addfollows();

@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, ScrollView, Keyboard, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity } from 'react-native'
+import { StyleSheet, ScrollView, Keyboard, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Textarea } from 'native-base';
 import axios from 'axios';
@@ -17,48 +17,48 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const PostScreen = ({ navigation, route }) => {
 
-        useFocusEffect(
-        React.useCallback(() => {
-        const onBackPress = () => {
-            Alert.alert("Hold on!", "Are you sure you want to discard the post?", [
-            {
-                text: "Cancel",
-                onPress: () => null,
-                style: "cancel"
-            },
-            { text: "YES", onPress: () => navigation.pop() }
-            ]);
-            return true;
-        };
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        Alert.alert("Hold on!", "Are you sure you want to discard the post?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel"
+          },
+          { text: "YES", onPress: () => navigation.pop() }
+        ]);
+        return true;
+      };
 
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
     }, []));
 
-        const [images, setImages] = useState([]);
-        const [selection, setSelection] = useState([])
-        const [tag, setTag] = useState('');
-        const [caption, setCaption] = useState('')
-        const [last, setLast] = useState(0);
-        const [keyboardOffset, setKeyboardOffset] = useState(0);
-        const keyboardDidShowListener = React.useRef();
-        const keyboardDidHideListener = React.useRef();
-        const onKeyboardShow = event => setKeyboardOffset(event.endCoordinates.height);
-        const onKeyboardHide = () => setKeyboardOffset(0);
+  const [images, setImages] = useState([]);
+  const [selection, setSelection] = useState([])
+  const [tag, setTag] = useState('');
+  const [caption, setCaption] = useState('')
+  const [last, setLast] = useState(0);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const keyboardDidShowListener = React.useRef();
+  const keyboardDidHideListener = React.useRef();
+  const onKeyboardShow = event => setKeyboardOffset(event.endCoordinates.height);
+  const onKeyboardHide = () => setKeyboardOffset(0);
 
-        React.useEffect(() => {
-          keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
-          keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
+  React.useEffect(() => {
+    keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
+    keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
 
-          return () => {
-            keyboardDidShowListener.current.remove();
-            keyboardDidHideListener.current.remove();
-          };
-        }, []);
-        function randomStr(len, arr) {
+    return () => {
+      keyboardDidShowListener.current.remove();
+      keyboardDidHideListener.current.remove();
+    };
+  }, []);
+  function randomStr(len, arr) {
     var ans = '';
     for (var i = len; i > 0; i--) {
       ans +=
@@ -68,239 +68,239 @@ const PostScreen = ({ navigation, route }) => {
   }
 
 
-        const uploadToS3 = (i, email, tagged) => {
+  const uploadToS3 = (i, email, tagged) => {
 
-          // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
-          var name = randomStr(20, '12345abcdepq75xyz') + '.' + images[i].uri[images[i].uri.length - 3] + images[i].uri[images[i].uri.length - 2] + images[i].uri[images[i].uri.length - 1]
-          const file = {
-            // `uri` can also be a file system path (i.e. file://)
-            uri: images[i].uri,
-            name: name,
-            type: "image/png",
-          }
+    // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
+    var name = randomStr(20, '12345abcdepq75xyz') + '.' + images[i].uri[images[i].uri.length - 3] + images[i].uri[images[i].uri.length - 2] + images[i].uri[images[i].uri.length - 1]
+    const file = {
+      // `uri` can also be a file system path (i.e. file://)
+      uri: images[i].uri,
+      name: name,
+      type: "image/png",
+    }
 
-          const options = {
-            keyPrefix: email + "/" + tagged + "/",
-            bucket: "kids-linkedin",
-            region: "ap-south-1",
-            accessKey: ACCESS_KEY,
-            secretKey: SECRET_KEY,
-            successActionStatus: 201
-          }
+    const options = {
+      keyPrefix: email + "/" + tagged + "/",
+      bucket: "kids-linkedin",
+      region: "ap-south-1",
+      accessKey: ACCESS_KEY,
+      secretKey: SECRET_KEY,
+      successActionStatus: 201
+    }
 
-          RNS3.put(file, options).then(response => {
-            console.log("dassd")
-            if (response.status !== 201)
-              throw new Error("Failed to upload image to S3");
-            console.log(response.body);
+    RNS3.put(file, options).then(response => {
+      console.log("dassd")
+      if (response.status !== 201)
+        throw new Error("Failed to upload image to S3");
+      console.log(response.body);
 
-            // var obj = { ...uploading };
-            // var a = 0;
-            // if (!a) {
-            //   a++;
-            //   obj[explore[i].uri] = false;
-            // }
+      // var obj = { ...uploading };
+      // var a = 0;
+      // if (!a) {
+      //   a++;
+      //   obj[explore[i].uri] = false;
+      // }
 
-            // console.log(obj, i);
+      // console.log(obj, i);
 
-            // setUploading({
-            //   ...obj
-            // })
+      // setUploading({
+      //   ...obj
+      // })
 
-            if (i == images.length - 2) alert("Uploaded");
+      if (i == images.length - 2) alert("Uploaded");
 
-          })
-            .catch(err => {
-              console.log(err);
-            })
-            ;
-          return name;
-        }
+    })
+      .catch(err => {
+        console.log(err);
+      })
+      ;
+    return name;
+  }
 
-        const PostUpload = async (tagged) => {
-          console.log(tagged)
-          var i;  
-          // setTimeout(() => {
-          //   setModalVisible4(false)
-          // }, 300);
-          // var obj = { ...uploading };
-          // for (i = 0; i < explore.length - 1; i++) {
-          //   obj[(explore[i].uri)] = true;
-          //   setUploading({
-          //     ...obj
-          //   });
-          // }
-          var children = await AsyncStorage.getItem('children')
-          children = JSON.parse(children)['0']
-          var name = ''
-          console.log(images)
-          for (i = 0; i < images.length; i++) {
-            var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken']  +  "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged) + ', ';
-            name = name + x;
+  const PostUpload = async (tagged) => {
+    console.log(tagged)
+    var i;
+    // setTimeout(() => {
+    //   setModalVisible4(false)
+    // }, 300);
+    // var obj = { ...uploading };
+    // for (i = 0; i < explore.length - 1; i++) {
+    //   obj[(explore[i].uri)] = true;
+    //   setUploading({
+    //     ...obj
+    //   });
+    // }
+    var children = await AsyncStorage.getItem('children')
+    children = JSON.parse(children)['0']
+    var name = ''
+    console.log(images)
+    for (i = 0; i < images.length; i++) {
+      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged) + ', ';
+      name = name + x;
 
-          //   if(tag == 'Certificate')
-          //   {
-          //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
-          //     var config = {
-          //       method: 'post',
-          //       url: 'https://barry-2z27nzutoq-as.a.run.app/updatecerti',
-          //       headers: { 
-          //         'Content-Type': 'application/json'
-          //       },
-          //       data : data
-          //     };
+      //   if(tag == 'Certificate')
+      //   {
+      //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
+      //     var config = {
+      //       method: 'post',
+      //       url: 'https://barry-2z27nzutoq-as.a.run.app/updatecerti',
+      //       headers: { 
+      //         'Content-Type': 'application/json'
+      //       },
+      //       data : data
+      //     };
 
-          //     axios(config).then(res => {
-          //       if(res == "success")
-          //       {
-          //         console.log("success")
-          //       }
-          //     }).catch(err => {
-          //       console.log(err);
-          //     })
-          //   }
-
-          }
-          // setModalVisible4(false);
-
-          const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-          var activity = { "image": name, "object": caption==''?'default123':caption, "verb": "post" }
-          // var user = client.feed('timeline', '103id');
-          // user.follow('user', '49id');
-          var user = client.feed('user', String(String(children['id']) + String("id")));
-          var dat = await user.addActivity(activity);
-          console.log(activity)
-          navigation.pop();
-        }
-
-        useEffect(() => {
-            setImages([ ...route.params.images ]);
-            // console.log(route.params.images)
-            var arr = [];
-            for(var i = 0; i < route.params.images.length; i++)
-            {
-              arr.push({ uri: route.params.images[i]["uri"], selected: i+1 });
-            }
-            // console.log(arr);
-            setSelection([ ...arr ]);
-            setLast(arr.length);
-        }, [])
-
-        return (
-            <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                {
-                  images.length > 1 ?
-                  <SliderBox
-                    images={images}
-                    dotColor="#327FEB"
-                    inactiveDotColor="#90A4AE"
-                    paginationBoxVerticalPadding={20}
-                    sliderBoxHeight={height*0.5}
-                    ImageComponentStyle={{ width: width, height: height*0.5,}}
-                    circleLoop={true}
-                // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-                // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
-                /> : 
-                  images.length == 1 ?
-                  <SliderBox
-                    images={images}
-                    dotColor="#327FEB"
-                    inactiveDotColor="#90A4AE"
-                    paginationBoxVerticalPadding={20}
-                    sliderBoxHeight={height*0.5}
-                    ImageComponentStyle={{ width: width, height: height*0.5,}}
-                    circleLoop={true}
-                // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-                // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
-                /> 
-                :
-                <SliderBox
-                    images={[""]}
-                    dotColor="#327FEB"
-                    inactiveDotColor="#90A4AE"
-                    paginationBoxVerticalPadding={20}
-                    sliderBoxHeight={height*0.5}
-                    ImageComponentStyle={{ width: width, height: height*0.5,}}
-                    circleLoop={true}
-                // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-                // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
-                /> 
-                }
-                <ScrollView>
-                <FlatList
-                  style={{marginTop: 10, height: height*0.2}}
-                  data={selection}
-                  renderItem={({ item, index }) => (
-                    <TouchableOpacity style={{ flexDirection: 'column', margin: 1, }} onPress={() => {
-                        var arr = [ ...selection ];
-                        arr[index]['selected'] = !arr[index]['selected'];
-                        // for(var i = index+1; i < arr.length; i++)
-                        // {
-                        //   arr[index]['selected'] = arr[index]['selected']-1;
-                        // }
-                        setSelection([ ...arr ])
-                        arr = [ ...images ];
-                        var i = 1000;
-                        // for(var a = 0; a < arr.length; a++)
-                        // {
-                        //   if(arr[a]['uri'] == selection[index]['uri'])
-                        //   {
-                        //     i = a;
-                        //     break;
-                        //   }
-                        // }
-                        var ar = arr.filter(item => item['uri'] !== selection[index]['uri'])
-                        if(ar.length == arr.length) 
-                        {
-                          // console.log(ar)
-                        ar.push({ uri: selection[index]['uri'] })
-                        }
-                        // console.log(ar, arr);
-                        setImages([ ...ar ]);
-                    }}>
-                        <View style={{width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 6, right: 6, alignItems: 'center', justifyContent: 'center'}} >
-                          { item.selected ? <Icon type="Feather" name="check" style={{color: "#327FEB", fontWeight: "bold"}} /> : null}
-                        </View>
-                        <Image source={{uri: item.uri}} style={{width: width*0.25, height: width*0.25, opacity: selection[index]['selected'] ? 0.6 : 1}} />
-                    </TouchableOpacity>
-                  )}
-                  //Setting the number of column
-                  // numColumns={4}
-                  showsHorizontalScrollIndicator={false}
-                  horizontal={true}
-                  keyExtractor={(item, index) => index.toString()}
-                />
-                </ScrollView>
-                <View style={{height: height*0.3, borderTopWidth: 1,borderLeftWidth: 1,borderRightWidth: 1, borderColor: 'lightgrey'}}>
-                  <Content padder>
-                    <Form>
-                      <Textarea value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
-                    </Form>
-                    <TouchableOpacity
-                      style={{height: 50}}
-                      onPress={() => {
-                        PostUpload(route.params.tag);
-                        // var ar = explore;
-                        // var arr = [];
-                        // for(var i = 1; i < ar.length; i++)
-                        // {
-                        //   arr.push({ uri: 'file://'+ar[i]["uri"] })
-                        // }
-                        // navigation.navigate('CreatePost', { images: arr })
-                      }}
-                    >
-                      <View style={styles.Next}>
-                        <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
-                          Post
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </Content>
-                </View>
-            </View>
-        );
+      //     axios(config).then(res => {
+      //       if(res == "success")
+      //       {
+      //         console.log("success")
+      //       }
+      //     }).catch(err => {
+      //       console.log(err);
+      //     })
+      //   }
 
     }
+    // setModalVisible4(false);
+
+    const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
+    var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post", tag: tagged }
+    // var user = client.feed('timeline', '103id');
+    // user.follow('user', '49id');
+    var user = client.feed('user', String(String(children['id']) + String("id")));
+    var dat = await user.addActivity(activity);
+    console.log(activity)
+    navigation.pop();
+  }
+
+  useEffect(() => {
+    setImages([...route.params.images]);
+    // console.log(route.params.images)
+    var arr = [];
+    for (var i = 0; i < route.params.images.length; i++) {
+      arr.push({ uri: route.params.images[i]["uri"], selected: i + 1 });
+    }
+    // console.log(arr);
+    setSelection([...arr]);
+    setLast(arr.length);
+  }, [])
+
+  return (
+    <KeyboardAvoidingView>
+      <View style={{ backgroundColor: 'white', height: height, width: width }}>
+        {
+          images.length > 1 ?
+            <SliderBox
+              images={images}
+              dotColor="#327FEB"
+              inactiveDotColor="#90A4AE"
+              paginationBoxVerticalPadding={20}
+              sliderBoxHeight={height * 0.5}
+              ImageComponentStyle={{ width: width, height: height * 0.5, }}
+              circleLoop={true}
+            // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+            // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
+            /> :
+            images.length == 1 ?
+              <SliderBox
+                images={images}
+                dotColor="#327FEB"
+                inactiveDotColor="#90A4AE"
+                paginationBoxVerticalPadding={20}
+                sliderBoxHeight={height * 0.5}
+                ImageComponentStyle={{ width: width, height: height * 0.5, }}
+                circleLoop={true}
+              // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+              // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
+              />
+              :
+              <SliderBox
+                images={[""]}
+                dotColor="#327FEB"
+                inactiveDotColor="#90A4AE"
+                paginationBoxVerticalPadding={20}
+                sliderBoxHeight={height * 0.5}
+                ImageComponentStyle={{ width: width, height: height * 0.5, }}
+                circleLoop={true}
+              // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+              // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
+              />
+        }
+        <ScrollView>
+          <FlatList
+            style={{ marginTop: 10, height: height * 0.2 }}
+            data={selection}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity style={{ flexDirection: 'column', margin: 1, }} onPress={() => {
+                var arr = [...selection];
+                arr[index]['selected'] = !arr[index]['selected'];
+                // for(var i = index+1; i < arr.length; i++)
+                // {
+                //   arr[index]['selected'] = arr[index]['selected']-1;
+                // }
+                setSelection([...arr])
+                arr = [...images];
+                var i = 1000;
+                // for(var a = 0; a < arr.length; a++)
+                // {
+                //   if(arr[a]['uri'] == selection[index]['uri'])
+                //   {
+                //     i = a;
+                //     break;
+                //   }
+                // }
+                var ar = arr.filter(item => item['uri'] !== selection[index]['uri'])
+                if (ar.length == arr.length) {
+                  // console.log(ar)
+                  ar.push({ uri: selection[index]['uri'] })
+                }
+                // console.log(ar, arr);
+                setImages([...ar]);
+              }}>
+                <View style={{ width: 25, height: 25, borderRadius: 20, backgroundColor: "#fff", position: 'absolute', opacity: 1, zIndex: 100, top: 6, right: 6, alignItems: 'center', justifyContent: 'center' }} >
+                  {item.selected ? <Icon type="Feather" name="check" style={{ color: "#327FEB", fontWeight: "bold" }} /> : null}
+                </View>
+                <Image source={{ uri: item.uri }} style={{ width: width * 0.25, height: width * 0.25, opacity: selection[index]['selected'] ? 0.6 : 1 }} />
+              </TouchableOpacity>
+            )}
+            //Setting the number of column
+            // numColumns={4}
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </ScrollView>
+        <View style={{ height: height * 0.3, borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: 'lightgrey' }}>
+          <Content padder>
+            <Form>
+              <Textarea style={{ fontFamily: 'NunitoSans-Regular' }} value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
+            </Form>
+            <TouchableOpacity
+              style={{ height: 50 }}
+              onPress={() => {
+                PostUpload(route.params.tag);
+                // var ar = explore;
+                // var arr = [];
+                // for(var i = 1; i < ar.length; i++)
+                // {
+                //   arr.push({ uri: 'file://'+ar[i]["uri"] })
+                // }
+                // navigation.navigate('CreatePost', { images: arr })
+              }}
+            >
+              <View style={styles.Next}>
+                <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
+                  Post
+                        </Text>
+              </View>
+            </TouchableOpacity>
+          </Content>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
+
+}
 
 
 
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: "#327FEB",
     borderWidth: 3,
-    borderStyle:"dashed",
+    borderStyle: "dashed",
     backgroundColor: "#fff"
     // borderStyle: 'dashed',
   },
@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 20
   },
-   Next2: {
+  Next2: {
     alignSelf: 'center',
     flexDirection: 'row',
     padding: 8,
@@ -501,4 +501,4 @@ const styles = StyleSheet.create({
 })
 
 
-    export default PostScreen;
+export default PostScreen;
