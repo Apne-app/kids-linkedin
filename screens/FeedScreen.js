@@ -725,14 +725,33 @@ const FeedScreen = ({ navigation, route }) => {
                 var pro = await AsyncStorage.getItem('profile')
                 if (pro !== null) {
                     pro = JSON.parse(pro)
-                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
+                    var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+
+                    var config = {
+                        method: 'post',
+                        url: 'http://104.199.146.206:5000/getToken',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: data
+                    };
+
+                    axios(config)
+                    .then(function (response) {
+                        // console.log(JSON.stringify(response.data.token));
+                        axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
                         .then(async (response) => {
                             setchildren(response.data)
+                            // console.log("response");
                             await AsyncStorage.setItem('children', JSON.stringify(response.data))
                         })
                         .catch((error) => {
                             console.log(error)
                         })
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
                 }
             }
             else {

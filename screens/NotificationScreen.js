@@ -7,6 +7,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import CompHeader from '../Modules/CompHeader';
 import CompButton from '../Modules/CompButton'
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -55,14 +57,34 @@ const NotificationScreen = ({ route, navigation }) => {
         var pro = await AsyncStorage.getItem('profile')
         if (pro !== null) {
           pro = JSON.parse(pro)
-          axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
-            .then(async (response) => {
-              setchildren(response.data)
-              await AsyncStorage.setItem('children', JSON.stringify(response.data))
-            })
-            .catch((error) => {
-              console.log(error)
-            })
+          var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+
+          var config = {
+              method: 'post',
+              url: 'http://104.199.146.206:5000/getToken',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              data: data
+          };
+
+          axios(config)
+          .then(function (response) {
+              // console.log(JSON.stringify(response.data.token));
+              axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
+              .then(async (response) => {
+                setchildren(response.data)
+                // console.log(response);
+                await AsyncStorage.setItem('children', JSON.stringify(response.data))
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+          
         }
       }
       else {
