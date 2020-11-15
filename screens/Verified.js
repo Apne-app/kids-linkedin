@@ -55,11 +55,11 @@ const Unverified = ({ navigation }) => {
                     await AsyncStorage.setItem('children', JSON.stringify(response.data))
                     if (Object.keys(response.data).length) {
                         await AsyncStorage.setItem('status', '3')
-                        navigation.navigate('Home')
+                        navigation.navigate(route.params.screen)
                     }
                     else {
                         await AsyncStorage.setItem('status', '2')
-                        navigation.navigate('Child')
+                        navigation.navigate('Child', {screen:route.params.screen})
                     }
                     console.log(response.data)
                 })

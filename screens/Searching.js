@@ -11,6 +11,7 @@ import analytics from '@segment/analytics-react-native';
 import { connect } from 'getstream';
 import { useFocusEffect } from "@react-navigation/native";
 import CompButton from '../Modules/CompButton';
+import { ScrollView } from 'react-native-gesture-handler';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -65,44 +66,44 @@ const Searching = ({ route, navigation }) => {
         addfollows()
     }, [])
     useFocusEffect(
-    React.useCallback(() => {
-        const onBackPress = () => {
-            // Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-            //     {
-            //         text: "Cancel",
-            //         onPress: () => null,
-            //         style: "cancel"
-            //     },
-            //     { text: "YES", onPress: () => BackHandler.exitApp() }
-            // ]);
-            navigation.pop()
-            return true;
-        };
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, []));
+        React.useCallback(() => {
+            const onBackPress = () => {
+                // Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                //     {
+                //         text: "Cancel",
+                //         onPress: () => null,
+                //         style: "cancel"
+                //     },
+                //     { text: "YES", onPress: () => BackHandler.exitApp() }
+                // ]);
+                navigation.pop()
+                return true;
+            };
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        }, []));
     useEffect(() => {
 
-        var data = JSON.stringify({"username":"Shashwat","password":"GenioKaPassword"});
+        var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
 
         var config = {
-        method: 'post',
-        url: 'http://104.199.146.206:5000/getToken',
-        headers: { 
-            'Content-Type': 'application/json'
-        },
-        data : data
+            method: 'post',
+            url: 'http://104.199.146.206:5000/getToken',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
         };
 
         axios(config)
-        .then(function (response) {
-        // console.log(JSON.stringify(response.data.token));
-        setToken(response.data.token)
-        })
-        .catch(function (error) {
-        console.log(error);
-        });
+            .then(function (response) {
+                // console.log(JSON.stringify(response.data.token));
+                setToken(response.data.token)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
@@ -150,7 +151,7 @@ const Searching = ({ route, navigation }) => {
                             source={{ uri: item['data']['image'] }}
                             style={{ width: 60, height: 60, borderRadius: 306, }}
                         />
-                        <View style={{  marginLeft: 20, flexDirection: 'column' }}>
+                        <View style={{ marginLeft: 20, flexDirection: 'column' }}>
                             <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  3 Posts </Text>
                         </View>
@@ -165,17 +166,17 @@ const Searching = ({ route, navigation }) => {
         );
     };
     const [status, setstatus] = useState('3')
-    useEffect(()=>{
+    useEffect(() => {
         const data = async () => {
             var st = await AsyncStorage.getItem('status')
             setstatus(st)
         }
         data()
-    },[])
+    }, [])
     return (
-        <Container>
-            <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'white', height: 110,  }}>
-                <Item style={{ width: width * 0.9, borderColor: "#000", height: 45, borderRadius: 10, marginTop:50 }}>
+        <ScrollView keyboardShouldPersistTaps='handled'>
+            <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'white', height: 110 }}>
+                <Item style={{ width: width * 0.9, borderColor: "#000", height: 45, borderRadius: 10, marginTop: 50 }}>
                     <Icon active name={searchQuery == "" ? 'search' : 'x'} type={'Feather'} />
                     <Input
                         autoFocus={true}
@@ -184,16 +185,16 @@ const Searching = ({ route, navigation }) => {
                         placeholder='Search' />
                 </Item>
             </Header>
-            {status=='3'?null:<CompButton message={'Signup/Login to find other kids'}  />}
-            {searchQuery == '' ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status=='3'?'Search for children to follow':null}</Text> :  (<View><FlatList
+            {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
+            {searchQuery == '' ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Search for children to follow' : null}</Text> : (<View><FlatList
                 data={result}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.gsToken}
                 numColumns={1}
-                style={{ alignSelf: 'center', marginTop:10 }}
+                style={{ alignSelf: 'center', marginTop: 10 }}
             />
             </View>)}
-        </Container>
+        </ScrollView>
     );
 }
 
