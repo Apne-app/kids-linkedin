@@ -635,7 +635,8 @@ const FeedScreen = ({ navigation, route }) => {
                                 apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                             /> : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null :<Chip style={{ backgroundColor: '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth:  0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color:  "#327FEB", fontFamily: 'NunitoSans-Regular' }} >{props.activity.tag}</Chip>
+}
                     </View>
                 }
                 Footer={footer(props.activity.id, props)}
