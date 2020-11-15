@@ -6,19 +6,55 @@ import { Switch } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Settings = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-    const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+    const onToggleSwitch = async () => {
+        var x = await AsyncStorage.getItem('profile');
+        if(isSwitchOn)
+        {
+            analytics.track('Push Notifications Turned Off', {
+                userID: x ? JSON.parse(x)['uuid'] : null,
+                deviceID: getUniqueId() 
+            })
+        }
+        else 
+        {
+            analytics.track('Push Notifications Turned On', {
+                userID: x ? JSON.parse(x)['uuid'] : null,
+                deviceID: getUniqueId() 
+            })
+        }
+        setIsSwitchOn(!isSwitchOn)
+        };
     const logout = async () => {
+        var x = await AsyncStorage.getItem('profile');
+        analytics.track('Logged Out', {
+            userID: x ? JSON.parse(x)['uuid'] : null,
+            deviceID: getUniqueId() 
+        })
         var arr = await AsyncStorage.getAllKeys()
         await AsyncStorage.multiRemove(arr)
         navigation.navigate('Login')
 
     }
+
+    useEffect(() => {
+        const analyse = async () => {
+            var x = await AsyncStorage.getItem('profile');
+            analytics.screen('Settings Screen', {
+                userID: x ? JSON.parse(x)['uuid'] : null,
+                deviceID: getUniqueId() 
+            })
+        }
+        analyse();
+    })
+
     return (
         <ScrollView>
             <CompHeader screen={'Settings'} goback={()=>navigation.navigate('Profile')} icon={'back'}/>

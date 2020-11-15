@@ -28,6 +28,11 @@ const NotificationScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const check = async () => {
+      var x = await AsyncStorage.getItem('profile');
+      analytics.screen('Notifications Screen', {
+          userID: x ? JSON.parse(x)['uuid'] : null,
+          deviceID: getUniqueId() 
+      })
       var child = await AsyncStorage.getItem('children')
       if (child != null) {
         child = JSON.parse(child)
