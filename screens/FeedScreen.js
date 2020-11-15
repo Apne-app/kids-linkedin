@@ -320,12 +320,12 @@ const FeedScreen = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image
-                                source={{ uri: children['0']['data']['image'] }}
+                                source={{ uri: props.activity.actor.data?props.activity.actor.data.profileImage:'' }}
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{children['0']['data']['type']}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data?props.activity.actor.data.type:null}</Text>
                             </View>
                             <ActionSheet
                                 ref={refActionSheet}
@@ -357,7 +357,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 return (
                                     <View><View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 40, padding: 10 }}>
                                         <Image
-                                            source={{ uri: children['0']['data']['image'] }}
+                                            source={{ uri: props.activity.actor.data?props.activity.actor.data.profileImage:'' }}
                                             style={{ width: 42, height: 42, borderRadius: 1000, marginLeft: 10 }}
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 15 }}>
@@ -583,7 +583,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 return (
                                     <View><View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 40, padding: 10 }}>
                                         <Image
-                                            source={{ uri: "children['0']['data']['image']" }}
+                                            source={{ uri: "props.activity.actor.data?props.activity.actor.data.profileImage:''" }}
                                             style={{ width: 42, height: 42, borderRadius: 1000, marginLeft: 10 }}
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 15 }}>

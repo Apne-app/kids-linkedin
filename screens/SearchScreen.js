@@ -103,21 +103,23 @@ const SearchScreen = ({ route, navigation }) => {
         child = JSON.parse(child)
         setchildren(child)
       }
-      setchildren({})
+      else {
+        setchildren({})
+      }
     }
     check()
   }, [])
 
   useFocusEffect(
-  React.useCallback(() => {
+    React.useCallback(() => {
       const onBackPress = () => {
-          navigation.navigate('Home', { screen: 'Feed' })
-          return true;
+        navigation.navigate('Home', { screen: 'Feed' })
+        return true;
       };
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
       return () =>
-          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-  }, []));
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
 
   // useEffect(() => {
   //   Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
@@ -146,8 +148,8 @@ const SearchScreen = ({ route, navigation }) => {
           pro = JSON.parse(pro)
           axios.get('http://104.199.158.211:5000/getchild/' + pro.email + '/')
             .then(async (response) => {
-              setchildren(response.data)
               await AsyncStorage.setItem('children', JSON.stringify(response.data))
+              // setchildren(response.data)
             })
             .catch((error) => {
               console.log(error)
@@ -272,10 +274,11 @@ const SearchScreen = ({ route, navigation }) => {
     );
   }
   const notthere = () => {
+    console.log(children, status)
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
         <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
-        <TouchableOpacity onPress={()=>navigation.navigate('Login')}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
       </View>
     )
   }
