@@ -5,8 +5,8 @@
 
     <item
         android:width="200dp"
-        android:height="150dp"
-        android:drawable="@mipmap/icon"
+        android:height="200dp"
+        android:drawable="@mipmap/logo_white"
         android:gravity="center" />
 
 </layer-list>

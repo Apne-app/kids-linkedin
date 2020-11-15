@@ -17,20 +17,17 @@ import { NavigationScreen, StreamApp } from 'react-native-activity-feed';
 import ReplyIcon from '../images/icons/reply.png';
 export default function SinglePostScreen({ navigation, route }) {
 
-    const activity = route.params.activity.activity
-    const feedGroup = route.params.activity.feedGroup
-    const userId = '47id'
+    const activity = route.params.actid
     return (
         <SafeAreaView style={styles.container}>
             <StreamApp
                 apiKey={'9ecz2uw6ezt9'}
                 appId={'96078'}
-                token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNDdpZCJ9.f3hGhw0QrYAeqF8TDTNY5E0JqMF0zI6CyUmMumpWdfI'}
+                token={props.activity.token}
             >
                 <SinglePost
                     activity={activity}
-                    feedGroup={feedGroup}
-                    userId={userId}
+                    feedGroup={'timeline'}
                     navigation={route}
                     Activity={(props) => console.log(props) || (
                         <React.Fragment>

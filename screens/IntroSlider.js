@@ -134,6 +134,7 @@ export default class App extends React.Component {
           renderPrevButton={this._renderDoneButton}
           renderNextButton={this._renderNextButton}
           renderDoneButton={this._renderNextButton}
+          onDone={()=>null}
           bottomButton={true}
           activeDotStyle={{ backgroundColor: "#327FEB", width:20 }}
           showSkipButton={true}
