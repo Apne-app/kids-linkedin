@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StatusBar, Image, TouchableOpacity } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
@@ -44,27 +44,38 @@ import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
 import codePush from "react-native-code-push";
-
+import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
+import firebase from '@react-native-firebase/app'
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
-// console.disableYellowBox = true
+const ReactMoE = require('react-native-moengage')
 
-// function Drawer({route}) {
-
-//   // console.log(route);
-
-//   return (
-//     <DrawNav.Navigator drawerPosition={"right"} initialRouteName="Home" >
-//       <DrawNav.Screen  options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: '#327FEB', fontSize: size}} type="Feather" name="home" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Home</Text>) }} name="Home" component={Bottom} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: '#327FEB', fontSize: size}} type="Feather" name="user" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Profile</Text>) }} name="Profile" component={ProfileScreen} />
-//       <DrawNav.Screen options={{drawerIcon:({ focused, size }) => (<Icon style={{ color: '#327FEB', fontSize: size}} type="Feather" name="settings" />), drawerLabel: ({ focused, color }) => (<Text style={{ fontFamily: 'NunitoSans-Regular', color: color, fontSize: 17, marginLeft:-20}}>Settings</Text>) }} name="Settings" component={Bottom} />
-//       {/* <DrawNav.Screen name="Tickets" component={Tickets} />
-//       <DrawNav.Screen name="Shipping" component={Shipping} /> */}
-//     </DrawNav.Navigator>
-//   )
-// }
 const App = (props) => {
+  const notifierRef = useRef(null)
+  useEffect(() => {
+    const config = async() => {
+      var profile = await AsyncStorage.getItem('profile')
+      if(profile!=null){
+        profile = JSON.parse(profile)
+        const pushtoken = await firebase.messaging().getToken()
+        console.log(pushtoken)
+        console.log(profile)
+        ReactMoE.default.setUserUniqueID(profile.id);
+        if(!profile.email.includes('default')){
+        ReactMoE.default.setUserEmailID(profile.email);
+        ReactMoE.default.setAlias(profile.email)
+        }
+        else{
+        ReactMoE.default.setAlias(profile.lnkdId)
+        }
+        ReactMoE.default.passFcmPushToken(pushtoken)
+      }
+
+    }
+    config()
+
+  })
   React.useEffect(() => {
     console.log("aaa", props);
   }, [])
@@ -158,7 +169,16 @@ const App = (props) => {
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      console.log(remoteMessage)
+      // Notifier.showNotification({
+      //   title: remoteMessage.notification.title,
+      //   description: remoteMessage.notification.body,
+      //   duration: 3000,
+      //   showAnimationDuration: 800,
+      //   showEasing: Easing.bounce,
+      //   hideOnPress: true,
+      // });
     });
 
     return unsubscribe;
@@ -212,12 +232,12 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
         <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
         <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
-        <Stack.Screen options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 700 } }, close: { animation: 'timing', config: { duration: 700 } } } }} name="Login" component={LoginScreen} />
+        <Stack.Screen options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
         <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
         <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
-        <Stack.Screen options={{ headerShown: false }} name="SinglePost" component={SinglePostScreen} />
+        <Stack.Screen options={{ headerShown: false, gestureDirection: 'horizontal', transitionSpec: { open: { animation: 'timing', config: { duration: 300 } }, close: { animation: 'timing', config: { duration: 300 } } } }} name="SinglePost" component={SinglePostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
         <Stack.Screen options={{ headerShown: false }} name="CreatePost" component={PostScreen} />
@@ -232,6 +252,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
         <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
       </Stack.Navigator>
+      <NotifierRoot ref={notifierRef} />
     </NavigationContainer>
   );
 };

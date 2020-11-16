@@ -38,6 +38,8 @@ target 'kids' do
 
   pod 'RNShare', :path => '../node_modules/react-native-share'
 
+  pod 'ReactNativeMoEngage', :path => '../node_modules/react-native-moengage'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing

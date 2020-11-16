@@ -3,6 +3,9 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.moengage.react.MoEReactPackage;
+import com.moengage.core.MoEngage;
+import com.moengage.react.MoEInitializer;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
@@ -84,6 +87,9 @@ public class MainApplication extends Application implements ShareApplication, Re
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+    MoEngage.Builder moEngage =
+          new MoEngage.Builder(this, "FSIAED0HW0M8881Z19HXM5ZI");
+    MoEInitializer.INSTANCE.initialize(getApplicationContext(), moEngage);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
