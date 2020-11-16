@@ -56,9 +56,9 @@ const SinglePostScreen = ({ navigation, route }) => {
                         kind="comment"
                         width={-80}
                         onPress={async () => {
-                            var x = await AsyncStorage.getItem('profile');
+                            var x = await AsyncStorage.getItem('children');
                             analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)['uuid'] : null,
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                                 deviceID: getUniqueId()
                             });
                         }}

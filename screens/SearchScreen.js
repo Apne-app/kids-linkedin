@@ -93,9 +93,9 @@ const SearchScreen = ({ route, navigation }) => {
   const [status, setstatus] = useState('3')
   useEffect(() => {
     const check = async () => {
-      var x = await AsyncStorage.getItem('profile');
+      var x = await AsyncStorage.getItem('children');
       analytics.screen('Search Screen', {
-          userID: x ? JSON.parse(x)['uuid'] : null,
+          userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
           deviceID: getUniqueId() 
       })
       var child = await AsyncStorage.getItem('children')

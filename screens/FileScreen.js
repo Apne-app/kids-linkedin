@@ -70,9 +70,9 @@ const FileScreen = (props) => {
 
     useEffect(() => {
         const check = async () => {
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.screen('Collections Screen', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId() 
             })
             var st = await AsyncStorage.getItem('status')
@@ -283,9 +283,9 @@ const FileScreen = (props) => {
 
     const viewImages = async (time) => {
 
-        var x = await AsyncStorage.getItem('profile');
+        var x = await AsyncStorage.getItem('children');
         analytics.track('A collection Selected to view', {
-            userID: x ? JSON.parse(x)['uuid'] : null,
+            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
             deviceID: getUniqueId() 
         })
 
@@ -383,9 +383,9 @@ const FileScreen = (props) => {
                         // style={{marginTop: 5}}
                         renderItem={({ item, i }) => (
                             <Chip key={i} style={{ backgroundColor: tag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: tag == item ? "#fff" : "#327FEB" }} onPress={async () => { 
-                                var x = await AsyncStorage.getItem('profile');
+                                var x = await AsyncStorage.getItem('children');
                                 analytics.screen('Collection Chip Pressed', {
-                                    userID: x ? JSON.parse(x)['uuid'] : null,
+                                    userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                                     deviceID: getUniqueId() 
                                 })
                                 tag == item ? setTag('') : setTag(item); tag == item ? showAll() : showTags(item); setTagsPresent(true); }} >{item}</Chip>

@@ -76,9 +76,9 @@ const LoginScreen = ({ route, navigation }) => {
   useEffect(() => {
 
     const analyse = async () => {
-      var x = await AsyncStorage.getItem('profile');
+      var x = await AsyncStorage.getItem('children');
       analytics.screen('Login Screen', {
-        userID: x ? JSON.parse(x)['uuid'] : null,
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
         deviceID: getUniqueId() 
       })
     }
@@ -118,9 +118,9 @@ const LoginScreen = ({ route, navigation }) => {
   const api = async () => {
     // setemail(email.split(' ')[0])
     // console.log(email)
-    var x = await AsyncStorage.getItem('profile');
+    var x = await AsyncStorage.getItem('children');
     analytics.track('Login Via Email', {
-        userID: x ? JSON.parse(x)['uuid'] : null,
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
         deviceID: getUniqueId() 
     })
     setLoading(true);

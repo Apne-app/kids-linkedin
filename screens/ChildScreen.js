@@ -87,9 +87,9 @@ const ChildScreen = ({ route, navigation }) => {
     const [text, settext] = useState();
     const api = async () => {
         if (current == 1) {
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.track('Child Name Entered', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId()
             })
             if (name == '') {
@@ -103,9 +103,9 @@ const ChildScreen = ({ route, navigation }) => {
             }
         }
         else if (current == 2) {
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.track('Child Birth Year Entered', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId()
             })
             if (year == 0) {
@@ -167,9 +167,9 @@ const ChildScreen = ({ route, navigation }) => {
             return (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', }}>
                     <TouchableOpacity onPress={async () => {
-                        var x = await AsyncStorage.getItem('profile');
+                        var x = await AsyncStorage.getItem('children');
                         analytics.track('I am a Kid', {
-                            userID: x ? JSON.parse(x)['uuid'] : null,
+                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                             deviceID: getUniqueId()
                         })
                         navigation.navigate('KidUser');
@@ -178,9 +178,9 @@ const ChildScreen = ({ route, navigation }) => {
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, textAlign: 'center', paddingHorizontal: 20 }}>I am a kid</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={async () => {
-                        var x = await AsyncStorage.getItem('profile');
+                        var x = await AsyncStorage.getItem('children');
                         analytics.track('I am a parent', {
-                            userID: x ? JSON.parse(x)['uuid'] : null,
+                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                             deviceID: getUniqueId()
                         })
                         setcurrent(1);
