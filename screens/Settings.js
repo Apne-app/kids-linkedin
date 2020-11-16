@@ -15,27 +15,27 @@ var width = Dimensions.get('screen').width;
 const Settings = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
     const onToggleSwitch = async () => {
-        var x = await AsyncStorage.getItem('profile');
+        var x = await AsyncStorage.getItem('children');
         if(isSwitchOn)
         {
             analytics.track('Push Notifications Turned Off', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId() 
             })
         }
         else 
         {
             analytics.track('Push Notifications Turned On', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId() 
             })
         }
         setIsSwitchOn(!isSwitchOn)
         };
     const logout = async () => {
-        var x = await AsyncStorage.getItem('profile');
+        var x = await AsyncStorage.getItem('children');
         analytics.track('Logged Out', {
-            userID: x ? JSON.parse(x)['uuid'] : null,
+            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
             deviceID: getUniqueId() 
         })
         var arr = await AsyncStorage.getAllKeys()
@@ -46,9 +46,9 @@ const Settings = ({ navigation }) => {
 
     useEffect(() => {
         const analyse = async () => {
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.screen('Settings Screen', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId() 
             })
         }

@@ -30,9 +30,9 @@ const NotificationScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const check = async () => {
-      var x = await AsyncStorage.getItem('profile');
+      var x = await AsyncStorage.getItem('children');
       analytics.screen('Notifications Screen', {
-        userID: x ? JSON.parse(x)['uuid'] : null,
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
         deviceID: getUniqueId()
       })
       var child = await AsyncStorage.getItem('children')

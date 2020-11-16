@@ -106,9 +106,9 @@ const FeedScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         const analyse = async () => {
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.screen('Feed Screen', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId()
             })
         }
@@ -118,9 +118,9 @@ const FeedScreen = ({ navigation, route }) => {
     const report = async (x) => {
 
         // console.log(children);
-        var x = await AsyncStorage.getItem('profile');
+        var x = await AsyncStorage.getItem('children');
         analytics.track('Post Reported', {
-            userID: x ? JSON.parse(x)['uuid'] : null,
+            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
             deviceID: getUniqueId()
         })
         var now = new Date();
@@ -235,9 +235,9 @@ const FeedScreen = ({ navigation, route }) => {
                         kind="comment"
                         width={-80}
                         onPress={async () => {
-                            var x = await AsyncStorage.getItem('profile');
+                            var x = await AsyncStorage.getItem('children');
                             analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)['uuid'] : null,
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                                 deviceID: getUniqueId()
                             });
                             console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] })

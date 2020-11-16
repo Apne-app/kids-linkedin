@@ -239,9 +239,9 @@ const ProfileScreen = ({ navigation, route }) => {
     useEffect(() => {
 
         const analyse = async () => {
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.screen('Profile Screen', {
-                userID: x ? JSON.parse(x)['uuid'] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                 deviceID: getUniqueId() 
             })
         }
@@ -472,9 +472,9 @@ const ProfileScreen = ({ navigation, route }) => {
                     </View>
                     <TouchableOpacity
                         onPress={async () => {
-                            var x = await AsyncStorage.getItem('profile');
+                            var x = await AsyncStorage.getItem('children');
                             analytics.track('Opened website', {
-                                userID: x ? JSON.parse(x)['uuid'] : null,
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                                 deviceID: getUniqueId() 
                             })
                             Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])

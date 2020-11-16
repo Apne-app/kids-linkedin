@@ -61,9 +61,9 @@ export default class ExampleApp extends PureComponent {
 
     const func = async () => {
 
-      var x = await AsyncStorage.getItem('profile');
+      var x = await AsyncStorage.getItem('children');
       analytics.screen('Camera Screen', {
-        userID: x ? JSON.parse(x)['uuid'] : null,
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
         deviceID: getUniqueId() 
       })
 
@@ -270,9 +270,9 @@ export default class ExampleApp extends PureComponent {
         <View style={{ flex: 1, flexDirection: 'row', justifyContent:'center' }}>
           <TouchableOpacity onPress={async () => 
           { 
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.track('Navigation from camera to Gallery', {
-              userID: x ? JSON.parse(x)['uuid'] : null,
+              userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
               deviceID: getUniqueId() 
             })
             this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] }) }} style={styles.capture, { flex: 1, alignItems: 'flex-start',  marginTop: 5, width:width/3, marginLeft:width/8, alignItems:'center' }}>
@@ -290,9 +290,9 @@ export default class ExampleApp extends PureComponent {
           </View>
           }
           <TouchableOpacity onPress={async () => {
-            var x = await AsyncStorage.getItem('profile');
+            var x = await AsyncStorage.getItem('children');
             analytics.track('Navigation from camera to Collections', {
-              userID: x ? JSON.parse(x)['uuid'] : null,
+              userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
               deviceID: getUniqueId() 
             })
 
@@ -313,9 +313,9 @@ export default class ExampleApp extends PureComponent {
 
   takePicture = async () => {
     // console.log(this.state.gallery);
-    var x = await AsyncStorage.getItem('profile');
+    var x = await AsyncStorage.getItem('children');
     analytics.track('Image Taken', {
-      userID: x ? JSON.parse(x)['uuid'] : null,
+      userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
       deviceID: getUniqueId() 
     })
     this.setState({ ...this.state, imagetaken: true });

@@ -150,9 +150,9 @@ const Searching = ({ route, navigation }) => {
                     <TouchableOpacity style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => 
                     { 
                         navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
-                        var x = await AsyncStorage.getItem('profile');
+                        var x = await AsyncStorage.getItem('children');
                         analytics.track('Searched Kid Opened', {
-                            userID: x ? JSON.parse(x)['uuid'] : null,
+                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                             deviceID: getUniqueId() 
                         })
                         }}>

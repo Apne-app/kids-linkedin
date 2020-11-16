@@ -224,9 +224,9 @@ const Upload = ({ route, navigation }) => {
 
     const sevent = async () => {
 
-    var x = await AsyncStorage.getItem('profile');
+    var x = await AsyncStorage.getItem('children');
     analytics.screen('Post Screen', {
-        userID: x ? JSON.parse(x)['uuid'] : null,
+         userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
         deviceID: getUniqueId() 
       })
     }
@@ -368,6 +368,7 @@ const Upload = ({ route, navigation }) => {
     arr.splice(0, 1);
 
     var tm = new Date().getTime();
+    // console.log(route.params.selected)
 
     arr.map(async (item, i) => {
       try {
@@ -380,7 +381,9 @@ const Upload = ({ route, navigation }) => {
         //     console.log(err)
         //   });
 
-        const saveFile = (base64) => {
+        
+
+        const saveFile = async (base64) => {
           const albumPath = `${pathDir}/Images`;
 
           const fileName = `${selectedTag}_${tm}-${i}.png`;
@@ -395,7 +398,8 @@ const Upload = ({ route, navigation }) => {
             .then(() => {
               RNFS.copyFile(filePathInCache, filePathInAlbum)
                 .then(() => {
-                  console.log('File Saved Successfully!');
+                  // console.log('File Saved Successfully!');
+                  uploadToS3(i, fileName, filePathInAlbum);
                 });
             })
             .catch((error) => {
@@ -403,13 +407,42 @@ const Upload = ({ route, navigation }) => {
             });
         };
 
-        saveFile();
-
-
+        await saveFile();
       } catch (error) {
         console.log(error)
       }
     })
+
+    setTimeout(() => {
+      if(route.params.selected)
+        {
+
+        route.params.selected.map(item => {
+
+          RNFS.exists(item.uri)
+          .then( (result) => {
+              console.log("file exists: ", result);
+
+              if(result){
+                return RNFS.unlink(item.uri)
+                  .then(() => {
+                    // console.log('FILE DELETED');
+                  })
+                  // `unlink` will throw an error, if the item to unlink does not exist
+                  .catch((err) => {
+                    console.log(err.message);
+                  });
+              }
+
+            })
+            .catch((err) => {
+              console.log(err.message);
+            });
+        })
+        }
+    }, 3000)
+
+    
     let x = await AsyncStorage.getItem("albums");
     let albums = JSON.parse(x);
     if (albums) {
@@ -469,19 +502,21 @@ const Upload = ({ route, navigation }) => {
   const userid = "shashwatid"
 
 
-  const uploadToS3 = (i, email) => {
-
+  const uploadToS3 = async (i, filename, filepath) => {
+    var x = await AsyncStorage.getItem('children')
+    x = JSON.parse(x)["0"]["data"]["gsToken"]
+    // console.log(filename, filepath);
     // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
-    var name = randomStr(20, '12345abcdepq75xyz') + '.' + explore[i].uri[explore[i].uri.length - 3] + explore[i].uri[explore[i].uri.length - 2] + explore[i].uri[explore[i].uri.length - 1]
+    // var name = randomStr(20, '12345abcdepq75xyz') + '.' + explore[i].uri[explore[i].uri.length - 3] + explore[i].uri[explore[i].uri.length - 2] + explore[i].uri[explore[i].uri.length - 1]
     const file = {
       // `uri` can also be a file system path (i.e. file://)
-      uri: explore[i].uri,
-      name: name,
+      uri: 'file://' + filepath,
+      name: filename,
       type: "image/png",
     }
 
     const options = {
-      keyPrefix: email + filename + "/" + selectedTag + "/",
+      keyPrefix: `collections/gettingImages-${x}-imagesFetched/`,
       bucket: "kids-linkedin",
       region: "ap-south-1",
       accessKey: ACCESS_KEY,
@@ -494,28 +529,14 @@ const Upload = ({ route, navigation }) => {
       if (response.status !== 201)
         throw new Error("Failed to upload image to S3");
       console.log(response.body);
-
-      var obj = { ...uploading };
-      var a = 0;
-      if (!a) {
-        a++;
-        obj[explore[i].uri] = false;
-      }
-
-      console.log(obj, i);
-
-      setUploading({
-        ...obj
-      })
-
-      if (i == explore.length - 2) alert("Uploaded");
-
+      // if (i == explore.length - 2) alert("Uploaded");
+      // console.log(response.body)
     })
       .catch(err => {
         console.log(err);
       })
       ;
-    return name;
+    // return name;
   }
 
   const myAsyncPDFFunction = async () => {
@@ -561,11 +582,6 @@ const Upload = ({ route, navigation }) => {
         }
       }
 
-      if (c) {
-        albums = [...albums, { 'albumName': filename, 'tagName': selectedTag }];
-      }
-
-      await AsyncStorage.setItem("albums", JSON.stringify(albums));
 
       console.log(pdf.filePath);
       alert('PDF Saved');
@@ -582,61 +598,13 @@ const Upload = ({ route, navigation }) => {
     return (
       <Gallery />
     )
-  const PostUpload = async () => {
-    var i;
-    setTimeout(() => {
-      setModalVisible4(false)
-    }, 300);
-    var obj = { ...uploading };
-    for (i = 0; i < explore.length - 1; i++) {
-      obj[(explore[i].uri)] = true;
-      setUploading({
-        ...obj
-      });
-    }
-    var children = await AsyncStorage.getItem('children')
-    children = JSON.parse(children)['0']
-    var name = ''
-    for (i = 0; i < explore.length - 1; i++) {
-      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tag + "/" + uploadToS3(i, children['data']['gsToken']) + ', ';
-      name = name + x;
-      if (tag == 'Certificate') {
-        var data = JSON.stringify({ "gstoken": children['data']['gsToken'], "certi_url": certi.certi_url, "certi_org": certi.certi_org, "certi_path": x });
-        var config = {
-          method: 'post',
-          url: 'https://barry-2z27nzutoq-as.a.run.app/updatecerti',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          data: data
-        };
-
-        axios(config).then(res => {
-          if (res == "success") {
-            console.log("success")
-          }
-        }).catch(err => {
-          console.log(err);
-        })
-      }
-
-    }
-    // setModalVisible4(false);
-
-    const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-    var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post" }
-    // var user = client.feed('timeline', '103id');
-    // user.follow('user', '49id');
-    var user = client.feed('user', String(String(children['id']) + String("id")));
-    await user.addActivity(activity);
-  }
 
   const openImageViewer = (am) => {
 
     // console.log(am);
     var selectedImg = [];
     for (var i = 1; i < explore.length; i++) {
-      selectedImg.push({ uri: "file://" + explore[i]["uri"], 'orginUri': "" });
+      selectedImg.push({ uri: explore[i]["uri"].includes("http") ? explore[i]["uri"] : "file://" + explore[i]["uri"], 'orginUri': "" });
     }
     setSelected([...selectedImg]);
     setopenImage(am - 1);
@@ -663,13 +631,14 @@ const Upload = ({ route, navigation }) => {
       setSelecting(false)
     }
     else {
-      saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+      setBottomSheetOpen(true)
+          closeRef.current.snapTo(0);
     }
   }
   const deletes = async () => {
-    var x = await AsyncStorage.getItem('profile');
+    var x = await AsyncStorage.getItem('children');
     analytics.track('Delete Images', {
-        userID: x ? JSON.parse(x)['uuid'] : null,
+         userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
         deviceID: getUniqueId() 
       })
     setSelecting(true);
@@ -714,9 +683,9 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50 }}
             onPress={async () => {
-              var x = await AsyncStorage.getItem('profile');
+              var x = await AsyncStorage.getItem('children');
               analytics.track('PDF Saved', {
-                  userID: x ? JSON.parse(x)['uuid'] : null,
+                   userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                   deviceID: getUniqueId() 
                 })
               myAsyncPDFFunction()
@@ -754,9 +723,9 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50 }}
             onPress={async () => {
-              var x = await AsyncStorage.getItem('profile');
+              var x = await AsyncStorage.getItem('children');
               analytics.track('Did not save collection', {
-                  userID: x ? JSON.parse(x)['uuid'] : null,
+                   userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                   deviceID: getUniqueId() 
                 })
               navigation.navigate('Home', { screen: 'Feed' })
@@ -774,9 +743,9 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50 }}
             onPress={async () => {
-              var x = await AsyncStorage.getItem('profile');
+              var x = await AsyncStorage.getItem('children');
               analytics.track('Collection Saved', {
-                  userID: x ? JSON.parse(x)['uuid'] : null,
+                   userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                   deviceID: getUniqueId() 
                 })
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
@@ -859,13 +828,13 @@ const Upload = ({ route, navigation }) => {
           FooterComponent={() => {
             return (
               <View style={{ height: height * 0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-                <TouchableOpacity
+                {explore[visibleImg + 1]['prevImg'] ?<TouchableOpacity
                   style={{ height: 40 }}
                   onPress={() => {
                     var ar = [...explore]; ar.splice(0, 1);
                     setSelected([]); setVisible(false);
                     // console.log({'img': explore[visibleImg+1]['prevImg'], height: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => width),  'reload': 1  });
-                    navigation.navigate('Preview', { 'img': explore[visibleImg + 1]['prevImg'], height: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1 });
+                    navigation.navigate('Preview', { 'img': explore[visibleImg + 1]['prevImg'], height: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => height) , width: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1, 'pos': visibleImg + 1 });
                     // console.log(explore);
                   }}
                 >
@@ -874,7 +843,7 @@ const Upload = ({ route, navigation }) => {
                       Edit {explore[visibleImg + 1]['prevImg'] ? 'Original' : null}
                     </Text>
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity> : null}
                 <TouchableOpacity
                   style={{ height: 40 }}
                   onPress={() => {
@@ -937,7 +906,7 @@ const Upload = ({ route, navigation }) => {
                           style={styles.image}
                           imageStyle={{ opacity: selecting && item.selected ? 0.5 : 1, borderRadius: 20 }}
                           source={{
-                            uri: "file://" + item.uri,
+                            uri:  item.uri.includes("http") ? item.uri : "file://" + item.uri,
                           }}
                         >
                           {
@@ -1052,9 +1021,10 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50, width: width * 0.3, alignItems: 'center' }}
             onPress={async () => {
-              var x = await AsyncStorage.getItem('profile');
+              var x = await AsyncStorage.getItem('children');
+              // console.log(JSON.parse(x)["0"]["data"]["gsToken"])
               analytics.track('Collection Shared', {
-                  userID: x ? JSON.parse(x)['uuid'] : null,
+                  userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                   deviceID: getUniqueId() 
                 }) 
               shareImage();
