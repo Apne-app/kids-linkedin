@@ -101,24 +101,24 @@ const FeedScreen = ({ navigation, route }) => {
 
         }, []));
 
-        useEffect(() => {
-            const analyse = async () => {
-                var x = await AsyncStorage.getItem('profile');
-                analytics.screen('Feed Screen', {
+    useEffect(() => {
+        const analyse = async () => {
+            var x = await AsyncStorage.getItem('profile');
+            analytics.screen('Feed Screen', {
                 userID: x ? JSON.parse(x)['uuid'] : null,
-                deviceID: getUniqueId() 
-                })
-            }
-            analyse();
-        })
+                deviceID: getUniqueId()
+            })
+        }
+        analyse();
+    })
 
     const report = async (x) => {
 
         // console.log(children);
         var x = await AsyncStorage.getItem('profile');
         analytics.track('Post Reported', {
-          userID: x ? JSON.parse(x)['uuid'] : null,
-          deviceID: getUniqueId() 
+            userID: x ? JSON.parse(x)['uuid'] : null,
+            deviceID: getUniqueId()
         })
         var now = new Date();
         var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
@@ -231,14 +231,14 @@ const FeedScreen = ({ navigation, route }) => {
                         counts={props.activity.reaction_counts}
                         kind="comment"
                         width={-80}
-                        onPress={async () => 
-                        { 
+                        onPress={async () => {
                             var x = await AsyncStorage.getItem('profile');
                             analytics.track('Comment', {
-                            userID: x ? JSON.parse(x)['uuid'] : null,
-                            deviceID: getUniqueId() 
+                                userID: x ? JSON.parse(x)['uuid'] : null,
+                                deviceID: getUniqueId()
                             });
-                            console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] }) }}
+                            console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] })
+                        }}
                     />
                     <Icon onPress={() => {
                         Linking.openURL('whatsapp://send?text=check').then((data) => {
@@ -339,17 +339,16 @@ const FeedScreen = ({ navigation, route }) => {
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
             <Activity
-                {...props}
                 Header={
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image
-                                source={{ uri: props.activity.actor.data?props.activity.actor.data.profileImage:'' }}
+                                source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '' }}
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data?props.activity.actor.data.type:null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
                             </View>
                             <ActionSheet
                                 ref={refActionSheet}
@@ -364,9 +363,9 @@ const FeedScreen = ({ navigation, route }) => {
                     </View>
                 }
                 Content={
-                    <View style={{ padding: 20 }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('SinglePost', { token: children['0']['data']['gsToken'], activity: props.activity })} style={{ padding: 20 }}>
                         {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
-                        {props.activity.image ? <ImageView
+                        {/* {props.activity.image ? <ImageView
                             presentationStyle={{ height: height / 3 }}
                             images={images}
                             imageIndex={0}
@@ -400,8 +399,8 @@ const FeedScreen = ({ navigation, route }) => {
                                         <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', marginLeft: 30, marginTop: 10, marginRight: 30, fontSize: 14 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text></View>)
                             }}
 
-                        /> : <View></View>}
-                        <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
+                        /> : <View></View>} */}
+                        <View style={{ alignSelf: 'center' }}>
                             {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image.split(", ")[0] }}
                                 style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
@@ -416,7 +415,7 @@ const FeedScreen = ({ navigation, route }) => {
                             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
                             /></View> : <View></View>}
-                        </TouchableOpacity>
+                        </View>
                         {props.activity.object.includes('http') ?
                             <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                             : null}
@@ -434,7 +433,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                             /> : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </View>
+                    </TouchableOpacity>
                 }
                 Footer={footer(props.activity.id, props)}
             />
@@ -570,12 +569,12 @@ const FeedScreen = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image
-                                source={{ uri: props.activity.actor.data?props.activity.actor.data.profileImage:'' }}
+                                source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '' }}
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data?props.activity.actor.data.type:'Child'}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data ? props.activity.actor.data.type : 'Child'}</Text>
                             </View>
                             <ActionSheet
                                 ref={refActionSheet}
@@ -612,7 +611,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         />
                                         <View style={{ flexDirection: 'column', marginLeft: 15 }}>
                                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: 'white' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{ }</Text>
                                         </View>
                                         <ActionSheet
                                             ref={refActionSheet}
@@ -659,8 +658,8 @@ const FeedScreen = ({ navigation, route }) => {
                                 apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                             /> : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null :<Chip style={{ backgroundColor: '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth:  0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color:  "#327FEB", fontFamily: 'NunitoSans-Regular' }} >{props.activity.tag}</Chip>
-}
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null : <Chip style={{ backgroundColor: '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: 0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color: "#327FEB", fontFamily: 'NunitoSans-Regular' }} >{props.activity.tag}</Chip>
+                        }
                     </View>
                 }
                 Footer={footer(props.activity.id, props)}
@@ -737,21 +736,21 @@ const FeedScreen = ({ navigation, route }) => {
                     };
 
                     axios(config)
-                    .then(function (response) {
-                        // console.log(JSON.stringify(response.data.token));
-                        axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
-                        .then(async (response) => {
-                            setchildren(response.data)
-                            // console.log("response");
-                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                        .then(function (response) {
+                            // console.log(JSON.stringify(response.data.token));
+                            axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
+                                .then(async (response) => {
+                                    setchildren(response.data)
+                                    // console.log("response");
+                                    await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                })
+                                .catch((error) => {
+                                    console.log(error)
+                                })
                         })
-                        .catch((error) => {
-                            console.log(error)
-                        })
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 }
             }
             else {
@@ -829,7 +828,7 @@ const FeedScreen = ({ navigation, route }) => {
         return (
             <SafeAreaProvider>
                 <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
-                <TouchableOpacity onPress={() => navigation.navigate('Login', {screen:'Feed'})}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableOpacity>
                 {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
@@ -885,8 +884,8 @@ const FeedScreen = ({ navigation, route }) => {
     }
     useEffect(() => {
         StatusBar.setBarStyle('dark-content')
-      })
-    
+    })
+
     return (
         children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
 

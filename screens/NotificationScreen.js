@@ -18,22 +18,22 @@ const NotificationScreen = ({ route, navigation }) => {
   const [status, setstatus] = useState('0')
 
   useFocusEffect(
-  React.useCallback(() => {
+    React.useCallback(() => {
       const onBackPress = () => {
-          navigation.navigate('Home', { screen: 'Feed' })
-          return true;
+        navigation.navigate('Home', { screen: 'Feed' })
+        return true;
       };
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
       return () =>
-          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-  }, []));
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
 
   useEffect(() => {
     const check = async () => {
       var x = await AsyncStorage.getItem('profile');
       analytics.screen('Notifications Screen', {
-          userID: x ? JSON.parse(x)['uuid'] : null,
-          deviceID: getUniqueId() 
+        userID: x ? JSON.parse(x)['uuid'] : null,
+        deviceID: getUniqueId()
       })
       var child = await AsyncStorage.getItem('children')
       if (child != null) {
@@ -46,7 +46,7 @@ const NotificationScreen = ({ route, navigation }) => {
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
-      setstatus(status)
+      setstatus(st)
     }
     check()
   }, [])
@@ -60,31 +60,31 @@ const NotificationScreen = ({ route, navigation }) => {
           var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
 
           var config = {
-              method: 'post',
-              url: 'http://104.199.146.206:5000/getToken',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              data: data
+            method: 'post',
+            url: 'http://104.199.146.206:5000/getToken',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            data: data
           };
 
           axios(config)
-          .then(function (response) {
+            .then(function (response) {
               // console.log(JSON.stringify(response.data.token));
               axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
-              .then(async (response) => {
-                setchildren(response.data)
-                // console.log(response);
-                await AsyncStorage.setItem('children', JSON.stringify(response.data))
-              })
-              .catch((error) => {
-                console.log(error)
-              })
-          })
-          .catch(function (error) {
+                .then(async (response) => {
+                  setchildren(response.data)
+                  // console.log(response);
+                  await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                })
+                .catch((error) => {
+                  console.log(error)
+                })
+            })
+            .catch(function (error) {
               console.log(error);
-          });
-          
+            });
+
         }
       }
       else {
@@ -96,14 +96,13 @@ const NotificationScreen = ({ route, navigation }) => {
     }, 3000);
   }, [])
   const there = () => {
-
     return (
       <View>
         <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
         <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
           <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
           <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
-          <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, let’s discover and take a look this later.</Text>
+          <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
         </View>
       </View>
     );
