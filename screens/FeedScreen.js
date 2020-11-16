@@ -7,7 +7,7 @@ import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Sea
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
@@ -26,10 +26,13 @@ import YouTube from 'react-native-youtube';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
+import ReactMoE,{MoEProperties} from 'react-native-moengage';
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
-
+let properties = new MoEProperties()
+properties.addAttribute("screen", "Home");
+ReactMoE.trackEvent("Screen", properties);
 updateStyle('activity', {
     container:
     {
@@ -177,7 +180,7 @@ const FeedScreen = ({ navigation, route }) => {
                 height: height * 0.5,
             }}
         >
-            <TouchableOpacity onPress={() => { sheetRefReport.current.snapTo(2); }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
+            <TouchableWithoutFeedback onPress={() => { sheetRefReport.current.snapTo(2); }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableWithoutFeedback>
             <Text style={{ alignSelf: 'center', marginBottom: 5, fontSize: 15 }} >Report {!(Object.keys(reportedProfile).length === 0 && reportedProfile.constructor === Object) ? reportedProfile.actor.data.name : ''}'s Post</Text>
             <FlatList
                 data={["Improper Content", "Faking to be someone else"]}
@@ -363,7 +366,7 @@ const FeedScreen = ({ navigation, route }) => {
                     </View>
                 }
                 Content={
-                    <TouchableOpacity onPress={() => navigation.navigate('SinglePost', { token: children['0']['data']['gsToken'], activity: props.activity })} style={{ padding: 20 }}>
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: children['0']['data']['gsToken'], activity: props })} style={{ padding: 20 }}>
                         {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                         {/* {props.activity.image ? <ImageView
                             presentationStyle={{ height: height / 3 }}
@@ -432,8 +435,8 @@ const FeedScreen = ({ navigation, route }) => {
                                 apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                             /> : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </TouchableOpacity>
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+                    </TouchableWithoutFeedback>
                 }
                 Footer={footer(props.activity.id, props)}
             />
@@ -626,7 +629,7 @@ const FeedScreen = ({ navigation, route }) => {
                             }}
 
                         /> : <View></View>}
-                        <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
+                        <TouchableWithoutFeedback activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
                             {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image.split(", ")[0] }}
                                 style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
@@ -641,7 +644,7 @@ const FeedScreen = ({ navigation, route }) => {
                             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
                             /></View> : <View></View>}
-                        </TouchableOpacity>
+                        </TouchableWithoutFeedback>
                         {props.activity.object.includes('http') ?
                             <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                             : null}
@@ -828,7 +831,7 @@ const FeedScreen = ({ navigation, route }) => {
         return (
             <SafeAreaProvider>
                 <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
-                <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableOpacity>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableWithoutFeedback>
                 {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}

@@ -87,9 +87,13 @@ public class MainApplication extends Application implements ShareApplication, Re
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    MoEngage.Builder moEngage =
-          new MoEngage.Builder(this, "FSIAED0HW0M8881Z19HXM5ZI");
-    MoEInitializer.INSTANCE.initialize(getApplicationContext(), moEngage);
+    MoEngage moEngage =
+        new MoEngage.Builder(this, "FSIAED0HW0M8881Z19HXM5ZI")
+            .setNotificationSmallIcon(R.mipmap.ic_launcher)
+            .setNotificationLargeIcon(R.mipmap.ic_launcher)
+            .build();
+    MoEngage.initialise(moEngage);
+    // MoEFireBaseHelper.Companion.getInstance().passPushToken(getApplicationContext(), token);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 

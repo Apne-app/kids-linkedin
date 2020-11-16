@@ -1,13 +1,13 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
@@ -29,11 +29,7 @@ var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
 const SinglePostScreen = ({ navigation, route }) => {
-    console.log(route.params.activity)
-    const CustomActivity = (props) => {
-        let img = props.activity.image ? props.activity.image.split(", ").length - 1 > 1 ? props.activity.image.split(", ").pop : props.activity.image : '';
-
-        const [commentVisible, setCmv] = React.useState('none');
+    const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
         const onShare = async () => {
 
@@ -45,33 +41,34 @@ const SinglePostScreen = ({ navigation, route }) => {
             refActionSheet.current.show()
         }
         const footer = (id, data) => {
-            return (<View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <LikeButton  {...props} />
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
-                    <ReactionIcon
-                        labelSingle=" "
-                        labelPlural=" "
-                        counts={props.activity.reaction_counts}
-                        kind="comment"
-                        width={-80}
-                        onPress={async () => {
-                            var x = await AsyncStorage.getItem('profile');
-                            analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)['uuid'] : null,
-                                deviceID: getUniqueId()
-                            });
-                        }}
-                    />
-                    <Icon onPress={() => {
+            return (
+                <View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <LikeButton  {...props} />
+                        <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                        <ReactionIcon
+                            labelSingle=" "
+                            labelPlural=" "
+                            counts={props.activity.reaction_counts}
+                            kind="comment"
+                            width={-80}
+                            onPress={async () => {
+                                var x = await AsyncStorage.getItem('profile');
+                                analytics.track('Comment', {
+                                    userID: x ? JSON.parse(x)['uuid'] : null,
+                                    deviceID: getUniqueId()
+                                });
+                            }}
+                        />
+                        {/* <Icon onPress={() => {
                         Linking.openURL('whatsapp://send?text=check').then((data) => {
                             console.log('WhatsApp Opened');
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
-                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
-                </View>
-            </View>)
+                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} /> */}
+                    </View>
+                </View>)
         }
         const [visible, setIsVisible] = React.useState(false);
         var images = []
@@ -103,7 +100,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     </View>
                 }
                 Content={
-                    <TouchableOpacity onPress={() => setIsVisible(true)} style={{ padding: 20 }}>
+                    <View style={{ padding: 20 }}>
                         {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                         {props.activity.image ?
                             <ImageView
@@ -117,7 +114,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 animationType={'none'}
                                 onRequestClose={() => setIsVisible(false)}
                             /> : <View></View>}
-                        <View style={{ alignSelf: 'center' }}>
+                        <TouchableWithoutFeedback onPress={() => setIsVisible(true)}  style={{ alignSelf: 'center' }}>
                             {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image.split(", ")[0] }}
                                 style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
@@ -132,7 +129,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
                             /></View> : <View></View>}
-                        </View>
+                        </TouchableWithoutFeedback>
                         {props.activity.object.includes('http') ?
                             <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                             : null}
@@ -149,29 +146,45 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                             /> : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </TouchableOpacity>
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+                    </View>
                 }
                 Footer={footer(props.activity.id, props)}
             />
         );
     };
+    console.log(route.params.activity)
     return (
-        <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <StreamApp
                 apiKey={'9ecz2uw6ezt9'}
                 appId={'96078'}
                 token={route.params.token}
             >
-                <CompHeader screen={'Post'} icon={'back'} goback={() => props.navigation.navigate('Home')} />
-                <SinglePost
-                    activity={route.params.activity}
-                    feedGroup={'timeline'}
-                    navigation={navigation}
-                    Activity={CustomActivity} options={{ withOwnReactions: true }}
+                <CompHeader screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
+                <CustomActivity props={route.params.activity} />
+                {/* <CommentList
+                    activityId={route.params.activity.activity_id}
+                    infiniteScroll
+                    reverseOrder
+                    CommentItem={({ comment }) => (
+                        <React.Fragment>
+                            <CommentItem
+                                comment={comment}
+                                Footer={<LikeButton reaction={comment} {...props} />}
+                            />
+                        </React.Fragment>
+                    )}
+                /> */}
+                <CommentBox
+                    activity={route.params.activity.activity}
+                    onAddReaction={route.params.activity.onAddReaction}
+                    avatarProps={{
+                        source: route.params.activity.activity.actor.data.profileImage
+                    }}
                 />
             </StreamApp>
-        </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 }
 

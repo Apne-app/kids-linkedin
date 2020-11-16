@@ -49,27 +49,28 @@ import firebase from '@react-native-firebase/app'
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
-const ReactMoE = require('react-native-moengage')
+import ReactMoE from 'react-native-moengage'
+ReactMoE.initialize();
 
 const App = (props) => {
   const notifierRef = useRef(null)
   useEffect(() => {
-    const config = async() => {
+    const config = async () => {
       var profile = await AsyncStorage.getItem('profile')
-      if(profile!=null){
+      if (profile != null) {
         profile = JSON.parse(profile)
         const pushtoken = await firebase.messaging().getToken()
         console.log(pushtoken)
         console.log(profile)
-        ReactMoE.default.setUserUniqueID(profile.id);
-        if(!profile.email.includes('default')){
-        ReactMoE.default.setUserEmailID(profile.email);
-        ReactMoE.default.setAlias(profile.email)
+        ReactMoE.setUserUniqueID(profile.id);
+        if (!profile.email.includes('default')) {
+          ReactMoE.setUserEmailID(profile.email);
+          ReactMoE.setAlias(profile.email)
         }
-        else{
-        ReactMoE.default.setAlias(profile.lnkdId)
+        else {
+          ReactMoE.setAlias(profile.lnkdId)
         }
-        ReactMoE.default.passFcmPushToken(pushtoken)
+        ReactMoE.passFcmPushToken(pushtoken)
       }
 
     }
