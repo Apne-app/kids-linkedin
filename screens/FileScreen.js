@@ -28,6 +28,7 @@ import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
+import axios from 'axios';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 var RNFS = require('react-native-fs');
 
@@ -45,6 +46,7 @@ const FileScreen = (props) => {
     const [selected, setSelected] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
     const [seltopic, setSelTopic] = React.useState('');
+    const [stringImages, setStringImages] = React.useState("");
     const [tagsPresent, setTagsPresent] = React.useState(false)
     const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
     const [tag, setTag] = React.useState('All');
@@ -52,8 +54,11 @@ const FileScreen = (props) => {
 
     const [refreshing, setRefreshing] = React.useState(false);
 
+    
+
     useFocusEffect(
     React.useCallback(() => {
+        // uploadToS3();
         const onBackPress = () => {
             props.navigation.navigate('Home', { screen: 'Feed' })
             return true;
@@ -75,54 +80,7 @@ const FileScreen = (props) => {
         }
         check()
     }, [])
-    const uploadToS3 = (i, email) => {
-
-        // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
-        var name = randomStr(20, '12345abcdepq75xyz') + '.' + selected[i].uri[selected[i].uri.length - 3] + selected[i].uri[selected[i].uri.length - 2] + selected[i].uri[selected[i].uri.length - 1]
-        const file = {
-            // `uri` can also be a file system path (i.e. file://)
-            uri: selected[i].uri,
-            name: name,
-            type: "image/png",
-        }
-
-        const options = {
-            keyPrefix: email + "/",
-            bucket: "kids-linkedin",
-            region: "ap-south-1",
-            accessKey: ACCESS_KEY,
-            secretKey: SECRET_KEY,
-            successActionStatus: 201
-        }
-
-        RNS3.put(file, options).then(response => {
-            console.log("dassd")
-            if (response.status !== 201)
-                throw new Error("Failed to upload image to S3");
-            console.log(response.body);
-
-            var obj = { ...uploading };
-            var a = 0;
-            if (!a) {
-                a++;
-                obj[selected[i].uri] = false;
-            }
-
-            console.log(obj, i);
-
-            setUploading({
-                ...obj
-            })
-
-            if (i == selected.length - 2) alert("Uploaded");
-
-        })
-            .catch(err => {
-                console.log(err);
-            })
-            ;
-        return name;
-    }
+    
 
 
     const cancelSelection = () => {
@@ -136,7 +94,7 @@ const FileScreen = (props) => {
                 // console.log("asd");
                 if (arr[i].files[j].node.checked) {
 
-                    console.log(arr[i].files[j].node.checked);
+                    // console.log(arr[i].files[j].node.checked);
                     arr[i].files[j].node.checked = false;
                 }
             }
@@ -169,7 +127,8 @@ const FileScreen = (props) => {
                 fls.sort();
                 fls.reverse();
                 var arr = [];
-
+                var b = "";
+                
                 for (var i = 0; i < fls.length;) {
                     // console.log(fls)
                     var m = fls[i];
@@ -179,16 +138,67 @@ const FileScreen = (props) => {
                         tmp.push(fls[i]);
                         i++;
                     }
+                    b += m.split('_')[1].split('-')[0];
+                    b += ",";
                     arr.push({ 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1] });
                 }
-                // console.log(arr);
+                setStringImages(b);
                 setFiles([...arr])
-                console.log(arr)
+                // console.log(b)
 
             })
             .catch((err) => {
                 console.log(err.message, err.code);
             });
+
+
+        var x = await AsyncStorage.getItem('children')
+                x = JSON.parse(x)["0"]["data"]["gsToken"];
+                // console.log(JSON.parse(x)["0"]["data"]["gsToken"])
+                // console.log(data)
+                var config = {
+                method: 'get',
+                url: `https://w9od15z398.execute-api.ap-south-1.amazonaws.com/default/getCollections?token=${x}`,
+                headers: { 
+                    'Content-Type': 'application/json'
+                }
+                };
+
+                axios(config)
+                .then(function (response) {
+                // console.log(JSON.stringify(response.data["0"]));
+                    // setCloudImages([ ...response.data["0"] ])
+                    var fls = [ ...response.data["0"] ];
+                    var arr = [];
+                    fls.sort();
+                    fls.reverse();
+
+                    for (var i = 0; i < fls.length;) {
+                    // console.log(fls)
+                        if(stringImages.includes(fls[i].split("gettingImages-")[1].split("-imagesFetched")[0]))
+                        {
+                            i++;
+                            continue;
+                        }
+                        else{
+
+                        var m = fls[i];
+                        // i++;
+                        var tmp = [];
+                        while (i < fls.length && fls[i].split("-imagesFetched/")[1].split("_")[1].split("-")[0] == m.split("-imagesFetched/")[1].split("_")[1].split("-")[0]) {
+                            tmp.push(fls[i]);
+                            i++;
+                        }
+                        arr.push({ 'time': m.split("-imagesFetched/")[1].split("_")[1].split("-")[0], 'images': tmp, tag: m.split("-imagesFetched/")[1].split("_")[0] + " (From Cloud) " });
+                        }
+                    }
+                    console.log(arr);
+                    setFiles([ ...arr, ...files ])
+
+                })
+                .catch(function (error) {
+                console.log(error);
+                });
 
 
     }
@@ -220,6 +230,10 @@ const FileScreen = (props) => {
                 } else {
                     console.log("Storage permission denied")
                 }
+
+                
+
+
             } catch (err) {
                 console.warn(err)
             }
@@ -286,11 +300,19 @@ const FileScreen = (props) => {
                 break;
             }
         }
-        console.log(arr2)
+        // console.log(arr2)
         props.navigation.navigate('PostScreen', { "selected": [...arr2] })
         // setSelected([ ...arr2]);
         // setSelTopic(topic);
         // setVisible(true);
+    }
+
+    const convertDate = (tm) => {
+        var d = new Date(JSON.parse(tm));
+        console.log(tm)
+
+        return d.toLocaleString();
+        //  return d;
     }
     
 
@@ -387,13 +409,13 @@ const FileScreen = (props) => {
                                     }}>
                                     <Card style={{ borderRadius: 20 }} >
                                         <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10 }}>{Date(item["time"].split("GMT")[0])}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10 }}>{convertDate(item["time"])}</Text>
                                             <Body style={{ flexDirection: 'row' }}>
                                                 {
                                                     item["images"].map((it, ind) => {
-                                                        console.log(it);
+                                                        // console.log(it);
                                                         if (ind < 2 || item["images"].length == 3) {
-                                                            return <Image style={{ height: width * 0.24, width: width * 0.24, marginHorizontal: width * 0.01, borderRadius: 20 }} source={{ uri: "file://" + it }} />;
+                                                            return <Image style={{ height: width * 0.24, width: width * 0.24, marginHorizontal: width * 0.01, borderRadius: 20 }} source={{ uri: it[0] == 'h' && it[1] == 't' && it[2] == "t" ? it :  "file://" + it }} />;
                                                         }
                                                     })
                                                 }
