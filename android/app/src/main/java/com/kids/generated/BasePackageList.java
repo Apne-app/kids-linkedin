@@ -1,4 +1,4 @@
-package com.kids.generated;
+package com.genioclub.app.generated;
 
 import java.util.Arrays;
 import java.util.List;

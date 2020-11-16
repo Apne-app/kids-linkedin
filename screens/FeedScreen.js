@@ -114,7 +114,7 @@ const FeedScreen = ({ navigation, route }) => {
         }
         analyse();
     })
-
+    console.log(children)
     const report = async (x) => {
 
         // console.log(children);

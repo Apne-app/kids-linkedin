@@ -1,4 +1,4 @@
-package com.kids;
+package com.genioclub.app;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -15,7 +15,7 @@ import com.horcrux.svg.SvgPackage;
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
 import com.rnfs.RNFSPackage;
-import com.kids.generated.BasePackageList;
+import com.genioclub.app.generated.BasePackageList;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -112,7 +112,7 @@ public class MainApplication extends Application implements ShareApplication, Re
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.kids.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.genioclub.app.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);
