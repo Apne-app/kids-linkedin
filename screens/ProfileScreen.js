@@ -8,7 +8,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 import FastImage from 'react-native-fast-image'
-import ImagePicker from 'react-native-image-picker';
 import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
@@ -24,11 +23,12 @@ import { connect } from 'getstream';
 import { set } from 'react-native-reanimated';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
+import Includes from '../Modules/Includes'
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
-import ActionSheet from 'react-native-actionsheet'
+import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
 import VideoPlayer from 'react-native-video-controls';
 import { SliderBox } from "react-native-image-slider-box";
@@ -36,6 +36,7 @@ import { Snackbar } from 'react-native-paper';
 import { Chip } from 'react-native-paper';
 import YouTube from 'react-native-youtube';
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
+import ImagePicker from 'react-native-image-crop-picker';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
@@ -121,23 +122,24 @@ const ProfileScreen = ({ navigation, route }) => {
     const [courses, setCourses] = useState([])
     const [refreshing, setRefreshing] = React.useState(false);
     const [bottomType, setBottomType] = useState('')
+    const [key, setkey] = useState('1')
     const [course, setCourse] = useState({
         org: '',
         url: '',
         name: ''
     })
 
-
+    const refActionSheet = useRef(null);
     useFocusEffect(
-    React.useCallback(() => {
-        const onBackPress = () => {
-            navigation.navigate('Home', { screen: 'Feed' })
-            return true;
-        };
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, []));
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.navigate('Home', { screen: 'Feed' })
+                return true;
+            };
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        }, []));
 
 
     const renderOptions = () => (
@@ -252,8 +254,8 @@ const ProfileScreen = ({ navigation, route }) => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
             analytics.screen('Profile Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-                deviceID: getUniqueId() 
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
             })
         }
         analyse();
@@ -289,7 +291,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 var user = client.feed('timeline', children['id'] + 'id');
                 var following = await user.following()
                 console.log(follows)
-                setdata({ 'followers': follows['results'], 'following': following['results'], type: children['data']['type']})
+                setdata({ 'followers': follows['results'], 'following': following['results'], type: children['data']['type'] })
             }
             // console.log(follows)
         }
@@ -363,7 +365,7 @@ const ProfileScreen = ({ navigation, route }) => {
             var user = client.feed('timeline', children['id'] + 'id');
             var following = await user.following()
             console.log(follows)
-            setdata({ 'followers': follows['results'], 'following': following['results'], followers:follows })
+            setdata({ 'followers': follows['results'], 'following': following['results'], followers: follows })
             // console.log(follows)
         }
         addfollows();
@@ -424,7 +426,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const logout = async () => {
         var keys = await AsyncStorage.getAllKeys()
         await AsyncStorage.multiRemove(keys)
-        navigation.navigate('Login', {screen:'Profile'})
+        navigation.navigate('Login', { screen: 'Profile' })
     }
     const CustomActivity = (props) => {
         let img = props.activity.image ? props.activity.image.split(", ").length - 1 > 1 ? props.activity.image.split(", ").pop : props.activity.image : '';
@@ -454,7 +456,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
                             console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] })
@@ -660,16 +662,15 @@ const ProfileScreen = ({ navigation, route }) => {
         );
     };
     const there = () => {
-        return (<View style={{height: height}}>
+        return (<View style={{ height: height }}>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login', {screen:'Profile'})} />
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
                     appId={'96078'}
                     token={children['0']['data']['gsToken']}
                 >
                     <View style={{ marginTop: 30, flexDirection: 'row' }}>
-                        <TouchableOpacity onPress={() => pickImage()} style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
                             <Image
                                 source={{ uri: source }}
                                 style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
@@ -718,8 +719,8 @@ const ProfileScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('Opened website', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-                                deviceID: getUniqueId() 
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                deviceID: getUniqueId()
                             })
                             Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])
                                 .catch(err => {
@@ -731,7 +732,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: 'white', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
                     </TouchableOpacity>
-                    <FlatFeed feedGroup="user"  Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                    <FlatFeed feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                 </StreamApp>
             </ScrollView>
             <BottomSheet
@@ -742,13 +743,21 @@ const ProfileScreen = ({ navigation, route }) => {
                 borderRadius={25}
                 renderContent={renderOptions}
             />
+            <ActionSheet
+                useNativeDriver={true}
+                ref={refActionSheet}
+                title={<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Change Profile Photo</Text>}
+                styles={{ borderRadius: 10, margin: 10 }}
+                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Take Photo</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                cancelButtonIndex={2}
+                onPress={(index) => { index == 0 ? pickImage('gallery') : pickImage('camera') }}
+            />
         </View>)
     }
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('Login', {screen:'Profile'})}><CompButton message={'Signup/Login to create profile'}  /></TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
             </View>
         )
     }
@@ -759,7 +768,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 child = JSON.parse(child)
                 setchildren(child)
             }
-            else{
+            else {
                 setchildren({})
             }
         }
@@ -797,21 +806,16 @@ const ProfileScreen = ({ navigation, route }) => {
             check()
         }, 3000);
     }, [])
-    const pickImage = () => {
-        ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
-
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            } else {
-                // upload(response.uri);
+    const pickImage = (type) => {
+        if (type === 'gallery') {
+            ImagePicker.openPicker({
+                width: 300,
+                height: 300,
+                cropping: true,
+                cropperCircleOverlay: true
+            }).then(image => {
                 const file = {
-                    // `uri` can also be a file system path (i.e. file://)
-                    uri: response.uri,
+                    uri: image.path,
                     name: children['0']['data']['gsToken'] + '.png',
                     type: "image/png",
                 }
@@ -825,12 +829,63 @@ const ProfileScreen = ({ navigation, route }) => {
                     successActionStatus: 201
                 }
                 RNS3.put(file, options).then(response => {
-                    console.log("dassd")
-                    if (response.status !== 201)
-                        throw new Error("Failed to upload image to S3");
+                    if (response.status !== 201) {
+                        console.log(response)
+                        alert('Could not update Profile Picture, please try again later')
+                    }
+                    else {
+                        var child = children['0']
+                        axios.get('http://104.199.158.211:5000/update_child/' + child.id + '/image/' + child.data.name + '/' + child.data.school + '/' + child.data.year + '/' + child.data.grade + '/' + child.data.type + '/' + child.data.gsToken + `/?token=${token}`)
+                            .then(async (response) => {
+                                setkey(String(parseInt(key) + 1))
+                            }).catch((error) => {
+                                console.log(error)
+                                alert('Could not update Profile Picture, please try again later')
+                            })
+                    }
                 })
-            }
-        });
+            });
+        }
+        if (type === 'camera') {
+            ImagePicker.openCamera({
+                width: 300,
+                height: 300,
+                cropping: true,
+                cropperCircleOverlay: true
+            }).then(image => {
+                const file = {
+                    uri: image.path,
+                    name: children['0']['data']['gsToken'] + '.png',
+                    type: "image/png",
+                }
+
+                const options = {
+                    keyPrefix: '',
+                    bucket: "kids-linkedin-avatars",
+                    region: "ap-south-1",
+                    accessKey: ACCESS_KEY,
+                    secretKey: SECRET_KEY,
+                    successActionStatus: 201
+                }
+                RNS3.put(file, options).then(response => {
+                    if (response.status !== 201) {
+                        console.log(response)
+                        alert('Could not update Profile Picture, please try again later')
+                    }
+                    else {
+                        var child = children['0']
+                        console.log(child.data.gsToken)
+                        axios.get('http://104.199.158.211:5000/update_child/' + child.id + '/image/' + child.data.name + '/' + child.data.school + '/' + child.data.year + '/' + child.data.grade + '/' + child.data.type + '/' + child.data.gsToken + `/?token=${token}`)
+                            .then(async (response) => {
+                                setkey(String(parseInt(key) + 1))
+                            }).catch((error) => {
+                                console.log(error)
+                                alert('Could not update Profile Picture, please try again later')
+                            })
+                    }
+                })
+            });
+        }
     }
     const loading = () => {
         return (
@@ -840,7 +895,8 @@ const ProfileScreen = ({ navigation, route }) => {
         );
     }
     return (
-        <View>
+        <View key={key}>
+            <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </View>
     );

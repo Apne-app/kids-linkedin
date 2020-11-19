@@ -143,7 +143,7 @@ const ChildScreen = ({ route, navigation }) => {
                 axios(config)
                 .then(function (response) {
                     // console.log(JSON.stringify(response.data.token));
-                    axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email + '/child/' + `?token=${response.data.token}`)
+                    axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email + '/Kid/' + `?token=${response.data.token}`)
                     .then(async (response) => {
                         if (response.data.split(', ').length == 2) {
                             await AsyncStorage.setItem('status', '3')

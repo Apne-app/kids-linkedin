@@ -29,6 +29,7 @@ var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
 const SinglePostScreen = ({ navigation, route }) => {
+    console.log(route.params.activity.activity)
     const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
         const onShare = async () => {

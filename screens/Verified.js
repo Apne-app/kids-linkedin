@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text,Alert, BackHandler, Dimensions, Image } from 'react-native'
+import { StyleSheet, View, Text, Alert, BackHandler, Dimensions, Image } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer } from 'native-base';
 import axios from 'axios';
@@ -13,24 +13,24 @@ const Unverified = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-        const onBackPress = () => {
-            Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-            {
-                text: "Cancel",
-                onPress: () => null,
-                style: "cancel"
-            },
-            { text: "YES", onPress: () => BackHandler.exitApp() }
-            ]);
-            return true;
-        };
+            const onBackPress = () => {
+                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => BackHandler.exitApp() }
+                ]);
+                return true;
+            };
 
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-    }, []));
+        }, []));
 
     const send = async () => {
         var x = await AsyncStorage.getItem('status');
@@ -52,36 +52,36 @@ const Unverified = ({ navigation, route }) => {
             var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
             var token = '';
             var config = {
-            method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: data
+                method: 'post',
+                url: 'http://104.199.146.206:5000/getToken',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
             };
             axios(config)
-            .then(async function (response) {
-                // console.log(JSON.stringify(response.data.token));
-                var pro = await AsyncStorage.getItem('profile')
-                pro = JSON.parse(pro)
-                axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
-                    .then(async (response) => {
-                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                        if (Object.keys(response.data).length) {
-                            await AsyncStorage.setItem('status', '3')
-                            navigation.navigate(route.params.screen === "IntroSlider" ? navigation.navigate('Home') : navigation.navigate(route.params.screen))
-                        }
-                        else {
-                            await AsyncStorage.setItem('status', '2')
-                            navigation.navigate('Child', {screen:route.params.screen})
-                        }
-                        console.log(response.data)
-                    })
-                var x = await AsyncStorage.getItem('status');
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                .then(async function (response) {
+                    // console.log(JSON.stringify(response.data.token));
+                    var pro = await AsyncStorage.getItem('profile')
+                    pro = JSON.parse(pro)
+                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
+                        .then(async (response) => {
+                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                            if (Object.keys(response.data).length) {
+                                await AsyncStorage.setItem('status', '3')
+                                route.params? (Object.keys(route.params).includes('screen') ? (route.params.screen === "IntroSlider" ? navigation.navigate('Home') : navigation.navigate(route.params.screen)) : navigation.navigate('Home')) : navigation.navigate('Home')
+                            }
+                            else {
+                                await AsyncStorage.setItem('status', '2')
+                                navigation.navigate('Child', { screen: route.params ? Object.keys(route.params).includes('screen') ? route.params.screen : 'Home' : 'Home' })
+                            }
+                            console.log(response.data)
+                        })
+                    var x = await AsyncStorage.getItem('status');
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
 
         }
         getData()
