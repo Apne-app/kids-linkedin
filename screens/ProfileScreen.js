@@ -509,7 +509,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     <LikeButton {...props} />
                     <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="comment" type="EvilIcons" style={{ fontSize: 30, marginLeft: 10, color: 'white' }} />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=check').then((data) => {
+                        Linking.openURL('whatsapp://send?text=').then((data) => {
                             // console.log('WhatsApp Opened');
                         }).catch(() => {
                             alert('Make sure Whatsapp is installed on your device');
