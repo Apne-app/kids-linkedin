@@ -37,6 +37,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
 import messaging from '@react-native-firebase/messaging';
 import IndProfile from './screens/IndProfile';
+import Includes from './Modules/Includes';
 import GalleryScreen from './screens/GalleryScreen';
 import KidUser from './screens/KidUser';
 import KidsAge from './screens/KidsAge';
@@ -49,27 +50,28 @@ import firebase from '@react-native-firebase/app'
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
-const ReactMoE = require('react-native-moengage')
+import ReactMoE from 'react-native-moengage'
+ReactMoE.initialize();
 
 const App = (props) => {
   const notifierRef = useRef(null)
   useEffect(() => {
-    const config = async() => {
+    const config = async () => {
       var profile = await AsyncStorage.getItem('profile')
-      if(profile!=null){
+      if (profile != null) {
         profile = JSON.parse(profile)
         const pushtoken = await firebase.messaging().getToken()
         console.log(pushtoken)
         console.log(profile)
-        ReactMoE.default.setUserUniqueID(profile.id);
-        if(!profile.email.includes('default')){
-        ReactMoE.default.setUserEmailID(profile.email);
-        ReactMoE.default.setAlias(profile.email)
+        ReactMoE.setUserUniqueID(profile.id);
+        if (!profile.email.includes('default')) {
+          ReactMoE.setUserEmailID(profile.email);
+          ReactMoE.setAlias(profile.email)
         }
-        else{
-        ReactMoE.default.setAlias(profile.lnkdId)
+        else {
+          ReactMoE.setAlias(profile.lnkdId)
         }
-        ReactMoE.default.passFcmPushToken(pushtoken)
+        ReactMoE.passFcmPushToken(pushtoken)
       }
 
     }
@@ -198,20 +200,25 @@ const App = (props) => {
       })
     }
     segmentInitialize();
-
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
         console.log(link)
         var pro = await AsyncStorage.getItem('profile')
         pro = JSON.parse(pro)
-        console.log(pro, link, link.url.includes(pro.uuid))
-        if (link.url.includes(pro.uuid)) {
-          containerRef.current?.navigate('Verified')
-          setinit('Verified')
+        if (pro) {
+          if (link.url.includes(pro.uuid)) {
+            containerRef.current?.navigate('Verified')
+            setinit('Verified')
+          }
+          else {
+            if (link.url.includes('verify')) {
+              containerRef.current?.navigate('Unverified')
+            }
+          }
         }
         else {
-          containerRef.current?.navigate('Unverified')
+          // containerRef.current?.navigate('Login', { screen: 'Home' })
         }
       })
       .catch(() => {
@@ -221,6 +228,29 @@ const App = (props) => {
       )
   }, []);
   // setInitialNavigationState(await getInitialState());
+  const handleDynamicLink = async (link) => {
+    var pro = await AsyncStorage.getItem('profile')
+    pro = JSON.parse(pro)
+    if (pro) {
+      if (link.url.includes(pro.uuid)) {
+        containerRef.current?.navigate('Verified')
+        setinit('Verified')
+      }
+      else {
+        if (link.url.includes('verify')) {
+          containerRef.current?.navigate('Unverified')
+        }
+      }
+    }
+    else {
+      containerRef.current?.navigate('Login', { screen: 'Home' })
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    return () => unsubscribe();
+  }, []);
   return (
     <NavigationContainer ref={containerRef}>
       <StatusBar
@@ -251,6 +281,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="Notifications" component={NotificationScreen} />
         <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
         <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
+        <Stack.Screen options={{ headerShown: false }} name="Includes" component={Includes} />
       </Stack.Navigator>
       <NotifierRoot ref={notifierRef} />
     </NavigationContainer>

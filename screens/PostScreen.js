@@ -169,7 +169,7 @@ const PostScreen = ({ navigation, route }) => {
     // setModalVisible4(false);
 
     const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-    var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post" }
+    var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
     var user = client.feed('user', String(String(children['id']) + String("id")));

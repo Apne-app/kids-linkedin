@@ -95,8 +95,8 @@ const SearchScreen = ({ route, navigation }) => {
     const check = async () => {
       var x = await AsyncStorage.getItem('children');
       analytics.screen('Search Screen', {
-          userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-          deviceID: getUniqueId() 
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+        deviceID: getUniqueId()
       })
       var child = await AsyncStorage.getItem('children')
       if (child != null) {
@@ -173,7 +173,7 @@ const SearchScreen = ({ route, navigation }) => {
           //     console.log(error);
           //   });
 
-          
+
         }
       }
       else {
@@ -187,7 +187,6 @@ const SearchScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <Container>
-        <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
         <Content style={styles.container}>
           <View >
             <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15 }}>Kids</Text>
@@ -297,8 +296,7 @@ const SearchScreen = ({ route, navigation }) => {
     console.log(children, status)
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
-        <TouchableOpacity onPress={() => navigation.navigate('Login', {screen:'Search'})}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Search' })}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
       </View>
     )
   }
@@ -310,7 +308,10 @@ const SearchScreen = ({ route, navigation }) => {
     );
   }
   return (
-    children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
+    <>
+      <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
+      {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
+    </>
   );
 }
 

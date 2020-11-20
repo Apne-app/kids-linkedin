@@ -1,4 +1,4 @@
-package com.kids;
+package com.genioclub.app;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,15 +1,15 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
-import ActionSheet from 'react-native-actionsheet'
+import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
 import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -26,10 +26,14 @@ import YouTube from 'react-native-youtube';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
+import ReactMoE, { MoEProperties } from 'react-native-moengage';
+import { connect } from 'getstream';
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
-
+let properties = new MoEProperties()
+properties.addAttribute("screen", "Home");
+ReactMoE.trackEvent("Screen", properties);
 updateStyle('activity', {
     container:
     {
@@ -80,44 +84,50 @@ const FeedScreen = ({ navigation, route }) => {
     const [reportComment, setReportComment] = useState('');
     const [actionstatus, setActionStatus] = useState(0);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const onBackPress = () => {
-                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-                    {
-                        text: "Cancel",
-                        onPress: () => null,
-                        style: "cancel"
-                    },
-                    { text: "YES", onPress: () => BackHandler.exitApp() }
-                ]);
-                return true;
-            };
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         const onBackPress = () => {
+    //             Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+    //                 {
+    //                     text: "Cancel",
+    //                     onPress: () => null,
+    //                     style: "cancel"
+    //                 },
+    //                 { text: "YES", onPress: () => BackHandler.exitApp() }
+    //             ]);
+    //             return true;
+    //         };
 
-            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    //         BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-            return () =>
-                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    //         return () =>
+    //             BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-        }, []));
+    //     }, []));
 
     useEffect(() => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
             analytics.screen('Feed Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
             })
         }
         analyse();
     })
+    // React.useEffect(() => {
+    //     const unsubscribe = navigation.addListener('state', (data) => {
+    //         console.log(data.data.state.history)
+    //     });
 
+    //     return unsubscribe;
+    // }, [navigation]);
     const report = async (x) => {
 
         // console.log(children);
         var x = await AsyncStorage.getItem('children');
         analytics.track('Post Reported', {
-            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
         })
         var now = new Date();
@@ -177,7 +187,7 @@ const FeedScreen = ({ navigation, route }) => {
                 height: height * 0.5,
             }}
         >
-            <TouchableOpacity onPress={() => { sheetRefReport.current.snapTo(2); }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableOpacity>
+            <TouchableWithoutFeedback onPress={() => { sheetRefReport.current.snapTo(2); }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon name="chevron-small-down" type="Entypo" /></TouchableWithoutFeedback>
             <Text style={{ alignSelf: 'center', marginBottom: 5, fontSize: 15 }} >Report {!(Object.keys(reportedProfile).length === 0 && reportedProfile.constructor === Object) ? reportedProfile.actor.data.name : ''}'s Post</Text>
             <FlatList
                 data={["Improper Content", "Faking to be someone else"]}
@@ -234,7 +244,7 @@ const FeedScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
                             console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] })
@@ -351,10 +361,11 @@ const FeedScreen = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
                             </View>
                             <ActionSheet
+                                useNativeDriver={true}
                                 ref={refActionSheet}
-                                options={['Share', 'Report', 'Close']}
+                                styles={{ borderRadius: 10, margin: 10 }}
+                                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                 cancelButtonIndex={2}
-                                destructiveButtonIndex={1}
                                 onPress={(index) => { index == 1 ? report(props.activity) : null; }}
                             />
                             <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
@@ -363,7 +374,7 @@ const FeedScreen = ({ navigation, route }) => {
                     </View>
                 }
                 Content={
-                    <TouchableOpacity onPress={() => navigation.navigate('SinglePost', { token: children['0']['data']['gsToken'], activity: props.activity })} style={{ padding: 20 }}>
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: children['0']['data']['gsToken'], activity: props })} style={{ padding: 20 }}>
                         {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                         {/* {props.activity.image ? <ImageView
                             presentationStyle={{ height: height / 3 }}
@@ -432,8 +443,8 @@ const FeedScreen = ({ navigation, route }) => {
                                 apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                             /> : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </TouchableOpacity>
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+                    </TouchableWithoutFeedback>
                 }
                 Footer={footer(props.activity.id, props)}
             />
@@ -577,10 +588,11 @@ const FeedScreen = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data ? props.activity.actor.data.type : 'Child'}</Text>
                             </View>
                             <ActionSheet
+                                useNativeDriver={true}
                                 ref={refActionSheet}
-                                options={['Share', 'Report', 'Close']}
+                                styles={{ borderRadius: 10, margin: 10 }}
+                                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                 cancelButtonIndex={2}
-                                destructiveButtonIndex={1}
                                 onPress={(index) => { index == 1 ? report(props.activity) : null; }}
                             />
                             <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
@@ -614,10 +626,11 @@ const FeedScreen = ({ navigation, route }) => {
                                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{ }</Text>
                                         </View>
                                         <ActionSheet
+                                            useNativeDriver={true}
                                             ref={refActionSheet}
-                                            options={['Share', 'Report', 'Close']}
+                                            styles={{ borderRadius: 10, margin: 10 }}
+                                            options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                             cancelButtonIndex={2}
-                                            destructiveButtonIndex={1}
                                             onPress={(index) => { index == 1 ? report(props.activity) : null; }}
                                         />
                                         <Right><Icon onPress={() => { showActionSheet(); }} name="options" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: 20, color: 'white' }} /></Right>
@@ -626,7 +639,7 @@ const FeedScreen = ({ navigation, route }) => {
                             }}
 
                         /> : <View></View>}
-                        <TouchableOpacity activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
+                        <TouchableWithoutFeedback activeOpacity={1} onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
                             {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image.split(", ")[0] }}
                                 style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
@@ -641,7 +654,7 @@ const FeedScreen = ({ navigation, route }) => {
                             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
                             /></View> : <View></View>}
-                        </TouchableOpacity>
+                        </TouchableWithoutFeedback>
                         {props.activity.object.includes('http') ?
                             <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                             : null}
@@ -709,6 +722,15 @@ const FeedScreen = ({ navigation, route }) => {
             if (child != null) {
                 child = JSON.parse(child)
                 setchildren(child)
+                const client = connect('9ecz2uw6ezt9', child[0]['data']['gsToken'], '96078');
+                var user = client.feed('timeline', child[0]['id'] + 'id');
+                user.get({ limit: 1, id_lt: '9aaabf77-2828-11eb-9805-0a7d4ff68278' })
+                    .then((data) => {
+                        // console.log(data)
+                    })
+                    .catch((data) => {
+                        // console.log(data)
+                    })
             }
             else {
                 setchildren({})
@@ -764,7 +786,6 @@ const FeedScreen = ({ navigation, route }) => {
     const there = (props) => {
         return (
             <SafeAreaProvider>
-                <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
                 {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
@@ -819,16 +840,15 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const loading = () => {
         return (
-            <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
-            </View>
+            <ScrollView refreshControl={
+                <RefreshControl refreshing={true} />} style={{ backgroundColor: '#fff', height: height, width: width }}>
+            </ScrollView>
         );
     }
     const notthere = () => {
         return (
             <SafeAreaProvider>
-                <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
-                <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableOpacity>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableWithoutFeedback>
                 {/* <YouTube
                     videoId="KVZ-P-ZI6W4" // The YouTube video ID
                     apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
@@ -887,7 +907,10 @@ const FeedScreen = ({ navigation, route }) => {
     })
 
     return (
-        children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
+        <>
+            <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
+            {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
+        </>
 
     );
 };

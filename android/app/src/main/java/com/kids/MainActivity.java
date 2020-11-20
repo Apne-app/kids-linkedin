@@ -1,4 +1,4 @@
-package com.kids;
+package com.genioclub.app;
 
 import android.os.Bundle;
 
@@ -19,6 +19,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "kids";
+    return "com.genioclub.app";
   }
 }
