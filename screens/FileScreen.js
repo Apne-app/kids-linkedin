@@ -140,7 +140,7 @@ const FileScreen = (props) => {
                     }
                     b += m.split('_')[1].split('-')[0];
                     b += ",";
-                    arr.push({ 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1] });
+                    arr.push({ 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1], cloud: 0 });
                 }
                 setStringImages(b);
                 setFiles([...arr])
@@ -189,7 +189,7 @@ const FileScreen = (props) => {
                             tmp.push(fls[i]);
                             i++;
                         }
-                        arr.push({ 'time': m.split("-imagesFetched/")[1].split("_")[1].split("-")[0], 'images': tmp, tag: m.split("-imagesFetched/")[1].split("_")[0] + " (From Cloud) " });
+                        arr.push({ 'time': m.split("-imagesFetched/")[1].split("_")[1].split("-")[0], 'images': tmp, tag: m.split("-imagesFetched/")[1].split("_")[0], cloud: 1 });
                         }
                     }
                     console.log(arr);
@@ -197,7 +197,7 @@ const FileScreen = (props) => {
 
                 })
                 .catch(function (error) {
-                console.log(error);
+                console.log(error, "asdas");
                 });
 
 
@@ -409,7 +409,10 @@ const FileScreen = (props) => {
                                     }}>
                                     <Card style={{ borderRadius: 20 }} >
                                         <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10 }}>{convertDate(item["time"])}</Text>
+                                            <View style={{flexDirection: 'row'}}>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10, flex: 8 }}>{convertDate(item["time"])}</Text>
+                                            { item['cloud'] ? <Icon type="Feather" name="cloud" style={{flex: 1, alignSelf: 'flex-end', color: "#327feb", fontSize: 20, marginHorizontal: 4, marginBottom: 10}} /> : null}
+                                            </View>
                                             <Body style={{ flexDirection: 'row' }}>
                                                 {
                                                     item["images"].map((it, ind) => {
