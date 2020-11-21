@@ -45,7 +45,7 @@ const App: () => React$Node = (props) => {
         arr = [props.route.params.img];
       }
 
-      console.log(arr);
+      // console.log(arr);
 
       await AsyncStorage.setItem("OrigImages", JSON.stringify(arr));
 
@@ -71,7 +71,8 @@ const App: () => React$Node = (props) => {
     //   console.log("do something with ", uri);
     // console.log(props.route.params);
     // await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': uri}) );
-    props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': dim.height, 'width': dim.width, 'uri': uri, 'prevImg': prevUri }] })
+    var tm= new Date();
+    props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': dim.height, 'width': dim.width, 'uri': uri, 'prevImg': prevUri}], 'time': props.route.params.time })
     // });
   }
 
@@ -110,7 +111,7 @@ const App: () => React$Node = (props) => {
         backAction
       );
 
-      console.log(props.route.params)
+      // console.log(props.route.params)
     }, []));
 
   const renderContent = () => (
@@ -182,6 +183,7 @@ const App: () => React$Node = (props) => {
     </View>
   );
   const goback = () => {
+    // var x = new Date();
     croppedi && editing ? setcroppedi(false) : editing ? props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images] }) : props.navigation.pop()
   }
   return (
@@ -214,14 +216,9 @@ const App: () => React$Node = (props) => {
             // setUri(res.uri);
             setDim({ height: JSON.parse(res.height), width: JSON.parse(res.width) })
             setcroppedi(true)
-            props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri }] })
+            var tm = new Date();
+            props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri }], 'time': props.route.params.time })
 
-
-            // scannedImg = await AsyncStorage.getItem('@scanImg');
-            // console.log("sd");
-            // } catch (error) {
-            //   console.log(error)
-            // // }
 
 
 

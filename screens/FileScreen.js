@@ -113,95 +113,93 @@ const FileScreen = (props) => {
         albums = JSON.parse(albums);
         // console.log(albums);
 
+        var result = await RNFS.readDir(`${dir_path}/Images`);
+        var fls = [];
+        for(var i = 0; i < result.length; i++)
+        {
+            var res = await RNFS.readDir(result[i]['path']);
+            fls.push({'images': res, 'cloud': 0});
+        }
+        console.log(fls);
+        setFiles([...fls]);
+    }          
 
-        RNFS.readDir(`${dir_path}/Images`)
-            .then((result) => {
-                console.log('GOT RESULT', result.length);
+                // result.map((item, i) => {
+                //     fls.push(item.path)
+                // })
 
-                var fls = [];
-
-                result.map((item, i) => {
-                    fls.push(item.path)
-                })
-
-                fls.sort();
-                fls.reverse();
-                var arr = [];
-                var b = "";
+                // fls.sort();
+                // fls.reverse();
+                // var arr = [];
+                // var b = "";
                 
-                for (var i = 0; i < fls.length;) {
-                    // console.log(fls)
-                    var m = fls[i];
-                    // i++;
-                    var tmp = [];
-                    while (i < fls.length && fls[i].split('_')[1].split('-')[0] == m.split('_')[1].split('-')[0]) {
-                        tmp.push(fls[i]);
-                        i++;
-                    }
-                    b += m.split('_')[1].split('-')[0];
-                    b += ",";
-                    arr.push({ 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1] });
-                }
-                setStringImages(b);
-                setFiles([...arr])
+                // for (var i = 0; i < fls.length;) {
+                //     // console.log(fls)
+                //     var m = fls[i];
+                //     // i++;
+                //     var tmp = [];
+                //     while (i < fls.length && fls[i].split('_')[1].split('-')[0] == m.split('_')[1].split('-')[0]) {
+                //         tmp.push(fls[i]);
+                //         i++;
+                //     }
+                //     b += m.split('_')[1].split('-')[0];
+                //     b += ",";
+                //     arr.push({ 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1], cloud: 0 });
+                // }
+                // setStringImages(b);
+                // setFiles([...arr])
                 // console.log(b)
 
-            })
-            .catch((err) => {
-                console.log(err.message, err.code);
-            });
+
+        // var x = await AsyncStorage.getItem('children')
+        //         x = JSON.parse(x)["0"]["data"]["gsToken"];
+        //         // console.log(JSON.parse(x)["0"]["data"]["gsToken"])
+        //         // console.log(data)
+        //         var config = {
+        //         method: 'get',
+        //         url: `https://w9od15z398.execute-api.ap-south-1.amazonaws.com/default/getCollections?token=${x}`,
+        //         headers: { 
+        //             'Content-Type': 'application/json'
+        //         }
+        //         };
+
+        //         axios(config)
+        //         .then(function (response) {
+        //         // console.log(JSON.stringify(response.data["0"]));
+        //             // setCloudImages([ ...response.data["0"] ])
+        //             var fls = [ ...response.data["0"] ];
+        //             var arr = [];
+        //             fls.sort();
+        //             fls.reverse();
+
+        //             for (var i = 0; i < fls.length;) {
+        //             // console.log(fls)
+        //                 if(stringImages.includes(fls[i].split("gettingImages-")[1].split("-imagesFetched")[0]))
+        //                 {
+        //                     i++;
+        //                     continue;
+        //                 }
+        //                 else{
+
+        //                 var m = fls[i];
+        //                 // i++;
+        //                 var tmp = [];
+        //                 while (i < fls.length && fls[i].split("-imagesFetched/")[1].split("_")[1].split("-")[0] == m.split("-imagesFetched/")[1].split("_")[1].split("-")[0]) {
+        //                     tmp.push(fls[i]);
+        //                     i++;
+        //                 }
+        //                 arr.push({ 'time': m.split("-imagesFetched/")[1].split("_")[1].split("-")[0], 'images': tmp, tag: m.split("-imagesFetched/")[1].split("_")[0], cloud: 1 });
+        //                 }
+        //             }
+        //             console.log(arr);
+        //             setFiles([ ...arr, ...files ])
+
+        //         })
+        //         .catch(function (error) {
+        //         console.log(error, "asdas");
+        //         });
 
 
-        var x = await AsyncStorage.getItem('children')
-                x = JSON.parse(x)["0"]["data"]["gsToken"];
-                // console.log(JSON.parse(x)["0"]["data"]["gsToken"])
-                // console.log(data)
-                var config = {
-                method: 'get',
-                url: `https://w9od15z398.execute-api.ap-south-1.amazonaws.com/default/getCollections?token=${x}`,
-                headers: { 
-                    'Content-Type': 'application/json'
-                }
-                };
-
-                axios(config)
-                .then(function (response) {
-                // console.log(JSON.stringify(response.data["0"]));
-                    // setCloudImages([ ...response.data["0"] ])
-                    var fls = [ ...response.data["0"] ];
-                    var arr = [];
-                    fls.sort();
-                    fls.reverse();
-
-                    for (var i = 0; i < fls.length;) {
-                    // console.log(fls)
-                        if(stringImages.includes(fls[i].split("gettingImages-")[1].split("-imagesFetched")[0]))
-                        {
-                            i++;
-                            continue;
-                        }
-                        else{
-
-                        var m = fls[i];
-                        // i++;
-                        var tmp = [];
-                        while (i < fls.length && fls[i].split("-imagesFetched/")[1].split("_")[1].split("-")[0] == m.split("-imagesFetched/")[1].split("_")[1].split("-")[0]) {
-                            tmp.push(fls[i]);
-                            i++;
-                        }
-                        arr.push({ 'time': m.split("-imagesFetched/")[1].split("_")[1].split("-")[0], 'images': tmp, tag: m.split("-imagesFetched/")[1].split("_")[0] + " (From Cloud) " });
-                        }
-                    }
-                    console.log(arr);
-                    setFiles([ ...arr, ...files ])
-
-                })
-                .catch(function (error) {
-                console.log(error);
-                });
-
-
-    }
 
 
     React.useEffect(() => {
@@ -281,30 +279,23 @@ const FileScreen = (props) => {
 
 
 
-    const viewImages = async (time) => {
+    const viewImages = async (i, tm) => {
 
         var x = await AsyncStorage.getItem('children');
         analytics.track('A collection Selected to view', {
             userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
             deviceID: getUniqueId() 
         })
-
         var arr = [...files];
+        arr = arr[i]['images'];
         var arr2 = [];
-        for (var i = 0; i < arr.length; i++) {
-
-            if (time === arr[i].time) {
-                for (var j = 0; j < arr[i].images.length; j++) {
-                    arr2.push({ uri: arr[i].images[j], height: 200 });
-                }
-                break;
-            }
+        tm = JSON.parse(tm);
+        // console.log(tm);
+        for (var j = 0; j < arr.length; j++) {
+            
+            arr2.push(({ uri: arr[j]['path'], height: 200 }));
         }
-        // console.log(arr2)
-        props.navigation.navigate('PostScreen', { "selected": [...arr2] })
-        // setSelected([ ...arr2]);
-        // setSelTopic(topic);
-        // setVisible(true);
+        props.navigation.navigate('PostScreen', { "selected": [...arr2], 'edit': 1, 'newTime': tm })
     }
 
     const convertDate = (tm) => {
@@ -403,31 +394,34 @@ const FileScreen = (props) => {
                                 <TouchableOpacity
                                     style={{ borderRadius: 20 }}
                                     onPress={() => {
-                                        viewImages(item["time"]);
-                                        //  console.log(selected);
-                                        //  
+                                        viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
                                     }}>
                                     <Card style={{ borderRadius: 20 }} >
                                         <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10 }}>{convertDate(item["time"])}</Text>
+                                            <View style={{flexDirection: 'row'}}>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10, flex: 8 }}>{item['images'][0]['path'].split('Images/')[1].split('/')[0]}</Text>
+                                            { item['cloud'] ? <Icon type="Feather" name="cloud" style={{flex: 1, alignSelf: 'flex-end', color: "#327feb", fontSize: 20, marginHorizontal: 4, marginBottom: 10}} /> : null}
+                                            </View>
                                             <Body style={{ flexDirection: 'row' }}>
                                                 {
-                                                    item["images"].map((it, ind) => {
-                                                        // console.log(it);
-                                                        if (ind < 2 || item["images"].length == 3) {
-                                                            return <Image style={{ height: width * 0.24, width: width * 0.24, marginHorizontal: width * 0.01, borderRadius: 20 }} source={{ uri: it[0] == 'h' && it[1] == 't' && it[2] == "t" ? it :  "file://" + it }} />;
-                                                        }
+                                                    // console.log(item)
+                                                    item['images'].map((it, ind) => {
+                                                            if(ind < 2 || item['images'].length == 3)
+                                                            {
+                                                                return <Image style={{ height: width * 0.24, width: width * 0.24, marginHorizontal: width * 0.01, borderRadius: 20 }} source={{ uri: it['path'].includes('file:') ? it['path'] :  "file://" + it['path'] }} />;
+                                                            } 
+                                                            
                                                     })
                                                 }
-                                                {item["images"].length - 2 > 0 && item["images"].length > 3 ? <View
+                                                {item['images'].length - 2 > 0 && item['images'].length > 3 ? <View
                                                     style={{ height: width * 0.24, width: width * 0.24, marginHorizontal: width * 0.01, borderColor: "#327FEB", borderWidth: 3, borderStyle: "dashed", borderRadius: 20, justifyContent: 'center' }} >
                                                     <View style={{ backgroundColor: "#fff", width: width * 0.15, alignItems: 'center', alignSelf: 'center', borderRadius: width * 0.15, height: width * 0.15, justifyContent: 'center' }}>
-                                                        <Text style={{ color: "#000", fontFamily: 'NunitoSans-Regular', }}>+ {item["images"].length - 2} more</Text>
+                                                        <Text style={{ color: "#000", fontFamily: 'NunitoSans-Regular', }}>+ {item['images'].length - 2} more</Text>
                                                         <Text style={{ color: "#000" }}>More</Text>
                                                     </View>
                                                 </View> : null}
                                             </Body>
-                                            {item.tag !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item.tag == 'Genio' ? 'None' : item.tag}</Chip> : null}
+                                            {item['images'][0]['name'].split('_')[0] !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item['images'][0]['name'].split('_')[0]}</Chip> : null}
 
                                         </CardItem>
                                     </Card>
