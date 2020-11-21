@@ -249,7 +249,9 @@ export default class ExampleApp extends PureComponent {
                   style={{ flex: 1 }}
                   onPress={() => {
                     // setSelected(item.node.image.uri)
-                    this.props.navigation.navigate('Preview', { 'img': item.node.image.uri, 'images': this.props.route.params ? this.props.route.params.images : [] });
+                    var tm = new Date();
+                    tm = tm.getTime();
+                    this.props.navigation.navigate('Preview', { 'img': item.node.image.uri, 'images': this.props.route.params ? this.props.route.params.images : [],'time': this.props.route.params ? this.props.route.params.time : tm });
                     console.log(item);
                   }}>
                   <Image
@@ -322,7 +324,10 @@ export default class ExampleApp extends PureComponent {
     if (this.camera) {
       const options = { quality: 0.5, base64: true, fixOrientation: true };
       const data = await this.camera.takePictureAsync(options);
-      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params ? this.props.route.params.images : [] });
+      var tm = new Date();
+      tm = tm.getTime();
+      // console.log(tm);
+      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params ? this.props.route.params.images : [], 'time': this.props.route.params ? this.props.route.params.time : tm  });
       // console.log(data);
 
     }

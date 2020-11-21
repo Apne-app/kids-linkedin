@@ -32,20 +32,6 @@ enableScreens(false);
 // but `RNFS.DocumentDirectoryPath` exists on both platforms and is writable
 var pathDir = Platform.OS === 'ios' ? RNFS.LibraryDirectoryPath : RNFS.ExternalDirectoryPath;
 
-// write the file
-
-const writeFile = () => {
-
-  console.log(pathDir)
-
-  RNFS.writeFile(pathDir, 'Lorem ipsum dolor sit amet', 'utf8')
-    .then((success) => {
-      console.log('FILE WRITTEN!');
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-}
 
 
 async function hasAndroidPermission() {
@@ -103,6 +89,7 @@ const Upload = ({ route, navigation }) => {
 
   const [orig, setOrig] = React.useState('');
   const [origImages, setOrigImages] = React.useState([])
+  const [time, setTime] = React.useState('');
   const [selecting, setSelecting] = React.useState(false);
 
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
@@ -115,24 +102,8 @@ const Upload = ({ route, navigation }) => {
     },
   ])
 
-  const [keyboardOffset, setKeyboardOffset] = useState(0);
-  const onKeyboardShow = event => setKeyboardOffset(event.endCoordinates.height);
-  const onKeyboardHide = () => setKeyboardOffset(0);
-  const keyboardDidShowListener = React.useRef();
-  const keyboardDidHideListener = React.useRef();
-
   const sheetRef = React.useRef(null);
   const closeRef = React.useRef(null);
-
-  // React.useEffect(() => {
-  //   keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
-  //   keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
-
-  //   return () => {
-  //     keyboardDidShowListener.current.remove();
-  //     keyboardDidHideListener.current.remove();
-  //   };
-  // }, []);
 
   const shareImage = async () => {
     var ar = explore;
@@ -231,7 +202,6 @@ const Upload = ({ route, navigation }) => {
       })
     }
     sevent();
-    console.log(explore)
     const backAction = async () => {
       
       closeRef.current.snapTo(0)
@@ -245,9 +215,6 @@ const Upload = ({ route, navigation }) => {
       backAction
     );
 
-
-
-    // console.log( "asddsd", route.params.selected, explore)
     if (route.params.selected) {
 
       for (var i = 0; i < route.params.selected.length; i++) {
@@ -255,7 +222,7 @@ const Upload = ({ route, navigation }) => {
       }
 
       setExplore([{ 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
-      console.log(route.params.selected);
+      
     }
 
     return () => {
@@ -265,28 +232,6 @@ const Upload = ({ route, navigation }) => {
       );
     };
 
-    // const getOrigImages = async () => {
-
-    //   var arr = await AsyncStorage.getItem("OrigImages");
-
-    //   console.log( "aaaaa", arr);
-
-    //   arr = JSON.parse(arr);
-
-    //   if(arr)
-    //   {
-    //     setOrigImages([ ...arr ]);
-    //   }
-
-
-    //   // if()
-
-    // }
-
-    // getOrigImages();
-
-    // console.log("aaaa");
-    // console.log(route.params.images)
   }, [])
 
 
@@ -294,60 +239,27 @@ const Upload = ({ route, navigation }) => {
 
 
   const getImages = async () => {
-    // let x = await AsyncStorage.getItem("@scanImg");
-    // console.log(x);
-    // if (x) {
-    //   if (JSON.parse(x).uri != explore[explore.length - 1]) {
-    //     setExplore([(JSON.parse(x)), ...explore]);
-    //     console.log(x);
-    //     var tempImg = await AsyncStorage.getItem('tempImg');
-    //     tempImg = JSON.parse(tempImg);
-    //     if(!tempImg) tempImg = { "files": [], "name": "Unsaved Images", "tag": "unsaved" };
-    //     tempImg.files.push( { "node": {"image": { "uri" : JSON.parse(x).uri }}} )
-    //     console.log(tempImg);
-    //     await AsyncStorage.setItem('tempImg', JSON.stringify(tempImg));
-    //     var y = "" + String((JSON.parse(x)).uri);
-    //     var obj = {};
-    //     obj[String((JSON.parse(x)).uri)] = false;
-    //     setUploading({
-    //       ...uploading,
-    //       ...obj
-    //     });
-    //   }
-    // }
-    // console.log(route.params.images)
     for (var i = 0; i < route.params.images.length; i++) {
       route.params.images[i]['selected'] = false;
     }
-    // setOrigImages([ ...origImages, { 'uri': route.params.prevImg, 'posn': explore.length-1} ])
     setExplore([{ 'height': 0, 'width': '0', 'uri': '' }, ...route.params.images])
-
   }
 
-  // console.log(route)
   var x = []
 
   if (route.params) {
-    console.log(x)
     if (route.params.reload) {
       getImages();
-      // setExplore([ route.params.images,  ])
-      console.log(route.params.reload);
-      console.log("asds");
       route.params.reload = 0;
     }
     else if (route.params.textAdded) {
       var arr = [...explore];
-      console.log("asdas", route.params)
-      // arr.push({ 'uri': route.params.changedimage.uri, 'height': route.params.changedimage.height, 'width': route.params.changedimage.width })
-      // setExplore([ ...arr ]);
       for (var i = 1; i < arr.length; i++) {
         if (route.params.changedimage.prevuri.split('cache/')[1] == arr[i]['uri'].split('cache/')[1]) {
           arr[i]['uri'] = route.params.changedimage.uri;
           arr[i]['height'] = route.params.changedimage.height;
           arr[i]['width'] = route.params.changedimage.width;
           setExplore([...arr]);
-          // console.log("Yohooo");
           break;
         }
       }
@@ -356,50 +268,32 @@ const Upload = ({ route, navigation }) => {
     }
   }
 
-  const saveImages = async () => {
+
+  const saveImages = async (item, tm, i) => {
 
     if (Platform.OS === "android" && !(await hasAndroidPermission())) {
       return;
     }
-    // console.log(explore[0].uri, tags[0])
-    console.log(selectedTag)
 
-    var arr = [...explore];
-    arr.splice(0, 1);
-
-    var tm = new Date().getTime();
-    // console.log(route.params.selected)
-
-    arr.map(async (item, i) => {
-      try {
-        console.log(item.uri);
-        // await CameraRoll.save(item.uri, { type: 'photo', album: "Genio" })
-        //   .then(res => {
-        //     console.log(res)
-        //   })
-        //   .catch(err => {
-        //     console.log(err)
-        //   });
-
-        
+    var tme = new Date(tm);
+    tme = tme.toString();
+    tme = tme.replace(/:/g,"-");
+    try {
 
         const saveFile = async (base64) => {
-          const albumPath = `${pathDir}/Images`;
+          const albumPath = `${pathDir}/Images/${tme}`;
 
           const fileName = `${selectedTag}_${tm}-${i}.png`;
           const filePathInCache = item.uri;
           const filePathInAlbum = `${albumPath}/${fileName}`;
 
-          console.log(fileName);
-          console.log(filePathInCache);
-          console.log(filePathInAlbum);
-
+          // console.log(fileName, filePathInCache, filePathInAlbum);
           return RNFS.mkdir(albumPath)
             .then(() => {
               RNFS.copyFile(filePathInCache, filePathInAlbum)
                 .then(() => {
-                  // console.log('File Saved Successfully!');
-                  uploadToS3(i, fileName, filePathInAlbum);
+                  uploadToS3(tm, fileName, filePathInAlbum);
+                  console.log("Dir Made");
                 });
             })
             .catch((error) => {
@@ -411,60 +305,15 @@ const Upload = ({ route, navigation }) => {
       } catch (error) {
         console.log(error)
       }
-    })
 
-    setTimeout(() => {
-      if(route.params.selected)
-        {
+  }
 
-        route.params.selected.map(item => {
-
-          RNFS.exists(item.uri)
-          .then( (result) => {
-              console.log("file exists: ", result);
-
-              if(result){
-                return RNFS.unlink(item.uri)
-                  .then(() => {
-                    // console.log('FILE DELETED');
-                  })
-                  // `unlink` will throw an error, if the item to unlink does not exist
-                  .catch((err) => {
-                    console.log(err.message);
-                  });
-              }
-
-            })
-            .catch((err) => {
-              console.log(err.message);
-            });
-        })
-        }
-    }, 3000)
-
-    
-    let x = await AsyncStorage.getItem("albums");
-    let albums = JSON.parse(x);
-    if (albums) {
-      var c = 1;
-      for (var i = 0; i < albums.length; i++) {
-        if (albums[i]['albumName'] == selectedTag) {
-          c = 0;
-          break;
-        }
-      }
-      if (c) {
-        albums = [...albums, { 'albumName': selectedTag, 'tagName': selectedTag }];
-      }
-      await AsyncStorage.setItem("albums", JSON.stringify(albums));
-    }
-    else {
-      await AsyncStorage.setItem("albums", JSON.stringify([{ 'albumName': selectedTag, 'tagName': selectedTag }]));
-    }
-
-    setModalVisible3(false);
-    // alert('Images Saved');
-
+  if(route.params.time)
+  {
+    setTime(route.params.time);
+    // console.log(route.params.images[route.params.images.length-1], "asaaaaaaaaaaaaaaa")
+    saveImages(route.params.images[route.params.images.length-1], route.params.time, route.params.images.length-1);
+    route.params.time = 0;
   }
 
   useFocusEffect(
@@ -502,12 +351,9 @@ const Upload = ({ route, navigation }) => {
   const userid = "shashwatid"
 
 
-  const uploadToS3 = async (i, filename, filepath) => {
+  const uploadToS3 = async (tm, filename, filepath) => {
     var x = await AsyncStorage.getItem('children')
     x = JSON.parse(x)["0"]["data"]["gsToken"]
-    // console.log(filename, filepath);
-    // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
-    // var name = randomStr(20, '12345abcdepq75xyz') + '.' + explore[i].uri[explore[i].uri.length - 3] + explore[i].uri[explore[i].uri.length - 2] + explore[i].uri[explore[i].uri.length - 1]
     const file = {
       // `uri` can also be a file system path (i.e. file://)
       uri: 'file://' + filepath,
@@ -516,7 +362,7 @@ const Upload = ({ route, navigation }) => {
     }
 
     const options = {
-      keyPrefix: `collections/gettingImages-${x}-imagesFetched/`,
+      keyPrefix: `collections/${x}/${tm}/`,
       bucket: "kids-linkedin",
       region: "ap-south-1",
       accessKey: ACCESS_KEY,
@@ -525,18 +371,22 @@ const Upload = ({ route, navigation }) => {
     }
 
     RNS3.put(file, options).then(response => {
-      console.log("dassd")
       if (response.status !== 201)
         throw new Error("Failed to upload image to S3");
       console.log(response.body);
-      // if (i == explore.length - 2) alert("Uploaded");
-      // console.log(response.body)
     })
       .catch(err => {
         console.log(err);
       })
       ;
     // return name;
+  }
+
+  if(route.params.edit)
+  {
+    route.params.edit = 0;
+    setTime(route.params.newTime);
+    
   }
 
   const myAsyncPDFFunction = async () => {
@@ -559,7 +409,6 @@ const Upload = ({ route, navigation }) => {
           arr.push(a);
         }
       })
-      console.log(arr);
 
       const options = {
         imagePaths: arr,
@@ -592,6 +441,39 @@ const Upload = ({ route, navigation }) => {
     }
   }
 
+  const deleteImages = async () => {
+    var tme = new Date(time);
+    tme = tme.toString();
+    tme = tme.replace(/:/g,"-");
+    var delDir = `${pathDir}/Images/`;
+    RNFS.exists(delDir)
+      .then( (result) => {
+          console.log("file exists: ", result);
+          RNFS.readDir(delDir)
+          .then(res => {
+            // console.log(res);
+            res.map((item, i) => {
+              // console.log(item.name)
+              if(item.name == tme)
+                return RNFS.unlink(item.path)
+                  .then(() => {
+                    console.log('FILE DELETED');
+                  })
+                  // `unlink` will throw an error, if the item to unlink does not exist
+                  .catch((err) => {
+                    console.log(err.message);
+                  });
+            })
+          })
+          .catch(err => {
+            console.log(err);
+          })
+        })
+        .catch((err) => {
+          console.log(err.message);
+      });
+  }
+
   const [caption, setcaption] = React.useState('');
 
   if (active == 0)
@@ -601,7 +483,6 @@ const Upload = ({ route, navigation }) => {
 
   const openImageViewer = (am) => {
 
-    // console.log(am);
     var selectedImg = [];
     for (var i = 1; i < explore.length; i++) {
       selectedImg.push({ uri: explore[i]["uri"].includes("http") ? explore[i]["uri"] : "file://" + explore[i]["uri"], 'orginUri': "" });
@@ -689,7 +570,6 @@ const Upload = ({ route, navigation }) => {
                   deviceID: getUniqueId() 
                 })
               myAsyncPDFFunction()
-              // console.log(explore)
             }}
           >
             <View style={styles.Next}>
@@ -728,8 +608,8 @@ const Upload = ({ route, navigation }) => {
                    userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
                   deviceID: getUniqueId() 
                 })
+              deleteImages();
               navigation.navigate('Home', { screen: 'Feed' })
-              // console.log(explore)
             }}
           >
             <View style={styles.Next}>
@@ -749,7 +629,7 @@ const Upload = ({ route, navigation }) => {
                   deviceID: getUniqueId() 
                 })
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
-              // console.log(explore)
+
             }}
           >
             <View style={styles.Next}>
@@ -811,7 +691,6 @@ const Upload = ({ route, navigation }) => {
           onImageIndexChange={imageIndex => {
             // alert("asd");
             setVisibleImg(imageIndex);
-            // console.log(imageIndex);
           }}
           backgroundColor={"#F5F5F5"}
           visible={visible}
@@ -833,9 +712,8 @@ const Upload = ({ route, navigation }) => {
                   onPress={() => {
                     var ar = [...explore]; ar.splice(0, 1);
                     setSelected([]); setVisible(false);
-                    // console.log({'img': explore[visibleImg+1]['prevImg'], height: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => height) /*explore[visibleImg+1]['prevImg']*/, width: Image.getSize(explore[visibleImg+1]['prevImg'], (width, height) => width),  'reload': 1  });
                     navigation.navigate('Preview', { 'img': explore[visibleImg + 1]['prevImg'], height: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => height) , width: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1, 'pos': visibleImg + 1 });
-                    // console.log(explore);
+                    
                   }}
                 >
                   <View style={styles.Cancel}>
@@ -847,10 +725,7 @@ const Upload = ({ route, navigation }) => {
                 <TouchableOpacity
                   style={{ height: 40 }}
                   onPress={() => {
-                    // console.log()
                     setSelected([]); setVisible(false);
-                    // console.log({ img: selected[visibleImg], 'height': explore[visibleImg+1]['height'], 'width': explore[visibleImg+1]['width']})
-                    // console.log(explore);
                     if (explore[visibleImg + 1]['width'] == undefined) {
                       Image.getSize(selected[visibleImg]['uri'].includes('://file') ? selected[visibleImg]['uri'].split('://')[1] : selected[visibleImg]['uri'], (width, height) => {
                         navigation.navigate('AddText', { img: { 'origUri': '', 'uri': selected[visibleImg]['uri'] }, 'height': height, 'width': width });
@@ -930,7 +805,7 @@ const Upload = ({ route, navigation }) => {
                         setExplore([...array])
                       }
                       else {
-                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', { "images": ar })
+                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', { "images": ar, 'time': time })
                       }
                     }}>
                       <View
@@ -1022,7 +897,6 @@ const Upload = ({ route, navigation }) => {
             style={{ height: 50, width: width * 0.3, alignItems: 'center' }}
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
-              // console.log(JSON.parse(x)["0"]["data"]["gsToken"])
               analytics.track('Collection Shared', {
                   userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                   deviceID: getUniqueId() 
@@ -1086,30 +960,7 @@ const Upload = ({ route, navigation }) => {
       </Item>*/}
       </View>
 
-      {/*<View style={{ height: height * 0.07 }} />
-      <Fab
-        active={activefab}
-        direction="up"
-        containerStyle={{ right: 8 }}
-        style={{ backgroundColor: 'transparent', bottom: height * 0.07 }}
-        position="bottomRight"
-        onPress={() => setActiveFab(!activefab)}>
-        <Icon name="arrow-down-circle" type="Feather" style={{ color: "#3cb979", fontSize: 50 }} />
-        <Button onPress={() => setModalVisible3(true)} style={{ backgroundColor: '#3B5998', marginBottom: height * 0.08 }}>
-          <Icon name="image" type="Feather" />
-        </Button>
-        <Button onPress={() => setModalVisible(true)} style={{ backgroundColor: '#DD5144', marginBottom: height * 0.08 }}>
-          <Icon name="file-pdf" type="FontAwesome5" />
-        </Button>
-        <Button style={{ backgroundColor: '#3B5998', marginBottom: height * 0.08 }}
-          onPress={() => {
-            setModalVisible2(true);
-            // console.log(explore);
-          }}
-        >
-          <Icon name="upload-cloud" type="Feather" style={{ color: "#fff" }} />
-        </Button>
-      </Fab>*/}
+      
       <BottomSheet
         ref={sheetRef}
         snapPoints={[300, -200]}

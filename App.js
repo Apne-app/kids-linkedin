@@ -53,6 +53,8 @@ const DrawNav = createDrawerNavigator();
 import ReactMoE from 'react-native-moengage'
 ReactMoE.initialize();
 
+console.ignoredYellowBox = ['Warning: Failed propType: SceneView'];
+
 const App = (props) => {
   const notifierRef = useRef(null)
   useEffect(() => {
