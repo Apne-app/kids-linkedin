@@ -441,6 +441,35 @@ const Upload = ({ route, navigation }) => {
     }
   }
 
+  const deleteSingleImage = async (item) => {
+    RNFS.unlink(item)
+    .then(() => {
+      console.log('FILE DELETED');
+    })
+    // `unlink` will throw an error, if the item to unlink does not exist
+    .catch((err) => {
+      console.log(err.message);
+    });
+    var x = await AsyncStorage.getItem('children')
+    x = JSON.parse(x)["0"]["data"]["gsToken"];
+    var config = {
+    method: 'get',
+    url: `https://gvsa1w2ib3.execute-api.ap-south-1.amazonaws.com/default/deleteFromS3?token=${x}&time=${time}&filename=${item.split('_')[1]}`,
+    headers: { 
+        'Content-Type': 'application/json'
+    }
+    };
+    // console.log(config);
+    axios(config)
+    .then(res => {
+      console.log(res.data);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+
+  }
+
   const deleteImages = async () => {
     var tme = new Date(time);
     tme = tme.toString();
@@ -517,6 +546,7 @@ const Upload = ({ route, navigation }) => {
     }
   }
   const deletes = async () => {
+    setDeleteCount(0);
     var x = await AsyncStorage.getItem('children');
     analytics.track('Delete Images', {
          userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
@@ -527,6 +557,7 @@ const Upload = ({ route, navigation }) => {
       var array = [...explore];
       for (var i = 1; i < array.length; i++) {
         if (array[i]['selected']) {
+          deleteSingleImage(array[i]['uri'])
           array.splice(i, 1);
           i--;
         }
@@ -859,6 +890,7 @@ const Upload = ({ route, navigation }) => {
                   i--;
                 }
               }
+              setDeleteCount(0);
               setExplore([...array]);
               setSelecting(false);
             }}
