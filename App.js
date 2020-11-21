@@ -187,7 +187,9 @@ const App = (props) => {
 
     return unsubscribe;
   }, []);
-
+  messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    alert('Message handled in the background!', remoteMessage.data);
+  });
 
 
 
