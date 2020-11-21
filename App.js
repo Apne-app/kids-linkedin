@@ -46,7 +46,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
 import codePush from "react-native-code-push";
 import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
-import firebase from '@react-native-firebase/app'
+import firebase from '@react-native-firebase/app';
+import OneSignal from 'react-native-onesignal';
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -84,7 +85,43 @@ const App = (props) => {
   useEffect(() => {
     StatusBar.setBarStyle('dark-content')
   })
+  const onReceived = (notification) => {
+    console.log("Notification received: ", notification);
+  }
 
+  const onOpened = (openResult) => {
+    containerRef.current?.navigate(openResult.notification.payload.additionalData.screen)
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  }
+
+  const onIds = (device) => {
+    console.log('Device info: ', device);
+  }
+  useEffect(() => {
+    //Remove this method to stop OneSignal Debugging 
+    OneSignal.setLogLevel(6, 0);
+
+    // Replace 'YOUR_ONESIGNAL_APP_ID' with your OneSignal App ID.
+    OneSignal.init("45264e11-664b-45ca-9181-9559110376f9", { kOSSettingsKeyAutoPrompt: false, kOSSettingsKeyInAppLaunchURL: false, kOSSettingsKeyInFocusDisplayOption: 2 });
+    OneSignal.inFocusDisplaying(2); // Controls what should happen if a notification is received while the app is open. 2 means that the notification will go directly to the device's notification center.
+    OneSignal.addEventListener('received', onReceived);
+    OneSignal.addEventListener('opened', onOpened);
+    OneSignal.addEventListener('ids', onIds);
+    []
+  })
+  useEffect(() => {
+    const hello = () => {
+      OneSignal.removeEventListener('received', onReceived);
+      OneSignal.removeEventListener('opened', onOpened);
+      OneSignal.removeEventListener('ids', onIds);
+    }
+    return (
+      hello
+    )
+  })
   const containerRef = React.useRef();
 
 

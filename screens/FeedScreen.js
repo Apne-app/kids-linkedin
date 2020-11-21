@@ -153,7 +153,7 @@ const FeedScreen = ({ navigation, route }) => {
         };
         axios(config)
             .then(function (response) {
-                console.log(JSON.stringify(response.data));
+                // console.log(JSON.stringify(response.data));
                 // setLoading(false);
                 if (response.data == "success") {
                     setShowToast(true);
@@ -570,7 +570,6 @@ const FeedScreen = ({ navigation, route }) => {
         }
         const [visible, setIsVisible] = React.useState(false);
         var images = []
-        const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
         props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
