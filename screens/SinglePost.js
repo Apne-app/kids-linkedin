@@ -65,6 +65,16 @@ updateStyle('uploadImage', {
 const SinglePostScreen = ({ navigation, route }) => {
     const [currentCommment, setcurrentCommment] = useState([])
     // console.log(route.params.activity.activity.own_reactions)
+    useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+            navigation.navigate('Home')
+            return true;
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
     const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
         const onShare = async () => {

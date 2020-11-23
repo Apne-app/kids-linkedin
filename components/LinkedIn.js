@@ -105,9 +105,9 @@ const LinkedIn = ({navigation, authtoken, loaderHandler}) => {
             redirectUri="https://genio.app/"
             onSuccess={async (data) => {
                 // setToken(data.access_token);
-                var x = await AsyncStorage.getItem('children');
+                // var x = await AsyncStorage.getItem('children');
                 analytics.track('Login Via Linkedin', {
-                    userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                    userID: null,   
                     deviceID: getUniqueId() 
                 })
                 getInfo(data.access_token);

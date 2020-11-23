@@ -81,32 +81,33 @@ const FeedScreen = ({ navigation, route }) => {
     const [reportComment, setReportComment] = useState('');
     const [actionstatus, setActionStatus] = useState(0);
 
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         const onBackPress = () => {
-    //             Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-    //                 {
-    //                     text: "Cancel",
-    //                     onPress: () => null,
-    //                     style: "cancel"
-    //                 },
-    //                 { text: "YES", onPress: () => BackHandler.exitApp() }
-    //             ]);
-    //             return true;
-    //         };
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => BackHandler.exitApp() }
+                ]);
+                return true;
+            };
 
-    //         BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-    //         return () =>
-    //             BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-    //     }, []));
+        }, []));
 
     useEffect(() => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
+            // console.log(x);
             analytics.screen('Feed Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
             })
         }
@@ -123,43 +124,44 @@ const FeedScreen = ({ navigation, route }) => {
 
         // console.log(children);
         var x = await AsyncStorage.getItem('children');
-        analytics.track('Post Reported', {
-            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-            deviceID: getUniqueId()
-        })
-        var now = new Date();
-        var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
-        datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+        console.log(x);
+        // analytics.track('Post Reported', {
+        //     userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+        //     deviceID: getUniqueId()
+        // })
+        // var now = new Date();
+        // var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+        // datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 
-        var body = {
-            "created_by": children["0"]["data"]["gsToken"],
-            "reported_name": x["actor"]["data"]["name"],
-            "post_id": x["id"],
-            "images": x["image"],
-            "reported_id": x["actor"]["id"].split("id")[0],
-            "reported_time": datetime
-        }
+        // var body = {
+        //     "created_by": children["0"]["data"]["gsToken"],
+        //     "reported_name": x["actor"]["data"]["name"],
+        //     "post_id": x["id"],
+        //     "images": x["image"],
+        //     "reported_id": x["actor"]["id"].split("id")[0],
+        //     "reported_time": datetime
+        // }
 
-        var config = {
-            method: 'post',
-            url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: body
-        };
-        axios(config)
-            .then(function (response) {
-                // console.log(JSON.stringify(response.data));
-                // setLoading(false);
-                if (response.data == "success") {
-                    setShowToast(true);
-                }
-            })
-            .catch(function (error) {
-                alert(error);
-                // setLoading(false)
-            });
+        // var config = {
+        //     method: 'post',
+        //     url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     data: body
+        // };
+        // axios(config)
+        //     .then(function (response) {
+        //         // console.log(JSON.stringify(response.data));
+        //         // setLoading(false);
+        //         if (response.data == "success") {
+        //             setShowToast(true);
+        //         }
+        //     })
+        //     .catch(function (error) {
+        //         alert(error);
+        //         // setLoading(false)
+        //     });
 
         // console.log(body);
 
@@ -241,7 +243,7 @@ const FeedScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
                             console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: children['0']['data']['gsToken'] })
