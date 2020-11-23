@@ -44,51 +44,7 @@ const theme = {
 
 const SearchScreen = ({ route, navigation }) => {
 
-  const [explore, setExplore] = React.useState([
-    {
-      'name': 'Shashwat  ',
-      'age': 20,
-      'image': 'http://shashwatmdas.info/shash.jpg'
-    },
-    {
-      'name': 'Bhargava  ',
-      'age': 20,
-      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
-    },
-    {
-      'name': 'Bhargava  ',
-      'age': 20,
-      'image': 'http://shashwatmdas.info/shash.jpg'
-    },
-    {
-      'name': 'Shashwat ',
-      'age': 20,
-      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
-    },
-    {
-      'name': 'Shashwat ',
-      'age': 20,
-      'image': 'http://shashwatmdas.info/shash.jpg'
-    },
-    {
-      'name': 'Shashwat ',
-      'age': 20,
-      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
-    },
-    {
-      'name': 'Bhargava  ',
-      'age': 20,
-      'image': 'http://shashwatmdas.info/shash.jpg'
-    },
-    {
-      'name': 'Bhargava  ',
-      'age': 20,
-      'image': 'https://bhargavamacha.info/static/media/me.d0c8ae20.jpg'
-    },
-    {
-      'name': "Show All"
-    }
-  ])
+  const [joined, setjoined] = React.useState({ '0': { 'data': { 'name': 'Loading', 'profileImage': '' }, 'id': '0' } })
   const [children, setchildren] = useState('notyet')
   const [status, setstatus] = useState('3')
   useEffect(() => {
@@ -120,18 +76,6 @@ const SearchScreen = ({ route, navigation }) => {
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, []));
-
-  // useEffect(() => {
-  //   Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
-
-  //   return () => {
-  //     Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
-  //   };
-  // }, []);
-
-  // const _keyboardDidShow = () => {
-  //   navigation.navigate('Searching') 
-  // };
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
@@ -146,32 +90,30 @@ const SearchScreen = ({ route, navigation }) => {
         var pro = await AsyncStorage.getItem('profile')
         if (pro !== null) {
           pro = JSON.parse(pro)
-          // var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+          var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
 
-          // var config = {
-          //   method: 'post',
-          //   url: 'http://104.199.146.206:5000/getToken',
-          //   headers: {
-          //     'Content-Type': 'application/json'
-          //   },
-          //   data: data
-          // };
-          // axios(config)
-          //   .then(async function (response) {
-          //     console.log(JSON.stringify(response.data.token));
-          //     axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
-          //     .then(async (response) => {
-          //       await AsyncStorage.setItem('children', JSON.stringify(response.data))
-          //       // setchildren(response.data)
-          //       console.log(response)
-          //     })
-          //     .catch((error) => {
-          //       console.log(error)
-          //     })
-          //   })
-          //   .catch(function (error) {
-          //     console.log(error);
-          //   });
+          var config = {
+            method: 'post',
+            url: 'http://104.199.146.206:5000/getToken',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            data: data
+          };
+          axios(config)
+            .then(async function (response) {
+              console.log(JSON.stringify(response.data.token));
+              axios.get('http://35.221.164.203:5000/recently/0' + `/?token=${response.data.token}`)
+                .then(async (response) => {
+                  setjoined(response.data)
+                })
+                .catch((error) => {
+                  console.log(error)
+                })
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
 
 
         }
@@ -180,114 +122,61 @@ const SearchScreen = ({ route, navigation }) => {
         // console.log('helo')
       }
     }
-    setTimeout(() => {
-      check()
-    }, 3000);
+    check()
   }, [])
   const there = () => {
     return (
       <Container>
         <Content style={styles.container}>
+          <View style={{flexDirection:'row'}}>
+            <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
+            <Text style={{ color: "#327FEB", textAlign: 'right', fontSize: 13, marginLeft: 8, fontFamily: 'NunitoSans-Bold', marginTop:8, }}>See All</Text>
+            <Icon type={'Feather'} name={'arrow-right'} style={{fontSize: 13,color: "#327FEB", marginTop:13, marginLeft:2 }} />
+          </View>
+          <FlatList
+            data={Object.keys(joined)}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(joined['item']['data']['name'])}>
+                  <View
+                    key={item.id}
+                    style={{ flex: 1, }}>
+                    <ImageBackground
+                      style={styles.image}
+                      imageStyle={{ borderRadius: 100000 }}
+                      source={{
+                        uri: joined[item]['data']['image'],
+                      }}
+                    >
+                    </ImageBackground>
+                    <View>
+                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name']}</Text>
+                    </View>
+                  </View>
+                  {/* <View
+                        style={styles.image}
+                      imageStyle={{ borderRadius: width*0.2 }}
+                      source={{
+                        uri: item.image,
+                      }}
+                      >
+                        <View style={styles.personDetails}>
+                          <View >
+                            <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>Show </Text>
+                            <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>All</Text>
+                          </View>
+                        </View>
+                       </View> */}
+                </TouchableOpacity>
+              )
+            }}
+            //Setting the number of column
+            numColumns={parseInt(width / 100)}
+            keyExtractor={(item, index) => index.toString()}
+          />
           <View >
-            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15 }}>Kids</Text>
+            <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Services</Text>
           </View>
-          <FlatList
-            data={explore}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(item.name)}>
-                { item.name != "Show All" ? <View
-                  key={item.id}
-                  style={{ flex: 1, }}>
-                  {/*console.log(item.node.image.uri)*/}
-                  <ImageBackground
-                    style={styles.image}
-                    imageStyle={{ borderRadius: width * 0.2 }}
-                    source={{
-                      uri: item.image,
-                    }}
-                  >
-                    {/*<View style={styles.personDetails}>
-                      <View >
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.name}</Text>
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.age}</Text>
-                      </View>
-                    </View>*/}
-                  </ImageBackground>
-                  <View >
-                    <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
-                  </View>
-                </View> :
-                  <View
-                    style={styles.image}
-                  // imageStyle={{ borderRadius: width*0.2 }}
-                  // source={{
-                  //   uri: item.image,
-                  // }}
-                  >
-                    <View style={styles.personDetails}>
-                      <View >
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>Show </Text>
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>All</Text>
-                      </View>
-                    </View>
-                  </View>
-                }
-              </TouchableOpacity>
-            )}
-            //Setting the number of column
-            numColumns={3}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <View style={{ marginTop: 30 }} >
-            <Text style={{ fontWeight: 'bold', color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15 }}>Services</Text>
-          </View>
-          <FlatList
-            data={explore}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(item.name)}>
-                { item.name != "Show All" ? <View
-                  key={item.id}
-                  style={{ flex: 1, }}>
-                  {/*console.log(item.node.image.uri)*/}
-                  <ImageBackground
-                    style={styles.image}
-                    imageStyle={{ borderRadius: width * 0.2 }}
-                    source={{
-                      uri: item.image,
-                    }}
-                  >
-                    {/*<View style={styles.personDetails}>
-                      <View >
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.name}</Text>
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>{item.age}</Text>
-                      </View>
-                    </View>*/}
-                  </ImageBackground>
-                  <View >
-                    <Text style={{ fontWeight: '500', color: "#797979", textAlign: 'center', fontSize: 12 }}>{item.name}</Text>
-                  </View>
-                </View> :
-                  <View
-                    style={styles.image}
-                  // imageStyle={{ borderRadius: width*0.2 }}
-                  // source={{
-                  //   uri: item.image,
-                  // }}
-                  >
-                    <View style={styles.personDetails}>
-                      <View >
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>Show </Text>
-                        <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>All</Text>
-                      </View>
-                    </View>
-                  </View>
-                }
-              </TouchableOpacity>
-            )}
-            //Setting the number of column
-            numColumns={3}
-            keyExtractor={(item, index) => index.toString()}
-          />
         </Content>
       </Container>
     );
@@ -322,7 +211,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: "#fafafa",
     marginTop: 20,
-    marginHorizontal: width * 0.05
+    paddingHorizontal: 10
     // padding: 40, 
     // paddingTop: 80
   },
@@ -363,13 +252,11 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    height: width * 0.2,
-    width: width * 0.2,
-    margin: width * 0.02,
+    height: 70,
+    width: 70,
+    margin: 10,
     alignSelf: 'center',
-    backgroundColor: "#327FEB",
-    borderRadius: width * 0.2,
-
+    borderRadius: 100000,
   },
 })
 

@@ -40,7 +40,7 @@ updateStyle('activity', {
         marginVertical: height * 0.01,
         borderRadius: width * 0.05,
         backgroundColor: "#fff",
-        marginHorizontal: 15,
+        marginHorizontal: 5,
         elevation: 0.2,
         fontFamily: 'NunitoSans-Regular'
     },
@@ -55,8 +55,8 @@ updateStyle('flatFeed', {
     container:
     {
         backgroundColor: "#f9f9f9",
-        paddingRight: width * 0.04,
-        paddingLeft: width * 0.04
+        paddingRight: 20,
+        paddingLeft: 20
     }
 });
 
@@ -785,15 +785,7 @@ const FeedScreen = ({ navigation, route }) => {
     const there = (props) => {
         return (
             <SafeAreaProvider>
-                {/* <YouTube
-                    videoId="KVZ-P-ZI6W4" // The YouTube video ID
-                    apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
-                    // onReady={e => this.setState({ isReady: true })}
-                    // onChangeState={e => this.setState({ status: e.state })}
-                    // onChangeQuality={e => this.setState({ quality: e.quality })}
-                    // onError={e => this.setState({ error: e.error })}
-                    style={{ alignSelf: 'stretch', height: 300 }}
-                /> */}
+
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{ marginTop: 20 }}
@@ -840,7 +832,7 @@ const FeedScreen = ({ navigation, route }) => {
     const loading = () => {
         return (
             <ScrollView refreshControl={
-                <RefreshControl refreshing={true} />} style={{ backgroundColor: '#fff', height: height, width: width }}>
+                <RefreshControl refreshing={true} />} style={{ backgroundColor: '#f9f9f9', height: height, width: width }}>
             </ScrollView>
         );
     }

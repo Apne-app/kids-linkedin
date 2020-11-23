@@ -89,7 +89,7 @@ const ChildScreen = ({ route, navigation }) => {
         if (current == 1) {
             var x = await AsyncStorage.getItem('children');
             analytics.track('Child Name Entered', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                userID: null,
                 deviceID: getUniqueId()
             })
             if (name == '') {
@@ -105,7 +105,7 @@ const ChildScreen = ({ route, navigation }) => {
         else if (current == 2) {
             var x = await AsyncStorage.getItem('children');
             analytics.track('Child Birth Year Entered', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                userID: null,
                 deviceID: getUniqueId()
             })
             if (year == 0) {
@@ -141,21 +141,21 @@ const ChildScreen = ({ route, navigation }) => {
                 };
 
                 axios(config)
-                .then(function (response) {
-                    // console.log(JSON.stringify(response.data.token));
-                    axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email + '/Kid/' + `?token=${response.data.token}`)
-                    .then(async (response) => {
-                        if (response.data.split(', ').length == 2) {
-                            await AsyncStorage.setItem('status', '3')
-                            // console.log(response.data)
-                            navigation.navigate('ChildSuccess')
-                        }
+                    .then(function (response) {
+                        // console.log(JSON.stringify(response.data.token));
+                        axios.get('http://104.199.158.211:5000/child/' + name.toLowerCase() + '/' + year + '/' + 'none' + '/' + 'none' + '/' + pro.email + '/Kid/' + `?token=${response.data.token}`)
+                            .then(async (response) => {
+                                if (response.data.split(', ').length == 2) {
+                                    await AsyncStorage.setItem('status', '3')
+                                    // console.log(response.data)
+                                    navigation.navigate('ChildSuccess')
+                                }
+                            })
                     })
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-                
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
 
             }
 
@@ -169,7 +169,7 @@ const ChildScreen = ({ route, navigation }) => {
                     <TouchableOpacity onPress={async () => {
                         var x = await AsyncStorage.getItem('children');
                         analytics.track('I am a Kid', {
-                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                            userID: null,
                             deviceID: getUniqueId()
                         })
                         navigation.navigate('KidUser');
@@ -180,7 +180,7 @@ const ChildScreen = ({ route, navigation }) => {
                     <TouchableOpacity onPress={async () => {
                         var x = await AsyncStorage.getItem('children');
                         analytics.track('I am a parent', {
-                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+                            userID: null,
                             deviceID: getUniqueId()
                         })
                         setcurrent(1);
@@ -239,7 +239,7 @@ const ChildScreen = ({ route, navigation }) => {
                     </View>
                 </View>
             </KeyboardAvoidingView>
-            <TouchableOpacity onPress={async() => {await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home')}} block dark style={{ alignSelf:'flex-end'}}>
+            <TouchableOpacity onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} block dark style={{ alignSelf: 'flex-end' }}>
                 <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Continue as guest</Text>
             </TouchableOpacity>
         </ScrollView>
