@@ -31,9 +31,6 @@ import { connect } from 'getstream';
 var height = Dimensions.get('screen').height;
 var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
-let properties = new MoEProperties()
-properties.addAttribute("screen", "Home");
-ReactMoE.trackEvent("Screen", properties);
 updateStyle('activity', {
     container:
     {
@@ -251,7 +248,7 @@ const FeedScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=check').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by '+ data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1)+' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=3a100e54-2d98-11eb-b373-0289d2c29892%26apn=com.genioclub.app').then((data) => {
                             console.log('WhatsApp Opened');
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
@@ -478,7 +475,7 @@ const FeedScreen = ({ navigation, route }) => {
                         onPress={() => { analytics.track('Comment'); console.log(id); navigation.navigate('Comments', { data: data, actid: id, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' }) }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=check').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by '+ data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1)+' on the new Genio app!').then((data) => {
                             console.log('WhatsApp Opened');
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
@@ -721,15 +718,15 @@ const FeedScreen = ({ navigation, route }) => {
             if (child != null) {
                 child = JSON.parse(child)
                 setchildren(child)
-                const client = connect('9ecz2uw6ezt9', child[0]['data']['gsToken'], '96078');
-                var user = client.feed('timeline', child[0]['id'] + 'id');
-                user.get({ limit: 1, id_lt: '9aaabf77-2828-11eb-9805-0a7d4ff68278' })
-                    .then((data) => {
-                        // console.log(data)
-                    })
-                    .catch((data) => {
-                        // console.log(data)
-                    })
+                // const client = connect('9ecz2uw6ezt9', child[0]['data']['gsToken'], '96078');
+                // var user = client.feed('timeline', child[0]['id'] + 'id');
+                // user.get({ limit: 1, id_lt: '9aaabf77-2828-11eb-9805-0a7d4ff68278' })
+                //     .then((data) => {
+                //         // console.log(data)
+                //     })
+                //     .catch((data) => {
+                //         // console.log(data)
+                //     })
             }
             else {
                 setchildren({})
@@ -840,15 +837,6 @@ const FeedScreen = ({ navigation, route }) => {
         return (
             <SafeAreaProvider>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableWithoutFeedback>
-                {/* <YouTube
-                    videoId="KVZ-P-ZI6W4" // The YouTube video ID
-                    apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
-                    // onReady={e => this.setState({ isReady: true })}
-                    // onChangeState={e => this.setState({ status: e.state })}
-                    // onChangeQuality={e => this.setState({ quality: e.quality })}
-                    // onError={e => this.setState({ error: e.error })}
-                    style={{ alignSelf: 'stretch', height: 300 }}
-                /> */}
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{ marginTop: 20 }}
@@ -856,7 +844,6 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="96078"
                         token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA'}
                     >
-                        {/* <View style={{backgroundColor:'#F5F5F5', position:'relative'}}><Text style={{ fontFamily: 'NunitoSans-Bold', color: "#000", fontSize: 20, padding: 20 }}>Welcome {children['0']['data']['name']}!</Text></View> */}
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet

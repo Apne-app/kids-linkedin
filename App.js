@@ -45,42 +45,19 @@ import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
 import codePush from "react-native-code-push";
+import { connect } from 'getstream';
 import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
 import firebase from '@react-native-firebase/app';
 import OneSignal from 'react-native-onesignal';
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
-import ReactMoE from 'react-native-moengage'
-ReactMoE.initialize();
+import RectMoE from 'react-native-moengage'
 
 console.ignoredYellowBox = ['Warning: Failed propType: SceneView'];
 
 const App = (props) => {
   const notifierRef = useRef(null)
-  useEffect(() => {
-    const config = async () => {
-      var profile = await AsyncStorage.getItem('profile')
-      if (profile != null) {
-        profile = JSON.parse(profile)
-        const pushtoken = await firebase.messaging().getToken()
-        console.log(pushtoken)
-        console.log(profile)
-        ReactMoE.setUserUniqueID(profile.id);
-        if (!profile.email.includes('default')) {
-          ReactMoE.setUserEmailID(profile.email);
-          ReactMoE.setAlias(profile.email)
-        }
-        else {
-          ReactMoE.setAlias(profile.lnkdId)
-        }
-        ReactMoE.passFcmPushToken(pushtoken)
-      }
-
-    }
-    config()
-
-  })
   React.useEffect(() => {
     console.log("aaa", props);
   }, [])
@@ -100,7 +77,7 @@ const App = (props) => {
   }
 
   const onIds = (device) => {
-    console.log('Device info: ', device);
+    // console.log('Device info: ', device);
   }
   useEffect(() => {
     //Remove this method to stop OneSignal Debugging 
@@ -244,7 +221,6 @@ const App = (props) => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
-        console.log(link)
         var pro = await AsyncStorage.getItem('profile')
         pro = JSON.parse(pro)
         if (pro) {
@@ -255,6 +231,10 @@ const App = (props) => {
           else {
             if (link.url.includes('verify')) {
               containerRef.current?.navigate('Unverified')
+            }
+            if (link.url.includes('post')) {
+              console.log(link)
+              containerRef.current?.navigate('Home')
             }
           }
         }
@@ -280,6 +260,28 @@ const App = (props) => {
       else {
         if (link.url.includes('verify')) {
           containerRef.current?.navigate('Unverified')
+        }
+        if (link.url.includes('post')) {
+          var child = await AsyncStorage.getItem('children')
+          if (child) {
+            child = JSON.parse(child)
+            const client = connect('9ecz2uw6ezt9', child['0']['data']['gsToken'], '96078');
+            var user = client.feed('user', '140id');
+            user.get({ limit: 1, id_gte: '9aaabf77-2828-11eb-9805-0a7d4ff68278' })
+              .then((data) => {
+                console.log(data)
+                var id = link.url
+                id = id.replace('https://link.genio.app/post?id=', '')
+                containerRef.current?.navigate('Home')
+              })
+              .catch((data) => {
+                console.log(data)
+                containerRef.current?.navigate('Home')
+              })
+          }
+          else {
+            containerRef.current?.navigate('Child')
+          }
         }
       }
     }

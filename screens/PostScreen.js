@@ -13,11 +13,22 @@ import { SliderBox } from "react-native-image-slider-box";
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import { RNS3 } from 'react-native-aws3';
 import { connect } from 'getstream';
+import CompHeader from '../Modules/CompHeader';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const PostScreen = ({ navigation, route }) => {
-
+  const goback = () => {
+    Alert.alert("Hold on!", "Are you sure you want to discard the post?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "YES", onPress: () => navigation.pop() }
+    ]);
+    return true;
+  };
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -196,6 +207,7 @@ const PostScreen = ({ navigation, route }) => {
 
   return (
     <View style={{ backgroundColor: 'white', height: height, width: width }}>
+      <CompHeader screen={'Post'} goback={goback} />
       <Snackbar
         visible={showToast}
         style={{ marginBottom: height * 0.1 }}
@@ -208,7 +220,7 @@ const PostScreen = ({ navigation, route }) => {
             navigation.pop();
           },
         }}>
-        Post Reported
+        Posted Successfully!
             </Snackbar>
 
       {loading ? <Spinner color='blue' style={styles.loading} /> : null}
@@ -297,7 +309,7 @@ const PostScreen = ({ navigation, route }) => {
       <View style={{ height: height * 0.3, borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: 'lightgrey' }}>
         <Content padder>
           <Form>
-            <Textarea value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
+            <Textarea style={{ fontFamily: 'NunitoSans-Regular' }} value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
           </Form>
           <TouchableOpacity
             style={{ height: 50 }}
@@ -313,7 +325,7 @@ const PostScreen = ({ navigation, route }) => {
             }}
           >
             <View style={styles.Next}>
-              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 'bold' }}>
+              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold' }}>
                 Post
                         </Text>
             </View>
