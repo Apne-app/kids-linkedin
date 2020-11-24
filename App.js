@@ -266,12 +266,12 @@ const App = (props) => {
           if (child) {
             child = JSON.parse(child)
             const client = connect('9ecz2uw6ezt9', child['0']['data']['gsToken'], '96078');
-            var user = client.feed('user', '140id');
-            user.get({ limit: 1, id_gte: '9aaabf77-2828-11eb-9805-0a7d4ff68278' })
+            var user = client.feed('timeline', child['0']['id'] + 'id');
+            var id = link.url
+            id = id.replace('https://link.genio.app/post?id=', '')
+            user.getActivityDetail(id)
               .then((data) => {
                 console.log(data)
-                var id = link.url
-                id = id.replace('https://link.genio.app/post?id=', '')
                 containerRef.current?.navigate('Home')
               })
               .catch((data) => {

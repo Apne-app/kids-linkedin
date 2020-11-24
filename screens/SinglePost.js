@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -63,16 +63,27 @@ updateStyle('uploadImage', {
     }
 });
 const SinglePostScreen = ({ navigation, route }) => {
+    const keyboardDidShowListener = React.useRef();
+    const scrollref = React.useRef();
+    const keyboardDidHideListener = React.useRef();
+    const onKeyboardShow = (event) => {
+        scrollref.current.scrollToEnd({ animated: true })
+    };
+    const onKeyboardHide = () => {
+
+    };
+    React.useEffect(() => {
+        keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
+        keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
+
+        return () => {
+            keyboardDidShowListener.current.remove();
+            keyboardDidHideListener.current.remove();
+        };
+    }, []);
     const [currentCommment, setcurrentCommment] = useState([])
-    // console.log(route.params.activity.activity.own_reactions)
     const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
-        const onShare = async () => {
-
-        };
-        const nulre = () => {
-            return null
-        }
         const showActionSheet = () => {
             refActionSheet.current.show()
         }
@@ -81,22 +92,25 @@ const SinglePostScreen = ({ navigation, route }) => {
                 <View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <LikeButton  {...props} />
-                        <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                        <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                         <ReactionIcon
                             labelSingle=" "
                             labelPlural=" "
                             counts={props.activity.reaction_counts}
                             kind="comment"
                             width={-80}
-                            onPress={async () => {
-                                var x = await AsyncStorage.getItem('profile');
-                                analytics.track('Comment', {
-                                    userID: x ? JSON.parse(x)['uuid'] : null,
-                                    deviceID: getUniqueId()
-                                });
-                            }}
                         />
                     </View>
+                    <CommentBox
+                        noKeyboardAccessory={true}
+                        textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
+                        activity={route.params.activity.activity}
+                        onAddReaction={route.params.activity.onAddReaction}
+                        avatarProps={{
+                            source: route.params.activity.activity.actor.data.profileImage,
+                        }
+                        }
+                    />
                     <FlatList extraData={currentCommment} data={route.params.activity.activity.own_reactions.comment} renderItem={({ item }) => {
                         return (
                             <View style={{ flexDirection: 'row', padding: 10 }}>
@@ -114,7 +128,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
-            <ScrollView>
+            <ScrollView ref={scrollref}>
                 <Activity
                     Header={
                         <View style={{ flexDirection: 'column' }}>
@@ -140,7 +154,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         </View>
                     }
                     Content={
-                        <View style={{ padding: 20 }}>
+                        <View style={{ paddingHorizontal: 40, paddingVertical: 20 }}>
                             {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             {props.activity.image ?
                                 <ImageView
@@ -175,18 +189,26 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 : null}
 
                             {props.activity.video ?
-                                <View style={{ width: width - 40, height: 340 }}>
-                                    <VideoPlayer
-                                        source={{ uri: props.activity.video }}
-                                        navigator={navigator}
-                                    /></View> : null}
-                            {props.activity.youtube ?
-                                <YouTube
-                                    videoId={props.activity.youtube} // The YouTube video ID
-                                    apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
+                                <VideoPlayer
+                                    disableFullscreen={true}
+                                    disableBack={true}
+                                    disableVolume={true}
                                     style={{ borderRadius: 10, width: width - 80, height: 340, }}
+                                    source={{ uri: props.activity.video }}
+                                    navigator={navigator}
                                 /> : null}
-                            {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5, marginLeft: -10 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+                            {props.activity.youtube ?
+                                <View style={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor: 'black' }}>
+                                    <YouTube
+                                        play={false}
+                                        fullscreen={false}
+                                        showFullscreenButton={false}
+                                        videoId={props.activity.youtube} // The YouTube video ID
+                                        apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
+                                        style={{ borderRadius: 10, width: width - 100, height: 320, alignSelf: 'center', margin: 10 }}
+                                    />
+                                </View> : null}
+                            {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
                         </View>
                     }
                     Footer={footer(props.activity.id, props)}
@@ -203,15 +225,6 @@ const SinglePostScreen = ({ navigation, route }) => {
             >
                 <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
                 <CustomActivity props={route.params.activity} />
-                <CommentBox
-                    textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
-                    activity={route.params.activity.activity}
-                    onAddReaction={route.params.activity.onAddReaction}
-                    avatarProps={{
-                        source: route.params.activity.activity.actor.data.profileImage,
-                    }
-                    }
-                />
             </StreamApp>
         </View>
     );
