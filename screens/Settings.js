@@ -18,22 +18,32 @@ const Settings = ({ navigation }) => {
         var x = await AsyncStorage.getItem('children');
         if (isSwitchOn) {
             analytics.track('Push Notifications Turned Off', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
             })
         }
         else {
             analytics.track('Push Notifications Turned On', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
             })
         }
         setIsSwitchOn(!isSwitchOn)
     };
+    useFocusEffect(
+    React.useCallback(() => {
+        const onBackPress = () => {
+            navigation.navigate('Home')
+            return true;
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []));
     const logout = async () => {
         var x = await AsyncStorage.getItem('children');
         analytics.track('Logged Out', {
-            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+            userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
         })
         var arr = await AsyncStorage.getAllKeys()
@@ -47,7 +57,7 @@ const Settings = ({ navigation }) => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
             analytics.screen('Settings Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
             })
         }
