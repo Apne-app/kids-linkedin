@@ -12,6 +12,7 @@ import LoginScreen from './screens/LoginScreen'
 import NotificationScreen from './screens/NotificationScreen'
 import SearchScreen from './screens/SearchScreen'
 import FeedScreen from './screens/FeedScreen'
+import VideoFullScreen from './screens/VideoFullScreen'
 import IntroScreen from './screens/IntroScreen'
 import IntroSlider from './screens/IntroSlider'
 import PostScreen from './screens/PostScreen'
@@ -325,6 +326,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
         <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
         <Stack.Screen options={{ headerShown: false }} name="Includes" component={Includes} />
+        <Stack.Screen options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
       </Stack.Navigator>
       <NotifierRoot ref={notifierRef} />
     </NavigationContainer>

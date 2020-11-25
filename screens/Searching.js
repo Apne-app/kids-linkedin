@@ -127,6 +127,9 @@ const Searching = ({ route, navigation }) => {
                     console.log(error)
                 })
         }
+        if (query == '') {
+            setresult([])
+        }
         setSearchQuery(query)
     };
     const followid = (id) => {
@@ -147,15 +150,14 @@ const Searching = ({ route, navigation }) => {
                     appId={'96078'}
                     token={item['data']['gsToken']}
                 >
-                    <TouchableOpacity style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => 
-                    { 
+                    <TouchableOpacity style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
                         navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
                         var x = await AsyncStorage.getItem('children');
                         analytics.track('Searched Kid Opened', {
-                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-                            deviceID: getUniqueId() 
+                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                            deviceID: getUniqueId()
                         })
-                        }}>
+                    }}>
                         <Image
                             source={{ uri: item['data']['image'] }}
                             style={{ width: 60, height: 60, borderRadius: 306, }}
@@ -184,14 +186,24 @@ const Searching = ({ route, navigation }) => {
     }, [])
     return (
         <ScrollView keyboardShouldPersistTaps='handled'>
-            <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'white', height: 110 }}>
-                <Item style={{ width: width * 0.9, borderColor: "#000", height: 45, borderRadius: 10, marginTop: 50 }}>
-                    <Icon active name={searchQuery == "" ? 'search' : 'x'} type={'Feather'} />
-                    <Input
+            <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'transparent', height: 110 }}>
+                <Item style={{ width: width * 0.9, borderColor: "transparent", height: 45, borderRadius: 10, marginTop: 50 }}>
+                    {/* <Input
+                        style={{ backgroundColor: 'lightgrey', borderRadius: 100, height: 35 }}
                         autoFocus={true}
                         onChangeText={onChangeSearch}
+
                         value={searchQuery}
-                        placeholder='Search' />
+                        placeholder='Search' /> */}
+                    <Searchbar
+                        theme={theme}
+                        autoFocus={true}
+                        style={{width:width-100}}
+                        placeholder="Search Genio"
+                        onChangeText={onChangeSearch}
+                        value={searchQuery}
+                    />
+                    <Text onPress={()=>navigation.navigate('Search')} style={{fontFamily:'NunitoSans-SemiBold', color:'#375FEB', marginLeft:10}}>Cancel</Text>
                 </Item>
             </Header>
             {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}

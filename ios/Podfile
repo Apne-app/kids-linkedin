@@ -40,6 +40,8 @@ target 'kids' do
 
   pod 'ReactNativeMoEngage', :path => '../node_modules/react-native-moengage'
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing

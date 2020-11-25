@@ -3,39 +3,25 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
+import { StreamApp, FlatFeed, Activity, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
+import CommentBox from '../components/CommentBox'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
 import VideoPlayer from 'react-native-video-controls';
-import AsyncStorage from '@react-native-community/async-storage';
-import axios from 'axios';
-import { useFocusEffect } from "@react-navigation/native";
-import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
-import { Snackbar } from 'react-native-paper';
-import analytics from '@segment/analytics-react-native';
-import { getUniqueId, getManufacturer } from 'react-native-device-info';
-import { Chip } from 'react-native-paper';
-import { clockRunning, set } from 'react-native-reanimated';
-import YouTube from 'react-native-youtube';
+import YoutubePlayer from "react-native-youtube-iframe";
 import CompHeader from '../Modules/CompHeader'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 var height = Dimensions.get('screen').height;
-var halfHeight = height / 2;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
     container:
     {
         marginVertical: height * 0.01,
-        borderRadius: width * 0.05,
         backgroundColor: "#fff",
         marginHorizontal: 5,
-        elevation: 0.2,
         fontFamily: 'NunitoSans-Regular'
     },
     text: {
@@ -53,6 +39,11 @@ updateStyle('flatFeed', {
         paddingLeft: 20
     }
 });
+updateStyle('LikeButton', {
+    text: {
+        fontFamily: 'NunitoSans-Bold'
+    },
+});
 
 
 updateStyle('uploadImage', {
@@ -66,6 +57,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const keyboardDidShowListener = React.useRef();
     const scrollref = React.useRef();
     const keyboardDidHideListener = React.useRef();
+    const [comments, setcomments] = useState([])
     const onKeyboardShow = (event) => {
         scrollref.current.scrollToEnd({ animated: true })
     };
@@ -81,37 +73,45 @@ const SinglePostScreen = ({ navigation, route }) => {
             keyboardDidHideListener.current.remove();
         };
     }, []);
+    useEffect(() => {
+        setcomments(route.params.activity.activity.own_reactions.comment)
+    }, [])
     const [currentCommment, setcurrentCommment] = useState([])
+    const [place, setplace] = useState('')
     const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
         const showActionSheet = () => {
             refActionSheet.current.show()
         }
+        const addcomment = (event) => {
+            console.log(event)
+        }
         const footer = (id, data) => {
             return (
                 <View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <LikeButton  {...props} />
-                        <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
-                        <ReactionIcon
-                            labelSingle=" "
-                            labelPlural=" "
-                            counts={props.activity.reaction_counts}
-                            kind="comment"
-                            width={-80}
-                        />
+                        <LikeButton  {...data} />
+                        <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, }} />
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4 }}>{comments.length}</Text>
                     </View>
-                    <CommentBox
-                        noKeyboardAccessory={true}
-                        textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
-                        activity={route.params.activity.activity}
-                        onAddReaction={route.params.activity.onAddReaction}
-                        avatarProps={{
-                            source: route.params.activity.activity.actor.data.profileImage,
-                        }
-                        }
-                    />
-                    <FlatList extraData={currentCommment} data={route.params.activity.activity.own_reactions.comment} renderItem={({ item }) => {
+                    <View style={{ flexDirection: 'row', }}>
+                        <CommentBox
+                            noKeyboardAccessory={true}
+                            textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
+                            activity={route.params.activity.activity}
+                            onSubmit={(text) => {
+                                route.params.activity.onAddReaction('comment', route.params.activity.activity, {
+                                    'text': text,
+                                });
+                                setcomments([{ 'data': { 'text': text }, 'user': { 'data': { 'profileImage': route.params.image } } }, ...comments])
+                            }}
+                            avatarProps={{
+                                source: route.params.activity.activity.actor.data.profileImage,
+                            }}
+                        />
+                        <Text onPress={{}} style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4, color: '#327FEB', marginTop: 24, marginRight: 20 }}>Post</Text>
+                    </View>
+                    <FlatList data={comments} renderItem={({ item }) => {
                         return (
                             <View style={{ flexDirection: 'row', padding: 10 }}>
                                 <Image source={{ uri: item.user.data.profileImage }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
@@ -154,8 +154,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                         </View>
                     }
                     Content={
-                        <View style={{ paddingHorizontal: 40, paddingVertical: 20 }}>
-                            {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                        <View style={{ paddingVertical: 20 }}>
+                            {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginBottom: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             {props.activity.image ?
                                 <ImageView
                                     presentationStyle={{ height: height / 3 }}
@@ -171,14 +171,14 @@ const SinglePostScreen = ({ navigation, route }) => {
                             <TouchableWithoutFeedback onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                     source={{ uri: props.activity.image.split(", ")[0] }}
-                                    style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
+                                    style={{ width: width, height: 340, marginTop: 20 }}
                                 /> : <View style={{ height: 340 }}><SliderBox
                                     images={props.activity.image.split(", ").filter(n => n)}
                                     dotColor="#FFEE58"
                                     inactiveDotColor="#90A4AE"
                                     paginationBoxVerticalPadding={20}
                                     sliderBoxHeight={340}
-                                    ImageComponentStyle={{ borderRadius: 10, width: width - 80, height: 340, }}
+                                    ImageComponentStyle={{ width: width, height: 340, }}
                                     circleLoop={true}
                                 // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
                                 // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
@@ -190,28 +190,31 @@ const SinglePostScreen = ({ navigation, route }) => {
 
                             {props.activity.video ?
                                 <VideoPlayer
+                                    seekColor={'#327FEB'}
+                                    toggleResizeModeOnFullscreen={false}
+                                    tapAnywhereToPause={true}
+                                    paused={true}
                                     disableFullscreen={true}
                                     disableBack={true}
                                     disableVolume={true}
                                     style={{ borderRadius: 10, width: width - 80, height: 340, }}
                                     source={{ uri: props.activity.video }}
-                                    navigator={navigator}
+                                    navigator={navigation}
+                                // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                                 /> : null}
                             {props.activity.youtube ?
-                                <View style={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor: 'black' }}>
-                                    <YouTube
-                                        play={false}
-                                        fullscreen={false}
-                                        showFullscreenButton={false}
+                                <View style={{ width: width, height: 340, alignSelf: 'center', margin: 10, padding: 10, backgroundColor: 'black' }} >
+                                    <YoutubePlayer
                                         videoId={props.activity.youtube} // The YouTube video ID
-                                        apiKey={'AIzaSyD6OI-AVRxALkG2WVshNSqrc2FuEfH2Z04'}
-                                        style={{ borderRadius: 10, width: width - 100, height: 320, alignSelf: 'center', margin: 10 }}
+                                        height={300}
+                                        width={width}
                                     />
-                                </View> : null}
+                                </View>
+                                : null}
                             {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
                         </View>
                     }
-                    Footer={footer(props.activity.id, props)}
+                    Footer={footer(props.activity.id, route.params.activity)}
                 />
             </ScrollView>
         );

@@ -9,7 +9,7 @@ import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, Re
 import LikeButton from '../components/LikeButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
-import Video from 'react-native-video';
+import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import { useFocusEffect } from "@react-navigation/native";
@@ -210,7 +210,7 @@ const FeedScreen = ({ navigation, route }) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <LikeButton  {...props} />
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props, token: status==='3'?children['0']['data']['gsToken']:'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <Icon onPress={() => props.navigation.navigate('SinglePost', { image:children['0']['data']['image'], activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
                         labelPlural=" "
@@ -223,7 +223,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 userID: JSON.parse(x)['0'] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
-                            navigation.navigate('SinglePost', { activity: props, token: status==='3'?children['0']['data']['gsToken']:'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
+                            navigation.navigate('SinglePost', { image:children['0']['data']['image'], activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
                         }}
                     />
                     <Icon onPress={() => {
@@ -265,7 +265,7 @@ const FeedScreen = ({ navigation, route }) => {
                 }
                 Content={
                     <View style={{ padding: 14 }}>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status==='3'?children['0']['data']['gsToken']:'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image:children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
                             {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             <View style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
@@ -278,39 +278,41 @@ const FeedScreen = ({ navigation, route }) => {
                                     paginationBoxVerticalPadding={20}
                                     sliderBoxHeight={340}
                                     disableOnPress={true}
-                                    ImageComponentStyle={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor:'transparent' }}
+                                    ImageComponentStyle={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor: 'transparent' }}
                                     circleLoop={true}
                                 /></View> : <View></View>}
                             </View>
                         </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status==='3'?children['0']['data']['gsToken']:'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image:children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
                             {props.activity.object.includes('http') ?
                                 <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                                 : null}
                         </TouchableWithoutFeedback>
                         {props.activity.video ?
-                            <Video
-                                auto
+                            <VideoPlayer
+                                seekColor={'#327FEB'}
+                                toggleResizeModeOnFullscreen={false}
+                                tapAnywhereToPause={true}
                                 paused={true}
                                 disableFullscreen={true}
                                 disableBack={true}
                                 disableVolume={true}
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                                 source={{ uri: props.activity.video }}
-                                navigator={navigator}
+                                navigator={navigation}
+                                // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                             /> : null}
                         {props.activity.youtube ?
-                            <View style={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor: 'black' }}>
+                            <View style={{ borderRadius: 10, width: width - 100, height: 210, alignSelf: 'center', margin: 10, padding:10, backgroundColor:'black' }} >
                                 <YoutubePlayer
-                                    play={false}
-                                    fullscreen={false}
-                                    showFullscreenButton={false}
                                     videoId={props.activity.youtube} // The YouTube video ID
-                                    style={{ borderRadius: 10, width: width - 100, height: 320, alignSelf: 'center', margin: 10 }}
+                                    height={200}
+                                    width={width - 120}
                                 />
-                            </View> : null}
+                            </View>
+                            : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </View>
+                    </View >
                 }
                 Footer={footer(props.activity.id, props)}
             />
