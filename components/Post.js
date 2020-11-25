@@ -14,6 +14,7 @@ import RNImageToPdf from 'react-native-image-to-pdf';
 import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { Overlay } from 'react-native-elements';
 import Gallery from './Gallery';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
@@ -676,6 +677,7 @@ const Upload = ({ route, navigation }) => {
 
 
   return (
+
     <View style={styles.container}>
       {/* <Header style={{ backgroundColor: "#fff" }} >
         <Left>
@@ -711,6 +713,7 @@ const Upload = ({ route, navigation }) => {
         </TouchableOpacity>
         </Right>
       </Header> */}
+      <View style={{backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: width, zIndex: 10, height: bottomSheetOpen ? height : 0}} />
       <CompHeader goback={goback} icon="close"  screen={selecting ? "Delete" : "Preview"} right={true} delete={deletes} selecting={selecting} />
       <View style={{ backgroundColor: "#fff" }}>
         
@@ -946,6 +949,7 @@ const Upload = ({ route, navigation }) => {
               setBottomSheetOpen(true);
               setFileName(new Date().toISOString().split('T')[0])
               sheetRef.current.snapTo(0)
+              setBottomSheetOpen(true);
               backButtonChange2();
             }}
           >
@@ -992,7 +996,6 @@ const Upload = ({ route, navigation }) => {
       </Item>*/}
       </View>
 
-      
       <BottomSheet
         ref={sheetRef}
         snapPoints={[300, -200]}
@@ -1015,7 +1018,6 @@ const Upload = ({ route, navigation }) => {
         borderRadius={30}
         renderContent={renderClosing}
       />
-
     </View>
   );
 }
