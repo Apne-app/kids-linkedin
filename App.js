@@ -12,6 +12,7 @@ import LoginScreen from './screens/LoginScreen'
 import NotificationScreen from './screens/NotificationScreen'
 import SearchScreen from './screens/SearchScreen'
 import FeedScreen from './screens/FeedScreen'
+import VideoFullScreen from './screens/VideoFullScreen'
 import IntroScreen from './screens/IntroScreen'
 import IntroSlider from './screens/IntroSlider'
 import PostScreen from './screens/PostScreen'
@@ -266,12 +267,12 @@ const App = (props) => {
           if (child) {
             child = JSON.parse(child)
             const client = connect('9ecz2uw6ezt9', child['0']['data']['gsToken'], '96078');
-            var user = client.feed('user', '140id');
-            user.get({ limit: 1, id_gte: '9aaabf77-2828-11eb-9805-0a7d4ff68278' })
+            var user = client.feed('timeline', child['0']['id'] + 'id');
+            var id = link.url
+            id = id.replace('https://link.genio.app/post?id=', '')
+            user.getActivityDetail(id)
               .then((data) => {
                 console.log(data)
-                var id = link.url
-                id = id.replace('https://link.genio.app/post?id=', '')
                 containerRef.current?.navigate('Home')
               })
               .catch((data) => {
@@ -325,6 +326,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
         <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
         <Stack.Screen options={{ headerShown: false }} name="Includes" component={Includes} />
+        <Stack.Screen options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
       </Stack.Navigator>
       <NotifierRoot ref={notifierRef} />
     </NavigationContainer>

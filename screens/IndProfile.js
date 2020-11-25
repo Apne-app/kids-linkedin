@@ -1,22 +1,31 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image, FlatList, PixelRatio } from 'react-native'
+import React, { useEffect, useState, useRef } from 'react';
+import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { Card } from 'react-native-paper';
-import FastImage from 'react-native-fast-image'
-import { useFocusEffect } from "@react-navigation/native";
-import ImagePicker from 'react-native-image-picker';
+import { ScrollView } from 'react-native-gesture-handler';
+import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import { SECRET_KEY, ACCESS_KEY } from '@env';
+import { useFocusEffect } from "@react-navigation/native";
 import { RNS3 } from 'react-native-aws3';
+import analytics from '@segment/analytics-react-native';
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'getstream';
+import ScreenHeader from '../Modules/ScreenHeader'
+import CompButton from '../Modules/CompButton'
+import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
+import LikeButton from '../components/LikeButton'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
+import VideoPlayer from 'react-native-video-controls';
+import { SliderBox } from "react-native-image-slider-box";
+import YoutubePlayer from "react-native-youtube-iframe";
+import { LinkPreview } from '@flyerhq/react-native-link-preview'
+import ImagePicker from 'react-native-image-crop-picker';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const IndProfile = ({ navigation, route }) => {
@@ -119,25 +128,6 @@ const IndProfile = ({ navigation, route }) => {
         addCerti();
     }, [])
 
-    useFocusEffect(
-    React.useCallback(() => {
-        const onBackPress = () => {
-            // Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-            //     {
-            //         text: "Cancel",
-            //         onPress: () => null,
-            //         style: "cancel"
-            //     },
-            //     { text: "YES", onPress: () => BackHandler.exitApp() }
-            // ]);
-            navigation.pop()
-            return true;
-        };
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, []));
-
     useEffect(() => {
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
@@ -177,57 +167,128 @@ const IndProfile = ({ navigation, route }) => {
         }
 
     }
+    const CustomActivity = (props) => {
+        const refActionSheet = useRef(null);
+        const showActionSheet = () => {
+            refActionSheet.current.show()
+        }
+        const footer = (id, data) => {
+            return (<View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <LikeButton  {...props} />
+                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props, token: status === '3' ? route['params']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <ReactionIcon
+                        labelSingle=" "
+                        labelPlural=" "
+                        counts={props.activity.reaction_counts}
+                        kind="comment"
+                        width={-80}
+                        onPress={async () => {
+                            var x = await AsyncStorage.getItem('children');
+                            analytics.track('Comment', {
+                                userID: JSON.parse(x)['0'] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                deviceID: getUniqueId()
+                            });
+                            navigation.navigate('SinglePost', { activity: props, token: status === '3' ? route['params']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
+                        }}
+                    />
+                    <Icon onPress={() => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=3a100e54-2d98-11eb-b373-0289d2c29892%26apn=com.genioclub.app').then((data) => {
+                        }).catch(() => {
+                            alert('Make sure Whatsapp installed on your device');
+                        });
+                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
+                </View>
+            </View>)
+        }
+        var images = []
+        props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
+        return (
+            <Activity
+                Header={
+                    <View style={{ flexDirection: 'column' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image
+                                source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '' }}
+                                style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
+                            />
+                            <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
+                            </View>
+                            <ActionSheet
+                                useNativeDriver={true}
+                                ref={refActionSheet}
+                                styles={{ borderRadius: 10, margin: 10 }}
+                                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                                cancelButtonIndex={2}
+                                onPress={(index) => { index == 1 ? report(props.activity) : null; }}
+                            />
+                            <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
+                        </View>
+                        <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>
+                    </View>
+                }
+                Content={
+                    <View style={{ padding: 14 }}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? route['params']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                            {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                            <View style={{ alignSelf: 'center' }}>
+                                {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
+                                    source={{ uri: props.activity.image.split(", ")[0] }}
+                                    style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
+                                /> : <View style={{ height: 340 }}><SliderBox
+                                    images={props.activity.image.split(", ").filter(n => n)}
+                                    dotColor="#FFEE58"
+                                    inactiveDotColor="#90A4AE"
+                                    paginationBoxVerticalPadding={20}
+                                    sliderBoxHeight={340}
+                                    disableOnPress={true}
+                                    ImageComponentStyle={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor: 'transparent' }}
+                                    circleLoop={true}
+                                /></View> : <View></View>}
+                            </View>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? route['params']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                            {props.activity.object.includes('http') ?
+                                <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                                : null}
+                        </TouchableWithoutFeedback>
+                        {props.activity.video ?
+                            <VideoPlayer
+                                seekColor={'#327FEB'}
+                                toggleResizeModeOnFullscreen={false}
+                                tapAnywhereToPause={true}
+                                paused={true}
+                                disableFullscreen={true}
+                                disableBack={true}
+                                disableVolume={true}
+                                style={{ borderRadius: 10, width: width - 80, height: 340, }}
+                                source={{ uri: props.activity.video }}
+                                navigator={navigation}
+                            // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+                            /> : null}
+                        {props.activity.youtube ?
+                            <View style={{ borderRadius: 10, width: width - 100, height: 210, alignSelf: 'center', margin: 10, padding: 10, backgroundColor: 'black' }} >
+                                <YoutubePlayer
+                                    videoId={props.activity.youtube} // The YouTube video ID
+                                    height={200}
+                                    width={width - 120}
+                                />
+                            </View>
+                            : null}
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+                    </View >
+                }
+                Footer={footer(props.activity.id, props)}
+            />
+        );
+    };
     const [source, setsource] = useState('https://d5c8j8afeo6fv.cloudfront.net/profile.png')
-    const pickImage = () => {
-        ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
-
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-            } else {
-                // upload(response.uri);
-                const file = {
-                    // `uri` can also be a file system path (i.e. file://)
-                    uri: response.uri,
-                    name: route['params']['data']['gsToken'] + '.jpg',
-                    type: "image/png",
-                }
-
-                const options = {
-                    keyPrefix: '',
-                    bucket: "kids-linkedin-avatars",
-                    region: "ap-south-1",
-                    accessKey: ACCESS_KEY,
-                    secretKey: SECRET_KEY,
-                    successActionStatus: 201
-                }
-                RNS3.put(file, options).then(response => {
-                    console.log("dassd")
-                    if (response.status !== 201)
-                        throw new Error("Failed to upload image to S3");
-
-                })
-                const client = connect('9ecz2uw6ezt9', route['params']['data']['gsToken'], '96078');
-                client.user().update({ profileImage: 'https://d5c8j8afeo6fv.cloudfront.net/' + route['params']['data']['gsToken'] + '.jpg' });
-            }
-        });
-    }
     return (
         <View>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <Header noShadow style={{ backgroundColor: '#fff', flexDirection: 'row', height: 60, borderBottomWidth: 0, marginTop: 10, marginBottom: 10 }}>
-                    <Body style={{ alignItems: 'center', flexDirection: 'row' }}>
-                        <Icon type="Feather" name="arrow-left" onPress={() => navigation.navigate('Searching')} />
-                        <Title style={{ fontFamily: 'NunitoSans-Regular', color: "#000", fontSize: 30, marginTop: 0, marginLeft: 20 }}>Profile</Title>
-                    </Body>
-                    <Right style={{ marginRight: 25, marginTop: 0 }}>
-                        <Icon onPress={() => { }} style={{ color: "#000", fontSize: 25 }} type="Feather" name="more-vertical" />
-                    </Right>
-                </Header>
+                <ScreenHeader goback={()=>navigation.navigate('Searching')} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
                     appId={'96078'}
@@ -279,7 +340,7 @@ const IndProfile = ({ navigation, route }) => {
 
                         </View>
                     </View>
-                    <FlatFeed feedGroup="user" />
+                    <FlatFeed feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                 </StreamApp>
             </ScrollView>
         </View>
