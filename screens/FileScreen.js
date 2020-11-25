@@ -46,6 +46,7 @@ const FileScreen = (props) => {
     const [selected, setSelected] = React.useState([]);
     const [visible, setVisible] = React.useState(false);
     const [seltopic, setSelTopic] = React.useState('');
+    const [synced, setSynced] = React.useState(false);
     const [stringImages, setStringImages] = React.useState("");
     const [tagsPresent, setTagsPresent] = React.useState(false)
     const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
@@ -108,10 +109,10 @@ const FileScreen = (props) => {
 
     const showAll = async () => {
         var fls = [];
+        var s = "";
         try{
 
         var result = await RNFS.readDir(`${dir_path}/Images`);
-        var s = "";
         for(var i = 0; i < result.length; i++)
         {
             var res = await RNFS.readDir(result[i]['path']);
@@ -150,6 +151,7 @@ const FileScreen = (props) => {
                 var n = JSON.parse(m);
                 var tme = new Date(n);
                 tme = tme.toString(); 
+                setSynced(true);
                 // console.log(tme)
                 var ar = [];
                 while(i < response.data["0"].length && response.data["0"][i].split(x + '/')[1].split('/')[0] == m)
@@ -216,6 +218,7 @@ const FileScreen = (props) => {
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
+        setSynced(false);
 
         const func = async () => {
 
@@ -307,6 +310,14 @@ const FileScreen = (props) => {
 
     }
 
+    const createDate = (x) => {
+        x = x.replace(/-/g,":");
+        var a = Date.parse(x);
+        var b = new Date();
+        // console.log(a)
+        return b-a < 86400000 ? 'Today' : b-a < 2*86400000 ? 'Yesterday' :x.split('GMT')[0];
+    }
+
 
 
     return (
@@ -362,7 +373,14 @@ const FileScreen = (props) => {
                     />
                 </View> : <View />}
 
-                {files.length != 0 ?
+                {
+                    !synced ?
+                    <View>
+                     <Image source={require('../assets/sync.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
+                     <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Syncing</Text>
+                     </View>
+                    :
+                    files.length != 0 ?
                     files.map((item, i) => {
                         return (
                             <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
@@ -374,7 +392,7 @@ const FileScreen = (props) => {
                                     <Card style={{ borderRadius: 20 }} >
                                         <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
                                             <View style={{flexDirection: 'row'}}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10, flex: 8 }}>{item["cloud"] ? item['images'][0]['time'] : item['images'][0]['path'].split('Images/')[1].split('/')[0]}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10, flex: 8 }}>{item["cloud"] ? createDate(item['images'][0]['time']) : createDate(item['images'][0]['path'].split('Images/')[1].split('/')[0])}</Text>
                                             { item['cloud'] ? <Icon type="Feather" name="cloud" style={{flex: 1, alignSelf: 'flex-end', color: "#327feb", fontSize: 20, marginHorizontal: 4, marginBottom: 10}} /> : null}
                                             </View>
                                             <Body style={{ flexDirection: 'row' }}>
