@@ -312,12 +312,13 @@ const FeedScreen = ({ navigation, route }) => {
                             </View>
                             : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </View >
+                    </View>
                 }
                 Footer={footer(props.activity.id, props)}
             />
         );
     };
+    
     var width = Dimensions.get('screen').width;
     const fontConfig = {
         default: {
