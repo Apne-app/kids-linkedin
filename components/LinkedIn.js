@@ -4,7 +4,7 @@ import React from 'react'
 import { StyleSheet, View, Text, Dimensions, Image } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Segment, Thumbnail } from 'native-base';
-import LinkedInModal from 'react-native-linkedin';
+import LinkedInModal from '../screens/react-native-linkedin';
 import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';

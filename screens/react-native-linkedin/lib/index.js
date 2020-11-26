@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 35,
         right: 5,
-        backgroundColor: '#000',
+        // backgroundColor: '#000',
         borderRadius: 12,
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.5)',
