@@ -95,7 +95,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <LikeButton  {...data} />
                         <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, }} />
-                        <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4 }}>{comments.length}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4 }}>{comments?comments.length:0}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', }}>
                         <CommentBox
