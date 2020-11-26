@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, TextInput } from 'react-native';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
-import {Avatar} from 'react-native-activity-feed';
+import { Avatar } from 'react-native-activity-feed';
 import { NativeSyntheticEvent } from 'react-native';
 import type { StyleSheetLike, ActivityData } from '../types';
 import type { Props as AvatarProps } from 'react-native-activity-feed';
@@ -10,33 +10,33 @@ import type { Streami18Ctx } from '../Context/StreamApp';
 import { buildStylesheet } from '../styles';
 import { withTranslationContext } from '../Context';
 
-type Props = {|
+type Props = {| 
   /** Callback function called when the text is submitted, by default it adds a
    * comment reaction to the provided activity */
   onSubmit?: (string) => mixed,
-  /** Height in pixels for the whole component */
-  height?: number,
-  /** Props used to render the Avatar component */
-  avatarProps?: AvatarProps,
-  /** Skips the Avatar component when provided */
-  noAvatar?: boolean,
-  /** Style changes to default */
-  styles?: StyleSheetLike,
-  /** activity */
-  activity: ActivityData,
-  /** event callback handler fired when the enter button is pressed */
-  onAddReaction: (string, ActivityData, any) => void,
-  /** Removes KeyboardAccessory. When disabling this keep in mind that the
-   * input won't move with the keyboard anymore. */
-  noKeyboardAccessory: boolean,
-  /** Custom verticalOffset for the KeyboardAccessory if for some reason the
-   * component is positioned wrongly when the keyboard opens. If the item is
-   * positioned too high this should be a negative number, if it's positioned
-   * too low it should be positive. One known case where this happens is when
-   * using react-navigation with `tabBarPosition: 'bottom'`.  */
-  verticalOffset: number,
+    /** Height in pixels for the whole component */
+    height ?: number,
+    /** Props used to render the Avatar component */
+    avatarProps ?: AvatarProps,
+    /** Skips the Avatar component when provided */
+    noAvatar ?: boolean,
+    /** Style changes to default */
+    styles ?: StyleSheetLike,
+    /** activity */
+    activity: ActivityData,
+      /** event callback handler fired when the enter button is pressed */
+      onAddReaction: (string, ActivityData, any) => void,
+        /** Removes KeyboardAccessory. When disabling this keep in mind that the
+         * input won't move with the keyboard anymore. */
+        noKeyboardAccessory: boolean,
+          /** Custom verticalOffset for the KeyboardAccessory if for some reason the
+           * component is positioned wrongly when the keyboard opens. If the item is
+           * positioned too high this should be a negative number, if it's positioned
+           * too low it should be positive. One known case where this happens is when
+           * using react-navigation with `tabBarPosition: 'bottom'`.  */
+          verticalOffset: number,
   /** Any props the React Native TextInput accepts */
-  textInputProps?: {},
+  textInputProps?: { },
 |} & Streami18Ctx;
 
 type State = {|
@@ -87,7 +87,7 @@ class CommentBox extends React.Component<Props, State> {
           value={this.state.text}
           style={styles.textInput}
           underlineColorAndroid="transparent"
-          onChangeText={(text) => this.setState({ text })}
+          onChangeText={(text) => { this.setState({ text }); this.props.setfun(text) }}
           onSubmitEditing={(event) => {
             this.setState({ text: '' });
             this.postComment(event);

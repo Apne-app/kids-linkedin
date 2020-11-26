@@ -105,27 +105,6 @@ const App = (props) => {
   const containerRef = React.useRef();
 
 
-  const tabs: TabsConfigsType = {
-    Feed: {
-      icon: () => <Icon style={{ color: "#327FEB", fontSize: 24 }} type="Feather" name="home" />
-    },
-    Search: {
-      icon: () => <Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="search" />
-    },
-    Post: {
-      icon: ({ progress }) => <Icon onPress={() => console.log('navigate')} style={{ color: '#327FEB', fontSize: 24, }} type="AntDesign" name="scan1" />
-    },
-    Files: {
-      icon: ({ progress }) => <Icon style={{ color: '#327FEB', fontSize: 24, }} type="AntDesign" name="file1" />
-    },
-    Notifications: {
-      icon: () => <Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="bell" />
-    },
-    Profile: {
-      icon: () => <Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="user" />
-    }
-  }
-
   function Bottom(props) {
 
     // console.log(props.route.params);
