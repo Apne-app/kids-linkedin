@@ -20,7 +20,7 @@ const NotificationScreen = ({ route, navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate('Home', { screen: 'Feed' })
+        navigation.pop()
         return true;
       };
       BackHandler.addEventListener("hardwareBackPress", onBackPress);

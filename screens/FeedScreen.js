@@ -75,6 +75,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [reportComment, setReportComment] = useState('');
     const [actionstatus, setActionStatus] = useState(0);
 
+
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -515,9 +516,10 @@ const FeedScreen = ({ navigation, route }) => {
         StatusBar.setBarStyle('dark-content')
     })
 
+
     return (
         <>
-            <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} />
+            <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} navigation={navigation}  />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </>
 

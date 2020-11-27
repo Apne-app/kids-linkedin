@@ -6,6 +6,7 @@ import { Switch } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import email from 'react-native-email'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
@@ -14,6 +15,18 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Settings = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+
+    const handleEmail = () => {
+        const to = ['support@genio.app'] // string or array of email addresses
+        email(to, {
+            // Optional additional arguments
+            // cc: ['bazzy@moo.com', 'doooo@daaa.com'], // string or array of email addresses
+            // bcc: 'mee@mee.com', // string or array of email addresses
+            subject: 'Your Genio Feedback',
+            body: 'Write your feedback here'
+        }).catch(console.error)
+    }
+
     const onToggleSwitch = async () => {
         var x = await AsyncStorage.getItem('children');
         if (isSwitchOn) {
@@ -79,7 +92,7 @@ const Settings = ({ navigation }) => {
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
                     </View>
                     <View style={{ flexDirection: 'column', marginTop: '40%' }}>
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => navigation.navigate('Home', {})} >
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => handleEmail()} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Give Feedback</Text>
                         </Button>
                         <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={() => navigation.navigate('Home', {})} >

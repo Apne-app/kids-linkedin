@@ -27,7 +27,7 @@ export default class ExampleApp extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = { zoom: 0.0, gallery: new Array(), imagetaken: false, side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false };
+    this.state = { storagePerm: false, cameraPerm: false, audioPerm: false, zoom: 0.0, gallery: new Array(), imagetaken: false, side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false };
   }
   _onPinchStart = () => {
     this._prevPinch = 1
@@ -53,13 +53,12 @@ export default class ExampleApp extends PureComponent {
   }
 
 
-
   
 
   componentDidMount() {
 
-
-    const func = async () => {
+    
+  const func = async () => {
 
       var x = await AsyncStorage.getItem('children');
       analytics.screen('Camera Screen', {
@@ -77,10 +76,12 @@ export default class ExampleApp extends PureComponent {
             'buttonPositive': 'Ok'
         }
         )
+        console.log(granted);
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use read from the storage 2");
+          // console.log("You can use read from the storage 2");
           // requestCameraPermission();
-
+          // console.log("sd")
+          this.setState({ ...this.state, storagePerm: true })
           CameraRoll.getPhotos({
             first: 100,
             assetType: 'Photos',
@@ -100,14 +101,51 @@ export default class ExampleApp extends PureComponent {
               console.log(err);
             });
 
-        } else {
-          console.log("Storage permission denied")
-          // requestCameraPermission();
+
         }
+        else 
+        {
+          return;
+        }
+          const grantedCam = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            // {
+            //   'title': 'Access Camera',
+            //   'message': 'Access Camera for the pictures',
+            //   'buttonPositive': 'Ok'
+            // }
+          )
+
+          if (grantedCam === PermissionsAndroid.RESULTS.GRANTED) {
+            // console.log("You can use read from the storage 2");
+            // requestCameraPermission();
+            this.setState({ ...this.state, cameraPerm : true })
+          }
+          else{
+            return;
+          }
+            const grantedAudio = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+              // {
+              //   'title': 'Access Microphone',
+              //   'message': 'Access Microphone ',
+              //   'buttonPositive': 'Ok'
+              // }
+            )
+            if (grantedAudio === PermissionsAndroid.RESULTS.GRANTED)
+            {
+              this.setState({ ...this.state, audioPerm : true })
+            }
+            else{
+              return;
+            }
+              
+           
       } catch (err) {
         console.warn(err)
       }
-    }
+  }
+    
     func();
 
     const { navigation } = this.props;
@@ -157,6 +195,87 @@ export default class ExampleApp extends PureComponent {
 
 
   render() {
+
+  const permFunc = async () => {
+      // console.log("sda")
+      try {
+        const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        // {
+        //     'title': 'Access Storage',
+        //     'message': 'Access Storage for the pictures',
+        //     'buttonPositive': 'Ok'
+        // }
+        )
+        console.log(granted);
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          // console.log("You can use read from the storage 2");
+          // requestCameraPermission();
+          // console.log("sd")
+          this.setState({ ...this.state, storagePerm: true })
+          CameraRoll.getPhotos({
+            first: 100,
+            assetType: 'Photos',
+          })
+            .then(r => {
+              // setGallery([ ...r.edges ]);
+
+              this.setState(({
+                gallery: [...r.edges]
+              }))
+
+              // setSelected(r.edges[0].node.image.uri)
+              console.log(r.edges[0].node.image.uri);
+            })
+            .catch((err) => {
+              //Error Loading 
+              console.log(err);
+            });
+
+
+        }
+        else 
+        {
+          return;
+        }
+          const grantedCam = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            // {
+            //   'title': 'Access Camera',
+            //   'message': 'Access Camera for the pictures',
+            //   'buttonPositive': 'Ok'
+            // }
+          )
+
+          if (grantedCam === PermissionsAndroid.RESULTS.GRANTED) {
+            // console.log("You can use read from the storage 2");
+            // requestCameraPermission();
+            this.setState({ ...this.state, cameraPerm : true })
+          }
+          else{
+            return;
+          }
+            const grantedAudio = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+              // {
+              //   'title': 'Access Microphone',
+              //   'message': 'Access Microphone ',
+              //   'buttonPositive': 'Ok'
+              // }
+            )
+            if (grantedAudio === PermissionsAndroid.RESULTS.GRANTED)
+            {
+              this.setState({ ...this.state, audioPerm : true })
+            }
+            else{
+              return;
+            }
+              
+           
+      } catch (err) {
+        console.warn(err)
+      }
+    }
     const renderContent = () => (
       <View
         // scrollEnabled={false}
@@ -185,6 +304,9 @@ export default class ExampleApp extends PureComponent {
         })
       }
     }
+    if(this.state.cameraPerm && this.state.audioPerm && this.state.storagePerm)
+    {
+
     return (
       <View style={styles.container}>
         <CompHeader screen={'Scan'} goback={goback} />
@@ -308,9 +430,23 @@ export default class ExampleApp extends PureComponent {
             </View>
           </TouchableOpacity>
         </View>
-
       </View>
     );
+    }
+    else {
+      return (
+        <View style={styles.container, {alignItems: 'center', justifyContent: 'center', height: height}}>
+          <View style={{alignSelf: 'center', justifyContent: 'center', alignItems: 'center'}}>
+          <Text>We need your permissions to make this page work!</Text>
+          <Button onPress={async () => {
+                permFunc();
+            }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
+              <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Give Permissions</Text>
+            </Button>
+          </View>
+        </View>
+      )
+    }
   }
 
   takePicture = async () => {
