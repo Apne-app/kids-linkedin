@@ -20,13 +20,13 @@ const CompHeader = (props) => {
         </View>
         <Body>
         </Body>
-        <Right>
+        {props.icon && <Right>
             <TouchableOpacity style={{ borderRadius: 20, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', marginTop: props.screen == 'Genio' ? -6 : 0, marginRight: -45 }}
                 onPress={() => props.fun()}
             >
                 <Icon name={props.icon} type="Feather" />
             </TouchableOpacity>
-        </Right>
+        </Right>}
     </Appbar.Header>
     )
 }

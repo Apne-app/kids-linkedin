@@ -562,7 +562,7 @@ const FeedScreen = ({ navigation, route }) => {
 
     return (
         <>
-            <ScreenHeader screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => navigation.navigate('Notifications')} />
+            <ScreenHeader screen={'Genio'} icon={''} navigation={navigation} fun={() => navigation.navigate('Notifications')} />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </>
 
