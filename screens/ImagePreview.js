@@ -217,7 +217,15 @@ const App: () => React$Node = (props) => {
             setDim({ height: JSON.parse(res.height), width: JSON.parse(res.width) })
             setcroppedi(true)
             var tm = new Date();
+            if(editing)
+            {
+            var ar = [...props.route.params.images];
+            ar.splice(props.route.params.pos, props.route.params.pos+1, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri });
+            props.navigation.navigate('PostScreen', { "reload": 1, "images": [...ar], 'time': props.route.params.time })
+            }
+            else{
             props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri }], 'time': props.route.params.time })
+            }
 
 
 
