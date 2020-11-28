@@ -464,7 +464,7 @@ const ProfileScreen = ({ navigation, route }) => {
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'left', }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
                             </View>
                             <ActionSheet
                                 useNativeDriver={true}
@@ -516,10 +516,10 @@ const ProfileScreen = ({ navigation, route }) => {
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                                 source={{ uri: props.activity.video }}
                                 navigator={navigation}
-                                // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+                            // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                             /> : null}
                         {props.activity.youtube ?
-                            <View style={{ borderRadius: 10, width: width - 100, height: 210, alignSelf: 'center', margin: 10, padding:10, backgroundColor:'black' }} >
+                            <View style={{ borderRadius: 10, width: width - 100, height: 210, alignSelf: 'center', margin: 10, padding: 10, backgroundColor: 'black' }} >
                                 <YoutubePlayer
                                     videoId={props.activity.youtube} // The YouTube video ID
                                     height={200}
@@ -803,7 +803,7 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     return (
         <View key={key}>
-            <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
+            <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => navigation.navigate('Settings')} />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </View>
     );

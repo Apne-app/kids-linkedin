@@ -192,6 +192,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                         videoId={props.activity.youtube} // The YouTube video ID
                         height={300}
                         width={width}
+                        forceAndroidAutoplay={true}
+                        play={true}
                     />
                 </View>
                 : null}

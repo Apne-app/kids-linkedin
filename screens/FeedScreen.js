@@ -11,6 +11,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Thumbnail } from 'react-native-thumbnail-video';
 import axios from 'axios';
 import { useFocusEffect } from "@react-navigation/native";
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -23,6 +24,7 @@ import YoutubePlayer from "react-native-youtube-iframe";
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
+import WebView from 'react-native-webview';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
@@ -67,6 +69,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [status, setstatus] = useState('0')
     const [options, setoptions] = useState({})
     const sheetRefLike = React.useRef(null);
+    const sheetYoutube = React.useRef(null)
     const [showToast, setShowToast] = useState(false)
     const sheetRefCom = React.useRef(null);
     const [reportedProfile, setReportedProfile] = useState({});
@@ -74,6 +77,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [reportType, setReportType] = useState('')
     const [reportComment, setReportComment] = useState('');
     const [actionstatus, setActionStatus] = useState(0);
+    const [youtube, setyoutube] = useState('https://youtube.com');
 
 
     useFocusEffect(
@@ -210,8 +214,28 @@ const FeedScreen = ({ navigation, route }) => {
         const footer = (id, data) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <LikeButton  {...props} />
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { image:children['0']['data']['image'], activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <TouchableWithoutFeedback onPress={async () => {
+                        var x = await AsyncStorage.getItem('children');
+                        var done = 0
+                        data.activity.own_reactions.like ? data.activity.own_reactions.like.map((item) => {
+                            var by = String(JSON.parse(x)["0"]["id"]) + 'id'
+                            if ((item.user_id) == by) {
+                                done = 1
+                            }
+                        }) : null
+                        if (done == 0) {
+                            console.log('doing')
+                            analytics.track('Like', {
+                                userID: JSON.parse(x)['0'] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                deviceID: getUniqueId(),
+                                by: JSON.parse(x)["0"]["id"],
+                                to: parseInt(props.activity.actor.id.replace('id', '')),
+                                actid: id
+                            })
+                        }
+
+                    }}><LikeButton   {...props} /></TouchableWithoutFeedback>
+                    <Icon onPress={() => props.navigation.navigate('SinglePost', { image: children['0']['data']['image'], activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
                         labelPlural=" "
@@ -224,7 +248,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 userID: JSON.parse(x)['0'] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
-                            navigation.navigate('SinglePost', { image:children['0']['data']['image'], activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
+                            navigation.navigate('SinglePost', { image: children['0']['data']['image'], activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
                         }}
                     />
                     <Icon onPress={() => {
@@ -249,7 +273,7 @@ const FeedScreen = ({ navigation, route }) => {
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
                             </View>
                             <ActionSheet
                                 useNativeDriver={true}
@@ -266,7 +290,7 @@ const FeedScreen = ({ navigation, route }) => {
                 }
                 Content={
                     <View style={{ padding: 14 }}>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image:children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
                             {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             <View style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
@@ -284,7 +308,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 /></View> : <View></View>}
                             </View>
                         </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image:children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
                             {props.activity.object.includes('http') ?
                                 <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                                 : null}
@@ -301,16 +325,10 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ borderRadius: 10, width: width - 80, height: 340, }}
                                 source={{ uri: props.activity.video }}
                                 navigator={navigation}
-                                // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+                            // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                             /> : null}
                         {props.activity.youtube ?
-                            <View style={{ borderRadius: 10, width: width - 100, height: 210, alignSelf: 'center', margin: 10, padding:10, backgroundColor:'black' }} >
-                                <YoutubePlayer
-                                    videoId={props.activity.youtube} // The YouTube video ID
-                                    height={200}
-                                    width={width - 120}
-                                />
-                            </View>
+                            <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props }) }} imageHeight={200} imageWidth={width - 80} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
                             : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
                     </View>
@@ -420,6 +438,13 @@ const FeedScreen = ({ navigation, route }) => {
             check()
         }, 3000);
     }, [])
+    const renderYoutube = () => {
+        return (
+            <ScrollView style={{ height: height - 80 }}>
+                <WebView source={{ uri: youtube }} />
+            </ScrollView>
+        )
+    }
     const there = (props) => {
         return (
             <SafeAreaProvider>
@@ -449,6 +474,15 @@ const FeedScreen = ({ navigation, route }) => {
                         initialSnap={2}
                         borderRadius={25}
                         renderContent={renderReport}
+                    />
+                    <BottomSheet
+                        ref={sheetYoutube}
+                        enabledContentTapInteraction={false}
+                        snapPoints={[height - 200, 0]}
+                        // enabledContentGestureInteraction={false}
+                        initialSnap={1}
+                        borderRadius={2}
+                        renderContent={renderYoutube}
                     />
                 </SafeAreaView>
                 <Snackbar
@@ -528,7 +562,7 @@ const FeedScreen = ({ navigation, route }) => {
 
     return (
         <>
-            <ScreenHeader screen={'Genio'} icon={'bell'} fun={() => navigation.navigate('Notifications')} navigation={navigation}  />
+            <ScreenHeader screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => navigation.navigate('Notifications')} />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </>
 
