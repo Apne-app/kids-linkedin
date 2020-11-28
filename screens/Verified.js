@@ -64,7 +64,16 @@ const Unverified = ({ navigation, route }) => {
                     // console.log(JSON.stringify(response.data.token));
                     var pro = await AsyncStorage.getItem('profile')
                     pro = JSON.parse(pro)
-                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
+                    axios({
+                    method: 'post',
+                    url:'http://104.199.158.211:5000/getchild/'+`?token=${response.data.token}`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                    "email":pro.email,
+                    })
+                    })
                         .then(async (response) => {
                             await AsyncStorage.setItem('children', JSON.stringify(response.data))
                             if (Object.keys(response.data).length) {

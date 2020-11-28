@@ -51,14 +51,30 @@ const LinkedIn = ({navigation, authtoken, loaderHandler}) => {
           // setInfo(response.data);
           // setLoading(false);
           // console.log(response.data);
-            c =  response.data.elements[0]['handle~'].emailAddress,
-            axios.get('http://104.199.146.206:5000/authLinkedin/' + c + '/' + b + '/' + a + `?token=${authtoken}`)
+            c =  response.data.elements[0]['handle~'].emailAddress;
+            var data = JSON.stringify({"email":c,"pfname":a,"plname":b});
+            // console.log(a, b, c)
+            axios({
+              method: 'post',
+              url:'http://104.199.146.206:5000/authLinkedin/'+ `?token=${authtoken}`,
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              data: data
+              })
               .then(async (response) => {
-                console.log(response.data, "aaaa")
+                // console.log(response.data, "aaaa")
                 
                   try {
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data));
-                  axios.get('http://104.199.158.211:5000/getchild/' + response.data.email + '/' + `?token=${authtoken}`)
+                  axios({
+                    method: 'post',
+                    url:'http://104.199.158.211:5000/getchild/'+`?token=${authtoken}`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+                    })
                   .then(async (response) => {
                       await AsyncStorage.setItem('children', JSON.stringify(response.data))
                       if (Object.keys(response.data).length) {
@@ -69,7 +85,7 @@ const LinkedIn = ({navigation, authtoken, loaderHandler}) => {
                           await AsyncStorage.setItem('status', '2')
                           navigation.navigate('Child')
                       }
-                      console.log(response.data)
+                      // console.log(response.data, "abcd")
                   })
                   // navigation.navigate('Child');
                 } catch (e) {
