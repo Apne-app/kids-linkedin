@@ -171,6 +171,7 @@ const FileScreen = (props) => {
         })
         .catch(function (error) {
         console.log(error, "asdas");
+        setSynced(true);
         });
 
     }          

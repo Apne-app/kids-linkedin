@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
 import Share from 'react-native-share';
-import { ScrollView, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
+import { Animated, ScrollView, TouchableWithoutFeedback, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
@@ -713,8 +713,22 @@ const Upload = ({ route, navigation }) => {
         </TouchableOpacity>
         </Right>
       </Header> */}
-      <View style={{backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: width, zIndex: 10, height: bottomSheetOpen ? height : 0}} />
-      <CompHeader goback={goback} icon="close"  screen={selecting ? "Delete" : "Preview"} right={true} delete={deletes} selecting={selecting} />
+      <CompHeader goback={goback} icon="close"  screen={selecting ? "Delete" : "Preview"} style={{zIndex: 1}} right={true} delete={deletes} selecting={selecting} />
+      
+      <Animated.View
+      style={{
+        backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: bottomSheetOpen ? width : 0, zIndex: 10, height: bottomSheetOpen ? height : 0
+      }}>
+      <Button
+        style={{
+          width: bottomSheetOpen ? width : 0,
+          height: bottomSheetOpen ? height: 0,
+          backgroundColor: 'transparent',
+        }}
+        activeOpacity={1}
+        onPress={() => sheetRef.current.snapTo(1)}
+      />
+    </Animated.View>
       <View style={{ backgroundColor: "#fff" }}>
         
         <ImageView
@@ -995,12 +1009,14 @@ const Upload = ({ route, navigation }) => {
         <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#327FEB" }} type="FontAwesome" name='send' />
       </Item>*/}
       </View>
-
       <BottomSheet
         ref={sheetRef}
         snapPoints={[300, -200]}
         initialSnap={1}
-        onCloseEnd={() => {
+        onOpenStart={() => {
+          setBottomSheetOpen(true);
+        }}
+        onCloseStart={() => {
           setBottomSheetOpen(false);
         }}
         enabledGestureInteraction={true}
@@ -1011,7 +1027,10 @@ const Upload = ({ route, navigation }) => {
         ref={closeRef}
         snapPoints={[300, -200]}
         initialSnap={1}
-        onCloseEnd={() => {
+        onOpenStart={() => {
+          setBottomSheetOpen(true);
+        }}
+        onCloseStart={() => {
           setBottomSheetOpen(false);
         }}
         enabledGestureInteraction={true}

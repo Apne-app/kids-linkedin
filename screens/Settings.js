@@ -1,12 +1,14 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, Alert, BackHandler, Dimensions, Image, TextInput, ScrollView } from 'react-native'
+import { StyleSheet, Animated, View, Text, Alert, TouchableOpacity, BackHandler, Dimensions, Image, TextInput, ScrollView } from 'react-native'
 import { Switch } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, Textarea } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import email from 'react-native-email'
 import analytics from '@segment/analytics-react-native';
+import BottomSheet from 'reanimated-bottom-sheet';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader'
@@ -14,6 +16,20 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Settings = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+
+    const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
+
+    const handleEmail = () => {
+        const to = ['support@genio.app'] // string or array of email addresses
+        email(to, {
+            // Optional additional arguments
+            // cc: ['bazzy@moo.com', 'doooo@daaa.com'], // string or array of email addresses
+            // bcc: 'mee@mee.com', // string or array of email addresses
+            subject: 'Your Genio Feedback',
+            body: 'Write your feedback here'
+        }).catch(console.error)
+    }
+
     const onToggleSwitch = async () => {
         var x = await AsyncStorage.getItem('children');
         if (isSwitchOn) {
@@ -43,6 +59,34 @@ const Settings = ({ navigation }) => {
 
     }
 
+    const sheetRef = React.useRef(null);
+
+    const renderContent = () => (
+        <View
+        scrollEnabled={false}
+        style={{
+            backgroundColor: 'white',
+            padding: 16,
+            height: 300,
+            elevation: 20
+        }}
+        >
+        <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
+            <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, width: 100, height: 5, marginTop: -4 }}></View>
+        </TouchableOpacity>
+        <Text style={{ margin: 15, marginTop: 20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Give Feedback</Text>
+
+        <Form>
+            <Textarea rowSpan={4} style={{borderRadius: 25}} bordered placeholder="Textarea" />
+        </Form>
+        <Button onPress={async () => {
+                
+            }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
+              <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Submit</Text>
+        </Button>
+        </View>
+    );
+
     useEffect(() => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
@@ -56,6 +100,20 @@ const Settings = ({ navigation }) => {
 
     return (
         <View>
+        <Animated.View
+            style={{
+                backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: bottomSheetOpen ? width : 0, zIndex: 10, height: bottomSheetOpen ? height : 0
+            }}>
+            <Button
+                style={{
+                width: bottomSheetOpen ? width : 0,
+                height: bottomSheetOpen ? height: 0,
+                backgroundColor: 'transparent',
+                }}
+                activeOpacity={1}
+                onPress={() => sheetRef.current.snapTo(1)}
+            />
+        </Animated.View>
             <CompHeader screen={'Settings'} goback={() => navigation.navigate('Profile')} icon={'back'} />
             <ScrollView>
                 <View style={{ margin: 25 }}>
@@ -68,7 +126,22 @@ const Settings = ({ navigation }) => {
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
                     </View>
                     <View style={{ flexDirection: 'column', marginTop: '40%' }}>
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => navigation.navigate('Home', {})} >
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => {
+                            sheetRef.current.snapTo(0);
+                            const onBackPress = () => {
+                                sheetRef.current.snapTo(1);
+                                const onBackNew = () => {
+                                    navigation.navigate('Home')
+                                    return true;
+                                };
+                                BackHandler.addEventListener("hardwareBackPress", onBackNew);
+                                return () =>
+                                    BackHandler.removeEventListener("hardwareBackPress", onBackNew);
+                            };
+                            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+                            return () =>
+                                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+                            }} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Give Feedback</Text>
                         </Button>
                         <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={() => navigation.navigate('Home', {})} >
@@ -81,6 +154,20 @@ const Settings = ({ navigation }) => {
                     </View>
                 </View>
             </ScrollView>
+            <BottomSheet
+                ref={sheetRef}
+                snapPoints={[300, -200]}
+                initialSnap={1}
+                onOpenStart={() => {
+                setBottomSheetOpen(true);
+                }}
+                onCloseStart={() => {
+                setBottomSheetOpen(false);
+                }}
+                enabledGestureInteraction={true}
+                borderRadius={30}
+                renderContent={renderContent}
+            />
         </View>
     );
 

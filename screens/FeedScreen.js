@@ -79,6 +79,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [actionstatus, setActionStatus] = useState(0);
     const [youtube, setyoutube] = useState('https://youtube.com');
 
+
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -330,12 +331,13 @@ const FeedScreen = ({ navigation, route }) => {
                             <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: children['0']['data']['image'], token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props }) }} imageHeight={200} imageWidth={width - 80} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
                             : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </View >
+                    </View>
                 }
                 Footer={footer(props.activity.id, props)}
             />
         );
     };
+    
     var width = Dimensions.get('screen').width;
     const fontConfig = {
         default: {
@@ -547,6 +549,7 @@ const FeedScreen = ({ navigation, route }) => {
     useEffect(() => {
         StatusBar.setBarStyle('dark-content')
     })
+
 
     return (
         <>
