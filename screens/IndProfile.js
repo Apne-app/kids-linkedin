@@ -333,7 +333,7 @@ const IndProfile = ({ navigation, route }) => {
                             </View>
                             : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </View >
+                    </View>
                 }
                 Footer={footer(props.activity.id, props)}
             />
@@ -383,7 +383,7 @@ const IndProfile = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                             </View>
                         </View>
-                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                        {/*<View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                             <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
@@ -393,7 +393,7 @@ const IndProfile = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Courses</Text>
                             </TouchableOpacity>
 
-                        </View>
+                        </View>*/}
                     </View>
                     <FlatFeed feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                 </StreamApp>

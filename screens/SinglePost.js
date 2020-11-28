@@ -9,6 +9,7 @@ import CommentBox from '../components/CommentBox'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
+import { useFocusEffect } from "@react-navigation/native";
 import VideoPlayer from 'react-native-video-controls';
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -54,6 +55,21 @@ updateStyle('uploadImage', {
     }
 });
 const SinglePostScreen = ({ navigation, route }) => {
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.pop()
+                return true;
+            };
+
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+        }, []));
+
     const keyboardDidShowListener = React.useRef();
     const scrollref = React.useRef();
     const keyboardDidHideListener = React.useRef();

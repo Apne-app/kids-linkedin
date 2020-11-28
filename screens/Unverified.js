@@ -14,26 +14,26 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Unverified = ({ navigation, route }) => {
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const onBackPress = () => {
-                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-                    {
-                        text: "Cancel",
-                        onPress: () => null,
-                        style: "cancel"
-                    },
-                    { text: "YES", onPress: () => BackHandler.exitApp() }
-                ]);
-                return true;
-            };
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         const onBackPress = () => {
+    //             Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+    //                 {
+    //                     text: "Cancel",
+    //                     onPress: () => null,
+    //                     style: "cancel"
+    //                 },
+    //                 { text: "YES", onPress: () => BackHandler.exitApp() }
+    //             ]);
+    //             return true;
+    //         };
 
-            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    //         BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-            return () =>
-                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    //         return () =>
+    //             BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-        }, []));
+    //     }, []));
 
 
     const [profile, setprofile] = useState({ 'email': '' })

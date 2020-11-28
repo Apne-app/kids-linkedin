@@ -561,7 +561,7 @@ const ProfileScreen = ({ navigation, route }) => {
                             </View>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 200, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                    <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
                         <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                             <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>2</Text>
@@ -576,7 +576,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                             </View>
                         </View>
-                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                        {/*<View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                             <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
@@ -586,7 +586,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Courses</Text>
                             </TouchableOpacity>
 
-                        </View>
+                        </View>*/}
                     </View>
                     <TouchableOpacity
                         onPress={async () => {

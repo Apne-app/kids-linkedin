@@ -158,7 +158,7 @@ const LoginScreen = ({ route, navigation }) => {
             }
             else {
               setLoading(false);
-              navigation.navigate('Unverified', { screen: route.params.screen })
+              navigation.navigate('Unverified', { screen: /*route.params.screen*/ 'Home' })
             }
           })
           .catch((response) => {

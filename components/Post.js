@@ -86,6 +86,7 @@ const Upload = ({ route, navigation }) => {
   const [filename, setFileName] = React.useState('')
   const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
 
+  const [selectedStatus, setSelectedStatus] = React.useState('Select All')
   const [deleteCount, setDeleteCount] = React.useState(0)
 
   const [orig, setOrig] = React.useState('');
@@ -127,6 +128,7 @@ const Upload = ({ route, navigation }) => {
     const backAction = async () => {
 
       setSelecting(false);
+      // setDeleteCount(0);
 
 
       const backNew = () => {
@@ -554,6 +556,16 @@ const Upload = ({ route, navigation }) => {
         deviceID: getUniqueId() 
       })
     setSelecting(true);
+    backButtonChange();
+    var tempArr = [...explore];
+    var cnt = 0;
+    for (var i = 1; i < tempArr.length; i++) {
+      if(tempArr[i]['selected'])
+      {
+      cnt++;
+      }
+    }
+    setDeleteCount(cnt);
     if (selecting) {
       var array = [...explore];
       for (var i = 1; i < array.length; i++) {
@@ -820,7 +832,18 @@ const Upload = ({ route, navigation }) => {
                         openImageViewer(index); setVisible(true);
                       }
                     }}
-                      onLongPress={() => { setSelecting(true); backButtonChange(); }}
+                      onLongPress={() => { 
+                        setSelecting(true); backButtonChange(); 
+                        var tempArr = [...explore];
+                        var cnt = 0;
+                        for (var i = 1; i < tempArr.length; i++) {
+                          if(tempArr[i]['selected'])
+                          {
+                          cnt++;
+                          }
+                        }
+                        setDeleteCount(cnt);
+                        }}
                     >
                       <View
                         key={item.id}
@@ -847,10 +870,20 @@ const Upload = ({ route, navigation }) => {
                     <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => {
                       if (selecting) {
                         var array = [...explore];
+                        var cnt = 0;
                         for (var i = 1; i < array.length; i++) {
-                          array[i]['selected'] = true;
+                          // if()
+                          selectedStatus == 'Select All' ? array[i]['selected'] = true : array[i]['selected'] = false;
                         }
+                        selectedStatus == 'Select All' ? setDeleteCount(array.length-1) : setDeleteCount(0);
                         setExplore([...array])
+                        if(selectedStatus == 'Select All')
+                        {
+                          setSelectedStatus('Deselect All')
+                        }
+                        else{
+                          setSelectedStatus('Select All')
+                        }
                       }
                       else {
                         var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', { "images": ar, 'time': time })
@@ -868,7 +901,7 @@ const Upload = ({ route, navigation }) => {
                                 !selecting ?
                                   <Icon type="AntDesign" name="plus" style={{ color: "#fff" }} />
                                   :
-                                  <Text style={{ color: "#fff", fontFamily: 'NunitoSans-Bold' }}>Select All</Text>
+                                  <Text style={{ color: "#fff", fontFamily: 'NunitoSans-Bold' }}>{selectedStatus}</Text>
                               }
                             </View>
                           </View>
@@ -990,7 +1023,7 @@ const Upload = ({ route, navigation }) => {
              var ar = explore;
               var arr = [];
               for (var i = 1; i < ar.length; i++) {
-                arr.push({ uri: 'file://' + ar[i]["uri"] })
+                arr.push({ uri: ar[i]["uri"].includes("http") ? ar[i]["uri"] : 'file://' + ar[i]["uri"] })
               }
               status==='3'?navigation.navigate('CreatePost', { images: arr, tag: selectedTag }):navigation.navigate('Login', {screen:'Post'})
             }}
