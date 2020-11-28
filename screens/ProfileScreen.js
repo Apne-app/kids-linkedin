@@ -528,7 +528,7 @@ const ProfileScreen = ({ navigation, route }) => {
                             </View>
                             : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
-                    </View >
+                    </View>
                 }
                 Footer={footer(props.activity.id, props)}
             />
@@ -712,35 +712,32 @@ const ProfileScreen = ({ navigation, route }) => {
                 }
                 RNS3.put(file, options).then(response => {
                     if (response.status !== 201) {
-                        console.log(response)
+                        console.log(response, "aa")
                         alert('Could not update Profile Picture, please try again later')
                     }
                     else {
                 
                         var child = children['0']
-                        axios({
-                            method: 'post',
-                            url:'http://104.199.158.211:5000/update_child/' + `/?token=${token}`,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            data: JSON.stringify({
-                                "cid": child.id,
-                                "change": "image",
-                                "name": child.data.name,
-                                "school": child.data.school,
-                                "year": child.data.year,
-                                "grade": child.data.grade,
-                                "acctype": child.data.type,
-                                "gsToken": child.data.gsToken
-                            })
-                            })
-                            .then(async (response) => {
-                                setkey(String(parseInt(key) + 1))
-                            }).catch((error) => {
-                                console.log(error)
-                                alert('Could not update Profile Picture, please try again later')
-                            })
+                        var axios = require('axios');
+                        var data = JSON.stringify({"cid":child.id,"change":"image","name":child.data.name,"school":child.data.school,"year":child.data.year,"grade":child.data.grade,"acctype":child.data.type,"gsToken":child.data.gsToken});
+
+                        var config = {
+                        method: 'post',
+                        url: `http://104.199.158.211:5000/update_child/?token=${token}`,
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        data : data
+                        };
+
+                        axios(config)
+                        .then(async (response) => {
+                            setkey(String(parseInt(key) + 1))
+                        }).catch((error) => {
+                            console.log(error, "asd")
+                            alert('Could not update Profile Picture, please try again later')
+                        })
+
                 
                     }
                 })
@@ -769,33 +766,27 @@ const ProfileScreen = ({ navigation, route }) => {
                 }
                 RNS3.put(file, options).then(response => {
                     if (response.status !== 201) {
-                        console.log(response)
+                        console.log(response, "aa")
                         alert('Could not update Profile Picture, please try again later')
                     }
                     else {
                         var child = children['0']
                         console.log(child.data.gsToken)
-                        axios({
-                            method: 'post',
-                            url:'http://104.199.158.211:5000/update_child/' + `/?token=${token}`,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            data: JSON.stringify({
-                                "cid": child.id,
-                                "change": "image",
-                                "name": child.data.name,
-                                "school": child.data.school,
-                                "year": child.data.year,
-                                "grade": child.data.grade,
-                                "acctype": child.data.type,
-                                "gsToken": child.data.gsToken
-                            })
-                            })
+                        var data = JSON.stringify({"cid":child.id,"change":"image","name":child.data.name,"school":child.data.school,"year":child.data.year,"grade":child.data.grade,"acctype":child.data.type,"gsToken":child.data.gsToken});
+
+                        var config = {
+                        method: 'post',
+                        url: `http://104.199.158.211:5000/update_child/?token=${token}`,
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        data : data
+                        };
+                            axios(config)
                             .then(async (response) => {
                                 setkey(String(parseInt(key) + 1))
                             }).catch((error) => {
-                                console.log(error)
+                                console.log(error, "asd")
                                 alert('Could not update Profile Picture, please try again later')
                             })
                     }
