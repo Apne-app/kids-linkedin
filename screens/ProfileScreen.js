@@ -661,7 +661,16 @@ const ProfileScreen = ({ navigation, route }) => {
                 var pro = await AsyncStorage.getItem('profile')
                 if (pro !== null) {
                     pro = JSON.parse(pro)
-                    axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${token}`)
+                    axios({
+                    method: 'post',
+                    url:'http://104.199.158.211:5000/getchild/'+`?token=${token}`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                    "email":pro.email,
+                    })
+                    })
                         .then(async (response) => {
                             setchildren(response.data)
                             await AsyncStorage.setItem('children', JSON.stringify(response.data))
@@ -707,14 +716,32 @@ const ProfileScreen = ({ navigation, route }) => {
                         alert('Could not update Profile Picture, please try again later')
                     }
                     else {
+                
                         var child = children['0']
-                        axios.get('http://104.199.158.211:5000/update_child/' + child.id + '/image/' + child.data.name + '/' + child.data.school + '/' + child.data.year + '/' + child.data.grade + '/' + child.data.type + '/' + child.data.gsToken + `/?token=${token}`)
+                        axios({
+                            method: 'post',
+                            url:'http://104.199.158.211:5000/update_child/' + `/?token=${token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: JSON.stringify({
+                                "cid": child.id,
+                                "change": "image",
+                                "name": child.data.name,
+                                "school": child.data.school,
+                                "year": child.data.year,
+                                "grade": child.data.grade,
+                                "acctype": child.data.type,
+                                "gsToken": child.data.gsToken
+                            })
+                            })
                             .then(async (response) => {
                                 setkey(String(parseInt(key) + 1))
                             }).catch((error) => {
                                 console.log(error)
                                 alert('Could not update Profile Picture, please try again later')
                             })
+                
                     }
                 })
             });
@@ -748,7 +775,23 @@ const ProfileScreen = ({ navigation, route }) => {
                     else {
                         var child = children['0']
                         console.log(child.data.gsToken)
-                        axios.get('http://104.199.158.211:5000/update_child/' + child.id + '/image/' + child.data.name + '/' + child.data.school + '/' + child.data.year + '/' + child.data.grade + '/' + child.data.type + '/' + child.data.gsToken + `/?token=${token}`)
+                        axios({
+                            method: 'post',
+                            url:'http://104.199.158.211:5000/update_child/' + `/?token=${token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: JSON.stringify({
+                                "cid": child.id,
+                                "change": "image",
+                                "name": child.data.name,
+                                "school": child.data.school,
+                                "year": child.data.year,
+                                "grade": child.data.grade,
+                                "acctype": child.data.type,
+                                "gsToken": child.data.gsToken
+                            })
+                            })
                             .then(async (response) => {
                                 setkey(String(parseInt(key) + 1))
                             }).catch((error) => {

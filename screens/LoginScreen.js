@@ -122,7 +122,14 @@ const LoginScreen = ({ route, navigation }) => {
         deviceID: getUniqueId() 
     })
     setLoading(true);
-    axios.get('http://104.199.146.206:5000/login/' + email.split(' ')[0] + `/default/?token=${token}`)
+    axios({
+      method: 'post',
+      url: `http://104.199.146.206:5000/login/?token=${token}`,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify({ "email": email.split(' ')[0], "lnkdId": "default" })
+      })
       .then(async (response) => {
         const storeProfile = async () => {
           try {

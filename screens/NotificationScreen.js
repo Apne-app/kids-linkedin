@@ -73,7 +73,16 @@ const NotificationScreen = ({ route, navigation }) => {
           axios(config)
             .then(function (response) {
               // console.log(JSON.stringify(response.data.token));
-              axios.get('http://104.199.158.211:5000/getchild/' + pro.email + `/?token=${response.data.token}`)
+              axios({
+              method: 'post',
+              url:'http://104.199.158.211:5000/getchild/'+`?token=${response.data.token}`,
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              data: JSON.stringify({
+              "email":pro.email,
+              })
+              })
                 .then(async (response) => {
                   setchildren(response.data)
                   // console.log(response);
