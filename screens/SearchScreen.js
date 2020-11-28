@@ -51,7 +51,7 @@ const SearchScreen = ({ route, navigation }) => {
     const check = async () => {
       var x = await AsyncStorage.getItem('children');
       analytics.screen('Search Screen', {
-        userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
         deviceID: getUniqueId()
       })
       var child = await AsyncStorage.getItem('children')

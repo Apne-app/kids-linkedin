@@ -243,7 +243,7 @@ const ProfileScreen = ({ navigation, route }) => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
             analytics.screen('Profile Screen', {
-                userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
             })
         }
@@ -436,7 +436,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('Comment', {
-                                userID: JSON.parse(x)['0'] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
                             navigation.navigate('SinglePost', { activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
@@ -592,7 +592,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('Opened website', {
-                                userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             })
                             Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])

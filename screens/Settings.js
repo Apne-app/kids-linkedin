@@ -61,7 +61,10 @@ const Settings = ({ navigation }) => {
         var arr = await AsyncStorage.getAllKeys()
         await AsyncStorage.multiRemove(arr)
         AsyncStorage.setItem('status', '-1')
-        navigation.navigate('Login', { screen: 'Home' })
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+        });
 
     }
 
@@ -74,8 +77,8 @@ const Settings = ({ navigation }) => {
                     backgroundColor: 'white',
                     padding: 16,
                     height: 300,
-                    elevation: 20, 
-                    marginBottom:100
+                    elevation: 20,
+                    marginBottom: 100
                 }}
             >
                 <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>

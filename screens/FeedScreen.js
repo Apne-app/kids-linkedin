@@ -226,7 +226,7 @@ const FeedScreen = ({ navigation, route }) => {
                         if (done == 0) {
                             console.log('doing')
                             analytics.track('Like', {
-                                userID: JSON.parse(x)['0'] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId(),
                                 by: JSON.parse(x)["0"]["id"],
                                 to: parseInt(props.activity.actor.id.replace('id', '')),
@@ -245,7 +245,7 @@ const FeedScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('Comment', {
-                                userID: JSON.parse(x)['0'] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
                             navigation.navigate('SinglePost', { image: children['0']['data']['image'], activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
@@ -562,7 +562,7 @@ const FeedScreen = ({ navigation, route }) => {
 
     return (
         <>
-            <ScreenHeader screen={'Genio'} icon={''} navigation={navigation} fun={() => navigation.navigate('Notifications')} />
+            <ScreenHeader screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => navigation.navigate('Notifications')} />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </>
 

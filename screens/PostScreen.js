@@ -190,7 +190,7 @@ const PostScreen = ({ navigation, route }) => {
     setShowToast(true);
     setTimeout(() => {
       navigation.pop();
-    }, 1500)
+    }, 1000)
   }
 
   useEffect(() => {

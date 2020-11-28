@@ -77,8 +77,8 @@ const LoginScreen = ({ route, navigation }) => {
 
     const analyse = async () => {
       analytics.screen('Login Screen', {
-        userID:  null,   
-        deviceID: getUniqueId() 
+        userID: null,
+        deviceID: getUniqueId()
       })
     }
     analyse();
@@ -118,8 +118,8 @@ const LoginScreen = ({ route, navigation }) => {
     // setemail(email.split(' ')[0])
     // console.log(email)
     analytics.track('Login Via Email', {
-        userID: null,   
-        deviceID: getUniqueId() 
+      userID: null,
+      deviceID: getUniqueId()
     })
     setLoading(true);
     axios({
@@ -129,7 +129,7 @@ const LoginScreen = ({ route, navigation }) => {
         'Content-Type': 'application/json'
       },
       data: JSON.stringify({ "email": email.split(' ')[0], "lnkdId": "default" })
-      })
+    })
       .then(async (response) => {
         const storeProfile = async () => {
           try {
@@ -158,7 +158,7 @@ const LoginScreen = ({ route, navigation }) => {
             }
             else {
               setLoading(false);
-              navigation.navigate('Unverified', {screen:route.params.screen})
+              navigation.navigate('Unverified', { screen: route.params.screen })
             }
           })
           .catch((response) => {
@@ -197,7 +197,14 @@ const LoginScreen = ({ route, navigation }) => {
   return (
     <ScrollView ref={scrollcheck} style={styles.container} keyboardShouldPersistTaps='handled'>
       {loader ? <Spinner color='blue' style={styles.loading} /> : null}
-      <CompHeader screen={'Login'} goback={() => navigation.pop()} />
+      <CompHeader screen={'Login'} goback={() => {
+        try {
+          navigation.pop()
+        }
+        catch {
+          navigation.navigate('Home')
+        }
+      }} />
       {/* <Container style={styles.container}> */}
       <Content >
         <View style={{ flex: 1, marginTop: 30, }}>

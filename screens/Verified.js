@@ -65,20 +65,24 @@ const Unverified = ({ navigation, route }) => {
                     var pro = await AsyncStorage.getItem('profile')
                     pro = JSON.parse(pro)
                     axios({
-                    method: 'post',
-                    url:'http://104.199.158.211:5000/getchild/'+`?token=${response.data.token}`,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify({
-                    "email":pro.email,
-                    })
+                        method: 'post',
+                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            "email": pro.email,
+                        })
                     })
                         .then(async (response) => {
                             await AsyncStorage.setItem('children', JSON.stringify(response.data))
                             if (Object.keys(response.data).length) {
                                 await AsyncStorage.setItem('status', '3')
-                                route.params? (Object.keys(route.params).includes('screen') ? (route.params.screen === "IntroSlider" ? navigation.navigate('Home') : navigation.navigate(route.params.screen)) : navigation.navigate('Home')) : navigation.navigate('Home')
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: route.params ? (Object.keys(route.params).includes('screen') ? (route.params.screen === "IntroSlider" ? ('Home') : (route.params.screen)) : ('Home')) : ('Home') }],
+                                });
+                                
                             }
                             else {
                                 await AsyncStorage.setItem('status', '2')

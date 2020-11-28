@@ -947,7 +947,7 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Collection Shared', {
-                  userID: JSON.parse(x)["0"] ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                  userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                   deviceID: getUniqueId() 
                 }) 
               shareImage();
