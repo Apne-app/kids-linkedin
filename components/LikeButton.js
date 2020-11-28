@@ -46,7 +46,6 @@ export default class LikeButton extends React.Component<Props> {
       onToggleReaction,
       onToggleChildReaction,
     } = this.props;
-
     if (reaction && onToggleChildReaction) {
       return onToggleChildReaction(reactionKind, reaction, {}, {});
     }

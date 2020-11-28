@@ -1,10 +1,12 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, BackHandler, TextInput } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, BackHandler, TextInput } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, NotificationFeed } from 'react-native-activity-feed';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import CompHeader from '../Modules/CompHeader';
 import CompButton from '../Modules/CompButton'
 import analytics from '@segment/analytics-react-native';
@@ -32,7 +34,7 @@ const NotificationScreen = ({ route, navigation }) => {
     const check = async () => {
       var x = await AsyncStorage.getItem('children');
       analytics.screen('Notifications Screen', {
-        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
         deviceID: getUniqueId()
       })
       var child = await AsyncStorage.getItem('children')
@@ -98,12 +100,25 @@ const NotificationScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <View>
-        <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
-        <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
+        {/* <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
           <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
           <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
           <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
-        </View>
+        </View> */}
+        <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
+            <StreamApp
+              style={{ marginTop: 20 }}
+              apiKey="9ecz2uw6ezt9"
+              appId="96078"
+              token={children['0']['data']['gsToken']}
+            >
+              <NotificationFeed feedGroup={'Notifications'} />
+            </StreamApp>
+
+          </SafeAreaView>
+
+        </SafeAreaProvider>
       </View>
     );
   }
@@ -117,13 +132,15 @@ const NotificationScreen = ({ route, navigation }) => {
   const notthere = () => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
         <CompButton message={'Signup/Login to view/recieve notifications'} />
       </View>
     )
   }
   return (
-    children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()
+    <>
+      <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
+      {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
+    </>
   );
 }
 

@@ -30,16 +30,6 @@ const Settings = ({ navigation }) => {
         }
         setIsSwitchOn(!isSwitchOn)
     };
-    useFocusEffect(
-    React.useCallback(() => {
-        const onBackPress = () => {
-            navigation.navigate('Home')
-            return true;
-        };
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, []));
     const logout = async () => {
         var x = await AsyncStorage.getItem('children');
         analytics.track('Logged Out', {
@@ -67,7 +57,6 @@ const Settings = ({ navigation }) => {
     return (
         <View>
             <CompHeader screen={'Settings'} goback={() => navigation.navigate('Profile')} icon={'back'} />
-
             <ScrollView>
                 <View style={{ margin: 25 }}>
                     <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
