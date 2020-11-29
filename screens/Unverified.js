@@ -14,26 +14,19 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Unverified = ({ navigation, route }) => {
 
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         const onBackPress = () => {
-    //             Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-    //                 {
-    //                     text: "Cancel",
-    //                     onPress: () => null,
-    //                     style: "cancel"
-    //                 },
-    //                 { text: "YES", onPress: () => BackHandler.exitApp() }
-    //             ]);
-    //             return true;
-    //         };
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.navigate('Login')
+                return true;
+            };
 
-    //         BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-    //         return () =>
-    //             BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-    //     }, []));
+        }, []));
 
 
     const [profile, setprofile] = useState({ 'email': '' })
@@ -79,8 +72,14 @@ const Unverified = ({ navigation, route }) => {
     const send = async (num) => {
         if (active) {
             setactive(false)
-            axios.get('http://104.199.146.206:5000/login/' + profile.email + `/default/?token=${token}`)
-                .then(async (response) => {
+            axios({
+                method: 'post',
+                url: `http://104.199.146.206:5000/login/?token=${token}`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({ "email": profile.email, "lnkdId": "default" })
+            }).then(async (response) => {
                     const storeProfile = async () => {
                         try {
                             await AsyncStorage.setItem('profile', JSON.stringify(response.data))
@@ -114,6 +113,7 @@ const Unverified = ({ navigation, route }) => {
 
                 })
                 .catch((error) => {
+                    console.log(error)
                     alert('There was an error, please try again')
                     navigation.navigate('Login')
                 })

@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, Text, ScrollView } from 'react-native';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import { Avatar } from 'react-native-activity-feed';
 import { NativeSyntheticEvent } from 'react-native';
@@ -9,6 +9,7 @@ import type { Props as AvatarProps } from 'react-native-activity-feed';
 import type { Streami18Ctx } from '../Context/StreamApp';
 import { buildStylesheet } from '../styles';
 import { withTranslationContext } from '../Context';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 type Props = {| 
   /** Callback function called when the text is submitted, by default it adds a
@@ -35,8 +36,8 @@ type Props = {|
            * too low it should be positive. One known case where this happens is when
            * using react-navigation with `tabBarPosition: 'bottom'`.  */
           verticalOffset: number,
-  /** Any props the React Native TextInput accepts */
-  textInputProps?: { },
+            /** Any props the React Native TextInput accepts */
+            textInputProps ?: {},
 |} & Streami18Ctx;
 
 type State = {|
@@ -70,12 +71,22 @@ class CommentBox extends React.Component<Props, State> {
     }
   }
 
+  postComment2(text: String<>) {
+    if (this.props.onSubmit !== undefined) {
+      this.props.onSubmit(text);
+    } else {
+      this.props.onAddReaction('comment', this.props.activity, {
+        text: text,
+      });
+    }
+  }
+
   render() {
     const { noKeyboardAccessory, textInputProps, t } = this.props;
 
     const styles = buildStylesheet('commentBox', this.props.styles);
     const input = (
-      <View style={styles.container}>
+      <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={styles.container}>
         {this.props.noAvatar || (
           <Avatar
             size={48}
@@ -87,16 +98,23 @@ class CommentBox extends React.Component<Props, State> {
           value={this.state.text}
           style={styles.textInput}
           underlineColorAndroid="transparent"
-          onChangeText={(text) => { this.setState({ text }); this.props.setfun(text) }}
+          onChangeText={(text) => { this.setState({ text }) }}
           onSubmitEditing={(event) => {
             this.setState({ text: '' });
+            console.log(event)
             this.postComment(event);
           }}
           placeholder={t('Start Typing...')}
           returnKeyType="send"
           {...textInputProps}
         />
-      </View>
+        <TouchableWithoutFeedback onPress={() => {
+          this.postComment2(this.state.text);
+          this.setState({ text: '' });
+        }}>
+          <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4, color: '#327FEB', marginRight: 20 }}>Post</Text>
+        </TouchableWithoutFeedback>
+      </ScrollView>
     );
     if (noKeyboardAccessory) {
       return input;
@@ -105,7 +123,7 @@ class CommentBox extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <View style={{ height: this.props.height }} />
-        <KeyboardAccessory verticalOffset={this.props.verticalOffset}>
+        <KeyboardAccessory verticalOffset={-300}>
           {input}
         </KeyboardAccessory>
       </React.Fragment>
