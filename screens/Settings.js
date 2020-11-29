@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Animated, View, Text, Alert, TouchableOpacity, BackHandler, Dimensions, Image, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Animated, View, Text, Alert, Linking, TouchableOpacity, BackHandler, Dimensions, Image, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native'
 import { Switch } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, Textarea } from 'native-base';
 import axios from 'axios';
@@ -71,14 +71,12 @@ const Settings = ({ navigation }) => {
     const sheetRef = React.useRef(null);
 
     const renderContent = () => (
-        <KeyboardAvoidingView>
-            <View
+            <ScrollView
                 style={{
                     backgroundColor: 'white',
                     padding: 16,
-                    height: 300,
+                    height: 400,
                     elevation: 20,
-                    marginBottom: 100
                 }}
             >
                 <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
@@ -94,8 +92,7 @@ const Settings = ({ navigation }) => {
                 }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
                     <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Submit</Text>
                 </Button>
-            </View>
-        </KeyboardAvoidingView>
+            </ScrollView>
     );
 
     useEffect(() => {
@@ -110,7 +107,7 @@ const Settings = ({ navigation }) => {
     })
 
     return (
-        <View>
+        <View style={{height: height}}>
             <Animated.View
                 style={{
                     backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: bottomSheetOpen ? width : 0, zIndex: 10, height: bottomSheetOpen ? height : 0
@@ -126,8 +123,9 @@ const Settings = ({ navigation }) => {
                 />
             </Animated.View>
             <CompHeader screen={'Settings'} goback={() => navigation.navigate('Profile')} icon={'back'} />
-            <ScrollView>
+            <ScrollView >
                 <View style={{ margin: 25 }}>
+                <View >
                     <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
                     <TextInput editable={false} placeholder={status === '3' ? "Kid's Name" : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                     <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
@@ -136,6 +134,7 @@ const Settings = ({ navigation }) => {
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-Bold", marginVertical: 15, marginLeft: 23 }}>Push Notifications</Text>
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
                     </View>*/}
+                </View>
                     <View style={{ flexDirection: 'column', marginTop: '40%' }}>
                         <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => {
                             sheetRef.current.snapTo(0);
@@ -155,7 +154,7 @@ const Settings = ({ navigation }) => {
                         }} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Give Feedback</Text>
                         </Button>
-                        <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={() => navigation.navigate('Home', {})} >
+                        <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={() => Linking.openURL('whatsapp://send?text=Type Your Query&phone=+918861024466')} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17, alignSelf: 'center', marginLeft: 40 }}>Contact Us</Text>
                             <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                         </Button>
@@ -167,7 +166,7 @@ const Settings = ({ navigation }) => {
             </ScrollView>
             <BottomSheet
                 ref={sheetRef}
-                snapPoints={[300, -200]}
+                snapPoints={[400, -200]}
                 initialSnap={1}
                 onOpenStart={() => {
                     setBottomSheetOpen(true);

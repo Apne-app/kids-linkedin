@@ -121,9 +121,9 @@ const FeedScreen = ({ navigation, route }) => {
     const report = async (x) => {
 
         // console.log(children);
-        var x = await AsyncStorage.getItem('children');
+        var y = await AsyncStorage.getItem('children');
         analytics.track('Post Reported', {
-            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+            userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
         })
         var now = new Date();

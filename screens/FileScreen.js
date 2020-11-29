@@ -420,7 +420,7 @@ const FileScreen = (props) => {
                                                     </View>
                                                 </View> : null}
                                             </Body>
-                                            {item['images'][0]['name'].split('_')[0] !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item['images'][0]['name'].split('_')[0]}</Chip> : null}
+                                            {item['images'][item['images'].length-1]['name'].split('_')[0] !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item['images'][0]['name'].split('_')[0]}</Chip> : null}
 
                                         </CardItem>
                                     </Card>
