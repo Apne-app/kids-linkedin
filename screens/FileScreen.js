@@ -127,6 +127,7 @@ const FileScreen = (props) => {
         {
             console.log(err);
         }
+        try{
 
         var x = await AsyncStorage.getItem('children')
         x = JSON.parse(x)["0"]["data"]["gsToken"];
@@ -173,6 +174,11 @@ const FileScreen = (props) => {
         console.log(error, "asdas");
         setSynced(true);
         });
+        }
+        catch(error)
+        {
+            setSynced(true);
+        }
 
     }          
 

@@ -27,7 +27,7 @@ export default class ExampleApp extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = { storagePerm: false, cameraPerm: false, audioPerm: false, zoom: 0.0, gallery: new Array(), imagetaken: false, side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false };
+    this.state = { denied: false, storagePerm: false, cameraPerm: false, audioPerm: false, zoom: 0.0, gallery: new Array(), imagetaken: false, side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false };
   }
   _onPinchStart = () => {
     this._prevPinch = 1
@@ -82,6 +82,7 @@ export default class ExampleApp extends PureComponent {
           // requestCameraPermission();
           // console.log("sd")
           this.setState({ ...this.state, storagePerm: true })
+          
           CameraRoll.getPhotos({
             first: 100,
             assetType: 'Photos',
@@ -105,6 +106,7 @@ export default class ExampleApp extends PureComponent {
         }
         else 
         {
+          this.setState({ ...this.state, denied: true })
           return;
         }
           const grantedCam = await PermissionsAndroid.request(
@@ -122,6 +124,7 @@ export default class ExampleApp extends PureComponent {
             this.setState({ ...this.state, cameraPerm : true })
           }
           else{
+            this.setState({ ...this.state, denied: true })
             return;
           }
             const grantedAudio = await PermissionsAndroid.request(
@@ -137,6 +140,7 @@ export default class ExampleApp extends PureComponent {
               this.setState({ ...this.state, audioPerm : true })
             }
             else{
+              this.setState({ ...this.state, denied: true })
               return;
             }
               
@@ -437,12 +441,12 @@ export default class ExampleApp extends PureComponent {
       return (
         <View style={styles.container, {alignItems: 'center', justifyContent: 'center', height: height}}>
           <View style={{alignSelf: 'center', justifyContent: 'center', alignItems: 'center'}}>
-          <Text>We need your permissions to make this page work!</Text>
+          {this.state.denied ? <View><Text>We need your permissions to make this page work!</Text>
           <Button onPress={async () => {
                 permFunc();
             }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
               <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Give Permissions</Text>
-            </Button>
+            </Button></View> : null}
           </View>
         </View>
       )

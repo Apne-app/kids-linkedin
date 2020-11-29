@@ -54,6 +54,7 @@ const PostScreen = ({ navigation, route }) => {
   const [selection, setSelection] = useState([])
   const [tag, setTag] = useState('');
   const [caption, setCaption] = useState('')
+  const [source, setsource] = useState('')
   const [last, setLast] = useState(0);
   const [showToast, setShowToast] = useState(false)
   const [loading, setLoading] = useState(false);
@@ -101,6 +102,7 @@ const PostScreen = ({ navigation, route }) => {
       secretKey: SECRET_KEY,
       successActionStatus: 201
     }
+
 
     RNS3.put(file, options).then(response => {
       console.log("dassd")
@@ -205,9 +207,31 @@ const PostScreen = ({ navigation, route }) => {
     setLast(arr.length);
   }, [])
 
+  useEffect(() => {
+      const profileImage = async () => {
+          var children = await AsyncStorage.getItem('children')
+          if (children != null) {
+              children = JSON.parse(children)['0']
+              setsource(children['data']['image'])
+          }
+          // console.log(follows)
+      }
+      profileImage()
+  }, [])
   return (
     <View style={{ backgroundColor: 'white', height: height, width: width }}>
       <CompHeader screen={'Post'} goback={goback} />
+      <View style={{ height: height * 0.12, borderBottomWidth: 1, borderColor: 'lightgrey' }}>
+        <Content>
+          <Item style={{elevation: 1}}>
+          <Image
+              source={{ uri: source }}
+              style={{ width: 45, height: 45, borderRadius: 306, marginLeft: 30, }}
+          />
+            <Textarea style={{ fontFamily: 'NunitoSans-Regular', paddingTop: 30, marginLeft: 10 }} value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
+          </Item>
+        </Content>
+      </View>
       <Snackbar
         visible={showToast}
         style={{ marginBottom: height * 0.1 }}
@@ -217,7 +241,7 @@ const PostScreen = ({ navigation, route }) => {
           label: 'Done',
           onPress: () => {
             // Do something
-            navigation.pop();
+            // navigation.pop();
           },
         }}>
         Posted Successfully!
@@ -232,7 +256,7 @@ const PostScreen = ({ navigation, route }) => {
             inactiveDotColor="#90A4AE"
             paginationBoxVerticalPadding={20}
             sliderBoxHeight={height * 0.5}
-            ImageComponentStyle={{ width: width, height: height * 0.5, }}
+            ImageComponentStyle={{ width: width, height: height * 0.47, }}
             circleLoop={true}
           // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
           // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
@@ -244,7 +268,7 @@ const PostScreen = ({ navigation, route }) => {
               inactiveDotColor="#90A4AE"
               paginationBoxVerticalPadding={20}
               sliderBoxHeight={height * 0.5}
-              ImageComponentStyle={{ width: width, height: height * 0.5, }}
+              ImageComponentStyle={{ width: width, height: height * 0.47, }}
               circleLoop={true}
             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
@@ -256,7 +280,7 @@ const PostScreen = ({ navigation, route }) => {
               inactiveDotColor="#90A4AE"
               paginationBoxVerticalPadding={20}
               sliderBoxHeight={height * 0.5}
-              ImageComponentStyle={{ width: width, height: height * 0.5, }}
+              ImageComponentStyle={{ width: width, height: height * 0.47, }}
               circleLoop={true}
             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
@@ -264,7 +288,7 @@ const PostScreen = ({ navigation, route }) => {
       }
       <ScrollView>
         <FlatList
-          style={{ marginTop: 10, height: height * 0.2 }}
+          style={{ marginTop: 10 }}
           data={selection}
           renderItem={({ item, index }) => (
             <TouchableOpacity style={{ flexDirection: 'column', margin: 1, }} onPress={() => {
@@ -305,14 +329,8 @@ const PostScreen = ({ navigation, route }) => {
           horizontal={true}
           keyExtractor={(item, index) => index.toString()}
         />
-      </ScrollView>
-      <View style={{ height: height * 0.3, borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: 'lightgrey' }}>
-        <Content padder>
-          <Form>
-            <Textarea style={{ fontFamily: 'NunitoSans-Regular' }} value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
-          </Form>
-          <TouchableOpacity
-            style={{ height: 50 }}
+        <TouchableOpacity
+            style={{ height: 60 }}
             onPress={() => {
               PostUpload(route.params.tag);
               // var ar = explore;
@@ -330,8 +348,7 @@ const PostScreen = ({ navigation, route }) => {
                         </Text>
             </View>
           </TouchableOpacity>
-        </Content>
-      </View>
+      </ScrollView>
     </View>
   );
 
@@ -511,6 +528,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#fff",
     width: 165,
+    marginTop: 10,
     flex: 1,
     marginHorizontal: 20
   },

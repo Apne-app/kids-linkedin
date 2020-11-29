@@ -261,8 +261,8 @@ const App: () => React$Node = (props) => {
       {
         !croppedi &&
         <View style={{flexDirection:'row', alignSelf:'center', backgroundColor: '#efefef', height:50, marginTop:20}}>
-          <TouchableOpacity style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360, marginRight: 50,}} source={require('../Icons/rotate_left.png')} /></TouchableOpacity>
-          <TouchableOpacity  style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360,  }} source={require('../Icons/rotate_right.png')} /></TouchableOpacity>
+          <TouchableOpacity onPress={() => cropViewRef.current.rotateImage(false)} style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360, marginRight: 50,}} source={require('../Icons/rotate_left.png')} /></TouchableOpacity>
+          <TouchableOpacity onPress={() => cropViewRef.current.rotateImage(true)} style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360,  }} source={require('../Icons/rotate_right.png')} /></TouchableOpacity>
           </View>
       }
       <View style={{ height: height * 0.16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: '#efefef' }}>

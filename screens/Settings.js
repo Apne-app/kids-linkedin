@@ -132,10 +132,10 @@ const Settings = ({ navigation }) => {
                     <TextInput editable={false} placeholder={status === '3' ? "Kid's Name" : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                     <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
                     <TextInput editable={false} placeholder={status === '3' ? "Kid's Year of Birth" : 'Please Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
-                    <View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
+                    {/*<View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-Bold", marginVertical: 15, marginLeft: 23 }}>Push Notifications</Text>
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
-                    </View>
+                    </View>*/}
                     <View style={{ flexDirection: 'column', marginTop: '40%' }}>
                         <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => {
                             sheetRef.current.snapTo(0);
