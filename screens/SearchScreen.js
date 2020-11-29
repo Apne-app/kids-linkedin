@@ -130,8 +130,8 @@ const SearchScreen = ({ route, navigation }) => {
         <Content style={styles.container}>
           <View style={{flexDirection:'row'}}>
             <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
-            <Text style={{ color: "#327FEB", textAlign: 'right', fontSize: 13, marginLeft: 8, fontFamily: 'NunitoSans-Bold', marginTop:8, }}>See All</Text>
-            <Icon type={'Feather'} name={'arrow-right'} style={{fontSize: 13,color: "#327FEB", marginTop:13, marginLeft:2 }} />
+            {/* <Text style={{ color: "#327FEB", textAlign: 'right', fontSize: 13, marginLeft: 8, fontFamily: 'NunitoSans-Bold', marginTop:8, }}>See All</Text> */}
+            {/* <Icon type={'Feather'} name={'arrow-right'} style={{fontSize: 13,color: "#327FEB", marginTop:13, marginLeft:2 }} /> */}
           </View>
           <FlatList
             data={Object.keys(joined)}
@@ -175,7 +175,7 @@ const SearchScreen = ({ route, navigation }) => {
             keyExtractor={(item, index) => index.toString()}
           />
           <View >
-            <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Services</Text>
+            {/* <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Services</Text> */}
           </View>
         </Content>
       </Container>

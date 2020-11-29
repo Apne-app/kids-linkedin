@@ -426,7 +426,7 @@ const ProfileScreen = ({ navigation, route }) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <LikeButton  {...props} />
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
                         labelPlural=" "
@@ -439,7 +439,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
-                            navigation.navigate('SinglePost', { activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA' })
+                            navigation.navigate('SinglePost', { activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
                         }}
                     />
                     <Icon onPress={() => {
@@ -481,7 +481,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 }
                 Content={
                     <View style={{ padding: 14 }}>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
                             {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             <View style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
@@ -499,7 +499,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                 /></View> : <View></View>}
                             </View>
                         </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMjNpZCJ9.NZsYpdUhcRrrK9QYtouTfV3xE80_SJv_mLmUWZAfxvA', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
                             {props.activity.object.includes('http') ?
                                 <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                                 : null}
@@ -535,7 +535,7 @@ const ProfileScreen = ({ navigation, route }) => {
         );
     };
     const there = () => {
-        return (<View style={{ height: height }}>
+        return (<View>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
@@ -605,7 +605,9 @@ const ProfileScreen = ({ navigation, route }) => {
                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: 'white', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
                     </TouchableOpacity>
-                    <FlatFeed feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                    <View style={{marginBottom:400}}>
+                        <FlatFeed feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                    </View>
                 </StreamApp>
             </ScrollView>
             <BottomSheet
@@ -662,14 +664,14 @@ const ProfileScreen = ({ navigation, route }) => {
                 if (pro !== null) {
                     pro = JSON.parse(pro)
                     axios({
-                    method: 'post',
-                    url:'http://104.199.158.211:5000/getchild/'+`?token=${token}`,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify({
-                    "email":pro.email,
-                    })
+                        method: 'post',
+                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${token}`,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            "email": pro.email,
+                        })
                     })
                         .then(async (response) => {
                             setchildren(response.data)
@@ -716,29 +718,29 @@ const ProfileScreen = ({ navigation, route }) => {
                         alert('Could not update Profile Picture, please try again later')
                     }
                     else {
-                
+
                         var child = children['0']
                         var axios = require('axios');
-                        var data = JSON.stringify({"cid":child.id,"change":"image","name":child.data.name,"school":child.data.school,"year":child.data.year,"grade":child.data.grade,"acctype":child.data.type,"gsToken":child.data.gsToken});
+                        var data = JSON.stringify({ "cid": child.id, "change": "image", "name": child.data.name, "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
 
                         var config = {
-                        method: 'post',
-                        url: `http://104.199.158.211:5000/update_child/?token=${token}`,
-                        headers: { 
-                            'Content-Type': 'application/json'
-                        },
-                        data : data
+                            method: 'post',
+                            url: `http://104.199.158.211:5000/update_child/?token=${token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: data
                         };
 
                         axios(config)
-                        .then(async (response) => {
-                            setkey(String(parseInt(key) + 1))
-                        }).catch((error) => {
-                            console.log(error, "asd")
-                            alert('Could not update Profile Picture, please try again later')
-                        })
+                            .then(async (response) => {
+                                setkey(String(parseInt(key) + 1))
+                            }).catch((error) => {
+                                console.log(error, "asd")
+                                alert('Could not update Profile Picture, please try again later')
+                            })
 
-                
+
                     }
                 })
             });
@@ -772,17 +774,17 @@ const ProfileScreen = ({ navigation, route }) => {
                     else {
                         var child = children['0']
                         console.log(child.data.gsToken)
-                        var data = JSON.stringify({"cid":child.id,"change":"image","name":child.data.name,"school":child.data.school,"year":child.data.year,"grade":child.data.grade,"acctype":child.data.type,"gsToken":child.data.gsToken});
+                        var data = JSON.stringify({ "cid": child.id, "change": "image", "name": child.data.name, "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
 
                         var config = {
-                        method: 'post',
-                        url: `http://104.199.158.211:5000/update_child/?token=${token}`,
-                        headers: { 
-                            'Content-Type': 'application/json'
-                        },
-                        data : data
+                            method: 'post',
+                            url: `http://104.199.158.211:5000/update_child/?token=${token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: data
                         };
-                            axios(config)
+                        axios(config)
                             .then(async (response) => {
                                 setkey(String(parseInt(key) + 1))
                             }).catch((error) => {

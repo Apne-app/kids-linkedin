@@ -23,7 +23,9 @@ updateStyle('activity', {
         marginVertical: height * 0.01,
         backgroundColor: "#fff",
         marginHorizontal: 5,
-        fontFamily: 'NunitoSans-Regular'
+        fontFamily: 'NunitoSans-Regular',
+        borderRadius: 0,
+        elevation:0
     },
     text: {
         fontFamily: 'NunitoSans-Regular'
@@ -37,7 +39,8 @@ updateStyle('flatFeed', {
     {
         backgroundColor: "#f9f9f9",
         paddingRight: 20,
-        paddingLeft: 20
+        paddingLeft: 20,
+        borderRadius: 0
     }
 });
 updateStyle('LikeButton', {
@@ -111,31 +114,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <LikeButton  {...data} />
                         <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, }} />
-                        <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4 }}>{comments?comments.length:0}</Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', }}>
-                        <CommentBox
-                            key={'1'}
-                            setfun={settext}
-                            noKeyboardAccessory={true}
-                            textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
-                            activity={route.params.activity.activity}
-                            onSubmit={(text) => {
-                                route.params.activity.onAddReaction('comment', route.params.activity.activity, {
-                                    'text': text,
-                                });
-                                setcomments([{ 'data': { 'text': text }, 'user': { 'data': { 'profileImage': route.params.image } } }, ...comments])
-                            }}
-                            avatarProps={{
-                                source: route.params.activity.activity.actor.data.profileImage,
-                            }}
-                        />
-                        <Text onPress={() => {
-                            route.params.activity.onAddReaction('comment', route.params.activity.activity, {
-                                'text': currentCommment,
-                            });
-                            setcomments([{ 'data': { 'text': currentCommment }, 'user': { 'data': { 'profileImage': route.params.image } } }, ...comments])
-                        }} style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4, color: '#327FEB', marginTop: 24, marginRight: 20 }}>Post</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4 }}>{comments ? comments.length : 0}</Text>
                     </View>
                     <FlatList data={comments} renderItem={({ item }) => {
                         return (
@@ -230,7 +209,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 />
                                 <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                     <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB'}}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
+                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
                                 </View>
                                 <ActionSheet
                                     ref={refActionSheet}
@@ -258,6 +237,21 @@ const SinglePostScreen = ({ navigation, route }) => {
             >
                 <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
                 <CustomActivity props={route.params.activity} />
+                <CommentBox
+                    key={'1'}
+                    // noKeyboardAccessory={true}
+                    textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
+                    activity={route.params.activity.activity}
+                    onSubmit={(text) => {
+                        route.params.activity.onAddReaction('comment', route.params.activity.activity, {
+                            'text': text,
+                        });
+                        setcomments([{ 'data': { 'text': text }, 'user': { 'data': { 'profileImage': route.params.image } } }, ...comments])
+                    }}
+                    avatarProps={{
+                        source: route.params.image,
+                    }}
+                />
             </StreamApp>
         </View>
     );

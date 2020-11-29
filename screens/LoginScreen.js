@@ -122,57 +122,73 @@ const LoginScreen = ({ route, navigation }) => {
       deviceID: getUniqueId()
     })
     setLoading(true);
-    axios({
+    var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+
+    var config = {
       method: 'post',
-      url: `http://104.199.146.206:5000/login/?token=${token}`,
+      url: 'http://104.199.146.206:5000/getToken',
       headers: {
         'Content-Type': 'application/json'
       },
-      data: JSON.stringify({ "email": email.split(' ')[0], "lnkdId": "default" })
-    })
-      .then(async (response) => {
-        const storeProfile = async () => {
-          try {
-            await AsyncStorage.setItem('profile', JSON.stringify(response.data))
-            //0 means no login
-            //1 means email sent
-            //2  means verified+no  child
-            /// 3 means child+verified
-            await AsyncStorage.setItem('status', '1')
+      data: data
+    };
+    axios(config)
+      .then(function (response) {
+        axios({
+          method: 'post',
+          url: `http://104.199.146.206:5000/login/?token=${response.data.token}`,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: JSON.stringify({ "email": email.split(' ')[0], "lnkdId": "default" })
+        })
+          .then(async (response) => {
+            const storeProfile = async () => {
+              try {
+                await AsyncStorage.setItem('profile', JSON.stringify(response.data))
+                //0 means no login
+                //1 means email sent
+                //2  means verified+no  child
+                /// 3 means child+verified
+                await AsyncStorage.setItem('status', '1')
 
-            analytics.identify(response.data.uuid, {
-              email: response.data.email
-            })
+                analytics.identify(response.data.uuid, {
+                  email: response.data.email
+                })
 
 
-          } catch (e) {
-            // saving error
-          }
-        }
-        storeProfile()
-        axios.get('http://35.229.160.51:80/send/' + response.data.uuid + '/' + response.data.email + '/')
-          .then((response) => {
-            console.log(response.data)
-            if (response.data == 'wrong id!') {
-              alert('There was an error, please try again')
+              } catch (e) {
+                // saving error
+              }
             }
-            else {
-              setLoading(false);
-              navigation.navigate('Unverified', { screen: /*route.params.screen*/ 'Home' })
-            }
+            storeProfile()
+            axios.get('http://35.229.160.51:80/send/' + response.data.uuid + '/' + response.data.email + '/')
+              .then((response) => {
+                console.log(response.data)
+                if (response.data == 'wrong id!') {
+                  alert('There was an error, please try again')
+                }
+                else {
+                  setLoading(false);
+                  navigation.navigate('Unverified', { screen: /*route.params.screen*/ 'Home' })
+                }
+              })
+              .catch((response) => {
+                console.log(response)
+                alert('There was an error, please try again')
+              })
+
           })
-          .catch((response) => {
-            console.log(response)
+          .catch((error) => {
+            console.log(error)
+            setLoading(false);
             alert('There was an error, please try again')
           })
-
-      })
-      .catch((error) => {
+      }).catch((error) => {
         console.log(error)
         setLoading(false);
         alert('There was an error, please try again')
       })
-
 
   }
   const checkemail = (text) => {
@@ -198,10 +214,10 @@ const LoginScreen = ({ route, navigation }) => {
     <ScrollView ref={scrollcheck} style={styles.container} keyboardShouldPersistTaps='handled'>
       {loader ? <Spinner color='blue' style={styles.loading} /> : null}
       <CompHeader screen={'Login'} goback={() => {
-        try {
+        if (navigation.canGoBack()) {
           navigation.pop()
         }
-        catch {
+        else {
           navigation.navigate('Home')
         }
       }} />
