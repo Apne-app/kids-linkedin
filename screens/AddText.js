@@ -170,7 +170,6 @@ const App: () => React$Node = (props) => {
 
   return (
     <>
-      <StatusBar barStyle="dark-content" />
       <Header noShadow style={{ backgroundColor: '#fff',  height: height*0.05}}>
               <Left style={{ alignItems: 'center' }}>
               <TouchableOpacity onPress={() =>  props.navigation.pop()}><Icon type="Feather" name="x" style={{ color: "#000", fontSize: 30,}} /></TouchableOpacity>

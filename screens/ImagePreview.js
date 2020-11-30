@@ -188,7 +188,6 @@ const App: () => React$Node = (props) => {
   }
   return (
     <>
-      <StatusBar barStyle="dark-content" />
       <CompHeader screen={'Edit'} icon={'back'} goback={goback} />
       <View style={styles.container}>
         {/*<Button

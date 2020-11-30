@@ -25,6 +25,11 @@ import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import WebView from 'react-native-webview';
+if (!window.location) {
+    // App is running in simulator
+    window.navigator.userAgent = 'ReactNative';
+}
+import io from 'socket.io-client';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
@@ -79,6 +84,15 @@ const FeedScreen = ({ navigation, route }) => {
     const [actionstatus, setActionStatus] = useState(0);
     const [youtube, setyoutube] = useState('https://youtube.com');
 
+    useEffect(() => {
+        const socket = io('http://localhost/kafka', {
+            transports: ['websocket'], jsonp: false
+        });
+        socket.connect();
+        socket.on('connect', () => {
+            console.log('connected to socket server');
+        });
+    })
 
     useFocusEffect(
         React.useCallback(() => {
@@ -235,7 +249,7 @@ const FeedScreen = ({ navigation, route }) => {
                         }
 
                     }}><LikeButton   {...props} /></TouchableWithoutFeedback>
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image']:'', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <Icon onPress={() => props.navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
                         labelPlural=" "
@@ -248,7 +262,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
-                            navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image']:'', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
+                            navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
                         }}
                     />
                     <Icon onPress={() => {
@@ -285,12 +299,12 @@ const FeedScreen = ({ navigation, route }) => {
                             />
                             <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
                         </View>
-                       {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
+                        {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
                     </View>
                 }
                 Content={
                     <View style={{ padding: 14 }}>
-                        <TouchableWithoutFeedback {...console.log(status)} onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image']:'', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
                             {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             <View style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
@@ -308,7 +322,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 /></View> : <View></View>}
                             </View>
                         </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image']:'', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
                             {props.activity.object.includes('http') ?
                                 <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                                 : null}
@@ -328,7 +342,7 @@ const FeedScreen = ({ navigation, route }) => {
                             // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                             /> : null}
                         {props.activity.youtube ?
-                            <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image']:'', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width - 80} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
+                            <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width - 80} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
                             : null}
                         {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9,*/ marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
                     </View>
@@ -337,7 +351,7 @@ const FeedScreen = ({ navigation, route }) => {
             />
         );
     };
-    
+
     var width = Dimensions.get('screen').width;
     const fontConfig = {
         default: {
@@ -410,14 +424,14 @@ const FeedScreen = ({ navigation, route }) => {
                         .then(function (response) {
                             // console.log(JSON.stringify(response.data.token));
                             axios({
-                            method: 'post',
-                            url:'http://104.199.158.211:5000/getchild/'+`?token=${response.data.token}`,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            data: JSON.stringify({
-                            "email":pro.email,
-                            })
+                                method: 'post',
+                                url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                data: JSON.stringify({
+                                    "email": pro.email,
+                                })
                             })
                                 .then(async (response) => {
                                     setchildren(response.data)
@@ -555,9 +569,7 @@ const FeedScreen = ({ navigation, route }) => {
             </SafeAreaProvider>
         )
     }
-    useEffect(() => {
-        StatusBar.setBarStyle('dark-content')
-    })
+
 
 
     return (

@@ -89,6 +89,7 @@
     "react-native-youtube": "^2.0.1",
     "react-native-youtube-iframe": "^1.4.0",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
+    "socket.io-client": "^3.0.3",
     "switch-button-react-native": "^1.0.3"
   },
   "devDependencies": {

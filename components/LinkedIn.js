@@ -19,129 +19,131 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 })
- 
-const LinkedIn = ({navigation, authtoken, loaderHandler}) => {
 
-    let a, b, c;
-    let i = 0;
-    let tk = "";
-    // const [token, setToken] = React.useState('');
+const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
 
-    const [linkedinInfo, setLinkedInfo] = React.useState({
-      fname:'',
-      lname: '',
-      email: '',
-    })
-    
-    async function getInfo(token) {
-      
-      loaderHandler();
-      tk = token;
-      await axios.get("https://api.linkedin.com/v2/me/?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))", { headers: { 'Authorization': "Bearer " + token } })
+  let a, b, c;
+  let i = 0;
+  let tk = "";
+  // const [token, setToken] = React.useState('');
+
+  const [linkedinInfo, setLinkedInfo] = React.useState({
+    fname: '',
+    lname: '',
+    email: '',
+  })
+
+  async function getInfo(token) {
+
+    loaderHandler();
+    tk = token;
+    await axios.get("https://api.linkedin.com/v2/me/?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))", { headers: { 'Authorization': "Bearer " + token } })
       .then(response => {
         // console.log(response.data);
-          a = response.data.firstName.localized.en_US;
-          b = response.data.lastName.localized.en_US;
+        a = response.data.firstName.localized.en_US;
+        b = response.data.lastName.localized.en_US;
       })
       .then(async () => {
         // console.log(tk);
         await axios.get(
           "https://api.linkedin.com/v2/clientAwareMemberHandles?q=members&projection=(elements*(primary,type,handle~))", { headers: { 'Authorization': "Bearer " + tk } })
-        .then(response => {
-          // setInfo(response.data);
-          // setLoading(false);
-          // console.log(response.data);
-            c =  response.data.elements[0]['handle~'].emailAddress;
-            var data = JSON.stringify({"email":c,"pfname":a,"plname":b});
+          .then(response => {
+            // setInfo(response.data);
+            // setLoading(false);
+            // console.log(response.data);
+            c = response.data.elements[0]['handle~'].emailAddress;
+            var data = JSON.stringify({ "email": c, "pfname": a, "plname": b });
             // console.log(a, b, c)
             axios({
               method: 'post',
-              url:'http://104.199.146.206:5000/authLinkedin/'+ `?token=${authtoken}`,
+              url: 'http://104.199.146.206:5000/authLinkedin/' + `?token=${authtoken}`,
               headers: {
                 'Content-Type': 'application/json'
               },
               data: data
-              })
+            })
               .then(async (response) => {
                 // console.log(response.data, "aaaa")
-                
-                  try {
+
+                try {
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data));
                   axios({
                     method: 'post',
-                    url:'http://104.199.158.211:5000/getchild/'+`?token=${authtoken}`,
+                    url: 'http://104.199.158.211:5000/getchild/' + `?token=${authtoken}`,
                     headers: {
-                        'Content-Type': 'application/json'
+                      'Content-Type': 'application/json'
                     },
                     data: data
-                    })
-                  .then(async (response) => {
+                  })
+                    .then(async (response) => {
                       await AsyncStorage.setItem('children', JSON.stringify(response.data))
                       if (Object.keys(response.data).length) {
-                          await AsyncStorage.setItem('status', '3')
-                          navigation.navigate('Home')
+                        await AsyncStorage.setItem('status', '3')
+                        navigation.reset({
+                          index: 0,
+                          routes: [{ name: 'Home' }],
+                        });
                       }
                       else {
-                          await AsyncStorage.setItem('status', '2')
-                          navigation.navigate('Child')
+                        await AsyncStorage.setItem('status', '2')
+                        navigation.navigate('Child')
                       }
                       // console.log(response.data, "abcd")
-                  })
+                    })
                   // navigation.navigate('Child');
                 } catch (e) {
                   // saving error
                 }
-            })
-            .catch(err => console.log(err, "aa"))
-        })
-        .catch(error => console.log(error, "bb"));
+              })
+              .catch(err => console.log(err, "aa"))
+          })
+          .catch(error => console.log(error, "bb"));
       })
       .then(() => console.log(linkedinInfo))
       .catch(err => {
         console.log(err, "cc")
-        if(!i)
-        {
+        if (!i) {
           i++;
           // setInterval(() => {
           //   getInfo();
           // }, 2000);
-        }  
+        }
       })
 
-      // console.log(linkedinInfo);
+    // console.log(linkedinInfo);
 
-    }
+  }
 
   const linkedRef = React.createRef();
-    return (
-        <LinkedInModal
-            ref={linkedRef}
-            clientID="86eyqhqu84z2db"
-            clientSecret="DaHDCXhoYqJwp6sN"
-            redirectUri="https://genio.app/"
-            onSuccess={async (data) => {
-                // setToken(data.access_token);
-                // var x = await AsyncStorage.getItem('children');
-                analytics.track('Login Via Linkedin', {
-                    userID: null,   
-                    deviceID: getUniqueId() 
-                })
-                getInfo(data.access_token);
-            }}
-            // permissions={['r_liteprofile']}
-            renderButton={() => 
-            (
-                <Button block  iconLeft style={{ marginTop: 82, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 28.5, height: 50, marginHorizontal:20, borderBottomColor:'#2477ed',borderBottomWidth:2 }} onPress={() => linkedRef.current && linkedRef.current.open()} >
-                  <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18,}}>Sign In with</Text>
-                  <Image source={require('../images/Ln-Logo.png')} style={{width:100,  height:100, resizeMode: 'contain', marginLeft:10}}  />
-                </Button>
-            )
-            }
-            onError ={(err) => console.log(err)}
-        >
-        </LinkedInModal>
-    );
-  
+  return (
+    <LinkedInModal
+      ref={linkedRef}
+      clientID="86eyqhqu84z2db"
+      clientSecret="DaHDCXhoYqJwp6sN"
+      redirectUri="https://genio.app/"
+      onSuccess={async (data) => {
+        // setToken(data.access_token);
+        // var x = await AsyncStorage.getItem('children');
+        analytics.track('Login Via Linkedin', {
+          userID: null,
+          deviceID: getUniqueId()
+        })
+        getInfo(data.access_token);
+      }}
+      // permissions={['r_liteprofile']}
+      renderButton={() =>
+      (
+        <Button block iconLeft style={{ marginTop: 82, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 28.5, height: 50, marginHorizontal: 20, borderBottomColor: '#2477ed', borderBottomWidth: 2 }} onPress={() => linkedRef.current && linkedRef.current.open()} >
+          <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>Sign In with</Text>
+          <Image source={require('../images/Ln-Logo.png')} style={{ width: 100, height: 100, resizeMode: 'contain', marginLeft: 10 }} />
+        </Button>
+      )
+      }
+      onError={(err) => console.log(err)}
+    >
+    </LinkedInModal>
+  );
+
 }
 export default LinkedIn;
 

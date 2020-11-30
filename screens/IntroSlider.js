@@ -126,7 +126,6 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <StatusBar translucent backgroundColor="transparent" />
         <AppIntroSlider
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}

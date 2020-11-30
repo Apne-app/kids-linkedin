@@ -62,9 +62,9 @@ const App = (props) => {
   React.useEffect(() => {
     console.log("aaa", props);
   }, [])
-  useEffect(() => {
-    StatusBar.setBarStyle('dark-content')
-  })
+  // useEffect(() => {
+  //   StatusBar.setBarStyle('dark-content')
+  // })
   const onReceived = (notification) => {
     console.log("Notification received: ", notification);
   }
@@ -268,17 +268,13 @@ const App = (props) => {
       containerRef.current?.navigate('Login', { screen: 'Home' })
     }
   };
-
+  StatusBar.setBackgroundColor('#1A71EB')
   useEffect(() => {
     const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
     return () => unsubscribe();
   }, []);
   return (
     <NavigationContainer ref={containerRef}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="#327FEB"
-      />
       <Stack.Navigator initialRouteName={'IntroSlider'}>
         <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
         <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />

@@ -24,8 +24,6 @@ updateStyle('activity', {
         backgroundColor: "#fff",
         marginHorizontal: 5,
         fontFamily: 'NunitoSans-Regular',
-        borderRadius: 0,
-        elevation:0
     },
     text: {
         fontFamily: 'NunitoSans-Regular'

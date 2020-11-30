@@ -11,20 +11,21 @@ const CompHeader = (props) => {
         close: require('../Icons/close.png'),
         back: require('../Icons/back.png'),
     };
-    return (<Appbar.Header style={{ backgroundColor: 'white' }} statusBarHeight={Constants.statusBarHeight + 10}>
+    // statusBarHeight={Constants.statusBarHeight + 10}
+    return (<Appbar.Header style={{ backgroundColor: '#327FEB', marginBottom:10, elevation:10 }} statusBarHeight={10}>
         <View style={{ flexDirection: 'row', marginTop: props.screen == 'Genio' ? 0 : 6, flex: 1, marginBottom: 10, marginLeft: 10 }}>
             {props.left && <TouchableOpacity onPress={() => props.goback()}>
                 <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginTop: 8 }} source={(images.back)} />
             </TouchableOpacity>}
-            <Text style={{ fontFamily: props.screen == 'Genio' ? 'FingerPaint-Regular' : 'NunitoSans-Bold', fontSize: props.screen == 'Genio' ? 40 : 30, marginLeft: 10, color: props.screen == 'Genio' ? '#327FEB' : 'black', width: 200 }}>{props.screen}</Text>
+            <Text style={{ fontFamily: props.screen == 'Genio' ? 'FingerPaint-Regular' : 'NunitoSans-Bold', fontSize: props.screen == 'Genio' ? 40 : 30, marginLeft: 10, color: props.screen == 'Genio' ? 'white' : 'white', width: 200 }}>{props.screen}</Text>
         </View>
         <Body>
         </Body>
          <Right>
-            <TouchableOpacity style={{display:props.icon==='bell'?'none':'flex', borderRadius: 20, borderWidth: 2, borderColor: "#fff", alignSelf: 'center', marginTop: props.screen == 'Genio' ? -6 : 0, marginRight: -45 }}
+            <TouchableOpacity style={{display:props.icon==='bell'?'none':'flex', borderRadius: 20, borderWidth: 0, borderColor: "#fff", alignSelf: 'center', marginTop: props.screen == 'Genio' ? -6 : 0, marginRight: -45 }}
                 onPress={() => props.fun()}
             >
-                <Icon name={props.icon} type="Feather" />
+                <Icon name={props.icon} style={{color:'white'}} type="Feather" />
             </TouchableOpacity>
         </Right>
     </Appbar.Header>

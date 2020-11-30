@@ -69,30 +69,47 @@ const Settings = ({ navigation }) => {
     }
 
     const sheetRef = React.useRef(null);
-
+    const [feedback, setfeedback] = useState('')
     const renderContent = () => (
-            <ScrollView
-                style={{
-                    backgroundColor: 'white',
-                    padding: 16,
-                    height: 400,
-                    elevation: 20,
-                }}
-            >
-                <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
-                    <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, width: 100, height: 5, marginTop: -4 }}></View>
-                </TouchableOpacity>
-                <Text style={{ margin: 15, marginTop: 20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Give Feedback</Text>
+        <ScrollView
+            style={{
+                backgroundColor: 'white',
+                padding: 16,
+                height: 400,
+                elevation: 20,
+            }}
+        >
+            <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
+                <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, width: 100, height: 5, marginTop: -4 }}></View>
+            </TouchableOpacity>
+            <Text style={{ margin: 15, marginTop: 20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Give Feedback</Text>
 
-                <Form>
-                    <Textarea style={{ fontFamily: 'NunitoSans-Regular', borderRadius: 10 }} rowSpan={4} bordered placeholder="Enter your message here" />
-                </Form>
-                <Button onPress={async () => {
+            <Form>
+                <Textarea onChangeText={(text) => { setfeedback(text) }} style={{ fontFamily: 'NunitoSans-Regular', borderRadius: 10 }} rowSpan={4} bordered placeholder="Enter your message here" />
+            </Form>
+            <Button onPress={async () => {
+                axios({
+                    method: 'post',
+                    url: 'https://waitlist-2z27nzutoq-el.a.run.app/feedback/',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        'email': 'anonymous', 'feedback': feedback
+                    })
+                })
+                    .then(async (response) => {
+                        alert('done')
 
-                }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
-                    <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Submit</Text>
-                </Button>
-            </ScrollView>
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                        alert('not done')
+                    })
+            }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
+                <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Submit</Text>
+            </Button>
+        </ScrollView>
     );
 
     useEffect(() => {
@@ -107,7 +124,7 @@ const Settings = ({ navigation }) => {
     })
 
     return (
-        <View style={{height: height}}>
+        <View style={{ height: height }}>
             <Animated.View
                 style={{
                     backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: bottomSheetOpen ? width : 0, zIndex: 10, height: bottomSheetOpen ? height : 0
@@ -125,16 +142,16 @@ const Settings = ({ navigation }) => {
             <CompHeader screen={'Settings'} goback={() => navigation.navigate('Profile')} icon={'back'} />
             <ScrollView >
                 <View style={{ margin: 25 }}>
-                <View >
-                    <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
-                    <TextInput editable={false} placeholder={status === '3' ? "Kid's Name" : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
-                    <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
-                    <TextInput editable={false} placeholder={status === '3' ? "Kid's Year of Birth" : 'Please Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
-                    {/*<View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
+                    <View >
+                        <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
+                        <TextInput editable={false} placeholder={status === '3' ? "Kid's Name" : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
+                        <TextInput editable={false} placeholder={status === '3' ? "Kid's Year of Birth" : 'Please Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        {/*<View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-Bold", marginVertical: 15, marginLeft: 23 }}>Push Notifications</Text>
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
                     </View>*/}
-                </View>
+                    </View>
                     <View style={{ flexDirection: 'column', marginTop: '40%' }}>
                         <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => {
                             sheetRef.current.snapTo(0);
