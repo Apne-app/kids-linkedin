@@ -7,9 +7,23 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import CameraRoll from "@react-native-community/cameraroll";
 import Gallery from '../components/Gallery'
 import CompHeader from '../Modules/CompHeader';
+import { useFocusEffect } from "@react-navigation/native";
 var height = Dimensions.get('screen').height;
-const GalleryScreen = ({navigation, route}) => {
-    console.log(route.params)
+const GalleryScreen = ({ navigation, route }) => {
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.pop()
+                return true;
+            };
+
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+        }, []));
+
     return (
         <View
             // scrollEnabled={false}
@@ -18,7 +32,7 @@ const GalleryScreen = ({navigation, route}) => {
                 height: height,
             }}
         >
-            <CompHeader screen={'Gallery'} />
+            <CompHeader goback={() => navigation.pop()} screen={'Gallery'} />
             <Gallery images={route.params.images} navigation={navigation} />
         </View>
     )

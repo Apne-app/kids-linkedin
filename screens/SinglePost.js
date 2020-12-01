@@ -15,6 +15,8 @@ import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import CompHeader from '../Modules/CompHeader'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
+import AsyncStorage from '@react-native-community/async-storage'
+import CompButton from '../Modules/CompButton'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
@@ -75,12 +77,20 @@ const SinglePostScreen = ({ navigation, route }) => {
     const scrollref = React.useRef();
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
+    const [status, setstatus] = useState('3')
     const onKeyboardShow = (event) => {
         scrollref.current.scrollToEnd({ animated: true })
     };
     const onKeyboardHide = () => {
 
     };
+    React.useEffect(() => {
+        const check = async () => {
+            var st = await AsyncStorage.getItem('status')
+            setstatus(st)
+        }
+        check()
+    }, [])
     React.useEffect(() => {
         keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
         keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
@@ -174,7 +184,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     disableFullscreen={true}
                     disableBack={true}
                     disableVolume={true}
-                    style={{ borderRadius: 10, width: width - 80, height: 340, }}
+                    style={{width: width, height: 340, marginLeft:-5}}
                     source={{ uri: props.activity.video }}
                     navigator={navigation}
                 // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
@@ -190,7 +200,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     />
                 </View>
                 : null}
-            {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+            {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{ marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
         </View>))
         var images = []
         props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
@@ -235,7 +245,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             >
                 <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
                 <CustomActivity props={route.params.activity} />
-                <CommentBox
+                {status === '3' ? <CommentBox
                     key={'1'}
                     // noKeyboardAccessory={true}
                     textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
@@ -249,7 +259,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                     avatarProps={{
                         source: route.params.image,
                     }}
-                />
+                /> :
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to add comments for this post'} back={'Home'} /></TouchableWithoutFeedback>}
             </StreamApp>
         </View>
     );

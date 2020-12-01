@@ -36,11 +36,10 @@ updateStyle('activity', {
     container:
     {
         marginVertical: height * 0.01,
-        borderRadius: width * 0.05,
         backgroundColor: "#fff",
-        marginHorizontal: 5,
-        elevation: 0.2,
-        fontFamily: 'NunitoSans-Regular'
+        marginHorizontal: 0,
+        fontFamily: 'NunitoSans-Regular',
+        borderRadius: 0
     },
     text: {
         fontFamily: 'NunitoSans-Regular'
@@ -53,19 +52,17 @@ updateStyle('flatFeed', {
     container:
     {
         backgroundColor: "#f9f9f9",
-        paddingRight: 20,
-        paddingLeft: 20
+        paddingRight: 0,
+        paddingLeft: 0,
+        borderRadius: 0
     }
 });
-
-
-updateStyle('uploadImage', {
-    image:
-    {
-        width: 10,
-        height: 10
-    }
+updateStyle('LikeButton', {
+    text: {
+        fontFamily: 'NunitoSans-Bold'
+    },
 });
+
 const FeedScreen = ({ navigation, route }) => {
     const [actid, setactid] = useState('f137b98f-0d0d-11eb-8255-128a130028af');
     const [type, settype] = useState('like');
@@ -248,7 +245,9 @@ const FeedScreen = ({ navigation, route }) => {
                             })
                         }
 
-                    }}><LikeButton   {...props} /></TouchableWithoutFeedback>
+                    }}>
+                        {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={()=>navigation.navigate('Login')}><LikeButton   {...props} /></TouchableWithoutFeedback>}
+                        </TouchableWithoutFeedback>
                     <Icon onPress={() => props.navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
@@ -292,7 +291,7 @@ const FeedScreen = ({ navigation, route }) => {
                             <ActionSheet
                                 useNativeDriver={true}
                                 ref={refActionSheet}
-                                styles={{ borderRadius: 10, margin: 10 }}
+                                styles={{ borderRadius: 0, margin: 10 }}
                                 options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                 cancelButtonIndex={2}
                                 onPress={(index) => { index == 1 ? report(props.activity) : null; }}
@@ -303,13 +302,13 @@ const FeedScreen = ({ navigation, route }) => {
                     </View>
                 }
                 Content={
-                    <View style={{ padding: 14 }}>
+                    <View>
                         <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
-                            {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                            {props.activity.object === 'default123' ? <View style={{ margin:5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft:14 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             <View style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                     source={{ uri: props.activity.image.split(", ")[0] }}
-                                    style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
+                                    style={{ width: width, height: 340, marginTop: 20, borderRadius: 0 }}
                                 /> : <View style={{ height: 340 }}><SliderBox
                                     images={props.activity.image.split(", ").filter(n => n)}
                                     dotColor="#FFEE58"
@@ -317,14 +316,14 @@ const FeedScreen = ({ navigation, route }) => {
                                     paginationBoxVerticalPadding={20}
                                     sliderBoxHeight={340}
                                     disableOnPress={true}
-                                    ImageComponentStyle={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor: 'transparent' }}
+                                    ImageComponentStyle={{ borderRadius: 0, width: width, height: 340, backgroundColor: 'transparent' }}
                                     circleLoop={true}
                                 /></View> : <View></View>}
                             </View>
                         </TouchableWithoutFeedback>
                         <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
                             {props.activity.object.includes('http') ?
-                                <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                                <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                                 : null}
                         </TouchableWithoutFeedback>
                         {props.activity.video ?
@@ -336,15 +335,15 @@ const FeedScreen = ({ navigation, route }) => {
                                 disableFullscreen={true}
                                 disableBack={true}
                                 disableVolume={true}
-                                style={{ borderRadius: 10, width: width - 80, height: 340, }}
+                                style={{ borderRadius: 0, width: width, height: 340, }}
                                 source={{ uri: props.activity.video }}
                                 navigator={navigation}
                             // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                             /> : null}
                         {props.activity.youtube ?
-                            <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width - 80} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
+                            <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
                             : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9,*/ marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === ''|| !Object.keys(props.activity).includes('tag') ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft:17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
                     </View>
                 }
                 Footer={footer(props.activity.id, props)}
@@ -352,7 +351,6 @@ const FeedScreen = ({ navigation, route }) => {
         );
     };
 
-    var width = Dimensions.get('screen').width;
     const fontConfig = {
         default: {
             regular: {
