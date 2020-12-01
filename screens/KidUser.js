@@ -20,10 +20,10 @@ const KidUser = ({ navigation, route }) => {
             <Image source={require('../assets/locked.gif')} style={{ width: 200, height: 200, alignSelf: 'center', marginTop: '50%' }} />
             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20, textAlign: 'center' }}>Only parents can create an account on Genio.</Text>
             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20, textAlign: 'center' }}>Ask your parent to create an account</Text>
-            <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60 }} onPress={() => navigation.navigate('Home')} >
+            <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60 }} onPress={() => navigation.pop()} >
                 <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Go Back</Text>
             </Button>
-            <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60 }} onPress={() => navigation.navigate('Home')} >
+            <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60 }} onPress={async() => {await AsyncStorage.setItem('status', '1'),navigation.navigate('Home')}} >
                 <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Continue as guest</Text>
             </Button>
         </View>

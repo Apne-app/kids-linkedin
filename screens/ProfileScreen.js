@@ -32,9 +32,10 @@ updateStyle('activity', {
     container:
     {
         marginVertical: height * 0.01,
-        borderRadius: width * 0.05,
         backgroundColor: "#fff",
-        fontFamily: 'NunitoSans-Regular'
+        marginHorizontal: 0,
+        fontFamily: 'NunitoSans-Regular',
+        borderRadius: 0
     },
     text: {
         fontFamily: 'NunitoSans-Regular'
@@ -47,20 +48,16 @@ updateStyle('flatFeed', {
     container:
     {
         backgroundColor: "#f9f9f9",
-        paddingRight: width * 0.04,
-        paddingLeft: width * 0.04
+        paddingRight: 0,
+        paddingLeft: 0,
+        borderRadius: 0
     }
 });
-
-
-updateStyle('uploadImage', {
-    image:
-    {
-        width: 10,
-        height: 10
-    }
+updateStyle('LikeButton', {
+    text: {
+        fontFamily: 'NunitoSans-Bold'
+    },
 });
-
 const CustomActivity = (props) => {
 
     const [commentVisible, setCmv] = React.useState('none');
@@ -423,10 +420,32 @@ const ProfileScreen = ({ navigation, route }) => {
             refActionSheet.current.show()
         }
         const footer = (id, data) => {
-            return (<View>
+            return (<View style={{ marginTop: 10 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <LikeButton  {...props} />
-                    <Icon onPress={() => props.navigation.navigate('SinglePost', { activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <TouchableWithoutFeedback onPress={async () => {
+                        var x = await AsyncStorage.getItem('children');
+                        var done = 0
+                        data.activity.own_reactions.like ? data.activity.own_reactions.like.map((item) => {
+                            var by = String(JSON.parse(x)["0"]["id"]) + 'id'
+                            if ((item.user_id) == by) {
+                                done = 1
+                            }
+                        }) : null
+                        if (done == 0) {
+                            console.log('doing')
+                            analytics.track('Like', {
+                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                deviceID: getUniqueId(),
+                                by: JSON.parse(x)["0"]["id"],
+                                to: parseInt(props.activity.actor.id.replace('id', '')),
+                                actid: id
+                            })
+                        }
+
+                    }}>
+                        {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
+                    </TouchableWithoutFeedback>
+                    <Icon onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
                         labelPlural=" "
@@ -439,7 +458,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             });
-                            navigation.navigate('SinglePost', { activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
+                            navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
                         }}
                     />
                     <Icon onPress={() => {
@@ -464,29 +483,29 @@ const ProfileScreen = ({ navigation, route }) => {
                             />
                             <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'left', }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
                             </View>
                             <ActionSheet
                                 useNativeDriver={true}
                                 ref={refActionSheet}
-                                styles={{ borderRadius: 10, margin: 10 }}
+                                styles={{ borderRadius: 0, margin: 10 }}
                                 options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                 cancelButtonIndex={2}
                                 onPress={(index) => { index == 1 ? report(props.activity) : null; }}
                             />
                             <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
                         </View>
-                        <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>
+                        {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
                     </View>
                 }
                 Content={
-                    <View style={{ padding: 14 }}>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
-                            {props.activity.object === 'default123' ? <View style={{ marginTop: -20 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                    <View>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
+                            {props.activity.object === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             <View style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                     source={{ uri: props.activity.image.split(", ")[0] }}
-                                    style={{ width: width - 80, height: 340, marginTop: 20, borderRadius: 10 }}
+                                    style={{ width: width, height: 340, marginTop: 20, borderRadius: 0 }}
                                 /> : <View style={{ height: 340 }}><SliderBox
                                     images={props.activity.image.split(", ").filter(n => n)}
                                     dotColor="#FFEE58"
@@ -494,14 +513,14 @@ const ProfileScreen = ({ navigation, route }) => {
                                     paginationBoxVerticalPadding={20}
                                     sliderBoxHeight={340}
                                     disableOnPress={true}
-                                    ImageComponentStyle={{ borderRadius: 10, width: width - 80, height: 340, backgroundColor: 'transparent' }}
+                                    ImageComponentStyle={{ borderRadius: 0, width: width, height: 340, backgroundColor: 'transparent' }}
                                     circleLoop={true}
                                 /></View> : <View></View>}
                             </View>
                         </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
                             {props.activity.object.includes('http') ?
-                                <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                                <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                                 : null}
                         </TouchableWithoutFeedback>
                         {props.activity.video ?
@@ -513,21 +532,15 @@ const ProfileScreen = ({ navigation, route }) => {
                                 disableFullscreen={true}
                                 disableBack={true}
                                 disableVolume={true}
-                                style={{ borderRadius: 10, width: width - 80, height: 340, }}
+                                style={{ borderRadius: 0, width: width, height: 340, }}
                                 source={{ uri: props.activity.video }}
                                 navigator={navigation}
                             // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                             /> : null}
                         {props.activity.youtube ?
-                            <View style={{ borderRadius: 10, width: width - 100, height: 210, alignSelf: 'center', margin: 10, padding: 10, backgroundColor: 'black' }} >
-                                <YoutubePlayer
-                                    videoId={props.activity.youtube} // The YouTube video ID
-                                    height={200}
-                                    width={width - 120}
-                                />
-                            </View>
+                            <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
                             : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' ? null : <View style={{ backgroundColor: '#327FEB', borderRadius: 10, width: 90, padding: 9, marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', fontSize: 10, alignSelf: 'center' }}>{props.activity.tag}</Text></View>}
+                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
                     </View>
                 }
                 Footer={footer(props.activity.id, props)}
@@ -557,16 +570,16 @@ const ProfileScreen = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB', textAlign: 'center', borderRadius: 28.5, borderColor: '#327FEB', borderWidth: 1, paddingHorizontal: 10 }}>{'Kid'}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{'Kid'}</Text>
                             </View>
                         </View>
                     </View>
                     <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
                         <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                            <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                            {/* <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>2</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                            </View>
+                            </View> */}
                             <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
@@ -605,7 +618,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: 'white', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
                     </TouchableOpacity>
-                    <View style={{marginBottom:400}}>
+                    <View style={{ marginBottom: 400 }}>
                         <FlatFeed feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                     </View>
                 </StreamApp>
@@ -633,6 +646,14 @@ const ProfileScreen = ({ navigation, route }) => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
+                    <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
+                        <Image source={require('../assets/profile.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+                    </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
+                    <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Build your kid's very own portfolio using Genio and give a boost to their profile</Text>
+                </TouchableWithoutFeedback>
             </View>
         )
     }

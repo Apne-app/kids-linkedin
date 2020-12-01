@@ -12,7 +12,7 @@ import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { connect } from 'getstream';
 import { useFocusEffect } from "@react-navigation/native";
 import CompButton from '../Modules/CompButton';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -150,7 +150,7 @@ const Searching = ({ route, navigation }) => {
                     appId={'96078'}
                     token={item['data']['gsToken']}
                 >
-                    <TouchableOpacity style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
+                    <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
                         navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
                         var x = await AsyncStorage.getItem('children');
                         analytics.track('Searched Kid Opened', {
@@ -163,13 +163,13 @@ const Searching = ({ route, navigation }) => {
                             style={{ width: 60, height: 60, borderRadius: 306, }}
                         />
                         <View style={{ marginLeft: 20, flexDirection: 'column' }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  3 Posts </Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop:9 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
+                            {/* <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  </Text> */}
                         </View>
                         {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
                             <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, marginTop: 2 }}>{follows && follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
                         </TouchableOpacity>*/}
-                    </TouchableOpacity>
+                    </TouchableWithoutFeedback>
                 </StreamApp>
             </View>
 
@@ -207,7 +207,7 @@ const Searching = ({ route, navigation }) => {
                 </Item>
             </Header>
             {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
-            {searchQuery == '' ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Search for children to follow' : null}</Text> : (<View><FlatList
+            {searchQuery != '' && !(result).length? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<View><FlatList
                 data={result}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.gsToken}

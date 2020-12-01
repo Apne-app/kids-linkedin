@@ -12,6 +12,7 @@ import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import CompButton from '../Modules/CompButton'
 import { useFocusEffect } from "@react-navigation/native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -128,7 +129,7 @@ const SearchScreen = ({ route, navigation }) => {
     return (
       <Container>
         <Content style={styles.container}>
-          <View style={{flexDirection:'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
             {/* <Text style={{ color: "#327FEB", textAlign: 'right', fontSize: 13, marginLeft: 8, fontFamily: 'NunitoSans-Bold', marginTop:8, }}>See All</Text> */}
             {/* <Icon type={'Feather'} name={'arrow-right'} style={{fontSize: 13,color: "#327FEB", marginTop:13, marginLeft:2 }} /> */}
@@ -186,6 +187,14 @@ const SearchScreen = ({ route, navigation }) => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
         <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Search' })}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
+          <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
+            <Image source={require('../assets/search.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+          </View>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
+          <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Explore what other kids are learning and working on</Text>
+        </TouchableWithoutFeedback>
       </View>
     )
   }
@@ -198,7 +207,7 @@ const SearchScreen = ({ route, navigation }) => {
   }
   return (
     <>
-      <ScreenHeader screen={'Search'} icon={'search'} fun={() => navigation.navigate('Searching')} />
+      <ScreenHeader screen={'Search'} icon={status === '3' ? 'search' : ''} fun={() => navigation.navigate('Searching')} />
       {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
     </>
   );

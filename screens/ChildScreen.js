@@ -145,7 +145,7 @@ const ChildScreen = ({ route, navigation }) => {
                         // console.log(JSON.stringify(response.data.token));
                         axios({
                             method: 'post',
-                            url:'http://104.199.158.211:5000/child/' + `?token=${response.data.token}`,
+                            url: 'http://104.199.158.211:5000/child/' + `?token=${response.data.token}`,
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -157,7 +157,7 @@ const ChildScreen = ({ route, navigation }) => {
                                 "email": pro.email,
                                 "acctype": "Kid"
                             })
-                            })
+                        })
                             .then(async (response) => {
                                 if (response.data.split(', ').length == 2) {
                                     await AsyncStorage.setItem('status', '3')
@@ -217,46 +217,67 @@ const ChildScreen = ({ route, navigation }) => {
         }
     }
     return (
-        <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center'
-        }} ref={scrollcheck} style={styles.container}>
-            <KeyboardAvoidingView>
-                <View>
-                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20 }}>Help us out with a few details </Text>
-                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
+        <View style={styles.container}>
+            <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+            }} ref={scrollcheck}>
+                <KeyboardAvoidingView>
                     <View>
-                        {inputtype()}
-                        <Text style={{ color: "red", fontFamily: 'NunitoSans-Bold', fontSize: 12, marginTop: 4, display: active ? 'flex' : 'none', marginLeft: 20 }}>{text}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, paddingHorizontal: 20 }}>Help us out with a few details </Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 20, marginBottom: 20, padding: 20 }}>{screen[current]}</Text>
+                        <View>
+                            {inputtype()}
+                            <Text style={{ color: "red", fontFamily: 'NunitoSans-Bold', fontSize: 12, marginTop: 4, display: active ? 'flex' : 'none', marginLeft: 20 }}>{text}</Text>
+                        </View>
+                        <View style={{ alignSelf: 'center', display: current ? 'flex' : 'none', flexDirection: 'row', marginTop:20 }}>
+                            <SpinnerButton
+                                buttonStyle={{
+                                    borderRadius: 28.5,
+                                    width: 130,
+                                    alignSelf: 'center',
+                                    backgroundColor: '#327FEB',
+                                    height: 36, 
+                                    marginRight:20
+                                }}
+                                isLoading={Loading}
+                                spinnerType='BarIndicator'
+                                onPress={() => {
+                                    setcurrent(current-1);
+                                    setactive(false)
+                                }}
+                                indicatorCount={10}
+                            >
+                                <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Back</Text>
+                                {/* <Text style={styles.buttonText}>Next</Text> */}
+                            </SpinnerButton>
+                            <SpinnerButton
+                                buttonStyle={{
+                                    borderRadius: 28.5,
+                                    width: 130,
+                                    alignSelf: 'center',
+                                    backgroundColor: '#327FEB',
+                                    height: 36
+                                }}
+                                isLoading={Loading}
+                                spinnerType='BarIndicator'
+                                onPress={() => {
+                                    api()
+                                }}
+                                indicatorCount={10}
+                            >
+                                <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
+                                {/* <Text style={styles.buttonText}>Next</Text> */}
+                            </SpinnerButton>
+                        </View>
                     </View>
-                    <View style={{ alignSelf: 'center', display: current ? 'flex' : 'none' }}>
-                        <SpinnerButton
-                            buttonStyle={{
-                                borderRadius: 28.5,
-                                margin: 20,
-                                width: 200,
-                                alignSelf: 'center',
-                                backgroundColor: '#327FEB',
-                                height: 50
-                            }}
-                            isLoading={Loading}
-                            spinnerType='BarIndicator'
-                            onPress={() => {
-                                api()
-                            }}
-                            indicatorCount={10}
-                        >
-                            <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
-                            {/* <Text style={styles.buttonText}>Next</Text> */}
-                        </SpinnerButton>
-                    </View>
-                </View>
-            </KeyboardAvoidingView>
-            <TouchableOpacity onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} block dark style={{ alignSelf: 'flex-end' }}>
+                </KeyboardAvoidingView>
+            </ScrollView>
+            <TouchableOpacity onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} block dark style={{ marginBottom: 20 }}>
                 <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Continue as guest</Text>
             </TouchableOpacity>
-        </ScrollView>
+        </View>
     );
 }
 

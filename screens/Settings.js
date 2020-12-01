@@ -175,7 +175,7 @@ const Settings = ({ navigation }) => {
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17, alignSelf: 'center', marginLeft: 40 }}>Contact Us</Text>
                             <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                         </Button>
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => logout()} >
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status==='3'?logout():navigation.navigate('Login')} >
                             <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{status === '3' ? 'Logout' : 'Login'}</Text>
                         </Button>
                     </View>

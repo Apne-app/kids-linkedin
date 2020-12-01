@@ -106,7 +106,10 @@ const SinglePostScreen = ({ navigation, route }) => {
         };
     }, []);
     useEffect(() => {
-        setcomments(route.params.activity.activity.own_reactions.comment)
+        if (route.params.activity.activity.own_reactions.comment) {
+            setcomments(route.params.activity.activity.own_reactions.comment)
+        }
+
     }, [])
     const [currentCommment, setcurrentCommment] = useState([])
     const [place, setplace] = useState('')
@@ -177,7 +180,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 /></View> : <View></View>}
             </TouchableWithoutFeedback>
             {props.activity.object.includes('http') ?
-                <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => {websiteref.current.snapTo(0);} }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 40, width: width, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { websiteref.current.snapTo(0); } }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 40, width: width, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                 : null}
 
             {props.activity.video ?
@@ -241,7 +244,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     };
     const renderWebsite = () => {
         return (
-            <View style={{ height: height - 80, flex:1, }}>
+            <View style={{ height: height - 80, flex: 1, }}>
                 <WebView source={{ uri: website }} />
             </View>
         )
