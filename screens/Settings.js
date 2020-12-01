@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Animated, View, Text, Alert, Linking, TouchableOpacity, BackHandler, Dimensions, Image, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Animated, View, Text, Alert, Linking, Keyboard, TouchableOpacity, BackHandler, Dimensions, Image, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native'
 import { Switch } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, Textarea } from 'native-base';
 import axios from 'axios';
@@ -19,6 +19,25 @@ const Settings = ({ navigation }) => {
 
     const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
     const [status, setstatus] = useState('1')
+    const [keyboardOffset, setKeyboardOffset] = useState(400);
+    const onKeyboardShow = event => 
+    {
+        setKeyboardOffset(event.endCoordinates.height+400);
+    }
+    const onKeyboardHide = () => setKeyboardOffset(400);
+
+    useEffect(() => {
+    Keyboard.addListener("keyboardDidShow", onKeyboardShow);
+    Keyboard.addListener("keyboardDidHide", onKeyboardHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
+      Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
+    };
+  }, []);
+
+
     const handleEmail = () => {
         const to = ['support@genio.app'] // string or array of email addresses
         email(to, {
@@ -71,7 +90,7 @@ const Settings = ({ navigation }) => {
     const sheetRef = React.useRef(null);
     const [feedback, setfeedback] = useState('')
     const renderContent = () => (
-        <ScrollView
+        <View
             style={{
                 backgroundColor: 'white',
                 padding: 16,
@@ -79,6 +98,7 @@ const Settings = ({ navigation }) => {
                 elevation: 20,
             }}
         >
+        
             <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
                 <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, width: 100, height: 5, marginTop: -4 }}></View>
             </TouchableOpacity>
@@ -109,7 +129,7 @@ const Settings = ({ navigation }) => {
             }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
                 <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Submit</Text>
             </Button>
-        </ScrollView>
+        </View>
     );
 
     useEffect(() => {
@@ -183,7 +203,7 @@ const Settings = ({ navigation }) => {
             </ScrollView>
             <BottomSheet
                 ref={sheetRef}
-                snapPoints={[400, -200]}
+                snapPoints={[keyboardOffset, 0]}
                 initialSnap={1}
                 onOpenStart={() => {
                     setBottomSheetOpen(true);

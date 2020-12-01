@@ -111,6 +111,8 @@ const App: () => React$Node = (props) => {
         backAction
       );
 
+      return () =>
+                BackHandler.removeEventListener("hardwareBackPress", backAction);
       // console.log(props.route.params)
     }, []));
 
