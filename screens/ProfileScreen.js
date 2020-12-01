@@ -608,11 +608,12 @@ const ProfileScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             })
-                            Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])
-                                .catch(err => {
-                                    console.error("Failed opening page because: ", err)
-                                    alert('Failed to open page')
-                                })
+                            navigation.navigate('Browser', { url: "https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'], heading: 'Website' })
+                            // Linking.openURL("https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'])
+                            //     .catch(err => {
+                            //         console.error("Failed opening page because: ", err)
+                            //         alert('Failed to open page')
+                            //     })
                         }}
 
                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>

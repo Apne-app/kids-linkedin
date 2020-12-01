@@ -117,7 +117,7 @@ export default class App extends React.Component {
 
   _renderDoneButton = () => {
     return (
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('Login', { 'screen': 'IntroSlider' })} block dark style={{ backgroundColor: '#fff', borderRadius: 30, width: width * 0.86, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} block dark style={{ backgroundColor: '#fff', borderRadius: 30, width: width * 0.86, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
         <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Sign up/Login</Text>
       </TouchableOpacity>
     );
@@ -133,10 +133,14 @@ export default class App extends React.Component {
           renderPrevButton={this._renderDoneButton}
           renderNextButton={this._renderNextButton}
           renderDoneButton={this._renderNextButton}
-          onDone={()=>null}
+          onSkip={() => {
+            this.props.navigation.navigate('Login')
+          }}
+          onDone={()=>this.props.navigation.navigate('Home', {'screen': 'Feed'})}
           bottomButton={true}
           activeDotStyle={{ backgroundColor: "#327FEB", width:20 }}
           showSkipButton={true}
+          showDoneButton={true}
           showPrevButton={true}
           data={data}
         />

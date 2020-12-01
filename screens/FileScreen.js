@@ -116,10 +116,12 @@ const FileScreen = (props) => {
         for(var i = 0; i < result.length; i++)
         {
             var res = await RNFS.readDir(result[i]['path']);
-            fls.push({'images': res, 'cloud': 0});
+            fls.push({'images': res, 'cloud': 0, "timestamp": result[i]['name']});
+            // console.log();
             s = s + res[0]['name'].split('_')[1].split('-')[0] + ', ';
         }
         setStringImages(s);
+        fls.sort();
         // console.log(fls[0]['images']);
         setFiles([...fls]);
         }
@@ -160,14 +162,24 @@ const FileScreen = (props) => {
                     ar.push({ 'name': response.data["0"][i].split(x + '/')[1].split('/')[1], 'path': response.data["0"][i], 'time': tme })
                     i++;
                 }
-                if(!s.includes(m))
+                if(/*!s.includes(m)*/1)
                 {
-                    arry.push({ 'cloud': 1, 'images': ar });
+                    arry.push({ 'cloud': 1, 'images': ar, 'timestamp': tme });
                 }
             }
             console.log(s);
+            var amp = [ ...arry, ...fls ]
+            // console.log(amp[0]);
+            amp.sort(function(a, b) {
+            var keyA = a.timestamp,
+                keyB = b.timestamp;
+            // Compare the 2 dates
+            if (keyA < keyB) return 1;
+            if (keyA > keyB) return -1;
+            return 0;
+            });
             // setStringImages(s);
-            setFiles([ ...arry, ...fls ])
+            setFiles([ ...amp ])
         
         })
         .catch(function (error) {
@@ -399,7 +411,7 @@ const FileScreen = (props) => {
                                     <Card style={{ borderRadius: 20 }} >
                                         <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
                                             <View style={{flexDirection: 'row'}}>
-                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10, flex: 8 }}>{item["cloud"] ? createDate(item['images'][0]['time']) : createDate(item['images'][0]['path'].split('Images/')[1].split('/')[0])}</Text>
+                                            <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, fontWeight: 'bold', marginBottom: 10, flex: 8 }}>{item["cloud"] ? createDate(item['images'][0]['time']) : createDate(item['images'][0]['path'].split('Images/')[1].split('/')[0])}</Text>
                                             { item['cloud'] ? <Icon type="Feather" name="cloud" style={{flex: 1, alignSelf: 'flex-end', color: "#327feb", fontSize: 20, marginHorizontal: 4, marginBottom: 10}} /> : null}
                                             </View>
                                             <Body style={{ flexDirection: 'row' }}>
