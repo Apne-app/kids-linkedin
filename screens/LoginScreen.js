@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput, TouchableOpacity } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput, TouchableOpacity, BackHandler } from 'react-native'
 import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, Spinner, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -10,6 +10,7 @@ import LoginForm from '../components/Login';
 import SignUpForm from '../components/SignUp';
 import axios from 'axios';
 import LinkedIn from '../components/LinkedIn'
+import { useFocusEffect } from "@react-navigation/native";
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
 import analytics from '@segment/analytics-react-native';
@@ -27,6 +28,24 @@ const LoginScreen = ({ route, navigation }) => {
       navigation.navigate('Verified')
     }
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.canGoBack()) {
+          navigation.pop()
+        }
+        else {
+          navigation.navigate('Home')
+        }
+        return true
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+    }, []));
   useEffect(() => {
     const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
     // When the is component unmounted, remove the listener

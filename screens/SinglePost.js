@@ -13,19 +13,30 @@ import { useFocusEffect } from "@react-navigation/native";
 import VideoPlayer from 'react-native-video-controls';
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
+import BottomSheet from 'reanimated-bottom-sheet';
 import CompHeader from '../Modules/CompHeader'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import AsyncStorage from '@react-native-community/async-storage'
 import CompButton from '../Modules/CompButton'
+import WebView from 'react-native-webview';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
+function urlify(text) {
+    var urlRegex = (/(https?:\/\/[^\s]+)/g);
+    var res = text.match(urlRegex);
+    return res
+    // or alternatively
+    // return text.replace(urlRegex, '<a href="$1">$1</a>')
+}
+
 updateStyle('activity', {
     container:
     {
         marginVertical: height * 0.01,
         backgroundColor: "#fff",
-        marginHorizontal: 5,
+        marginHorizontal: 0,
         fontFamily: 'NunitoSans-Regular',
+        borderRadius: 0
     },
     text: {
         fontFamily: 'NunitoSans-Regular'
@@ -38,8 +49,8 @@ updateStyle('flatFeed', {
     container:
     {
         backgroundColor: "#f9f9f9",
-        paddingRight: 20,
-        paddingLeft: 20,
+        paddingRight: 0,
+        paddingLeft: 0,
         borderRadius: 0
     }
 });
@@ -49,14 +60,6 @@ updateStyle('LikeButton', {
     },
 });
 
-
-updateStyle('uploadImage', {
-    image:
-    {
-        width: 10,
-        height: 10
-    }
-});
 const SinglePostScreen = ({ navigation, route }) => {
 
     useFocusEffect(
@@ -78,6 +81,8 @@ const SinglePostScreen = ({ navigation, route }) => {
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
     const [status, setstatus] = useState('3')
+    const [website, setwebsite] = useState('https://genio.app')
+    const websiteref = React.useRef();
     const onKeyboardShow = (event) => {
         scrollref.current.scrollToEnd({ animated: true })
     };
@@ -120,7 +125,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             return (
                 <View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <LikeButton  {...data} />
+                        {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                         <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, }} />
                         <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4 }}>{comments ? comments.length : 0}</Text>
                     </View>
@@ -172,7 +177,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 /></View> : <View></View>}
             </TouchableWithoutFeedback>
             {props.activity.object.includes('http') ?
-                <LinkPreview text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 10, marginTop: 10, width: width - 80, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 50) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => {websiteref.current.snapTo(0);} }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 40, width: width, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                 : null}
 
             {props.activity.video ?
@@ -184,23 +189,21 @@ const SinglePostScreen = ({ navigation, route }) => {
                     disableFullscreen={true}
                     disableBack={true}
                     disableVolume={true}
-                    style={{width: width, height: 340, marginLeft:-5}}
+                    style={{ width: width, height: 340 }}
                     source={{ uri: props.activity.video }}
                     navigator={navigation}
                 // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                 /> : null}
             {props.activity.youtube ?
-                <View style={{ width: width, height: 340, alignSelf: 'center', margin: 10, padding: 10, backgroundColor: 'black' }} >
-                    <YoutubePlayer
-                        videoId={props.activity.youtube} // The YouTube video ID
-                        height={300}
-                        width={width}
-                        forceAndroidAutoplay={true}
-                        play={true}
-                    />
-                </View>
+                <YoutubePlayer
+                    videoId={props.activity.youtube} // The YouTube video ID
+                    height={250}
+                    width={width}
+                    forceAndroidAutoplay={true}
+                    play={true}
+                />
                 : null}
-            {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{ marginTop: 5 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
+            {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
         </View>))
         var images = []
         props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
@@ -236,6 +239,13 @@ const SinglePostScreen = ({ navigation, route }) => {
             </ScrollView>
         );
     };
+    const renderWebsite = () => {
+        return (
+            <View style={{ height: height - 80, flex:1, }}>
+                <WebView source={{ uri: website }} />
+            </View>
+        )
+    }
     return (
         <View style={styles.container}>
             <StreamApp
@@ -262,6 +272,15 @@ const SinglePostScreen = ({ navigation, route }) => {
                 /> :
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to add comments for this post'} back={'Home'} /></TouchableWithoutFeedback>}
             </StreamApp>
+            <BottomSheet
+                ref={websiteref}
+                enabledContentTapInteraction={false}
+                snapPoints={[height - 80, 0]}
+                // enabledContentGestureInteraction={false}
+                initialSnap={1}
+                borderRadius={2}
+                renderContent={renderWebsite}
+            />
         </View>
     );
 }
