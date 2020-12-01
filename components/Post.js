@@ -319,11 +319,68 @@ const Upload = ({ route, navigation }) => {
     route.params.time = 0;
   }
 
-  useFocusEffect(
-        React.useCallback(() => {
-        const backAction = async () => {
+  // if(route.params.edited)
+  // {
+  //   console.log("asd");
+  //   route.params.edited = 0;
+  //   const backBehaviour = () => {
+
+  //    const backAction = async () => {
       
-          closeRef.current.snapTo(0)
+  //         closeRef.current.snapTo(0)
+
+  //         return true;
+  //       };
+
+  //       const backHandler = BackHandler.addEventListener(
+  //         "hardwareBackPress",
+  //         backAction
+  //       );
+
+  //       return () =>
+  //         BackHandler.removeEventListener("hardwareBackPress", backAction);
+  //   }
+  //   backBehaviour();
+  // }
+  // else{
+  //   const backBehaviour = () => {
+
+  //   const backAction = async () => {
+      
+          
+  //         navigation.navigate('Home', { screen: 'Files' })
+
+
+  //         return true;
+  //       };
+
+  //       const backHandler = BackHandler.addEventListener(
+  //         "hardwareBackPress",
+  //         backAction
+  //       );
+
+  //       return () =>
+  //         BackHandler.removeEventListener("hardwareBackPress", backAction);
+  //   }
+  //   backBehaviour();
+        
+  // }
+
+  React.useEffect(() => {
+     const backBehaviour = () => {
+       console.log("bllah")
+
+    const backAction = async () => {
+      
+          console.log("asdl")
+          if(route.params.edited)
+          {
+
+            closeRef.current.snapTo(0)
+          }
+          else{
+          navigation.navigate('Home', { screen: 'Files' })
+          }
 
 
           return true;
@@ -336,8 +393,30 @@ const Upload = ({ route, navigation }) => {
 
         return () =>
           BackHandler.removeEventListener("hardwareBackPress", backAction);
+    }
+    backBehaviour();
+  })
+
+  // useFocusEffect(
+  //       React.useCallback(() => {
+  //       const backAction = async () => {
+      
+          
+  //         navigation.navigate('Home', { screen: 'Files' })
+
+
+  //         return true;
+  //       };
+
+  //       const backHandler = BackHandler.addEventListener(
+  //         "hardwareBackPress",
+  //         backAction
+  //       );
+
+  //       return () =>
+  //         BackHandler.removeEventListener("hardwareBackPress", backAction);
         
-    }, []));
+  //   }, []));
 
 
   // getImages();

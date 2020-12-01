@@ -72,7 +72,7 @@ const App: () => React$Node = (props) => {
     // console.log(props.route.params);
     // await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': uri}) );
     var tm= new Date();
-    props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': dim.height, 'width': dim.width, 'uri': uri, 'prevImg': prevUri}], 'time': props.route.params.time })
+    props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": [...props.route.params.images, { 'height': dim.height, 'width': dim.width, 'uri': uri, 'prevImg': prevUri}], 'time': props.route.params.time })
     // });
   }
 
@@ -220,10 +220,10 @@ const App: () => React$Node = (props) => {
             {
             var ar = [...props.route.params.images];
             ar.splice(props.route.params.pos, props.route.params.pos+1, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri });
-            props.navigation.navigate('PostScreen', { "reload": 1, "images": [...ar], 'time': props.route.params.time })
+            props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": [...ar], 'time': props.route.params.time })
             }
             else{
-            props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri }], 'time': props.route.params.time })
+            props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": [...props.route.params.images, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri }], 'time': props.route.params.time })
             }
 
 

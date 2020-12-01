@@ -21,6 +21,7 @@ import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
 import Camera from './components/Camera'
 import ChildScreen from './screens/ChildScreen'
+import Browser from './screens/Browser'
 import Gallery from './components/Gallery'
 import SinglePostScreen from './screens/SinglePost'
 import Searching from './screens/Searching'
@@ -292,6 +293,7 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
         <Stack.Screen options={{ headerShown: false }} name="AddText" component={AddText} />
         <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
+        <Stack.Screen options={{ headerShown: false }} name="Browser" component={Browser} />
         <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
         <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
         <Stack.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
