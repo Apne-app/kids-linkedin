@@ -114,7 +114,9 @@ const Searching = ({ route, navigation }) => {
         }
         addfollows()
     }, [])
+    const [doing, setdoing] = useState(false)
     const onChangeSearch = query => {
+        setdoing(true)
         if (query != '') {
             axios.get('http://35.221.164.203:5000/keyword/' + query.toLowerCase() + `/0?token=${token}`)
                 .then(async (response) => {
@@ -122,6 +124,7 @@ const Searching = ({ route, navigation }) => {
                     var keys = Object.keys(response.data)
                     var data = keys.map((key) => response['data'][key])
                     setresult(data)
+                    setdoing(false)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -207,7 +210,7 @@ const Searching = ({ route, navigation }) => {
                 </Item>
             </Header>
             {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
-            {searchQuery != '' && !(result).length? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<View><FlatList
+            {searchQuery != '' && !doing && !(result).length? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<View><FlatList
                 data={result}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.gsToken}

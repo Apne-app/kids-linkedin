@@ -53,28 +53,28 @@ export default class ExampleApp extends PureComponent {
   }
 
 
-  
+
 
   componentDidMount() {
 
-    
-  const func = async () => {
+
+    const func = async () => {
 
       var x = await AsyncStorage.getItem('children');
       analytics.screen('Camera Screen', {
-        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-        deviceID: getUniqueId() 
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+        deviceID: getUniqueId()
       })
 
 
       try {
         const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
             'title': 'Access Storage',
             'message': 'Access Storage for the pictures',
             'buttonPositive': 'Ok'
-        }
+          }
         )
         console.log(granted);
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -82,7 +82,7 @@ export default class ExampleApp extends PureComponent {
           // requestCameraPermission();
           // console.log("sd")
           this.setState({ ...this.state, storagePerm: true })
-          
+
           CameraRoll.getPhotos({
             first: 100,
             assetType: 'Photos',
@@ -104,58 +104,56 @@ export default class ExampleApp extends PureComponent {
 
 
         }
-        else 
-        {
+        else {
           this.setState({ ...this.state, denied: true })
           return;
         }
-          const grantedCam = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            // {
-            //   'title': 'Access Camera',
-            //   'message': 'Access Camera for the pictures',
-            //   'buttonPositive': 'Ok'
-            // }
-          )
+        const grantedCam = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          // {
+          //   'title': 'Access Camera',
+          //   'message': 'Access Camera for the pictures',
+          //   'buttonPositive': 'Ok'
+          // }
+        )
 
-          if (grantedCam === PermissionsAndroid.RESULTS.GRANTED) {
-            // console.log("You can use read from the storage 2");
-            // requestCameraPermission();
-            this.setState({ ...this.state, cameraPerm : true })
-          }
-          else{
-            this.setState({ ...this.state, denied: true })
-            return;
-          }
-            const grantedAudio = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-              // {
-              //   'title': 'Access Microphone',
-              //   'message': 'Access Microphone ',
-              //   'buttonPositive': 'Ok'
-              // }
-            )
-            if (grantedAudio === PermissionsAndroid.RESULTS.GRANTED)
-            {
-              this.setState({ ...this.state, audioPerm : true })
-            }
-            else{
-              this.setState({ ...this.state, denied: true })
-              return;
-            }
-              
-           
+        if (grantedCam === PermissionsAndroid.RESULTS.GRANTED) {
+          // console.log("You can use read from the storage 2");
+          // requestCameraPermission();
+          this.setState({ ...this.state, cameraPerm: true })
+        }
+        else {
+          this.setState({ ...this.state, denied: true })
+          return;
+        }
+        const grantedAudio = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          // {
+          //   'title': 'Access Microphone',
+          //   'message': 'Access Microphone ',
+          //   'buttonPositive': 'Ok'
+          // }
+        )
+        if (grantedAudio === PermissionsAndroid.RESULTS.GRANTED) {
+          this.setState({ ...this.state, audioPerm: true })
+        }
+        else {
+          this.setState({ ...this.state, denied: true })
+          return;
+        }
+
+
       } catch (err) {
         console.warn(err)
       }
-  }
-    
+    }
+
     func();
 
     const { navigation } = this.props;
-    this.focusListener = navigation.addListener("focus", () => {      
-    // Call ur function here.. or add logic.  
-    this.setState({ ...this.state, imagetaken: false })   
+    this.focusListener = navigation.addListener("focus", () => {
+      // Call ur function here.. or add logic.  
+      this.setState({ ...this.state, imagetaken: false })
     });
 
     this.focusListener = this.props.navigation.addListener("focus", () => {
@@ -193,23 +191,23 @@ export default class ExampleApp extends PureComponent {
     }, 5000);
 
   };
-//   componentDidMount(){
-    
-// }
+  //   componentDidMount(){
+
+  // }
 
 
   render() {
 
-  const permFunc = async () => {
+    const permFunc = async () => {
       // console.log("sda")
       try {
         const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        // {
-        //     'title': 'Access Storage',
-        //     'message': 'Access Storage for the pictures',
-        //     'buttonPositive': 'Ok'
-        // }
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          // {
+          //     'title': 'Access Storage',
+          //     'message': 'Access Storage for the pictures',
+          //     'buttonPositive': 'Ok'
+          // }
         )
         console.log(granted);
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -238,44 +236,42 @@ export default class ExampleApp extends PureComponent {
 
 
         }
-        else 
-        {
+        else {
           return;
         }
-          const grantedCam = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            // {
-            //   'title': 'Access Camera',
-            //   'message': 'Access Camera for the pictures',
-            //   'buttonPositive': 'Ok'
-            // }
-          )
+        const grantedCam = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          // {
+          //   'title': 'Access Camera',
+          //   'message': 'Access Camera for the pictures',
+          //   'buttonPositive': 'Ok'
+          // }
+        )
 
-          if (grantedCam === PermissionsAndroid.RESULTS.GRANTED) {
-            // console.log("You can use read from the storage 2");
-            // requestCameraPermission();
-            this.setState({ ...this.state, cameraPerm : true })
-          }
-          else{
-            return;
-          }
-            const grantedAudio = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-              // {
-              //   'title': 'Access Microphone',
-              //   'message': 'Access Microphone ',
-              //   'buttonPositive': 'Ok'
-              // }
-            )
-            if (grantedAudio === PermissionsAndroid.RESULTS.GRANTED)
-            {
-              this.setState({ ...this.state, audioPerm : true })
-            }
-            else{
-              return;
-            }
-              
-           
+        if (grantedCam === PermissionsAndroid.RESULTS.GRANTED) {
+          // console.log("You can use read from the storage 2");
+          // requestCameraPermission();
+          this.setState({ ...this.state, cameraPerm: true })
+        }
+        else {
+          return;
+        }
+        const grantedAudio = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          // {
+          //   'title': 'Access Microphone',
+          //   'message': 'Access Microphone ',
+          //   'buttonPositive': 'Ok'
+          // }
+        )
+        if (grantedAudio === PermissionsAndroid.RESULTS.GRANTED) {
+          this.setState({ ...this.state, audioPerm: true })
+        }
+        else {
+          return;
+        }
+
+
       } catch (err) {
         console.warn(err)
       }
@@ -292,7 +288,7 @@ export default class ExampleApp extends PureComponent {
         }}
       >
         <TouchableOpacity onPress={() => { this.sheetRef.snapTo(1); this.setState({ ...this.state, isGalleryOpen: false }); }} style={{ alignItems: 'center', paddingBottom: 10 }}><Icon style={{ color: "black" }} name="chevron-small-down" type="Entypo" /></TouchableOpacity>
-        
+
       </View>
     );
 
@@ -308,145 +304,148 @@ export default class ExampleApp extends PureComponent {
         })
       }
     }
-    if(this.state.cameraPerm && this.state.audioPerm && this.state.storagePerm)
-    {
+    if (this.state.cameraPerm && this.state.audioPerm && this.state.storagePerm) {
 
-    return (
-      <View style={styles.container}>
-        <CompHeader screen={'Scan'} goback={goback} />
-        <Button block style={{ marginTop: 100, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 30, width: width - 40, alignSelf: 'center', height: 60, position: this.state.visible ? 'absolute' : 'relative', zIndex: 400, display: this.state.visible ? 'flex' : 'none' }} onPress={() => this.setState({ ...this.state, visible: false })} >
-          <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Upload your first image</Text>
-        </Button>
-        <BottomSheet
-          ref={ref => {
-            this.sheetRef = ref;
-          }}
-          snapPoints={[height * 0.5, 0]}
-          initialSnap={1}
-          enabledGestureInteraction={false}
-          borderRadius={25}
-          renderContent={renderContent}
-        />
-        <View style={{ height: height * 0.6, }}>
-          <RNCamera
+      return (
+        <View style={styles.container}>
+          <CompHeader screen={'Scan'} goback={goback} />
+          <Button block style={{ marginTop: 100, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 30, width: width - 40, alignSelf: 'center', height: 60, position: this.state.visible ? 'absolute' : 'relative', zIndex: 400, display: this.state.visible ? 'flex' : 'none' }} onPress={() => this.setState({ ...this.state, visible: false })} >
+            <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 16 }}>Upload your first image</Text>
+          </Button>
+          <BottomSheet
             ref={ref => {
-              this.camera = ref;
+              this.sheetRef = ref;
             }}
-            style={styles.preview}
-            type={this.state.side}
-            zoom={this.state.zoom}
-            flashMode={this.state.flash}
-            androidCameraPermissionOptions={{
-              title: 'Permission to use camera',
-              message: 'We need your permission to use your camera',
-              buttonPositive: 'Ok',
-              buttonNegative: 'Cancel',
-            }}
-            androidRecordAudioPermissionOptions={{
-              title: 'Permission to use audio recording',
-              message: 'We need your permission to use your audio',
-              buttonPositive: 'Ok',
-              buttonNegative: 'Cancel',
-            }}
-          >
-            <ZoomView
-              onPinchEnd={this._onPinchEnd}
-              onPinchStart={this._onPinchStart}
-              onPinchProgress={this._onPinchProgress}
-            >
-              <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, { flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 10, left: 10 }}>
-                <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginLeft: 10, marginBottom: 10 }} source={require('../Icons/flip_camera.png')} />
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={this.changeFlash.bind(this)} style={styles.capture, { flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 15, right: 10 }}>
-                {this.state.flash == RNCamera.Constants.FlashMode.off ? <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginLeft: 10 }} source={require('../Icons/flash_on.png')} /> : <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginRight: 10 }} source={require('../Icons/flash_off.png')} />}
-              </TouchableOpacity>
-            </ZoomView>
-          </RNCamera>
-        </View>
-        <View style={{ height: height * 0.13, alignItems: 'center', marginTop: height * 0.02 }} >
-          <FlatList
-            data={this.state.gallery}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={{ flex: 1, flexDirection: 'column', margin: 1, height: 80 }}>
-                <TouchableOpacity
-                  key={item.id}
-                  style={{ flex: 1 }}
-                  onPress={() => {
-                    // setSelected(item.node.image.uri)
-                    var tm = new Date();
-                    tm = tm.getTime();
-                    this.props.navigation.navigate('Preview', { 'img': item.node.image.uri, 'images': this.props.route.params ? this.props.route.params.images : [],'time': this.props.route.params ? this.props.route.params.time : tm });
-                    console.log(item);
-                  }}>
-                  <Image
-                    style={styles.image}
-                    source={{
-                      uri: item.node.image.uri,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-            //Setting the number of column
-            // numColumns={3}
-            horizontal={true}
-            keyExtractor={(item, index) => index.toString()}
+            snapPoints={[height * 0.5, 0]}
+            initialSnap={1}
+            enabledGestureInteraction={false}
+            borderRadius={25}
+            renderContent={renderContent}
           />
-        </View>
-        <View style={{ flex: 1, flexDirection: 'row', justifyContent:'center' }}>
-          <TouchableOpacity onPress={async () => 
-          { 
-            var x = await AsyncStorage.getItem('children');
-            analytics.track('Navigation from camera to Gallery', {
-              userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-              deviceID: getUniqueId() 
-            })
-            this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] }) }} style={styles.capture, { flex: 1, alignItems: 'flex-start',  marginTop: 5, width:width/3, marginLeft:width/8, alignItems:'center' }}>
-            <View>
-              <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/gallery.png')} />
-              <Text style={{ fontFamily: 'NunitoSans-Regular' }}>Gallery</Text>
-            </View>
-          </TouchableOpacity>
-          { !this.state.imagetaken ? <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, { flex: 2, alignItems: 'center', marginTop: -10, width:width/6, alignItems:'center' }}>
-            <Icon type="Entypo" name="circle" style={{ color: "grey", fontSize: 70 }} />
-          </TouchableOpacity>
-          :
-          <View style={{ marginBottom: 5}}>
-          <Spinner color='blue' style={{height: 30, width: 30}} />
-          </View>
-          }
-          <TouchableOpacity onPress={async () => {
-            var x = await AsyncStorage.getItem('children');
-            analytics.track('Navigation from camera to Collections', {
-              userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-              deviceID: getUniqueId() 
-            })
+          <View style={{ height: height * 0.6, }}>
+            <RNCamera
+              ref={ref => {
+                this.camera = ref;
+              }}
+              style={styles.preview}
+              type={this.state.side}
+              zoom={this.state.zoom}
+              flashMode={this.state.flash}
+              androidCameraPermissionOptions={{
+                title: 'Permission to use camera',
+                message: 'We need your permission to use your camera',
+                buttonPositive: 'Ok',
+                buttonNegative: 'Cancel',
+              }}
+              androidRecordAudioPermissionOptions={{
+                title: 'Permission to use audio recording',
+                message: 'We need your permission to use your audio',
+                buttonPositive: 'Ok',
+                buttonNegative: 'Cancel',
+              }}
+            >
+              <ZoomView
+                onPinchEnd={this._onPinchEnd}
+                onPinchStart={this._onPinchStart}
+                onPinchProgress={this._onPinchProgress}
+              >
+                <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, { flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 10, left: 10 }}>
+                  <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginLeft: 10, marginBottom: 10 }} source={require('../Icons/flip_camera.png')} />
+                </TouchableOpacity>
 
-            this.props.navigation.navigate('Home', {
-              screen: 'Files',
-            })
-          }} style={styles.capture, { flex: 1, alignItems: 'flex-end', marginTop: 9, width:width/3,marginRight:width/8, alignItems:'center' }}>
-            <View>
-              <Icon style={{ color: 'black', fontSize: 24, alignSelf:'center' }} type="AntDesign" name="file1" />
-              <Text style={{ fontFamily: 'NunitoSans-Regular', marginTop: 6 }}>Collections</Text>
-            </View>
-          </TouchableOpacity>
+                <TouchableOpacity onPress={this.changeFlash.bind(this)} style={styles.capture, { flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 15, right: 10 }}>
+                  {this.state.flash == RNCamera.Constants.FlashMode.off ? <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginLeft: 10 }} source={require('../Icons/flash_on.png')} /> : <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginRight: 10 }} source={require('../Icons/flash_off.png')} />}
+                </TouchableOpacity>
+              </ZoomView>
+            </RNCamera>
+          </View>
+          <View style={{ height: height * 0.13, alignItems: 'center', marginTop: height * 0.02 }} >
+            <FlatList
+              data={this.state.gallery}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <View style={{ flex: 1, flexDirection: 'column', margin: 1, height: 80 }}>
+                  <TouchableOpacity
+                    key={item.id}
+                    style={{ flex: 1 }}
+                    onPress={() => {
+                      // setSelected(item.node.image.uri)
+                      var tm = new Date();
+                      tm = tm.getTime();
+                      this.props.navigation.navigate('Preview', { 'img': item.node.image.uri, 'images': this.props.route.params ? this.props.route.params.images : [], 'time': this.props.route.params ? this.props.route.params.time : tm });
+                      console.log(item);
+                    }}>
+                    <Image
+                      style={styles.image}
+                      source={{
+                        uri: item.node.image.uri,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+              //Setting the number of column
+              // numColumns={3}
+              horizontal={true}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+            <TouchableOpacity onPress={async () => {
+              var x = await AsyncStorage.getItem('children');
+              analytics.track('Navigation from camera to Gallery', {
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
+              })
+              this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] })
+            }} style={styles.capture, { flex: 1, alignItems: 'flex-start', marginTop: 5, width: width / 3, marginLeft: width / 8, alignItems: 'center' }}>
+              <View>
+                <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/gallery.png')} />
+                <Text style={{ fontFamily: 'NunitoSans-Regular' }}>Gallery</Text>
+              </View>
+            </TouchableOpacity>
+            {!this.state.imagetaken ? <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture, { flex: 2, alignItems: 'center', marginTop: -10, width: width / 6, alignItems: 'center' }}>
+              <Icon type="Entypo" name="circle" style={{ color: "grey", fontSize: 70 }} />
+            </TouchableOpacity>
+              :
+              <View style={{ marginBottom: 5 }}>
+                <Spinner color='blue' style={{ height: 30, width: 30 }} />
+              </View>
+            }
+            <TouchableOpacity onPress={async () => {
+              var x = await AsyncStorage.getItem('children');
+              analytics.track('Navigation from camera to Collections', {
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
+              })
+
+              this.props.navigation.navigate('Home', {
+                screen: 'Files',
+              })
+            }} style={styles.capture, { flex: 1, alignItems: 'flex-end', marginTop: 9, width: width / 3, marginRight: width / 8, alignItems: 'center' }}>
+              <View>
+                <Icon style={{ color: 'black', fontSize: 24, alignSelf: 'center' }} type="AntDesign" name="file1" />
+                <Text style={{ fontFamily: 'NunitoSans-Regular', marginTop: 6 }}>Collections</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    );
+      );
     }
     else {
       return (
-        <View style={styles.container, {alignItems: 'center', justifyContent: 'center', height: height}}>
-          <View style={{alignSelf: 'center', justifyContent: 'center', alignItems: 'center'}}>
-          {this.state.denied ? <View><Text>We need your permissions to make this page work!</Text>
-          <Button onPress={async () => {
-                permFunc();
-            }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
-              <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Give Permissions</Text>
-            </Button></View> : null}
+        <View>
+          <CompHeader screen={'Scan'} goback={goback} />
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:'50%'}}>
+            <View style={{ alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}>
+              {this.state.denied ? <View style={{ alignSelf: 'center' }}>
+                <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-SemiBold' }}>Enable access so you can start scanning the best memories of your kids</Text>
+                <Button onPress={async () => {
+                  permFunc();
+                }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
+                  <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Give Permissions</Text>
+                </Button></View> : null}
+            </View>
           </View>
         </View>
       )
@@ -457,8 +456,8 @@ export default class ExampleApp extends PureComponent {
     // console.log(this.state.gallery);
     var x = await AsyncStorage.getItem('children');
     analytics.track('Image Taken', {
-      userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-      deviceID: getUniqueId() 
+      userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+      deviceID: getUniqueId()
     })
     this.setState({ ...this.state, imagetaken: true });
     if (this.camera) {
@@ -467,7 +466,7 @@ export default class ExampleApp extends PureComponent {
       var tm = new Date();
       tm = tm.getTime();
       // console.log(tm);
-      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params ? this.props.route.params.images : [], 'time': this.props.route.params ? this.props.route.params.time : tm  });
+      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params ? this.props.route.params.images : [], 'time': this.props.route.params ? this.props.route.params.time : tm });
       // console.log(data);
 
     }

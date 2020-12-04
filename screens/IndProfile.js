@@ -6,6 +6,7 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { ScrollView } from 'react-native-gesture-handler';
 import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Thumbnail } from 'react-native-thumbnail-video';
 import axios from 'axios';
 import { SECRET_KEY, ACCESS_KEY } from '@env';
 import { useFocusEffect } from "@react-navigation/native";
@@ -38,18 +39,33 @@ const IndProfile = ({ navigation, route }) => {
     const [courses, setCourses] = useState([])
     const [children, setchildren] = useState({})
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
+    const [status, setstatus] = useState('3')
     const optionsRef = React.useRef(null);
     useEffect(() => {
         const addfollows = async () => {
-            const client = connect('9ecz2uw6ezt9', route['params']['data']['gsToken'], '96078');
-            var user = client.feed('user', route['params']['id'] + 'id');
+            var children = await AsyncStorage.getItem('children')
+            if (children) {
+                children = JSON.parse(children)['0']
+            }
+            else {
+                children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
+            }
+            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
+            var user = client.feed('user', route['params']['data']['id'] + 'id');
             var follows = await user.followers()
-            var user = client.feed('timeline', route['params']['id'] + 'id');
+            var user = client.feed('timeline', route['params']['data']['id'] + 'id');
             var following = await user.following()
             setdata({ 'followers': follows['results'], 'following': following['results'] })
             // console.log(follows)
         }
         addfollows()
+    }, [])
+    useEffect(() => {
+        const check = async () => {
+            var st = await AsyncStorage.getItem('status')
+            setstatus(st)
+        }
+        check()
     }, [])
     useEffect(() => {
         const check = async () => {
@@ -59,34 +75,38 @@ const IndProfile = ({ navigation, route }) => {
                 setchildren(child)
             }
             else {
-                setchildren({})
+                setchildren([{ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } }])
             }
         }
         check()
     }, [])
-    useEffect(() => {
-        // console.log(route.params)
-        const addfollows = async () => {
-            var children = await AsyncStorage.getItem('children')
-            console.log(children)
-            children = JSON.parse(children)['0']
-            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-            var user = client.feed('timeline', children['id'] + 'id');
-            var follows = await user.following()
-            // var profile = client.feed('user', route['params']['id']+'id');
-            // var profFollow = await profile.followers();
-            // var profFollowing = await profile.followers();
-            // console.log("asdaaaa",profile)
-            // setdata({ 'followers': profFollow['results'], 'following': profFollowing['results'] });
-            var data = []
-            follows['results'].map(item => {
-                data.push(item['target_id'].replace('user:', '').replace('id', ''))
-            })
-            setfollows(data)
-            data.includes(String(route.params.id)) ? setFollowPerson('Following') : null;
-        }
-        addfollows()
-    }, [])
+    // useEffect(() => {
+    //     // console.log(route.params)
+    //     const addfollows = async () => {
+    //         var children = await AsyncStorage.getItem('children')
+    //         if (children) {
+    //             children = JSON.parse(children)['0']
+    //         }
+    //         else {
+    //             children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
+    //         }
+    //         const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
+    //         var user = client.feed('timeline', route['params']['data']['id'] + 'id');
+    //         var follows = await user.following()
+    //         // var profile = client.feed('user', route['params']['id']+'id');
+    //         // var profFollow = await profile.followers();
+    //         // var profFollowing = await profile.followers();
+    //         // console.log("asdaaaa",profile)
+    //         // setdata({ 'followers': profFollow['results'], 'following': profFollowing['results'] });
+    //         var data = []
+    //         follows['results'].map(item => {
+    //             data.push(item['target_id'].replace('user:', '').replace('id', ''))
+    //         })
+    //         setfollows(data)
+    //         data.includes(String(route.params.id)) ? setFollowPerson('Following') : null;
+    //     }
+    //     addfollows()
+    // }, [])
 
     useEffect(() => {
         const addCerti = async () => {
@@ -127,14 +147,18 @@ const IndProfile = ({ navigation, route }) => {
                 });
 
         }
-        addCerti();
+        // addCerti();
     }, [])
 
     useEffect(() => {
         const addfollows = async () => {
             var children = await AsyncStorage.getItem('children')
-            console.log(children)
-            children = JSON.parse(children)['0']
+            if (children) {
+                children = JSON.parse(children)['0']
+            }
+            else {
+                children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
+            }
             setcurrentid(children['id'])
         }
         addfollows()
@@ -233,27 +257,28 @@ const IndProfile = ({ navigation, route }) => {
             return (<View style={{ marginTop: 10 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableWithoutFeedback onPress={async () => {
-                        var x = await AsyncStorage.getItem('children');
-                        var done = 0
-                        data.activity.own_reactions.like ? data.activity.own_reactions.like.map((item) => {
-                            var by = String(JSON.parse(x)["0"]["id"]) + 'id'
-                            if ((item.user_id) == by) {
-                                done = 1
+                        if (status === '3') {
+                            var x = await AsyncStorage.getItem('children');
+                            var done = 0
+                            data.activity.own_reactions.like ? data.activity.own_reactions.like.map((item) => {
+                                var by = String(JSON.parse(x)["0"]["id"]) + 'id'
+                                if ((item.user_id) == by) {
+                                    done = 1
+                                }
+                            }) : null
+                            if (done == 0) {
+                                console.log('doing')
+                                analytics.track('Like', {
+                                    userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                    deviceID: getUniqueId(),
+                                    by: JSON.parse(x)["0"]["id"],
+                                    to: parseInt(props.activity.actor.id.replace('id', '')),
+                                    actid: id
+                                })
                             }
-                        }) : null
-                        if (done == 0) {
-                            console.log('doing')
-                            analytics.track('Like', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-                                deviceID: getUniqueId(),
-                                by: JSON.parse(x)["0"]["id"],
-                                to: parseInt(props.activity.actor.id.replace('id', '')),
-                                actid: id
-                            })
                         }
-
                     }}>
-                        <LikeButton   {...props} />
+                        {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                     </TouchableWithoutFeedback>
                     <Icon onPress={() => navigation.navigate('SinglePost', { image: children['0']['data']['image'], activity: props, token: children['0']['data']['gsToken'] })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
@@ -360,8 +385,8 @@ const IndProfile = ({ navigation, route }) => {
     return (
         Object.keys(children).length ?
             <View>
+                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
                 <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                    <ScreenHeader goback={() => navigation.navigate('Searching')} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
                     <StreamApp
                         apiKey={'9ecz2uw6ezt9'}
                         appId={'96078'}
@@ -370,7 +395,7 @@ const IndProfile = ({ navigation, route }) => {
                         <View style={{ marginTop: 30, flexDirection: 'row' }}>
                             <TouchableOpacity style={{ flexDirection: 'row' }}>
                                 <Image
-                                    source={{ uri: route['params']['data']['image'] }}
+                                    source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
                                     style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
                                 />
                             </TouchableOpacity>
@@ -386,12 +411,12 @@ const IndProfile = ({ navigation, route }) => {
                             </TouchableOpacity> */}
                             </View>
                         </View>
-                        <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                            <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                                {/* <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                        {/* <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}> */}
+                        {/* <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                                <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                            </View> */}
+                            </View>
                                 <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
                                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
                                     <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
@@ -400,8 +425,8 @@ const IndProfile = ({ navigation, route }) => {
                                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
                                     <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                                 </View>
-                            </View>
-                            {/*<View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                            </View> */}
+                        {/*<View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                             <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
@@ -412,11 +437,12 @@ const IndProfile = ({ navigation, route }) => {
                             </TouchableOpacity>
 
                         </View>*/}
-                        </View>
-                        <FlatFeed userId={route['params']['id']+'id'} feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                        {/* </View> */}
+                        <FlatFeed userId={route['params']['id'] + 'id'} feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
                     </StreamApp>
                 </ScrollView>
             </View> : <View style={{ backgroundColor: 'white', height: height, width: width }}>
+                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
                 <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
             </View>
     );

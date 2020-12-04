@@ -29,52 +29,21 @@ function urlify(text) {
     // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
 
-updateStyle('activity', {
-    container:
-    {
-        marginVertical: height * 0.01,
-        backgroundColor: "#fff",
-        marginHorizontal: 0,
-        fontFamily: 'NunitoSans-Regular',
-        borderRadius: 0
-    },
-    text: {
-        fontFamily: 'NunitoSans-Regular'
-    },
-    header: {
-        fontFamily: 'NunitoSans-Regular'
-    }
-});
-updateStyle('flatFeed', {
-    container:
-    {
-        backgroundColor: "#f9f9f9",
-        paddingRight: 0,
-        paddingLeft: 0,
-        borderRadius: 0
-    }
-});
-updateStyle('LikeButton', {
-    text: {
-        fontFamily: 'NunitoSans-Bold'
-    },
-});
-
 const SinglePostScreen = ({ navigation, route }) => {
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const onBackPress = () => {
-                navigation.pop()
-                return true;
-            };
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         const onBackPress = () => {
+    //             navigation.pop()
+    //             return true;
+    //         };
 
-            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    //         BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-            return () =>
-                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    //         return () =>
+    //             BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-        }, []));
+    //     }, []));
 
     const keyboardDidShowListener = React.useRef();
     const scrollref = React.useRef();
@@ -96,15 +65,6 @@ const SinglePostScreen = ({ navigation, route }) => {
         }
         check()
     }, [])
-    React.useEffect(() => {
-        keyboardDidShowListener.current = Keyboard.addListener('keyboardWillShow', onKeyboardShow);
-        keyboardDidHideListener.current = Keyboard.addListener('keyboardWillHide', onKeyboardHide);
-
-        return () => {
-            keyboardDidShowListener.current.remove();
-            keyboardDidHideListener.current.remove();
-        };
-    }, []);
     useEffect(() => {
         if (route.params.activity.activity.own_reactions.comment) {
             setcomments(route.params.activity.activity.own_reactions.comment)
@@ -128,7 +88,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             return (
                 <View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
+                        {status === '3' ? <TouchableWithoutFeedback onPress={() => setplace(1)}><LikeButton  {...props} /></TouchableWithoutFeedback> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                         <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, }} />
                         <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 4 }}>{comments ? comments.length : 0}</Text>
                     </View>
@@ -180,7 +140,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 /></View> : <View></View>}
             </TouchableWithoutFeedback>
             {props.activity.object.includes('http') ?
-                <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { websiteref.current.snapTo(0); } }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 40, width: width, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(props.activity.object)[0] }) } }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 40, width: width, alignSelf: 'center' }} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                 : null}
 
             {props.activity.video ?
@@ -242,21 +202,15 @@ const SinglePostScreen = ({ navigation, route }) => {
             </ScrollView>
         );
     };
-    const renderWebsite = () => {
-        return (
-            <View style={{ height: height - 80, flex: 1, }}>
-                <WebView source={{ uri: website }} />
-            </View>
-        )
-    }
+
     return (
         <View style={styles.container}>
+            <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
             <StreamApp
                 apiKey={'9ecz2uw6ezt9'}
                 appId={'96078'}
                 token={route.params.token}
             >
-                <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
                 <CustomActivity props={route.params.activity} />
                 {status === '3' ? <CommentBox
                     key={'1'}
@@ -275,15 +229,6 @@ const SinglePostScreen = ({ navigation, route }) => {
                 /> :
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to add comments for this post'} back={'Home'} /></TouchableWithoutFeedback>}
             </StreamApp>
-            <BottomSheet
-                ref={websiteref}
-                enabledContentTapInteraction={false}
-                snapPoints={[height - 80, 0]}
-                // enabledContentGestureInteraction={false}
-                initialSnap={1}
-                borderRadius={2}
-                renderContent={renderWebsite}
-            />
         </View>
     );
 }

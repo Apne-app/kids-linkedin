@@ -185,12 +185,12 @@ export default class LinkedInModal extends React.Component {
             }
             return (
                 <View style={{ flex: 1,backgroundColor:'black' }}>
-                <Appbar.Header style={{ backgroundColor: 'white' }} statusBarHeight={Constants.statusBarHeight-25}>
+                <Appbar.Header style={{ backgroundColor: '#327FEB' }}>
                     <View style={{ flexDirection: 'row', flex: 1, marginLeft: 10 }}>
                     <TouchableOpacity onPress={() => this.setState({ ...this.state, modalVisible: false })}>
                         <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginTop:0 }} source={require('../../../Icons/close.png')} />
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 24, marginLeft: 10, width: 200, marginTop: -5 }}>{"Linkedin Login"}</Text>
+                    <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 24, marginLeft: 10, width: 200, marginTop: -5, color:'white' }}>{"Linkedin Login"}</Text>
                     </View>
                     <Body>
                     </Body>

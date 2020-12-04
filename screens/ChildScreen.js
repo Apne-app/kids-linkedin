@@ -75,7 +75,7 @@ const ChildScreen = ({ route, navigation }) => {
         viewPass: false
     })
     const flow = ['type', 'name', 'year']
-    const screen = ["Please choose who's creating the account", "What's his/her name?", 'Which year was he/she born?']
+    const screen = ["Please choose who's creating the account", "What's your kid's name?", 'Which year was your kid born?']
     const [Loading, setLoading] = useState(false)
     const [current, setcurrent] = useState(0)
     const [type, settype] = useState('name');
@@ -231,20 +231,20 @@ const ChildScreen = ({ route, navigation }) => {
                             {inputtype()}
                             <Text style={{ color: "red", fontFamily: 'NunitoSans-Bold', fontSize: 12, marginTop: 4, display: active ? 'flex' : 'none', marginLeft: 20 }}>{text}</Text>
                         </View>
-                        <View style={{ alignSelf: 'center', display: current ? 'flex' : 'none', flexDirection: 'row', marginTop:20 }}>
+                        <View style={{ alignSelf: 'center', display: current ? 'flex' : 'none', flexDirection: 'row', marginTop: 20 }}>
                             <SpinnerButton
                                 buttonStyle={{
                                     borderRadius: 28.5,
                                     width: 130,
                                     alignSelf: 'center',
                                     backgroundColor: '#327FEB',
-                                    height: 36, 
-                                    marginRight:20
+                                    height: 36,
+                                    marginRight: 20
                                 }}
                                 isLoading={Loading}
                                 spinnerType='BarIndicator'
                                 onPress={() => {
-                                    setcurrent(current-1);
+                                    setcurrent(current - 1);
                                     setactive(false)
                                 }}
                                 indicatorCount={10}
@@ -274,7 +274,7 @@ const ChildScreen = ({ route, navigation }) => {
                     </View>
                 </KeyboardAvoidingView>
             </ScrollView>
-            <TouchableOpacity onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} block dark style={{ marginBottom: 20 }}>
+            <TouchableOpacity onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(route.params ? route.params.screen : 'Home') }} block dark style={{ marginBottom: 20 }}>
                 <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Continue as guest</Text>
             </TouchableOpacity>
         </View>

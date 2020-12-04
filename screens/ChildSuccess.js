@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text,Alert, BackHandler, Dimensions, Image } from 'react-native'
+import { StyleSheet, View, Text, Alert, BackHandler, Dimensions, Image } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer } from 'native-base';
 import axios from 'axios';
@@ -13,28 +13,31 @@ const ChildSuccess = ({ navigation }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-        const onBackPress = () => {
-            Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-            {
-                text: "Cancel",
-                onPress: () => null,
-                style: "cancel"
-            },
-            { text: "YES", onPress: () => BackHandler.exitApp() }
-            ]);
-            return true;
-        };
+            const onBackPress = () => {
+                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => BackHandler.exitApp() }
+                ]);
+                return true;
+            };
 
-        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-        return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-    }, []));
+        }, []));
 
     setTimeout(() => {
-        navigation.navigate('Home')
-        }, 2000);
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home'}],
+        });
+    }, 2000);
     return (
         <View style={{ backgroundColor: 'white', height: height, width: width }}>
             <Image source={require('../assets/verified.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />

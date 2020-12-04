@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: width,
-    height: height * 0.55,
+    height: height * 0.5,
     // marginVertical: 32,
   },
   text: {
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     width: 325,
     fontWeight: "normal",
     lineHeight: 26,
-    fontFamily:'NunitoSans-SemiBold',
+    fontFamily: 'NunitoSans-SemiBold',
     marginTop: 20
   },
   title: {
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     width: 218,
     lineHeight: 33,
     textAlign: 'center',
-    fontFamily:'NunitoSans-Bold'
+    fontFamily: 'NunitoSans-Bold'
 
   },
   buttonCircle: {
@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     // shadowRadius: 2,  
-    elevation: 5
+    elevation: 5,
+    marginBottom:-height*0.01
   }
 });
 
@@ -136,13 +137,14 @@ export default class App extends React.Component {
           onSkip={() => {
             this.props.navigation.navigate('Login')
           }}
-          onDone={()=>this.props.navigation.navigate('Home', {'screen': 'Feed'})}
+          onDone={() => this.props.navigation.navigate('Home', { 'screen': 'Feed' })}
           bottomButton={true}
-          activeDotStyle={{ backgroundColor: "#327FEB", width:20 }}
+          activeDotStyle={{ backgroundColor: "#327FEB", width: 20 }}
           showSkipButton={true}
           showDoneButton={true}
           showPrevButton={true}
           data={data}
+        // dotStyle={{marinTop:50}}
         />
       </View>
     );

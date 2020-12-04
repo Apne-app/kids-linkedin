@@ -16,26 +16,39 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Settings = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-
+    const [children, setchildren] = React.useState({});
     const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
     const [status, setstatus] = useState('1')
     const [keyboardOffset, setKeyboardOffset] = useState(400);
-    const onKeyboardShow = event => 
-    {
-        setKeyboardOffset(event.endCoordinates.height+400);
+    const onKeyboardShow = event => {
+        setKeyboardOffset(event.endCoordinates.height + 400);
     }
+    useEffect(() => {
+        const check = async () => {
+            var child = await AsyncStorage.getItem('children')
+            if (child != null) {
+                child = JSON.parse(child)
+                setchildren(child)
+            }
+            else {
+                setchildren({})
+            }
+        }
+        check()
+    }, [])
+
     const onKeyboardHide = () => setKeyboardOffset(400);
 
     useEffect(() => {
-    Keyboard.addListener("keyboardDidShow", onKeyboardShow);
-    Keyboard.addListener("keyboardDidHide", onKeyboardHide);
+        Keyboard.addListener("keyboardDidShow", onKeyboardShow);
+        Keyboard.addListener("keyboardDidHide", onKeyboardHide);
 
-    // cleanup function
-    return () => {
-      Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
-      Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
-    };
-  }, []);
+        // cleanup function
+        return () => {
+            Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
+            Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
+        };
+    }, []);
 
 
     const handleEmail = () => {
@@ -98,7 +111,7 @@ const Settings = ({ navigation }) => {
                 elevation: 20,
             }}
         >
-        
+
             <TouchableOpacity onPress={() => sheetRef.current.snapTo(1)} style={{ alignItems: 'center', paddingBottom: 10 }}>
                 <View style={{ backgroundColor: 'lightgrey', borderRadius: 20, width: 100, height: 5, marginTop: -4 }}></View>
             </TouchableOpacity>
@@ -115,16 +128,18 @@ const Settings = ({ navigation }) => {
                         'Content-Type': 'application/json'
                     },
                     data: JSON.stringify({
-                        'email': 'anonymous', 'feedback': feedback
+                        'email': status==='3'?children['0']['id']:'anonymous', 'feedback': feedback
                     })
                 })
                     .then(async (response) => {
-                        alert('done')
+                        alert('Thank you for your feedback!')
+                        sheetRef.current.snapTo(1)
 
                     })
                     .catch((error) => {
                         console.log(error)
-                        alert('not done')
+                        alert('Thank you for your feedback!')
+                        sheetRef.current.snapTo(1)
                     })
             }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
                 <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Submit</Text>
@@ -164,9 +179,9 @@ const Settings = ({ navigation }) => {
                 <View style={{ margin: 25 }}>
                     <View >
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
-                        <TextInput editable={false} placeholder={status === '3' ? "Kid's Name" : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <TextInput editable={false} placeholder={status === '3' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
-                        <TextInput editable={false} placeholder={status === '3' ? "Kid's Year of Birth" : 'Please Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <TextInput editable={false} placeholder={status === '3' ? children['0']['data']['year'] : 'Please Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                         {/*<View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-Bold", marginVertical: 15, marginLeft: 23 }}>Push Notifications</Text>
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
@@ -195,7 +210,7 @@ const Settings = ({ navigation }) => {
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17, alignSelf: 'center', marginLeft: 40 }}>Contact Us</Text>
                             <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                         </Button>
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status==='3'?logout():navigation.navigate('Login')} >
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status === '3' ? logout() : navigation.navigate('Login')} >
                             <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{status === '3' ? 'Logout' : 'Login'}</Text>
                         </Button>
                     </View>
