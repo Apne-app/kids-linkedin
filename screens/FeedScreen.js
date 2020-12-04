@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, TouchableOpacity, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -580,11 +580,45 @@ const FeedScreen = ({ navigation, route }) => {
         )
     }
 
+    const Features = () => {
+        return (
+            <View>
+            <FlatList
+              data={["Feed", "Quiz", "News"]}
+              scrollEnabled={true}
+              contentContainerStyle={{
+                flexGrow: 1,
+              }}
+              showsHorizontalScrollIndicator={false}
+              style={{ marginTop: 15 }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  key={item}
+                  onPress={() => {
+                    // setValue({ ...value, color: item })
+                    navigation.navigate('Browser', { url: "https://quizizz.com/join/quiz/5ea4540affcaa5001b9c4782/start" })
+                    // console.log(item);  
+                  }}>
+                  <View style={{ alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center', height: 60, width: 60, borderRadius: 20, backgroundColor: '#327feb', borderColor: '#000', marginHorizontal: 6, borderWidth: 2 }} >
+                    <Text style={{alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center'}}>{item}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+              //Setting the number of column
+              // numColumns={3}
+              horizontal={true}
+              keyExtractor={(item, index) => index.toString()}
+            />
+            </View>
+        )
+    }
+
 
 
     return (
         <>
             <ScreenHeader screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => navigation.navigate('Notifications')} />
+            <Features />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </>
 
