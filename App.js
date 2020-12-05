@@ -309,4 +309,8 @@ const App = (props) => {
   );
 };
 
+codePush.sync({
+  updateDialog: true,
+  installMode: codePush.InstallMode.IMMEDIATE
+});
 export default codePush(App);

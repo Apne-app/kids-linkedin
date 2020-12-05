@@ -71,6 +71,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         }
 
     }, [])
+    
     const [currentCommment, setcurrentCommment] = useState([])
     const [place, setplace] = useState('')
     const CustomActivity = ({ props }) => {

@@ -432,6 +432,7 @@ export default class ExampleApp extends PureComponent {
         </View>
       );
     }
+    
     else {
       return (
         <View>
