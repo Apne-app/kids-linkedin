@@ -181,7 +181,7 @@ const LoginScreen = ({ route, navigation }) => {
               }
             }
             storeProfile()
-            axios.get('http://35.229.160.51:80/send/' + response.data.uuid + '/' + response.data.email + '/')
+            axios.get('http://35.229.160.51:80/send2/' + response.data.uuid + '/' + response.data.email + '/')
               .then((response) => {
                 console.log(response.data)
                 if (response.data == 'wrong id!') {

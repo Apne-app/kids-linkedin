@@ -128,7 +128,7 @@ const Settings = ({ navigation }) => {
                         'Content-Type': 'application/json'
                     },
                     data: JSON.stringify({
-                        'email': status==='3'?children['0']['id']:'anonymous', 'feedback': feedback
+                        'email': status === '3' ? children['0']['id'] : 'anonymous', 'feedback': feedback
                     })
                 })
                     .then(async (response) => {
@@ -150,6 +150,13 @@ const Settings = ({ navigation }) => {
     useEffect(() => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
+            if (x) {
+                x = JSON.parse(x)
+                if (Object.keys(x).length == 0) {
+                    await AsyncStorage.removeItem('children');
+                    x = null
+                }
+            }
             analytics.screen('Settings Screen', {
                 userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
@@ -213,6 +220,7 @@ const Settings = ({ navigation }) => {
                         <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status === '3' ? logout() : navigation.navigate('Login')} >
                             <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{status === '3' ? 'Logout' : 'Login'}</Text>
                         </Button>
+                        <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 13, textAlign: 'center', marginTop: 2 }}>v0.2.0</Text>
                     </View>
                 </View>
             </ScrollView>

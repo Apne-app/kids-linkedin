@@ -33,6 +33,13 @@ const NotificationScreen = ({ route, navigation }) => {
   useEffect(() => {
     const check = async () => {
       var x = await AsyncStorage.getItem('children');
+      if (x) {
+        x = JSON.parse(x)
+        if (Object.keys(x).length == 0) {
+          await AsyncStorage.removeItem('children');
+          x = null
+        }
+      }
       analytics.screen('Notifications Screen', {
         userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
         deviceID: getUniqueId()
@@ -74,14 +81,14 @@ const NotificationScreen = ({ route, navigation }) => {
             .then(function (response) {
               // console.log(JSON.stringify(response.data.token));
               axios({
-              method: 'post',
-              url:'http://104.199.158.211:5000/getchild/'+`?token=${response.data.token}`,
-              headers: {
+                method: 'post',
+                url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                headers: {
                   'Content-Type': 'application/json'
-              },
-              data: JSON.stringify({
-              "email":pro.email,
-              })
+                },
+                data: JSON.stringify({
+                  "email": pro.email,
+                })
               })
                 .then(async (response) => {
                   setchildren(response.data)

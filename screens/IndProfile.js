@@ -289,6 +289,13 @@ const IndProfile = ({ navigation, route }) => {
                         width={-80}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
+                            if (x) {
+                                x = JSON.parse(x)
+                                if (Object.keys(x).length == 0) {
+                                  await AsyncStorage.removeItem('children');
+                                  x = null
+                                }
+                              }
                             analytics.track('Comment', {
                                 userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()

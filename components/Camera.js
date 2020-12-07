@@ -62,6 +62,14 @@ export default class ExampleApp extends PureComponent {
 
       var x = await AsyncStorage.getItem('children');
       if (x) {
+        x = JSON.parse(x)
+        if (Object.keys(x).length == 0) {
+          await AsyncStorage.removeItem('children');
+          x = null
+        }
+      }
+      console.log(x)
+      if (x) {
         analytics.screen('Camera Screen', {
           userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
           deviceID: getUniqueId()

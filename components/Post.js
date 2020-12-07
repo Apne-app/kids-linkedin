@@ -115,13 +115,13 @@ const Upload = ({ route, navigation }) => {
       arr.push('file://' + ar[i]["uri"])
     }
     const shareOptions = {
-          title: 'Genio',
-          subject: 'Check out my collection. Create your own such collections at Genio',
-          message: 'Check out my collection. Create your own such collections at Genio',
-          urls: arr,
-        };
+      title: 'Genio',
+      subject: 'Check out my collection. Create your own such collections at Genio',
+      message: 'Check out my collection. Create your own such collections at Genio',
+      urls: arr,
+    };
     return Share.open(shareOptions);
-};
+  };
 
   const backButtonChange = () => {
 
@@ -133,9 +133,9 @@ const Upload = ({ route, navigation }) => {
 
       const backNew = () => {
         // saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
-        
-          setBottomSheetOpen(true)
-          closeRef.current.snapTo(0)
+
+        setBottomSheetOpen(true)
+        closeRef.current.snapTo(0)
       }
 
       const backHandler = BackHandler.addEventListener(
@@ -144,7 +144,7 @@ const Upload = ({ route, navigation }) => {
       );
 
       return () =>
-          BackHandler.removeEventListener("hardwareBackPress", backNew);
+        BackHandler.removeEventListener("hardwareBackPress", backNew);
 
 
       return true;
@@ -156,7 +156,7 @@ const Upload = ({ route, navigation }) => {
     );
 
     return () =>
-          BackHandler.removeEventListener("hardwareBackPress", backAction);
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
 
   }
 
@@ -168,8 +168,8 @@ const Upload = ({ route, navigation }) => {
 
       const backNew = () => {
         // saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
-        
-          closeRef.current.snapTo(0)
+
+        closeRef.current.snapTo(0)
       }
 
       const backHandler = BackHandler.addEventListener(
@@ -178,7 +178,7 @@ const Upload = ({ route, navigation }) => {
       );
 
       return () =>
-          BackHandler.removeEventListener("hardwareBackPress", backNew);
+        BackHandler.removeEventListener("hardwareBackPress", backNew);
 
 
       return true;
@@ -190,7 +190,7 @@ const Upload = ({ route, navigation }) => {
     );
 
     return () =>
-          BackHandler.removeEventListener("hardwareBackPress", backAction);
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
 
   }
 
@@ -198,15 +198,22 @@ const Upload = ({ route, navigation }) => {
 
     const sevent = async () => {
 
-    var x = await AsyncStorage.getItem('children');
-    analytics.screen('Post Screen', {
-         userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-        deviceID: getUniqueId() 
+      var x = await AsyncStorage.getItem('children');
+      if (x) {
+        x = JSON.parse(x)
+        if (Object.keys(x).length == 0) {
+          await AsyncStorage.removeItem('children');
+          x = null
+        }
+      }
+      analytics.screen('Post Screen', {
+        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+        deviceID: getUniqueId()
       })
     }
     sevent();
     const backAction = async () => {
-      
+
       closeRef.current.snapTo(0)
 
 
@@ -225,7 +232,7 @@ const Upload = ({ route, navigation }) => {
       }
 
       setExplore([{ 'height': 0, 'width': '0', 'uri': '' }, ...route.params.selected])
-      
+
     }
 
     return () => {
@@ -280,42 +287,41 @@ const Upload = ({ route, navigation }) => {
 
     var tme = new Date(tm);
     tme = tme.toString();
-    tme = tme.replace(/:/g,"-");
+    tme = tme.replace(/:/g, "-");
     try {
 
-        const saveFile = async (base64) => {
-          const albumPath = `${pathDir}/Images/${tme}`;
+      const saveFile = async (base64) => {
+        const albumPath = `${pathDir}/Images/${tme}`;
 
-          const fileName = `${selectedTag}_${tm}-${i}.png`;
-          const filePathInCache = item.uri;
-          const filePathInAlbum = `${albumPath}/${fileName}`;
+        const fileName = `${selectedTag}_${tm}-${i}.png`;
+        const filePathInCache = item.uri;
+        const filePathInAlbum = `${albumPath}/${fileName}`;
 
-          // console.log(fileName, filePathInCache, filePathInAlbum);
-          return RNFS.mkdir(albumPath)
-            .then(() => {
-              RNFS.copyFile(filePathInCache, filePathInAlbum)
-                .then(() => {
-                  uploadToS3(tm, fileName, filePathInAlbum);
-                  console.log("Dir Made");
-                });
-            })
-            .catch((error) => {
-              console.log('Could not create dir', error);
-            });
-        };
+        // console.log(fileName, filePathInCache, filePathInAlbum);
+        return RNFS.mkdir(albumPath)
+          .then(() => {
+            RNFS.copyFile(filePathInCache, filePathInAlbum)
+              .then(() => {
+                uploadToS3(tm, fileName, filePathInAlbum);
+                console.log("Dir Made");
+              });
+          })
+          .catch((error) => {
+            console.log('Could not create dir', error);
+          });
+      };
 
-        await saveFile();
-      } catch (error) {
-        console.log(error)
-      }
+      await saveFile();
+    } catch (error) {
+      console.log(error)
+    }
 
   }
 
-  if(route.params.time)
-  {
+  if (route.params.time) {
     setTime(route.params.time);
     // console.log(route.params.images[route.params.images.length-1], "asaaaaaaaaaaaaaaa")
-    saveImages(route.params.images[route.params.images.length-1], route.params.time, route.params.images.length-1);
+    saveImages(route.params.images[route.params.images.length - 1], route.params.time, route.params.images.length - 1);
     route.params.time = 0;
   }
 
@@ -326,7 +332,7 @@ const Upload = ({ route, navigation }) => {
   //   const backBehaviour = () => {
 
   //    const backAction = async () => {
-      
+
   //         closeRef.current.snapTo(0)
 
   //         return true;
@@ -346,8 +352,8 @@ const Upload = ({ route, navigation }) => {
   //   const backBehaviour = () => {
 
   //   const backAction = async () => {
-      
-          
+
+
   //         navigation.navigate('Home', { screen: 'Files' })
 
 
@@ -363,36 +369,35 @@ const Upload = ({ route, navigation }) => {
   //         BackHandler.removeEventListener("hardwareBackPress", backAction);
   //   }
   //   backBehaviour();
-        
+
   // }
 
   React.useEffect(() => {
-     const backBehaviour = () => {
-       console.log("bllah")
+    const backBehaviour = () => {
+      console.log("bllah")
 
-    const backAction = async () => {
-      
-          console.log("asdl")
-          if(route.params.edited)
-          {
+      const backAction = async () => {
 
-            closeRef.current.snapTo(0)
-          }
-          else{
+        console.log("asdl")
+        if (route.params.edited) {
+
+          closeRef.current.snapTo(0)
+        }
+        else {
           navigation.navigate('Home', { screen: 'Files' })
-          }
+        }
 
 
-          return true;
-        };
+        return true;
+      };
 
-        const backHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
-          backAction
-        );
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
 
-        return () =>
-          BackHandler.removeEventListener("hardwareBackPress", backAction);
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", backAction);
     }
     backBehaviour();
   })
@@ -400,8 +405,8 @@ const Upload = ({ route, navigation }) => {
   // useFocusEffect(
   //       React.useCallback(() => {
   //       const backAction = async () => {
-      
-          
+
+
   //         navigation.navigate('Home', { screen: 'Files' })
 
 
@@ -415,7 +420,7 @@ const Upload = ({ route, navigation }) => {
 
   //       return () =>
   //         BackHandler.removeEventListener("hardwareBackPress", backAction);
-        
+
   //   }, []));
 
 
@@ -464,11 +469,10 @@ const Upload = ({ route, navigation }) => {
     // return name;
   }
 
-  if(route.params.edit)
-  {
+  if (route.params.edit) {
     route.params.edit = 0;
     setTime(route.params.newTime);
-    
+
   }
 
   const myAsyncPDFFunction = async () => {
@@ -483,8 +487,7 @@ const Upload = ({ route, navigation }) => {
       var arr = [];
 
       explore.map(item => {
-        if (item.uri.length > 10)
-        {
+        if (item.uri.length > 10) {
           var a = item.uri;
           a = a.replace('file:///', '');
           a = a.replace('file:/', '');
@@ -525,47 +528,47 @@ const Upload = ({ route, navigation }) => {
 
   const deleteSingleImage = async (item) => {
     RNFS.unlink(item)
-    .then(() => {
-      console.log('FILE DELETED');
-    })
-    // `unlink` will throw an error, if the item to unlink does not exist
-    .catch((err) => {
-      console.log(err.message);
-    });
+      .then(() => {
+        console.log('FILE DELETED');
+      })
+      // `unlink` will throw an error, if the item to unlink does not exist
+      .catch((err) => {
+        console.log(err.message);
+      });
     var x = await AsyncStorage.getItem('children')
     x = JSON.parse(x)["0"]["data"]["gsToken"];
     var config = {
-    method: 'get',
-    url: `https://gvsa1w2ib3.execute-api.ap-south-1.amazonaws.com/default/deleteFromS3?token=${x}&time=${time}&filename=${item.split('_')[1]}`,
-    headers: { 
+      method: 'get',
+      url: `https://gvsa1w2ib3.execute-api.ap-south-1.amazonaws.com/default/deleteFromS3?token=${x}&time=${time}&filename=${item.split('_')[1]}`,
+      headers: {
         'Content-Type': 'application/json'
-    }
+      }
     };
     // console.log(config);
     axios(config)
-    .then(res => {
-      console.log(res.data);
-    })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      })
 
   }
 
   const deleteImages = async () => {
     var tme = new Date(time);
     tme = tme.toString();
-    tme = tme.replace(/:/g,"-");
+    tme = tme.replace(/:/g, "-");
     var delDir = `${pathDir}/Images/`;
     RNFS.exists(delDir)
-      .then( (result) => {
-          console.log("file exists: ", result);
-          RNFS.readDir(delDir)
+      .then((result) => {
+        console.log("file exists: ", result);
+        RNFS.readDir(delDir)
           .then(res => {
             // console.log(res);
             res.map((item, i) => {
               // console.log(item.name)
-              if(item.name == tme)
+              if (item.name == tme)
                 return RNFS.unlink(item.path)
                   .then(() => {
                     console.log('FILE DELETED');
@@ -579,9 +582,9 @@ const Upload = ({ route, navigation }) => {
           .catch(err => {
             console.log(err);
           })
-        })
-        .catch((err) => {
-          console.log(err.message);
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   }
 
@@ -624,24 +627,23 @@ const Upload = ({ route, navigation }) => {
     }
     else {
       setBottomSheetOpen(true)
-          closeRef.current.snapTo(0);
+      closeRef.current.snapTo(0);
     }
   }
   const deletes = async () => {
     setDeleteCount(0);
     var x = await AsyncStorage.getItem('children');
     analytics.track('Delete Images', {
-         userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-        deviceID: getUniqueId() 
-      })
+      userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+      deviceID: getUniqueId()
+    })
     setSelecting(true);
     backButtonChange();
     var tempArr = [...explore];
     var cnt = 0;
     for (var i = 1; i < tempArr.length; i++) {
-      if(tempArr[i]['selected'])
-      {
-      cnt++;
+      if (tempArr[i]['selected']) {
+        cnt++;
       }
     }
     setDeleteCount(cnt);
@@ -689,9 +691,9 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('PDF Saved', {
-                   userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-                  deviceID: getUniqueId() 
-                })
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
+              })
               myAsyncPDFFunction()
             }}
           >
@@ -728,9 +730,9 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Did not save collection', {
-                   userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-                  deviceID: getUniqueId() 
-                })
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
+              })
               deleteImages();
               navigation.navigate('Home', { screen: 'Feed' })
             }}
@@ -748,9 +750,9 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Collection Saved', {
-                   userID: x ? JSON.parse(x)["0"]["data"]["gsToken"]: null,   
-                  deviceID: getUniqueId() 
-                })
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
+              })
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
 
             }}
@@ -804,24 +806,24 @@ const Upload = ({ route, navigation }) => {
         </TouchableOpacity>
         </Right>
       </Header> */}
-      <CompHeader goback={goback} icon="close"  screen={selecting ? "Delete" : "Preview"} style={{zIndex: 1}} right={true} delete={deletes} selecting={selecting} />
-      
+      <CompHeader goback={goback} icon="close" screen={selecting ? "Delete" : "Preview"} style={{ zIndex: 1 }} right={true} delete={deletes} selecting={selecting} />
+
       <Animated.View
-      style={{
-        backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: bottomSheetOpen ? width : 0, zIndex: 10, height: bottomSheetOpen ? height : 0
-      }}>
-      <Button
         style={{
-          width: bottomSheetOpen ? width : 0,
-          height: bottomSheetOpen ? height: 0,
-          backgroundColor: 'transparent',
-        }}
-        activeOpacity={1}
-        onPress={() => sheetRef.current.snapTo(1)}
-      />
-    </Animated.View>
+          backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: bottomSheetOpen ? width : 0, zIndex: 10, height: bottomSheetOpen ? height : 0
+        }}>
+        <Button
+          style={{
+            width: bottomSheetOpen ? width : 0,
+            height: bottomSheetOpen ? height : 0,
+            backgroundColor: 'transparent',
+          }}
+          activeOpacity={1}
+          onPress={() => sheetRef.current.snapTo(1)}
+        />
+      </Animated.View>
       <View style={{ backgroundColor: "#fff" }}>
-        
+
         <ImageView
           images={selected}
           imageIndex={openImg}
@@ -846,13 +848,13 @@ const Upload = ({ route, navigation }) => {
           FooterComponent={() => {
             return (
               <View style={{ height: height * 0.1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-                {explore[visibleImg + 1]['prevImg'] ?<TouchableOpacity
+                {explore[visibleImg + 1]['prevImg'] ? <TouchableOpacity
                   style={{ height: 40 }}
                   onPress={() => {
                     var ar = [...explore]; ar.splice(0, 1);
                     setSelected([]); setVisible(false);
-                    navigation.navigate('Preview', { 'img': explore[visibleImg + 1]['prevImg'], height: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => height) , width: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1, 'pos': visibleImg });
-                    
+                    navigation.navigate('Preview', { 'img': explore[visibleImg + 1]['prevImg'], height: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => height), width: Image.getSize(explore[visibleImg + 1]['prevImg'], (width, height) => width), 'images': ar, 'editing': 1, 'pos': visibleImg });
+
                   }}
                 >
                   <View style={styles.Cancel}>
@@ -911,18 +913,17 @@ const Upload = ({ route, navigation }) => {
                         openImageViewer(index); setVisible(true);
                       }
                     }}
-                      onLongPress={() => { 
-                        setSelecting(true); backButtonChange(); 
+                      onLongPress={() => {
+                        setSelecting(true); backButtonChange();
                         var tempArr = [...explore];
                         var cnt = 0;
                         for (var i = 1; i < tempArr.length; i++) {
-                          if(tempArr[i]['selected'])
-                          {
-                          cnt++;
+                          if (tempArr[i]['selected']) {
+                            cnt++;
                           }
                         }
                         setDeleteCount(cnt);
-                        }}
+                      }}
                     >
                       <View
                         key={item.id}
@@ -931,7 +932,7 @@ const Upload = ({ route, navigation }) => {
                           style={styles.image}
                           imageStyle={{ opacity: selecting && item.selected ? 0.5 : 1, borderRadius: 20 }}
                           source={{
-                            uri:  item.uri.includes("http") ? item.uri : "file://" + item.uri,
+                            uri: item.uri.includes("http") ? item.uri : "file://" + item.uri,
                           }}
                         >
                           {
@@ -954,13 +955,12 @@ const Upload = ({ route, navigation }) => {
                           // if()
                           selectedStatus == 'Select All' ? array[i]['selected'] = true : array[i]['selected'] = false;
                         }
-                        selectedStatus == 'Select All' ? setDeleteCount(array.length-1) : setDeleteCount(0);
+                        selectedStatus == 'Select All' ? setDeleteCount(array.length - 1) : setDeleteCount(0);
                         setExplore([...array])
-                        if(selectedStatus == 'Select All')
-                        {
+                        if (selectedStatus == 'Select All') {
                           setSelectedStatus('Deselect All')
                         }
-                        else{
+                        else {
                           setSelectedStatus('Select All')
                         }
                       }
@@ -1059,9 +1059,9 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Collection Shared', {
-                  userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-                  deviceID: getUniqueId() 
-                }) 
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
+              })
               shareImage();
             }}
           >
@@ -1099,12 +1099,12 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50 }}
             onPress={() => {
-             var ar = explore;
+              var ar = explore;
               var arr = [];
               for (var i = 1; i < ar.length; i++) {
                 arr.push({ uri: ar[i]["uri"].includes("http") ? ar[i]["uri"] : 'file://' + ar[i]["uri"] })
               }
-              status==='3'?navigation.navigate('CreatePost', { images: arr, tag: selectedTag }):navigation.navigate('Login', {screen:'Post'})
+              status === '3' ? navigation.navigate('CreatePost', { images: arr, tag: selectedTag }) : navigation.navigate('Login', { screen: 'Post' })
             }}
           >
             <View style={styles.Next}>

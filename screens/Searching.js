@@ -156,6 +156,13 @@ const Searching = ({ route, navigation }) => {
                     <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
                         navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
                         var x = await AsyncStorage.getItem('children');
+                        if (x) {
+                            x = JSON.parse(x)
+                            if (Object.keys(x).length == 0) {
+                              await AsyncStorage.removeItem('children');
+                              x = null
+                            }
+                          }
                         analytics.track('Searched Kid Opened', {
                             userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                             deviceID: getUniqueId()
@@ -166,7 +173,7 @@ const Searching = ({ route, navigation }) => {
                             style={{ width: 60, height: 60, borderRadius: 306, }}
                         />
                         <View style={{ marginLeft: 20, flexDirection: 'column' }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop:9 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop: 9 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
                             {/* <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  </Text> */}
                         </View>
                         {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
@@ -201,16 +208,16 @@ const Searching = ({ route, navigation }) => {
                     <Searchbar
                         theme={theme}
                         autoFocus={true}
-                        style={{width:width-100}}
+                        style={{ width: width - 100 }}
                         placeholder="Search Genio"
                         onChangeText={onChangeSearch}
                         value={searchQuery}
                     />
-                    <Text onPress={()=>navigation.navigate('Search')} style={{fontFamily:'NunitoSans-SemiBold', color:'#375FEB', marginLeft:10}}>Cancel</Text>
+                    <Text onPress={() => navigation.navigate('Search')} style={{ fontFamily: 'NunitoSans-SemiBold', color: '#375FEB', marginLeft: 10 }}>Cancel</Text>
                 </Item>
             </Header>
             {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
-            {searchQuery != '' && !doing && !(result).length? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<View><FlatList
+            {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<View><FlatList
                 data={result}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.gsToken}
