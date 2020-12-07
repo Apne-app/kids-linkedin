@@ -61,10 +61,19 @@ export default class ExampleApp extends PureComponent {
     const func = async () => {
 
       var x = await AsyncStorage.getItem('children');
-      analytics.screen('Camera Screen', {
-        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-        deviceID: getUniqueId()
-      })
+      if (x) {
+        analytics.screen('Camera Screen', {
+          userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+          deviceID: getUniqueId()
+        })
+      }
+      else {
+        analytics.screen('Camera Screen', {
+          userID: null,
+          deviceID: getUniqueId()
+        })
+      }
+
 
 
       try {
@@ -432,12 +441,12 @@ export default class ExampleApp extends PureComponent {
         </View>
       );
     }
-    
+
     else {
       return (
         <View>
           <CompHeader screen={'Scan'} goback={goback} />
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop:'50%'}}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: '50%' }}>
             <View style={{ alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}>
               {this.state.denied ? <View style={{ alignSelf: 'center' }}>
                 <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-SemiBold' }}>Enable access so you can start scanning the best memories of your kids</Text>

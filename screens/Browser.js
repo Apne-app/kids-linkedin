@@ -53,7 +53,10 @@ const Browser = ({ navigation, route }) => {
             {/* <View style={{display:display}}>
                 <Animation />
                 </View> */}
-            <CompHeader screen={getHostName(route.params.url)} goback={() => navigation.navigate('Profile')} icon={'back'} />
+            <CompHeader screen={getHostName(route.params.url)} goback={() => navigation.pop()} icon={'back'} />
+            <View>
+
+            </View>
             <WebView
                 source={{
                     uri: url

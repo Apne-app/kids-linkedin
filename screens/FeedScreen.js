@@ -25,11 +25,6 @@ import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import WebView from 'react-native-webview';
-if (!window.location) {
-    // App is running in simulator
-    window.navigator.userAgent = 'ReactNative';
-}
-import io from 'socket.io-client';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -88,16 +83,6 @@ const FeedScreen = ({ navigation, route }) => {
     const [reportComment, setReportComment] = useState('');
     const [actionstatus, setActionStatus] = useState(0);
     const [youtube, setyoutube] = useState('https://youtube.com');
-
-    useEffect(() => {
-        const socket = io('http://localhost/kafka', {
-            transports: ['websocket'], jsonp: false
-        });
-        socket.connect();
-        socket.on('connect', () => {
-            console.log('connected to socket server');
-        });
-    })
 
     useFocusEffect(
         React.useCallback(() => {
@@ -583,32 +568,32 @@ const FeedScreen = ({ navigation, route }) => {
     const Features = () => {
         return (
             <View>
-            <FlatList
-              data={["Feed", "Quiz", "News"]}
-              scrollEnabled={true}
-              contentContainerStyle={{
-                flexGrow: 1,
-              }}
-              showsHorizontalScrollIndicator={false}
-              style={{ marginTop: 15 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  key={item}
-                  onPress={() => {
-                    // setValue({ ...value, color: item })
-                    navigation.navigate('Browser', { url: "https://quizizz.com/join/quiz/5ea4540affcaa5001b9c4782/start" })
-                    // console.log(item);  
-                  }}>
-                  <View style={{ alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center', height: 60, width: 60, borderRadius: 20, backgroundColor: '#327feb', borderColor: '#000', marginHorizontal: 6, borderWidth: 2 }} >
-                    <Text style={{alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center'}}>{item}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-              //Setting the number of column
-              // numColumns={3}
-              horizontal={true}
-              keyExtractor={(item, index) => index.toString()}
-            />
+                <FlatList
+                    data={["Feed", "Quiz", "News"]}
+                    scrollEnabled={true}
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                    }}
+                    showsHorizontalScrollIndicator={false}
+                    style={{ marginTop: 15 }}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            key={item}
+                            onPress={() => {
+                                // setValue({ ...value, color: item })
+                                navigation.navigate('Browser', { url: "https://quizizz.com/join/quiz/5ea4540affcaa5001b9c4782/start" })
+                                // console.log(item);  
+                            }}>
+                            <View style={{ alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center', height: 60, width: 60, borderRadius: 20, backgroundColor: '#327feb', borderColor: '#000', marginHorizontal: 6, borderWidth: 2 }} >
+                                <Text style={{ alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center' }}>{item}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                    //Setting the number of column
+                    // numColumns={3}
+                    horizontal={true}
+                    keyExtractor={(item, index) => index.toString()}
+                />
             </View>
         )
     }
