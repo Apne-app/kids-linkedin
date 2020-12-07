@@ -15,6 +15,7 @@ import FeedScreen from './screens/FeedScreen'
 import VideoFullScreen from './screens/VideoFullScreen'
 import IntroScreen from './screens/IntroScreen'
 import IntroSlider from './screens/IntroSlider'
+import { TransitionPresets } from '@react-navigation/stack';
 import PostScreen from './screens/PostScreen'
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
@@ -274,6 +275,19 @@ const App = (props) => {
     const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
     return () => unsubscribe();
   }, []);
+
+  const config = {
+    animation: 'spring',
+    config: {
+      stiffness: 1000,
+      damping: 500,
+      mass: 3,
+      overshootClamping: true,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 0.01,
+    },
+  };
+
   return (
     <NavigationContainer ref={containerRef}>
       <Stack.Navigator initialRouteName={'IntroSlider'}>
@@ -286,14 +300,36 @@ const App = (props) => {
         <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
         <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
         <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
-        <Stack.Screen options={{ headerShown: false, gestureDirection: 'horizontal', transitionSpec: { open: { animation: 'timing', config: { duration: 300 } }, close: { animation: 'timing', config: { duration: 300 } } } }} name="SinglePost" component={SinglePostScreen} />
+        <Stack.Screen options={({ route, navigation }) => ({
+          headerShown: false,
+          gestureEnabled: true,
+          cardOverlayEnabled: true,
+          headerStatusBarHeight:
+            navigation
+              .dangerouslyGetState()
+              .routes.findIndex((r) => r.key === route.key) > 0
+              ? 0
+              : undefined,
+          ...TransitionPresets.SlideFromRightIOS,
+        })} name="SinglePost" component={SinglePostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
         <Stack.Screen options={{ headerShown: false }} name="CreatePost" component={PostScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
         <Stack.Screen options={{ headerShown: false }} name="AddText" component={AddText} />
         <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
-        <Stack.Screen options={{ headerShown: false }} name="Browser" component={Browser} />
+        <Stack.Screen options={({ route, navigation }) => ({
+          headerShown: false,
+          gestureEnabled: true,
+          cardOverlayEnabled: true,
+          headerStatusBarHeight:
+            navigation
+              .dangerouslyGetState()
+              .routes.findIndex((r) => r.key === route.key) > 0
+              ? 0
+              : undefined,
+          ...TransitionPresets.SlideFromRightIOS,
+        })} name="Browser" component={Browser} />
         <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
         <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
         <Stack.Screen options={{ headerShown: false }} name="Settings" component={Settings} />

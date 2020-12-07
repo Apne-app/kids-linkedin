@@ -425,12 +425,12 @@ const FileScreen = (props) => {
                             files.map((item, i) => {
                                 return (
                                     <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-                                        <TouchableOpacity
-                                            style={{ borderRadius: 20 }}
-                                            onPress={() => {
-                                                viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
-                                            }}>
-                                            <Card style={{ borderRadius: 20 }} >
+                                    <Card style={{ borderRadius: 20 }} >
+                                    <TouchableOpacity
+                                        style={{ borderRadius: 20 }}
+                                        onPress={() => {
+                                            viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
+                                        }}>
                                                 <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
                                                     <View style={{ flexDirection: 'row' }}>
                                                         <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, fontWeight: 'bold', marginBottom: 10, flex: 8 }}>{item["cloud"] ? createDate(item['images'][0]['time']) : createDate(item['images'][0]['path'].split('Images/')[1].split('/')[0])}</Text>
@@ -456,8 +456,8 @@ const FileScreen = (props) => {
                                                     {item['images'][item['images'].length - 1]['name'].split('_')[0] !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item['images'][0]['name'].split('_')[0]}</Chip> : null}
 
                                                 </CardItem>
+                                                </TouchableOpacity>
                                             </Card>
-                                        </TouchableOpacity>
                                     </View>
                                 )
                             })
