@@ -49,7 +49,7 @@ const Unverified = ({ navigation, route }) => {
                             await AsyncStorage.setItem('status', '3')
                             navigation.reset({
                                 index: 0,
-                                routes: [{ name: route.params ? (Object.keys(route.params).includes('screen') ? (route.params.screen === "IntroSlider" ? ('Home') : (route.params.screen)) : ('Home')) : ('Home') }],
+                                routes: [{ name: 'Home'}],
                             });
 
                         }

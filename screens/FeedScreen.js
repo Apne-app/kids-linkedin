@@ -114,11 +114,17 @@ const FeedScreen = ({ navigation, route }) => {
                     await AsyncStorage.removeItem('children');
                     x = null
                 }
+                analytics.screen('Feed Screen', {
+                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    deviceID: getUniqueId()
+                })
             }
-            analytics.screen('Feed Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-                deviceID: getUniqueId()
-            })
+            else {
+                analytics.screen('Feed Screen', {
+                    userID: null,
+                    deviceID: getUniqueId()
+                })
+            }
         }
         analyse();
     })

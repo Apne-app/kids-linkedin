@@ -78,11 +78,17 @@ const FileScreen = (props) => {
                     await AsyncStorage.removeItem('children');
                     x = null
                 }
+                analytics.screen('Collections Screen', {
+                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    deviceID: getUniqueId()
+                })
             }
-            analytics.screen('Collections Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-                deviceID: getUniqueId()
-            })
+            else {
+                analytics.screen('Collections Screen', {
+                    userID: null,
+                    deviceID: getUniqueId()
+                })
+            }
             var st = await AsyncStorage.getItem('status')
             setstatus(st)
         }
@@ -387,11 +393,18 @@ const FileScreen = (props) => {
                                         await AsyncStorage.removeItem('children');
                                         x = null
                                     }
+                                    analytics.track('Collection Chip Pressed', {
+                                        userID: x ? x["0"]["data"]["gsToken"] : null,
+                                        deviceID: getUniqueId()
+                                    })
+
                                 }
-                                analytics.screen('Collection Chip Pressed', {
-                                    userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-                                    deviceID: getUniqueId()
-                                })
+                                else {
+                                    analytics.track('Collection Chip Pressed', {
+                                        userID: null,
+                                        deviceID: getUniqueId()
+                                    })
+                                }
                                 tag == item ? setTag('') : setTag(item); tag == item ? showAll() : showTags(item); setTagsPresent(true);
                             }} >{item}</Chip>
                         )}

@@ -57,11 +57,18 @@ const SearchScreen = ({ route, navigation }) => {
           await AsyncStorage.removeItem('children');
           x = null
         }
+        analytics.screen('Search Screen', {
+          userID: x ? x["0"]["data"]["gsToken"] : null,
+          deviceID: getUniqueId()
+        })
       }
-      analytics.screen('Search Screen', {
-        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-        deviceID: getUniqueId()
-      })
+      else{
+        analytics.screen('Search Screen', {
+          userID:  null,
+          deviceID: getUniqueId()
+        })
+      }
+
       var child = await AsyncStorage.getItem('children')
       if (child != null) {
         child = JSON.parse(child)

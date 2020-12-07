@@ -205,9 +205,13 @@ const Upload = ({ route, navigation }) => {
           await AsyncStorage.removeItem('children');
           x = null
         }
+        analytics.screen('Post Screen', {
+          userID: x ? x["0"]["data"]["gsToken"] : null,
+          deviceID: getUniqueId()
+        })
       }
       analytics.screen('Post Screen', {
-        userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+        userID:  null,
         deviceID: getUniqueId()
       })
     }

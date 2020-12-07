@@ -26,6 +26,7 @@ import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import ImagePicker from 'react-native-image-crop-picker';
+import { Thumbnail } from 'react-native-thumbnail-video';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 updateStyle('activity', {
@@ -240,16 +241,24 @@ const ProfileScreen = ({ navigation, route }) => {
         const analyse = async () => {
             var x = await AsyncStorage.getItem('children');
             if (x) {
+                console.log(x)
                 x = JSON.parse(x)
                 if (Object.keys(x).length == 0) {
                   await AsyncStorage.removeItem('children');
                   x = null
                 }
+                analytics.screen('Profile Screen', {
+                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    deviceID: getUniqueId()
+                })
               }
-            analytics.screen('Profile Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-                deviceID: getUniqueId()
-            })
+              else{
+                analytics.screen('Profile Screen', {
+                    userID:  null,
+                    deviceID: getUniqueId()
+                })
+              }
+            
         }
         analyse();
 

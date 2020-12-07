@@ -156,11 +156,18 @@ const Settings = ({ navigation }) => {
                     await AsyncStorage.removeItem('children');
                     x = null
                 }
+                analytics.screen('Settings Screen', {
+                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    deviceID: getUniqueId()
+                })
             }
-            analytics.screen('Settings Screen', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-                deviceID: getUniqueId()
-            })
+            else{
+                analytics.screen('Settings Screen', {
+                    userID:  null,
+                    deviceID: getUniqueId()
+                })
+            }
+            
         }
         analyse();
     })
