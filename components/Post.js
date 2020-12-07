@@ -13,6 +13,7 @@ import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
 import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { Overlay } from 'react-native-elements';
 import Gallery from './Gallery';
@@ -93,6 +94,7 @@ const Upload = ({ route, navigation }) => {
   const [origImages, setOrigImages] = React.useState([])
   const [time, setTime] = React.useState('');
   const [selecting, setSelecting] = React.useState(false);
+  const [showToast, setShowToast] = React.useState(false);
 
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
   const [selectedTag, setTag] = React.useState('Genio');
@@ -112,8 +114,10 @@ const Upload = ({ route, navigation }) => {
     var arr = [];
     for (var i = 1; i < ar.length; i++) {
       // var base64data = await RNFS.readFile('file://' + ar[i]["uri"], 'base64').then();
-      arr.push('file://' + ar[i]["uri"])
+      // console.log(ar[i]["uri"]);
+      arr.push( ar[i]["uri"].includes('http') ? ar[i]["uri"] : 'file://' + ar[i]["uri"])
     }
+    console.log(arr)
     const shareOptions = {
       title: 'Genio',
       subject: 'Check out my collection. Create your own such collections at Genio',
@@ -256,6 +260,10 @@ const Upload = ({ route, navigation }) => {
     for (var i = 0; i < route.params.images.length; i++) {
       route.params.images[i]['selected'] = false;
     }
+    if(route.params.images.length == 1)
+    {
+      setShowToast(true);
+    }
     setExplore([{ 'height': 0, 'width': '0', 'uri': '' }, ...route.params.images])
   }
 
@@ -378,7 +386,7 @@ const Upload = ({ route, navigation }) => {
 
   React.useEffect(() => {
     const backBehaviour = () => {
-      console.log("bllah")
+      // console.log("bllah")
 
       const backAction = async () => {
 
@@ -741,8 +749,8 @@ const Upload = ({ route, navigation }) => {
               navigation.navigate('Home', { screen: 'Feed' })
             }}
           >
-            <View style={styles.Next}>
-              <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom: 4 }}>
+            <View style={styles.Cancel}>
+              <Text style={{ color: "#000", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom: 4 }}>
                 No
               </Text>
             </View>
@@ -823,7 +831,7 @@ const Upload = ({ route, navigation }) => {
             backgroundColor: 'transparent',
           }}
           activeOpacity={1}
-          onPress={() => sheetRef.current.snapTo(1)}
+          onPress={() => closeRef.current.snapTo(1)}
         />
       </Animated.View>
       <View style={{ backgroundColor: "#fff" }}>
@@ -1069,7 +1077,7 @@ const Upload = ({ route, navigation }) => {
               shareImage();
             }}
           >
-            <Icon name="share-2" type="Feather" />
+            <Icon name="share" type="Entypo"  />
             <Text style={{ fontSize: 10, fontFamily: 'NunitoSans-Bold', marginLeft: 10 }} >Share </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -1125,6 +1133,20 @@ const Upload = ({ route, navigation }) => {
         <Icon onPress={() => {tag == 'Certificate' ? setModalVisible4(true): PostUpload(); analytics.track('Posted')}} style={{ color: "#327FEB" }} type="FontAwesome" name='send' />
       </Item>*/}
       </View>
+      <Snackbar
+          visible={showToast}
+          style={{ marginBottom: height * 0.04 }}
+          duration={1500}
+          onDismiss={() => setShowToast(false)}
+          action={{
+              label: 'Done',
+              onPress: () => {
+                  // Do something
+                  setShowToast(false);
+              },
+          }}>
+          A new collection was created
+      </Snackbar>
       <BottomSheet
         ref={sheetRef}
         snapPoints={[300, -200]}
@@ -1338,13 +1360,13 @@ const styles = StyleSheet.create({
   Cancel: {
     alignSelf: 'center',
     flexDirection: 'row',
-    padding: 8,
-    // margin: 5,
+    padding: 10,
+    marginBottom: 4,
     backgroundColor: '#fff',
-    borderRadius: 20,
+    borderRadius: 30,
     borderWidth: 1,
     borderColor: "#327FEB",
-    width: 135,
+    width: width*0.4,
     flex: 1,
     marginHorizontal: 20
   },

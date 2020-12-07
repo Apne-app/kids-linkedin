@@ -31,19 +31,19 @@ function urlify(text) {
 
 const SinglePostScreen = ({ navigation, route }) => {
 
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         const onBackPress = () => {
-    //             navigation.pop()
-    //             return true;
-    //         };
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.pop()
+                return true;
+            };
 
-    //         BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-    //         return () =>
-    //             BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-    //     }, []));
+        }, []));
 
     const keyboardDidShowListener = React.useRef();
     const scrollref = React.useRef();
