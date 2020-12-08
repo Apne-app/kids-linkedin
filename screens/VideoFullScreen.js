@@ -9,6 +9,7 @@ const VideoFullScreen = ({ route, navigation }) => {
             seekColor={'#327FEB'}
             toggleResizeModeOnFullscreen={false}
             tapAnywhereToPause={true}
+            playInBackground={false}
             fullscreen={true}
             disableFullscreen={false}
             disableBack={true}

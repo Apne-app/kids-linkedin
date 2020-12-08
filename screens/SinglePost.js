@@ -149,6 +149,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     seekColor={'#327FEB'}
                     toggleResizeModeOnFullscreen={false}
                     tapAnywhereToPause={true}
+                    playInBackground={false}
                     paused={true}
                     disableFullscreen={true}
                     disableBack={true}
@@ -156,7 +157,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     style={{ width: width, height: 340 }}
                     source={{ uri: props.activity.video }}
                     navigator={navigation}
-                // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+                    onExitFullscreen={()=>navigation.pop()}
                 /> : null}
             {props.activity.youtube ?
                 <YoutubePlayer

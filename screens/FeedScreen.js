@@ -341,6 +341,8 @@ const FeedScreen = ({ navigation, route }) => {
                                 seekColor={'#327FEB'}
                                 toggleResizeModeOnFullscreen={false}
                                 tapAnywhereToPause={true}
+                                playInBackground={false}
+                                playWhenInactive={false}
                                 paused={true}
                                 disableFullscreen={true}
                                 disableBack={true}
@@ -348,7 +350,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 style={{ borderRadius: 0, width: width, height: 340, }}
                                 source={{ uri: props.activity.video }}
                                 navigator={navigation}
-                            // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+                                // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
                             /> : null}
                         {props.activity.youtube ?
                             <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
