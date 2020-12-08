@@ -12,14 +12,21 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader'
+import { Snackbar } from 'react-native-paper';
+import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Settings = ({ navigation }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
     const [children, setchildren] = React.useState({});
     const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
+    const [logging, setlogging] = React.useState(false);
+    const [newname, setnewname] = React.useState('default123');
     const [status, setstatus] = useState('1')
+    const [key, setkey] = useState('2')
+    const [change, setchange] = useState(false)
     const [keyboardOffset, setKeyboardOffset] = useState(400);
+    const [showToast, setShowToast] = useState(false)
     const onKeyboardShow = event => {
         setKeyboardOffset(event.endCoordinates.height + 400);
     }
@@ -85,18 +92,34 @@ const Settings = ({ navigation }) => {
         setIsSwitchOn(!isSwitchOn)
     };
     const logout = async () => {
-        var x = await AsyncStorage.getItem('children');
-        analytics.track('Logged Out', {
-            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
-            deviceID: getUniqueId()
-        })
-        var arr = await AsyncStorage.getAllKeys()
-        await AsyncStorage.multiRemove(arr)
-        AsyncStorage.setItem('status', '-1')
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'Login' }],
-        });
+        Alert.alert(
+            "Alert",
+            "Are you sure you want to logout?",
+            [
+                {
+                    text: "No",
+                    onPress: () => null,
+                    style: "cancel"
+                },
+                { text: "Yes", onPress: () => out() }
+            ],
+            { cancelable: false }
+        )
+        const out = async () => {
+            setlogging(true)
+            var x = await AsyncStorage.getItem('children');
+            analytics.track('Logged Out', {
+                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
+            })
+            var arr = await AsyncStorage.getAllKeys()
+            await AsyncStorage.multiRemove(arr)
+            await AsyncStorage.setItem('status', '-1')
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            });
+        }
 
     }
 
@@ -161,19 +184,73 @@ const Settings = ({ navigation }) => {
                     deviceID: getUniqueId()
                 })
             }
-            else{
+            else {
                 analytics.screen('Settings Screen', {
-                    userID:  null,
+                    userID: null,
                     deviceID: getUniqueId()
                 })
             }
-            
+
         }
         analyse();
     })
-
+    const save = async () => {
+        var child = await AsyncStorage.getItem('children')
+        var pro = await AsyncStorage.getItem('profile')
+        pro = JSON.parse(pro)
+        child = JSON.parse(child)[0]
+        var data = JSON.stringify({ "cid": child.id, "change": "name", "name": newname.toLowerCase(), "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
+        var data1 = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+        var token = '';
+        var config1 = {
+            method: 'post',
+            url: 'http://104.199.146.206:5000/getToken',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data1
+        };
+        axios(config1)
+            .then(async function (response) {
+                var config = {
+                    method: 'post',
+                    url: `http://104.199.158.211:5000/update_child/?token=${response.data.token}`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+                };
+                axios(config)
+                    .then(async (response1) => {
+                        axios({
+                            method: 'post',
+                            url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: JSON.stringify({
+                                "email": pro.email,
+                            })
+                        })
+                            .then(async (response) => {
+                                await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Profile' }],
+                                });
+                                setkey(newname)
+                                setchange(true)
+                                setShowToast(true)
+                            })
+                    }).catch((error) => {
+                        console.log(error, "asd")
+                        alert('Could not update Name, please try again later')
+                        setnewname('default123')
+                    })
+            })
+    }
     return (
-        <View style={{ height: height }}>
+        <View key={key} style={{ height: height }}>
             <Animated.View
                 style={{
                     backgroundColor: 'black', position: 'absolute', opacity: 0.5, flex: 1, left: 0, right: 0, width: bottomSheetOpen ? width : 0, zIndex: 10, height: bottomSheetOpen ? height : 0
@@ -189,11 +266,14 @@ const Settings = ({ navigation }) => {
                 />
             </Animated.View>
             <CompHeader screen={'Settings'} goback={() => navigation.navigate('Profile')} icon={'back'} />
-            <ScrollView >
+            <ScrollView keyboardShouldPersistTaps={'handled'} style={{ opacity: logging ? 0.2 : 1 }}>
                 <View style={{ margin: 25 }}>
                     <View >
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
-                        <TextInput editable={false} placeholder={status === '3' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <TextInput keyboardType={'name-phone-pad'} value={status === '3' ? newname == 'default123' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : newname : 'Please Login to edit Kid\'s Name'} onChangeText={(text) => { setnewname(text); setchange(false) }} editable={status === '3' ? true : false} placeholder={status === '3' ? '' : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, display: newname === 'default123' || change ? 'none' : 'flex' }} onPress={() => save()} >
+                            <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text>
+                        </Button>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
                         <TextInput editable={false} placeholder={status === '3' ? children['0']['data']['year'] : 'Please Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                         {/*<View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
@@ -245,6 +325,18 @@ const Settings = ({ navigation }) => {
                 borderRadius={30}
                 renderContent={renderContent}
             />
+            <View style={{ position: logging ? 'absolute' : 'relative', bottom: '10%', zIndex: 1000, backgroundColor: '#327FEB', alignSelf: 'center', height: 70, width: width - 50, borderRadius: 25, padding: 20, flexDirection: 'row', alignContent: 'center', display: logging ? 'flex' : 'none' }}>
+                <Image source={require('../assets/log_loader.gif')} style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: (width - 50) / 10 }} />
+                <Text style={{ textAlign: 'right', fontFamily: 'NunitoSans-Bold', fontSize: 18, color: 'white', marginLeft: 20 }}>Logging you out</Text>
+            </View>
+            <Snackbar
+                visible={showToast}
+                style={{ bottom: 80, }}
+                duration={1500}
+                onDismiss={() => setShowToast(false)}
+            >
+                <Text style={{fontFamily:'NunitoSans-Bold', color:'white'}}> Successfully Saved</Text>
+                </Snackbar>
         </View>
     );
 
