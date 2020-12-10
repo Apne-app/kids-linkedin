@@ -69,6 +69,7 @@
     "react-native-paper": "^4.1.0",
     "react-native-photo-browser": "^0.7.0",
     "react-native-reanimated": "^1.13.0",
+    "react-native-rss-parser": "^1.5.1",
     "react-native-s3-upload": "0.0.12",
     "react-native-safe-area-context": "^3.1.7",
     "react-native-safe-area-view": "^1.1.1",
