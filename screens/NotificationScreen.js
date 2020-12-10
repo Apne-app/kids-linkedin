@@ -17,6 +17,8 @@ var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
 
   const [children, setchildren] = useState('notyet')
+  const [notifications, setnotifications] = useState({})
+  const [keys, setkeys] = useState([])
   const [status, setstatus] = useState('0')
 
   useFocusEffect(
@@ -44,13 +46,13 @@ const NotificationScreen = ({ route, navigation }) => {
           deviceID: getUniqueId()
         })
       }
-      else{
+      else {
         analytics.screen('Notifications Screen', {
           userID: null,
           deviceID: getUniqueId()
         })
       }
-      
+
       var child = await AsyncStorage.getItem('children')
       if (child != null) {
         child = JSON.parse(child)
@@ -99,6 +101,20 @@ const NotificationScreen = ({ route, navigation }) => {
               })
                 .then(async (response) => {
                   setchildren(response.data)
+                  axios({
+                    method: 'get',
+                    url: 'https://magnolia-2z27nzutoq-el.a.run.app/' + response.data[0]['id'],
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    // data: JSON.stringify({
+                    //   "email": pro.email,
+                    // })
+                  }).then((data) => {
+                    console.log(data.data)
+                    setnotifications(data.data)
+                    setkeys(Object.keys(data.data).reverse())
+                  })
                   // console.log(response);
                   await AsyncStorage.setItem('children', JSON.stringify(response.data))
                 })
@@ -122,26 +138,25 @@ const NotificationScreen = ({ route, navigation }) => {
   }, [])
   const there = () => {
     return (
-      <View>
-        {/* <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
-          <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
-          <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
-          <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
-        </View> */}
-        <SafeAreaProvider>
-          <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
-            <StreamApp
-              style={{ marginTop: 20 }}
-              apiKey="9ecz2uw6ezt9"
-              appId="96078"
-              token={children['0']['data']['gsToken']}
-            >
-              <NotificationFeed feedGroup={'Notifications'} />
-            </StreamApp>
-
-          </SafeAreaView>
-
-        </SafeAreaProvider>
+      <View style={{ padding: 20 }}>
+        {!keys.length &&
+          <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
+            <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
+            <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
+            <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
+          </View>
+        }
+        {keys.map((item) => {
+          return (
+            <View>
+              <View style={{ flexDirection: 'row', marginVertical:7 }}>
+                <Image style={{ width: 40, height: 40, borderRadius: 1000 }} source={{ uri: notifications[item]['image'] }} />
+                <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10 }}>{notifications[item]['name'][0].toUpperCase() + notifications[item]['name'].substring(1) + ' ' + notifications[item]['type'] + ' your post'}</Text>
+              </View>
+              <View style={{width:width-80, alignSelf:'center', height:0.5, backgroundColor:'lightgrey', marginVertical:5}}></View>
+            </View>
+          )
+        })}
       </View>
     );
   }

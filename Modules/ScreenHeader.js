@@ -22,7 +22,7 @@ const CompHeader = (props) => {
         <Body>
         </Body>
          <Right>
-            <TouchableOpacity style={{display:props.icon==='bell'?'none':'flex', borderRadius: 20, borderWidth: 0, borderColor: "#fff", alignSelf: 'center', marginTop: props.screen == 'Genio' ? -6 : 0, marginRight: -45 }}
+            <TouchableOpacity style={{borderRadius: 20, borderWidth: 0, borderColor: "#fff", alignSelf: 'center', marginTop: props.screen == 'Genio' ? -6 : 0, marginRight: -45 }}
                 onPress={() => props.fun()}
             >
                 <Icon name={props.icon} style={{color:'white'}} type="Feather" />
