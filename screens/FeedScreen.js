@@ -85,6 +85,8 @@ const FeedScreen = ({ navigation, route }) => {
     const [reportComment, setReportComment] = useState('');
     const [actionstatus, setActionStatus] = useState(0);
     const [news, setNews] = useState([]);
+    const [quizOffset, setQuizOffset] = useState(10);
+    const [newsOffset, setNewsOffset] = useState(10);
     const [refreshing, setRefreshing] = useState(false);
     const [quiz, setQuiz] = useState([]);
     const [youtube, setyoutube] = useState('https://youtube.com');
@@ -290,7 +292,7 @@ const FeedScreen = ({ navigation, route }) => {
                     });
                 }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
             </View>
-            </View >)
+            </View>)
         }
 var images = []
 props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
@@ -639,9 +641,9 @@ const notthere = () => {
 
         if(quiz.length < 1)
         {
-            const asyncNews = async () => {
+            const asyncQuiz = async () => {
                 var axios = require('axios');
-                var data = JSON.stringify({"request_type":"get"});
+                var data = JSON.stringify({"request_type":"get", "offset": 0});
 
                 var config = {
                 method: 'post',
@@ -663,7 +665,7 @@ const notthere = () => {
 
 
             }
-            asyncNews();
+            asyncQuiz();
         }
 
 
@@ -822,6 +824,9 @@ const notthere = () => {
         )
 
     }
+    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+        return layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+     }
 
     const News = () => {
 
@@ -829,7 +834,7 @@ const notthere = () => {
         {
             const asyncNews = async () => {
                 var axios = require('axios');
-                var data = JSON.stringify({"request_type":"get"});
+                var data = JSON.stringify({"request_type":"get", "offset": 0});
 
                 var config = {
                 method: 'post',
@@ -854,9 +859,16 @@ const notthere = () => {
             }
             asyncNews();
         }
+        
 
         return (
             <ScrollView style={{backgroundColor: '#f9f9f9'}}
+            // onScroll={({nativeEvent}) => {
+            //     if (isCloseToBottom(nativeEvent)) {
+            //       console.log("end")
+            //     }
+            //   }}
+              scrollEventThrottle={400}
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
@@ -1010,7 +1022,80 @@ const notthere = () => {
     return (
         <>
             <ScreenHeader screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => navigation.navigate('Notifications')} />
-            <ScrollView>
+            <ScrollView
+            onScroll={({nativeEvent}) => {
+                if (isCloseToBottom(nativeEvent)) {
+                  if(feedstate == 2)
+                  {
+                    const asyncNews = async () => {
+                        var axios = require('axios');
+                        var data = JSON.stringify({"request_type":"get", "offset": newsOffset});
+        
+                        var config = {
+                        method: 'post',
+                        url: 'https://uv4nn2mtxa.execute-api.ap-south-1.amazonaws.com/default/newsAggregator',
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        data : data
+                        };
+        
+                        axios(config)
+                        .then(function (response) {
+                        // console.log(JSON.stringify(response.data));
+                        // if(response.data.length == 0)
+                        // {
+                        //     alert("No more news to show!")
+                        // }
+                        setNews([ ...news, ...response.data ]);
+                        setNewsOffset(newsOffset+response.data.length);
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                        setNews(['err'])
+                        });
+        
+        
+                    }
+                    asyncNews();
+                  }
+                  else if(feedstate == 1)
+                  {
+                    const asyncQuiz = async () => {
+                        var axios = require('axios');
+                        var data = JSON.stringify({"request_type":"get", "offset": quizOffset});
+        
+                        var config = {
+                        method: 'post',
+                        url: 'https://9c9qtqg8x7.execute-api.ap-south-1.amazonaws.com/default/quizAggregator',
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        data : data
+                        };
+        
+                        axios(config)
+                        .then(function (response) {
+                        // console.log(JSON.stringify(response.data));
+                        // if(response.data.length == 0)
+                        // {
+                        //     alert("No more quizzes available right now")
+                        // }
+
+                        setQuiz([ ...quiz, ...response.data ]);
+                        setQuizOffset(quizOffset+response.data.length);
+                        })
+                        .catch(function (error) {
+                        setQuiz(['err'])
+                        });
+        
+        
+                    }
+                    asyncQuiz();
+                  }
+                }
+              }}
+            >
             <Features style={{backgroundColor: '#f9f9f9'}} />
             {children == 'notyet' ? loading() :Object.keys(children).length > 0 && status == '3' ?  feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News()  : notthere()}
             </ScrollView>
