@@ -87,9 +87,11 @@
     "react-native-video": "^5.1.0-alpha8",
     "react-native-video-controls": "^2.7.1",
     "react-native-view-shot": "^3.1.2",
+    "react-native-websocket": "^1.0.2",
     "react-native-webview": "^11.0.0",
     "react-native-youtube": "^2.0.1",
     "react-native-youtube-iframe": "^1.4.0",
+    "react-use-websocket": "^2.2.0",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "socket.io-client": "^3.0.3",
     "switch-button-react-native": "^1.0.3"
