@@ -36,6 +36,9 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Arrays;
+import com.clevertap.android.sdk.ActivityLifecycleCallback;
+import com.clevertap.react.CleverTapPackage;
+import com.clevertap.android.sdk.CleverTapAPI;
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
 import org.unimodules.adapters.react.ReactModuleRegistryProvider;
 import org.unimodules.core.interfaces.SingletonModule;
@@ -85,6 +88,8 @@ public class MainApplication extends Application implements ShareApplication, Re
 
   @Override
   public void onCreate() {
+    CleverTapAPI.setUIEditorConnectionEnabled(false);
+    ActivityLifecycleCallback.register(this);
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     MoEngage moEngage =

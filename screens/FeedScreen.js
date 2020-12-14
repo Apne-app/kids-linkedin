@@ -21,6 +21,7 @@ import { Snackbar } from 'react-native-paper';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId } from 'react-native-device-info';
 import { Chip } from 'react-native-paper';
+import ImagePicker from 'react-native-image-picker'
 import YoutubePlayer from "react-native-youtube-iframe";
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
@@ -83,6 +84,7 @@ const FeedScreen = ({ navigation, route }) => {
     const sheetRefReport = React.useRef(null);
     const [reportType, setReportType] = useState('')
     const [reportComment, setReportComment] = useState('');
+    const [selecting, setSelecting] = useState(false)
     const [actionstatus, setActionStatus] = useState(0);
     const [news, setNews] = useState([]);
     const [quizOffset, setQuizOffset] = useState(10);
@@ -359,9 +361,9 @@ return (
                         disableBack={true}
                         disableVolume={true}
                         style={{ borderRadius: 0, width: width, height: 340, }}
-                        source={{ uri: props.activity.video }}
+                        source={{ uri: props.activity.video}}
                         navigator={navigation}
-                    // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+                    // onEnterFullscreen={()=>console.log(props.activity.video)}
                     /> : null}
                 {props.activity.youtube ?
                     <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
@@ -1017,6 +1019,59 @@ const notthere = () => {
 
     }
 
+    const openImagePicker = () => {
+        const options = {
+          title:'Choose how to proceed',
+          mediaType: 'photo',
+          
+        //   storageOptions:{
+        //     skipBackup:true,
+        //     path:'images'
+        //   }
+        }
+        ImagePicker.showImagePicker(options,(response) => {
+          if(response.didCancel){
+            console.log('user cancelled');
+          }else if (response.error) {
+            console.log('ERROR'+response.error);
+      
+          }else if (response.customButton) {
+            console.log('user tapped'+response.customButton);
+          }else {
+            // console.log(response)
+            navigation.navigate('CreatePost', { 'images': [ { uri: response.uri} ] })
+          }
+      
+      
+        })
+      
+        }
+        const openVideoPicker = () => {
+            const options = {
+              title:'Choose how to proceed',
+              mediaType: 'video',
+              durationLimit: 120
+            //   storageOptions:{
+            //     skipBackup:true,
+            //     path:'images'
+            //   }
+            }
+            ImagePicker.showImagePicker(options,(response) => {
+              if(response.didCancel){
+                console.log('user cancelled');
+              }else if (response.error) {
+                console.log('ERROR'+response.error);
+          
+              }else if (response.customButton) {
+                console.log('user tapped'+response.customButton);
+              }else {
+                navigation.navigate('CreatePost', { 'images': [], 'video': response.uri })
+              }
+          
+          
+            })
+          
+            }
 
 
     return (
@@ -1099,6 +1154,25 @@ const notthere = () => {
             <Features style={{backgroundColor: '#f9f9f9'}} />
             {children == 'notyet' ? loading() :Object.keys(children).length > 0 && status == '3' ?  feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News()  : notthere()}
             </ScrollView>
+            <Fab
+                active={selecting}
+                direction="up"
+                containerStyle={{ right: 8 }}
+                style={{ backgroundColor: '#327FEB' }}
+                position="bottomRight"
+                onPress={() => setSelecting(!selecting)}
+            >
+                <Icon type="Ionicons" name='add' style={{ color: "#fff", fontSize: 35 }} />
+                <Button onPress={() => navigation.navigate('CreatePost', { 'images': [] })} style={{ backgroundColor: '#34A34F' }}>
+                <Icon name="pencil" type="FontAwesome" />
+                </Button>
+                <Button onPress={() => openImagePicker()} style={{ backgroundColor: '#3B5998' }}>
+                <Icon name="folder-images" type="Entypo" />
+                </Button>
+                <Button onPress={() => openVideoPicker()} style={{ backgroundColor: 'orange' }}>
+                <Icon name="video" type="Feather" />
+                </Button>
+            </Fab>
         </>
 
 );

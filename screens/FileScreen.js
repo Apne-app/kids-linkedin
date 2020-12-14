@@ -31,6 +31,7 @@ import CompButton from '../Modules/CompButton'
 import axios from 'axios';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 var RNFS = require('react-native-fs');
+const CleverTap = require('clevertap-react-native');
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -70,6 +71,7 @@ const FileScreen = (props) => {
         }, []));
 
     useEffect(() => {
+        CleverTap.recordEvent('testEvent');
         const check = async () => {
             var x = await AsyncStorage.getItem('children');
             if (x) {
@@ -478,7 +480,7 @@ const FileScreen = (props) => {
                         containerStyle={{ right: 8 }}
                         style={{ backgroundColor: '#327FEB', bottom: height * 0.08 }}
                         position="bottomRight"
-                        onPress={() => setVisible(true)}
+                        // onPress={() => setVisible(true)}
                     >
                         <Icon type="FontAwesome" name='send' style={{ color: "#fff", fontSize: 27, marginRight: 5 }} />
                     </Fab> :

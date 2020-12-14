@@ -52,6 +52,8 @@ import { connect } from 'getstream';
 import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
 import firebase from '@react-native-firebase/app';
 import OneSignal from 'react-native-onesignal';
+const CleverTap = require('clevertap-react-native');
+
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -144,6 +146,7 @@ const App = (props) => {
 
   const [init, setinit] = useState('Login')
   useEffect(() => {
+    CleverTap.recordEvent('App Opened');
 
     const send = async () => {
       var x = await AsyncStorage.getItem('status');

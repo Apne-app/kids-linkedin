@@ -42,6 +42,8 @@ target 'kids' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing

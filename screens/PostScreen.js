@@ -12,8 +12,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SliderBox } from "react-native-image-slider-box";
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import { RNS3 } from 'react-native-aws3';
+import VideoPlayer from 'react-native-video-controls';
 import { connect } from 'getstream';
 import CompHeader from '../Modules/CompHeader';
+import Video from 'react-native-video';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -84,14 +86,28 @@ const PostScreen = ({ navigation, route }) => {
 
 
   const uploadToS3 = (i, email, tagged) => {
-
+    let file = {}
     // console.log(randomStr(20, '12345abcdepq75xyz')+'.'+explore[i].uri[explore[i].uri.length-3]+explore[i].uri[explore[i].uri.length-2]+explore[i].uri[explore[i].uri.length-1])
-    var name = randomStr(20, '12345abcdepq75xyz') + '.' + images[i].uri[images[i].uri.length - 3] + images[i].uri[images[i].uri.length - 2] + images[i].uri[images[i].uri.length - 1]
-    const file = {
-      // `uri` can also be a file system path (i.e. file://)
+    var name = randomStr(20, '12345abcdepq75xyz') + '.mp4'
+    if(route.params.video)
+    {
+      file = {
+        // `uri` can also be a file system path (i.e. file://)
+        uri: route.params.video,
+        name: name,
+        type: "video/mp4",
+      }
+    }
+    else
+    {
+      
+      var name = randomStr(20, '12345abcdepq75xyz') + '.' + images[i].uri[images[i].uri.length - 3] + images[i].uri[images[i].uri.length - 2] + images[i].uri[images[i].uri.length - 1]
+      file = {
+        // `uri` can also be a file system path (i.e. file://)
       uri: images[i].uri,
       name: name,
       type: "image/png",
+    }
     }
 
     const options = {
@@ -108,7 +124,7 @@ const PostScreen = ({ navigation, route }) => {
       console.log("dassd")
       if (response.status !== 201)
         throw new Error("Failed to upload image to S3");
-      console.log(response.body);
+      console.log(response.body, "asdas");
 
       // var obj = { ...uploading };
       // var a = 0;
@@ -152,37 +168,54 @@ const PostScreen = ({ navigation, route }) => {
     children = JSON.parse(children)['0']
     var name = ''
     console.log(images)
-    for (i = 0; i < images.length; i++) {
-      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged) + ', ';
-      name = name + x;
+    if(route.params.video)
+    {
+      var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged);
+      name = name+x;
+    }
+    else
+    {
 
+      for (i = 0; i < images.length; i++) {
+        var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged) + ', ';
+      name = name + x;
+      
       //   if(tag == 'Certificate')
       //   {
-      //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
+        //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
       //     var config = {
-      //       method: 'post',
+        //       method: 'post',
       //       url: 'https://barry-2z27nzutoq-as.a.run.app/updatecerti',
       //       headers: { 
       //         'Content-Type': 'application/json'
       //       },
       //       data : data
       //     };
-
+      
       //     axios(config).then(res => {
       //       if(res == "success")
       //       {
-      //         console.log("success")
+        //         console.log("success")
       //       }
       //     }).catch(err => {
-      //       console.log(err);
-      //     })
-      //   }
-
+        //       console.log(err);
+        //     })
+        //   }
+        
+      }
     }
     // setModalVisible4(false);
 
     const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-    var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
+    if(route.params.video)
+    {
+      var activity = { "video": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
+    } 
+    else
+    {
+      var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
+    }
+    console.log
     // var user = client.feed('timeline', '103id');
     // user.follow('user', '49id');
     var user = client.feed('user', String(String(children['id']) + String("id")));
@@ -221,14 +254,14 @@ const PostScreen = ({ navigation, route }) => {
   return (
     <View style={{ backgroundColor: 'white', height: height, width: width }}>
       <CompHeader screen={'Post'} goback={goback} />
-      <View style={{ height: height * 0.12, borderBottomWidth: 1, borderColor: 'lightgrey' }}>
+      <View style={{ height:  route.params.images.length || route.params.video ? height * 0.12 : height*0.29, marginBottom: route.params.images.length || route.params.video ? 0 : height*0.2, borderBottomWidth: 1, borderColor: 'lightgrey' }}>
         <Content>
           <Item style={{elevation: 1}}>
           <Image
               source={{ uri: source }}
               style={{ width: 45, height: 45, borderRadius: 306, marginLeft: 30, }}
           />
-            <Textarea style={{ fontFamily: 'NunitoSans-Regular', paddingTop: 30, marginLeft: 10 }} value={caption} onChangeText={text => setCaption(text)} rowSpan={4} placeholder="Add Caption" />
+            <Textarea style={{ fontFamily: 'NunitoSans-Regular', paddingTop: route.params.images.length || route.params.video ? 30 : height*0.1, marginLeft: 10, width: width*0.7 }} value={caption} onChangeText={text => setCaption(text)} rowSpan={route.params.images.length || route.params.video ? 4 : 10} placeholder="Add Caption" />
           </Item>
         </Content>
       </View>
@@ -249,6 +282,21 @@ const PostScreen = ({ navigation, route }) => {
 
       {loading ? <Spinner color='blue' style={styles.loading} /> : null}
       {
+        route.params.video ?
+        <VideoPlayer
+            seekColor={'#327FEB'}
+            toggleResizeModeOnFullscreen={false}
+            tapAnywhereToPause={true}
+            paused={true}
+            disableFullscreen={true}
+            disableBack={true}
+            disableVolume={true}
+            style={{ borderRadius: 0, width: width, height: height*0 }}
+            source={{ uri: route.params.video }}
+            navigator={navigation}
+        // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+        />
+        :
         images.length > 1 ?
           <SliderBox
             images={images}
@@ -273,6 +321,9 @@ const PostScreen = ({ navigation, route }) => {
             // onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
             // currentImageEmitter={index => console.warn(`current pos is: ${index}`)}
             />
+            :
+            route.params.images.length == 0  ?
+            null
             :
             <SliderBox
               images={[""]}
@@ -415,7 +466,13 @@ const styles = StyleSheet.create({
     marginTop: 40
     // height: 80,
   },
-
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
   image: {
     height: width * 0.39,
     width: width * 0.39,
