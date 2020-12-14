@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, BackHandler, TextInput } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, BackHandler, TextInput, RefreshControl } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -12,6 +12,7 @@ import CompButton from '../Modules/CompButton'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
+import { ScrollView } from 'react-native-gesture-handler';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
@@ -19,7 +20,11 @@ const NotificationScreen = ({ route, navigation }) => {
   const [children, setchildren] = useState('notyet')
   const [notifications, setnotifications] = useState({})
   const [keys, setkeys] = useState([])
+  const [extra, setextra] = useState([])
+  const [fetched, setfetched] = useState(false)
   const [status, setstatus] = useState('0')
+  const [refreshing, setrefreshing] = useState(false)
+  const [place, setplace] = useState('1')
 
   useFocusEffect(
     React.useCallback(() => {
@@ -65,6 +70,21 @@ const NotificationScreen = ({ route, navigation }) => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
       setstatus(st)
+      if (st === '3') {
+        var noti = await AsyncStorage.getItem('notifications')
+        var newnoti = await AsyncStorage.getItem('newnoti')
+        noti = JSON.parse(noti)
+
+        if (noti) {
+          setfetched(true)
+          setnotifications(noti)
+          setkeys(Object.keys(noti).reverse())
+          if (newnoti) {
+            newnoti = Array(newnoti)
+            setextra(newnoti)
+          }
+        }
+      }
     }
     check()
   }, [])
@@ -101,6 +121,7 @@ const NotificationScreen = ({ route, navigation }) => {
               })
                 .then(async (response) => {
                   setchildren(response.data)
+                  console.log(response.data[0]['id'])
                   axios({
                     method: 'get',
                     url: 'https://magnolia-2z27nzutoq-el.a.run.app/' + response.data[0]['id'],
@@ -110,10 +131,27 @@ const NotificationScreen = ({ route, navigation }) => {
                     // data: JSON.stringify({
                     //   "email": pro.email,
                     // })
-                  }).then((data) => {
-                    console.log(data.data)
+                  }).then(async (data) => {
+                    setfetched(true)
                     setnotifications(data.data)
-                    setkeys(Object.keys(data.data).reverse())
+                    setplace(String(Math.random()))
+                    var noti = await AsyncStorage.getItem('notifications')
+                    noti = JSON.parse(noti)
+                    var arr = []
+                    var data1 = Object.keys(noti).reverse()
+                    var data2 = Object.keys(data.data).reverse()
+                    for (var i = 0; i < data2.length; i++) {
+                      if (!data1.includes(data2[i])) {
+                        arr.push(data2[i])
+                      }
+                      else {
+                        break;
+                      }
+                    }
+                    setextra(arr)
+                    AsyncStorage.removeItem('newnoti')
+                    AsyncStorage.setItem('notifications', JSON.stringify(data.data))
+                    setkeys(data2)
                   })
                   // console.log(response);
                   await AsyncStorage.setItem('children', JSON.stringify(response.data))
@@ -136,28 +174,85 @@ const NotificationScreen = ({ route, navigation }) => {
       check()
     }, 3000);
   }, [])
+  const refresh = () => {
+    setrefreshing(true)
+    axios({
+      method: 'get',
+      url: 'https://magnolia-2z27nzutoq-el.a.run.app/' + children[0]['id'],
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // data: JSON.stringify({
+      //   "email": pro.email,
+      // })
+    }).then(async (data) => {
+      setfetched(true)
+      setnotifications(data.data)
+      var noti = await AsyncStorage.getItem('notifications')
+      noti = JSON.parse(noti)
+      var arr = []
+      var data1 = Object.keys(noti).reverse()
+      var data2 = Object.keys(data.data).reverse()
+      for (var i = 0; i < data2.length; i++) {
+        if (!data1.includes(data2[i])) {
+          arr.push(data2[i])
+        }
+        else {
+          break;
+        }
+      }
+      setextra(arr)
+      setrefreshing(false)
+
+      setkeys(data2)
+      AsyncStorage.removeItem('newnoti')
+      AsyncStorage.setItem('notifications', JSON.stringify(data.data))
+    })
+  }
+  const data = () => {
+    var arr = []
+    keys.map((item) => {
+      arr.push (
+        notifications[item]['name'] == 'admin' ?
+          <View key={item}>
+            <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft:10 }}>
+              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: -11, marginTop: 16, marginRight: 5 }} />}
+              <Image style={{ width: 40, height: 40, borderRadius: 1000, }} source={{ uri: notifications[item]['image'] }} />
+              <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight:28 }}>{notifications[item]['type']}</Text>
+            </View>
+            <View style={{ width: width - 80, alignSelf: 'center', height: 0.5, backgroundColor: 'lightgrey', marginVertical: 5 }}></View>
+          </View> :
+          <View key={item}>
+            <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft:10,  }}>
+              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: -11, marginTop: 16, marginRight: 10 }} />}
+              <Image style={{ width: 40, height: 40, borderRadius: 1000 }} source={{ uri: notifications[item]['image'] }} />
+              <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight:28 }}>{notifications[item]['name'][0].toUpperCase() + notifications[item]['name'].substring(1) + ' ' + notifications[item]['type'] + ' your post'}</Text>
+            </View>
+            <View style={{ width: width - 80, alignSelf: 'center', height: 0.5, backgroundColor: 'lightgrey', marginVertical: 5 }}></View>
+          </View>
+      )
+    })
+    return arr
+  }
   const there = () => {
     return (
-      <View style={{ padding: 20 }}>
-        {!keys.length &&
+      <>
+        {!keys.length && fetched &&
           <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
             <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
             <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
             <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
           </View>
         }
-        {keys.map((item) => {
-          return (
-            <View>
-              <View style={{ flexDirection: 'row', marginVertical:7 }}>
-                <Image style={{ width: 40, height: 40, borderRadius: 1000 }} source={{ uri: notifications[item]['image'] }} />
-                <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10 }}>{notifications[item]['name'][0].toUpperCase() + notifications[item]['name'].substring(1) + ' ' + notifications[item]['type'] + ' your post'}</Text>
-              </View>
-              <View style={{width:width-80, alignSelf:'center', height:0.5, backgroundColor:'lightgrey', marginVertical:5}}></View>
-            </View>
-          )
-        })}
-      </View>
+        {!fetched &&
+          loading()
+        }
+        <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }>
+          {data()}
+        </ScrollView>
+      </>
     );
   }
   const loading = () => {
