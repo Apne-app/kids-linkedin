@@ -52,6 +52,9 @@ import { connect } from 'getstream';
 import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
 import firebase from '@react-native-firebase/app';
 import OneSignal from 'react-native-onesignal';
+import { PersistGate } from 'redux-persist/es/integration/react'
+import { Provider } from 'react-redux';
+import { store, persistor } from './Store/store';
 const CleverTap = require('clevertap-react-native');
 
 const Stack = createStackNavigator();
@@ -133,7 +136,7 @@ const App = (props) => {
           }
         }}
       >
-        <BottomNav.Screen name="Feed" component={FeedScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon name="home" style={{color: "#327feb", fontSize: 24}} type="Feather" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Home</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: "grey", fontSize: 24 }} type="Feather" name="home" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Home</Text></View> }} />
+        <BottomNav.Screen name="Feed" component={FeedScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon name="home" style={{ color: "#327feb", fontSize: 24 }} type="Feather" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Home</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: "grey", fontSize: 24 }} type="Feather" name="home" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Home</Text></View> }} />
         <BottomNav.Screen name="Search" component={SearchScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Search</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Search</Text></View> }} />
         <BottomNav.Screen name="Post" style={{ backgroundColor: 'transparent' }} component={PostScreenNavig} options={{ tabBarLabel: '', tabBarButton: props => <TouchableOpacity {...props} style={{ bottom: 30, backgroundColor: 'transparent' }} ><LinearGradient locations={[0.9, 1]} colors={['transparent', '#f5f5f5']} style={{ borderRadius: 10000 }}><Icon name={'camera'} type="Feather" style={{ backgroundColor: '#327FEB', borderRadius: 10000, color: 'white', width: 65, height: 65, fontSize: 25, padding: 20.5, marginBottom: 4 }} /></LinearGradient></TouchableOpacity> }} />
         <BottomNav.Screen name="Files" component={FileScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Collections</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Collections</Text></View> }} />
@@ -292,59 +295,66 @@ const App = (props) => {
   };
 
   return (
-    <NavigationContainer ref={containerRef}>
-      <Stack.Navigator initialRouteName={'IntroSlider'}>
-        <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
-        <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
-        <Stack.Screen options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
-        <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
-        <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
-        <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
-        <Stack.Screen options={({ route, navigation }) => ({
-          headerShown: false,
-          gestureEnabled: true,
-          cardOverlayEnabled: true,
-          headerStatusBarHeight:
-            navigation
-              .dangerouslyGetState()
-              .routes.findIndex((r) => r.key === route.key) > 0
-              ? 0
-              : undefined,
-          ...TransitionPresets.SlideFromRightIOS,
-        })} name="SinglePost" component={SinglePostScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
-        <Stack.Screen options={{ headerShown: false }} name="CreatePost" component={PostScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
-        <Stack.Screen options={{ headerShown: false }} name="AddText" component={AddText} />
-        <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
-        <Stack.Screen options={({ route, navigation }) => ({
-          headerShown: false,
-          gestureEnabled: true,
-          cardOverlayEnabled: true,
-          headerStatusBarHeight:
-            navigation
-              .dangerouslyGetState()
-              .routes.findIndex((r) => r.key === route.key) > 0
-              ? 0
-              : undefined,
-          ...TransitionPresets.SlideFromRightIOS,
-        })} name="Browser" component={Browser} />
-        <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
-        <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
-        <Stack.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
-        <Stack.Screen options={{ headerShown: false }} name="Comments" component={Comments} />
-        <Stack.Screen options={{ headerShown: false }} name="Notifications" component={NotificationScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
-        <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
-        <Stack.Screen options={{ headerShown: false }} name="Includes" component={Includes} />
-        <Stack.Screen options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
-      </Stack.Navigator>
-      <NotifierRoot ref={notifierRef} />
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate
+        loading={null}
+        persistor={persistor}
+      >
+        <NavigationContainer ref={containerRef}>
+          <Stack.Navigator initialRouteName={'IntroSlider'}>
+            <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
+            <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
+            <Stack.Screen options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
+            <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
+            <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
+            <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
+            <Stack.Screen options={({ route, navigation }) => ({
+              headerShown: false,
+              gestureEnabled: true,
+              cardOverlayEnabled: true,
+              headerStatusBarHeight:
+                navigation
+                  .dangerouslyGetState()
+                  .routes.findIndex((r) => r.key === route.key) > 0
+                  ? 0
+                  : undefined,
+              ...TransitionPresets.SlideFromRightIOS,
+            })} name="SinglePost" component={SinglePostScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
+            <Stack.Screen options={{ headerShown: false }} name="CreatePost" component={PostScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
+            <Stack.Screen options={{ headerShown: false }} name="AddText" component={AddText} />
+            <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
+            <Stack.Screen options={({ route, navigation }) => ({
+              headerShown: false,
+              gestureEnabled: true,
+              cardOverlayEnabled: true,
+              headerStatusBarHeight:
+                navigation
+                  .dangerouslyGetState()
+                  .routes.findIndex((r) => r.key === route.key) > 0
+                  ? 0
+                  : undefined,
+              ...TransitionPresets.SlideFromRightIOS,
+            })} name="Browser" component={Browser} />
+            <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
+            <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
+            <Stack.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
+            <Stack.Screen options={{ headerShown: false }} name="Comments" component={Comments} />
+            <Stack.Screen options={{ headerShown: false }} name="Notifications" component={NotificationScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
+            <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
+            <Stack.Screen options={{ headerShown: false }} name="Includes" component={Includes} />
+            <Stack.Screen options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
+          </Stack.Navigator>
+          <NotifierRoot ref={notifierRef} />
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 };
 

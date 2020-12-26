@@ -13,9 +13,11 @@ import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from 'react-native-gesture-handler';
+import { saveNotifications } from "../Actions/saveNotifications"
+import { connect } from "react-redux";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-const NotificationScreen = ({ route, navigation }) => {
+const NotificationScreen = ({ route, navigation, localnotifications, reduxsaveNotifications }) => {
 
   const [children, setchildren] = useState('notyet')
   const [notifications, setnotifications] = useState({})
@@ -71,14 +73,11 @@ const NotificationScreen = ({ route, navigation }) => {
       var st = await AsyncStorage.getItem('status')
       setstatus(st)
       if (st === '3') {
-        var noti = await AsyncStorage.getItem('notifications')
         var newnoti = await AsyncStorage.getItem('newnoti')
-        noti = JSON.parse(noti)
-
-        if (noti) {
+        if (localnotifications) {
           setfetched(true)
-          setnotifications(noti)
-          setkeys(Object.keys(noti).reverse())
+          setnotifications(localnotifications)
+          setkeys(Object.keys(localnotifications).reverse())
           if (newnoti) {
             newnoti = Array(newnoti)
             setextra(newnoti)
@@ -134,6 +133,7 @@ const NotificationScreen = ({ route, navigation }) => {
                   }).then(async (data) => {
                     setfetched(true)
                     setnotifications(data.data)
+                    reduxsaveNotifications(data.data)
                     setplace(String(Math.random()))
                     var noti = await AsyncStorage.getItem('notifications')
                     noti = JSON.parse(noti)
@@ -203,7 +203,6 @@ const NotificationScreen = ({ route, navigation }) => {
       }
       setextra(arr)
       setrefreshing(false)
-
       setkeys(data2)
       AsyncStorage.removeItem('newnoti')
       AsyncStorage.setItem('notifications', JSON.stringify(data.data))
@@ -212,21 +211,21 @@ const NotificationScreen = ({ route, navigation }) => {
   const data = () => {
     var arr = []
     keys.map((item) => {
-      arr.push (
+      arr.push(
         notifications[item]['name'] == 'admin' ?
           <View key={item}>
-            <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft:10 }}>
-              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: -11, marginTop: 16, marginRight: 5 }} />}
+            <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft: 10 }}>
+              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 0, marginTop: 16, marginRight: 5 }} />}
               <Image style={{ width: 40, height: 40, borderRadius: 1000, }} source={{ uri: notifications[item]['image'] }} />
-              <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight:28 }}>{notifications[item]['type']}</Text>
+              <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight: 40 }}>{notifications[item]['type']}</Text>
             </View>
             <View style={{ width: width - 80, alignSelf: 'center', height: 0.5, backgroundColor: 'lightgrey', marginVertical: 5 }}></View>
           </View> :
           <View key={item}>
-            <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft:10,  }}>
-              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: -11, marginTop: 16, marginRight: 10 }} />}
+            <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft: 10, }}>
+              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 2, marginTop: 16, marginRight: 10 }} />}
               <Image style={{ width: 40, height: 40, borderRadius: 1000 }} source={{ uri: notifications[item]['image'] }} />
-              <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight:28 }}>{notifications[item]['name'][0].toUpperCase() + notifications[item]['name'].substring(1) + ' ' + notifications[item]['type'] + ' your post'}</Text>
+              <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight: 40 }}>{notifications[item]['name'][0].toUpperCase() + notifications[item]['name'].substring(1) + ' ' + notifications[item]['type'] + ' your post'}</Text>
             </View>
             <View style={{ width: width - 80, alignSelf: 'center', height: 0.5, backgroundColor: 'lightgrey', marginVertical: 5 }}></View>
           </View>
@@ -317,5 +316,17 @@ const styles = StyleSheet.create({
     color: "#A9A9A9"
   }
 })
+const mapStateToProps = (state) => {
+  return {
+    localnotifications: state.NotificationsReducer.notifications,
 
-export default NotificationScreen;
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    reduxsaveNotifications: (notifications) => dispatch(saveNotifications(notifications))
+
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NotificationScreen)

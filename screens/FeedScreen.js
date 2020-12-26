@@ -277,7 +277,7 @@ const FeedScreen = ({ navigation, route }) => {
                     }}>
                         {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                     </TouchableWithoutFeedback>
-                    <Icon onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <Icon onPress={() => navigation.navigate('SinglePost', { id:status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '',image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
                         labelPlural=" "
@@ -448,18 +448,23 @@ const FeedScreen = ({ navigation, route }) => {
                         var noti = await AsyncStorage.getItem('notifications')
                         noti = JSON.parse(noti)
                         var arr = []
-                        var data1 = Object.keys(noti).reverse()
-                        var data2 = Object.keys(data.data).reverse()
-                        for (var i = 0; i < data2.length; i++) {
-                            if (!data1.includes(data2[i])) {
-                                arr.push(data2[i])
+                        if (noti) {
+                            var data1 = Object.keys(noti).reverse()
+                            var data2 = Object.keys(data.data).reverse()
+                            for (var i = 0; i < data2.length; i++) {
+                                if (!data1.includes(data2[i])) {
+                                    arr.push(data2[i])
+                                }
+                                else {
+                                    break;
+                                }
                             }
-                            else {
-                                break;
+                            if (arr.length) {
+                                AsyncStorage.setItem('newnoti', String(arr))
+                                setnewnoti(true)
                             }
                         }
-                        if (arr.length) {
-                            AsyncStorage.setItem('newnoti', String(arr))
+                        else {
                             setnewnoti(true)
                         }
                         AsyncStorage.setItem('notifications', JSON.stringify(data.data))
@@ -468,7 +473,7 @@ const FeedScreen = ({ navigation, route }) => {
             }
         },
         //Will attempt to reconnect on all close events, such as server shutting down
-        shouldReconnect: (closeEvent) => false,
+        shouldReconnect: (closeEvent) => true,
     });
     useEffect(() => {
         const check = async () => {
@@ -513,19 +518,21 @@ const FeedScreen = ({ navigation, route }) => {
                     var noti = await AsyncStorage.getItem('notifications')
                     noti = JSON.parse(noti)
                     var arr = []
-                    var data1 = Object.keys(noti).reverse()
-                    var data2 = Object.keys(data.data).reverse()
-                    for (var i = 0; i < data2.length; i++) {
-                        if (!data1.includes(data2[i])) {
-                            arr.push(data2[i])
+                    if (noti) {
+                        var data1 = Object.keys(noti).reverse()
+                        var data2 = Object.keys(data.data).reverse()
+                        for (var i = 0; i < data2.length; i++) {
+                            if (!data1.includes(data2[i])) {
+                                arr.push(data2[i])
+                            }
+                            else {
+                                break;
+                            }
                         }
-                        else {
-                            break;
+                        if (arr.length) {
+                            AsyncStorage.setItem('newnoti', String(arr))
+                            setnewnoti(true)
                         }
-                    }
-                    if (arr.length) {
-                        AsyncStorage.setItem('newnoti', String(arr))
-                        setnewnoti(true)
                     }
                     AsyncStorage.setItem('notifications', JSON.stringify(data.data))
                 })
@@ -1126,57 +1133,57 @@ const FeedScreen = ({ navigation, route }) => {
 
     const openImagePicker = () => {
         const options = {
-          title:'Choose how to proceed',
-          mediaType: 'photo',
-          
-        //   storageOptions:{
-        //     skipBackup:true,
-        //     path:'images'
-        //   }
-        }
-        ImagePicker.showImagePicker(options,(response) => {
-          if(response.didCancel){
-            console.log('user cancelled');
-          }else if (response.error) {
-            console.log('ERROR'+response.error);
-      
-          }else if (response.customButton) {
-            console.log('user tapped'+response.customButton);
-          }else {
-            // console.log(response)
-            navigation.navigate('CreatePost', { 'images': [ { uri: response.uri} ] })
-          }
-      
-      
-        })
-      
-        }
-        const openVideoPicker = () => {
-            const options = {
-              title:'Choose how to proceed',
-              mediaType: 'video',
-              durationLimit: 120
+            title: 'Choose how to proceed',
+            mediaType: 'photo',
+
             //   storageOptions:{
             //     skipBackup:true,
             //     path:'images'
             //   }
-            }
-            ImagePicker.showImagePicker(options,(response) => {
-              if(response.didCancel){
+        }
+        ImagePicker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
                 console.log('user cancelled');
-              }else if (response.error) {
-                console.log('ERROR'+response.error);
-          
-              }else if (response.customButton) {
-                console.log('user tapped'+response.customButton);
-              }else {
-                navigation.navigate('CreatePost', { 'images': [], 'video': response.uri })
-              }
-          
-          
-            })
-          
+            } else if (response.error) {
+                console.log('ERROR' + response.error);
+
+            } else if (response.customButton) {
+                console.log('user tapped' + response.customButton);
+            } else {
+                // console.log(response)
+                navigation.navigate('CreatePost', { 'images': [{ uri: response.uri }] })
             }
+
+
+        })
+
+    }
+    const openVideoPicker = () => {
+        const options = {
+            title: 'Choose how to proceed',
+            mediaType: 'video',
+            durationLimit: 120
+            //   storageOptions:{
+            //     skipBackup:true,
+            //     path:'images'
+            //   }
+        }
+        ImagePicker.showImagePicker(options, (response) => {
+            if (response.didCancel) {
+                console.log('user cancelled');
+            } else if (response.error) {
+                console.log('ERROR' + response.error);
+
+            } else if (response.customButton) {
+                console.log('user tapped' + response.customButton);
+            } else {
+                navigation.navigate('CreatePost', { 'images': [], 'video': response.uri })
+            }
+
+
+        })
+
+    }
 
     const setnewnotifun = () => {
         setnewnoti(false)
@@ -1256,8 +1263,8 @@ const FeedScreen = ({ navigation, route }) => {
                     }
                 }}
             >
-            <Features style={{backgroundColor: '#f9f9f9'}} />
-            {children == 'notyet' ? loading() :Object.keys(children).length > 0 && status == '3' ?  feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News()  : notthere()}
+                <Features style={{ backgroundColor: '#f9f9f9' }} />
+                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : notthere()}
             </SafeAreaView>
             <Fab
                 active={selecting}
@@ -1269,13 +1276,13 @@ const FeedScreen = ({ navigation, route }) => {
             >
                 <Icon type="Ionicons" name='add' style={{ color: "#fff", fontSize: 35 }} />
                 <Button onPress={() => navigation.navigate('CreatePost', { 'images': [] })} style={{ backgroundColor: '#34A34F' }}>
-                <Icon name="pencil" type="FontAwesome" />
+                    <Icon name="pencil" type="FontAwesome" />
                 </Button>
                 <Button onPress={() => openImagePicker()} style={{ backgroundColor: '#3B5998' }}>
-                <Icon name="folder-images" type="Entypo" />
+                    <Icon name="folder-images" type="Entypo" />
                 </Button>
                 <Button onPress={() => openVideoPicker()} style={{ backgroundColor: 'orange' }}>
-                <Icon name="video" type="Feather" />
+                    <Icon name="video" type="Feather" />
                 </Button>
             </Fab>
         </>

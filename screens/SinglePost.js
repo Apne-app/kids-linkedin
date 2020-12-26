@@ -19,6 +19,8 @@ import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import AsyncStorage from '@react-native-community/async-storage'
 import CompButton from '../Modules/CompButton'
 import WebView from 'react-native-webview';
+import { getUniqueId } from 'react-native-device-info';
+import analytics from '@segment/analytics-react-native';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -71,7 +73,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         }
 
     }, [])
-    
+
     const [currentCommment, setcurrentCommment] = useState([])
     const [place, setplace] = useState('')
     const CustomActivity = ({ props }) => {
@@ -157,7 +159,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     style={{ width: width, height: 340 }}
                     source={{ uri: props.activity.video }}
                     navigator={navigation}
-                    onExitFullscreen={()=>navigation.pop()}
+                    onExitFullscreen={() => navigation.pop()}
                 /> : null}
             {props.activity.youtube ?
                 <YoutubePlayer
@@ -224,6 +226,26 @@ const SinglePostScreen = ({ navigation, route }) => {
                             'text': text,
                         });
                         setcomments([{ 'data': { 'text': text }, 'user': { 'data': { 'profileImage': route.params.image } } }, ...comments])
+                        analytics.track('Comment', {
+                            userID: route.params.token,
+                            deviceID: getUniqueId(),
+                            by: route.params.id,
+                            byname: route.params.name,
+                            byimage: route.params.image,
+                            to: parseInt(route.params.activity.activity.actor.id.replace('id', '')),
+                            actid: route.params.activity.activity.id,
+                            comment: text
+                        })
+                        // console.log({
+                        //     userID: route.params.token,
+                        //     deviceID: getUniqueId(),
+                        //     by: route.params.id,
+                        //     byname: route.params.name,
+                        //     byimage: route.params.image,
+                        //     to: parseInt(route.params.activity.activity.actor.id.replace('id', '')),
+                        //     actid: route.params.activity.activity.id
+                        // }
+                        // )
                     }}
                     avatarProps={{
                         source: route.params.image,
