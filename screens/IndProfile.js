@@ -51,9 +51,9 @@ const IndProfile = ({ navigation, route }) => {
                 children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
             }
             const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-            var user = client.feed('user', route['params']['data']['id'] + 'id');
+            var user = client.feed('user', route['params']['id'] + 'id');
             var follows = await user.followers()
-            var user = client.feed('timeline', route['params']['data']['id'] + 'id');
+            var user = client.feed('timeline', route['params']['id'] + 'id');
             var following = await user.following()
             setdata({ 'followers': follows['results'], 'following': following['results'] })
             // console.log(follows)
@@ -304,7 +304,7 @@ const IndProfile = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=3a100e54-2d98-11eb-b373-0289d2c29892%26apn=com.genioclub.app').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id='+data.activity.id+'%26apn=com.genioclub.app').then((data) => {
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });

@@ -270,7 +270,7 @@ const Settings = ({ navigation }) => {
                 <View style={{ margin: 25 }}>
                     <View >
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
-                        <TextInput keyboardType={'name-phone-pad'} value={status === '3' ? newname == 'default123' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : newname : 'Please Login to edit Kid\'s Name'} onChangeText={(text) => { setnewname(text); setchange(false) }} editable={status === '3' ? true : false} placeholder={status === '3' ? '' : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <TextInput editable={status === '3' ? true : false} keyboardType={'name-phone-pad'} value={status === '3' ? newname == 'default123' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : newname : 'Please Login to edit Kid\'s Name'} onChangeText={(text) => { setnewname(text); setchange(false) }} editable={status === '3' ? true : false} placeholder={status === '3' ? '' : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                         <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, display: newname === 'default123' || change ? 'none' : 'flex' }} onPress={() => save()} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text>
                         </Button>
@@ -335,8 +335,8 @@ const Settings = ({ navigation }) => {
                 duration={1500}
                 onDismiss={() => setShowToast(false)}
             >
-                <Text style={{fontFamily:'NunitoSans-Bold', color:'white'}}> Successfully Saved</Text>
-                </Snackbar>
+                <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'white' }}> Successfully Saved</Text>
+            </Snackbar>
         </View>
     );
 

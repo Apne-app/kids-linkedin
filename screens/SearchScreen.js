@@ -62,9 +62,9 @@ const SearchScreen = ({ route, navigation }) => {
           deviceID: getUniqueId()
         })
       }
-      else{
+      else {
         analytics.screen('Search Screen', {
-          userID:  null,
+          userID: null,
           deviceID: getUniqueId()
         })
       }
@@ -151,8 +151,9 @@ const SearchScreen = ({ route, navigation }) => {
           <FlatList
             data={Object.keys(joined)}
             renderItem={({ item }) => {
+              console.log(joined[item]['id'])
               return (
-                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => alert(joined['item']['data']['name'])}>
+                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })}>
                   <View
                     key={item.id}
                     style={{ flex: 1, }}>

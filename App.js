@@ -251,15 +251,29 @@ const App = (props) => {
         if (link.url.includes('post')) {
           var child = await AsyncStorage.getItem('children')
           if (child) {
+            var children = JSON.parse(child)
             child = JSON.parse(child)
+            var status = await AsyncStorage.getItem('status');
             const client = connect('9ecz2uw6ezt9', child['0']['data']['gsToken'], '96078');
-            var user = client.feed('timeline', child['0']['id'] + 'id');
+            var user = client.feed('timeline', child['0']['id'] + 'id', child['0']['data']['gsToken']);
             var id = link.url
+            const addreaction = (kind, activity, data, options) => {
+              client.reactions.add(
+                kind,
+                activity,
+                data,
+                options,
+              )
+            }
             id = id.replace('https://link.genio.app/post?id=', '')
-            user.getActivityDetail(id)
+            user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
               .then((data) => {
                 console.log(data)
-                containerRef.current?.navigate('Home')
+                containerRef.current?.navigate('SinglePost', {
+                  id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: {
+                    activity: data['results'][0], onAddReaction: addreaction
+                  }, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'
+                })
               })
               .catch((data) => {
                 console.log(data)

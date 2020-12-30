@@ -17,7 +17,7 @@ import { saveNotifications } from "../Actions/saveNotifications"
 import { connect } from "react-redux";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-const NotificationScreen = ({ route, navigation, localnotifications, reduxsaveNotifications }) => {
+const NotificationScreen = ({ route, navigation }) => {
 
   const [children, setchildren] = useState('notyet')
   const [notifications, setnotifications] = useState({})
@@ -71,13 +71,15 @@ const NotificationScreen = ({ route, navigation, localnotifications, reduxsaveNo
   useEffect(() => {
     const check = async () => {
       var st = await AsyncStorage.getItem('status')
+      var noti = await AsyncStorage.getItem('notifications')
       setstatus(st)
       if (st === '3') {
         var newnoti = await AsyncStorage.getItem('newnoti')
-        if (localnotifications) {
+        if (noti) {
+          noti = JSON.parse(noti)
           setfetched(true)
-          setnotifications(localnotifications)
-          setkeys(Object.keys(localnotifications).reverse())
+          setnotifications(noti)
+          setkeys(Object.keys(noti).reverse())
           if (newnoti) {
             newnoti = Array(newnoti)
             setextra(newnoti)
@@ -133,7 +135,6 @@ const NotificationScreen = ({ route, navigation, localnotifications, reduxsaveNo
                   }).then(async (data) => {
                     setfetched(true)
                     setnotifications(data.data)
-                    reduxsaveNotifications(data.data)
                     setplace(String(Math.random()))
                     var noti = await AsyncStorage.getItem('notifications')
                     noti = JSON.parse(noti)
@@ -316,17 +317,6 @@ const styles = StyleSheet.create({
     color: "#A9A9A9"
   }
 })
-const mapStateToProps = (state) => {
-  return {
-    localnotifications: state.NotificationsReducer.notifications,
 
-  }
-}
-const mapDispatchToProps = (dispatch) => {
-  return {
-    reduxsaveNotifications: (notifications) => dispatch(saveNotifications(notifications))
 
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(NotificationScreen)
+export default NotificationScreen

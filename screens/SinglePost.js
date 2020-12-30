@@ -206,7 +206,6 @@ const SinglePostScreen = ({ navigation, route }) => {
             </ScrollView>
         );
     };
-
     return (
         <View style={styles.container}>
             <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />

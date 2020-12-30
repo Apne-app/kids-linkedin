@@ -277,7 +277,7 @@ const FeedScreen = ({ navigation, route }) => {
                     }}>
                         {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login')}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                     </TouchableWithoutFeedback>
-                    <Icon onPress={() => navigation.navigate('SinglePost', { id:status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '',image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                    <Icon onPress={() => navigation.navigate('SinglePost', { id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                     <ReactionIcon
                         labelSingle=" "
                         labelPlural=" "
@@ -294,7 +294,7 @@ const FeedScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=3a100e54-2d98-11eb-b373-0289d2c29892%26apn=com.genioclub.app').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id='+data.activity+'%26apn=com.genioclub.app').then((data) => {
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
@@ -1266,7 +1266,7 @@ const FeedScreen = ({ navigation, route }) => {
                 <Features style={{ backgroundColor: '#f9f9f9' }} />
                 {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : notthere()}
             </SafeAreaView>
-            <Fab
+            {/* <Fab
                 active={selecting}
                 direction="up"
                 containerStyle={{ right: 8 }}
@@ -1284,7 +1284,7 @@ const FeedScreen = ({ navigation, route }) => {
                 <Button onPress={() => openVideoPicker()} style={{ backgroundColor: 'orange' }}>
                     <Icon name="video" type="Feather" />
                 </Button>
-            </Fab>
+            </Fab> */}
         </>
 
     );

@@ -478,7 +478,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=3a100e54-2d98-11eb-b373-0289d2c29892%26apn=com.genioclub.app').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id='+data.activity.id+'%26apn=com.genioclub.app').then((data) => {
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
@@ -843,7 +843,7 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     return (
         <View key={key}>
-            <ScreenHeader screen={'Profile'} icon={'more-vertical'} fun={() => navigation.navigate('Settings')} />
+            <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
             {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
         </View>
     );
