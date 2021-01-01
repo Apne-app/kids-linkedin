@@ -244,21 +244,21 @@ const ProfileScreen = ({ navigation, route }) => {
                 console.log(x)
                 x = JSON.parse(x)
                 if (Object.keys(x).length == 0) {
-                  await AsyncStorage.removeItem('children');
-                  x = null
+                    await AsyncStorage.removeItem('children');
+                    x = null
                 }
                 analytics.screen('Profile Screen', {
                     userID: x ? x["0"]["data"]["gsToken"] : null,
                     deviceID: getUniqueId()
                 })
-              }
-              else{
+            }
+            else {
                 analytics.screen('Profile Screen', {
-                    userID:  null,
+                    userID: null,
                     deviceID: getUniqueId()
                 })
-              }
-            
+            }
+
         }
         analyse();
 
@@ -478,7 +478,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id='+data.activity.id+'%26apn=com.genioclub.app').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity.id + '%26apn=com.genioclub.app').then((data) => {
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
@@ -760,7 +760,6 @@ const ProfileScreen = ({ navigation, route }) => {
                         var child = children['0']
                         var axios = require('axios');
                         var data = JSON.stringify({ "cid": child.id, "change": "image", "name": child.data.name, "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
-
                         var config = {
                             method: 'post',
                             url: `http://104.199.158.211:5000/update_child/?token=${token}`,
@@ -772,7 +771,27 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         axios(config)
                             .then(async (response) => {
-                                setkey(String(parseInt(key) + 1))
+                                var pro = await AsyncStorage.getItem('profile')
+                                if (pro !== null) {
+                                    pro = JSON.parse(pro)
+                                    // console.log(JSON.stringify(response.data.token));
+                                    axios({
+                                        method: 'post',
+                                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${token}`,
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        data: JSON.stringify({
+                                            "email": pro.email,
+                                        })
+                                    })
+                                        .then(async (response) => {
+                                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                            setkey(String(parseInt(key) + 1))
+                                        })
+                                        .catch((error) => {
+                                        })
+                                }
                             }).catch((error) => {
                                 console.log(error, "asd")
                                 alert('Could not update Profile Picture, please try again later')
@@ -824,7 +843,26 @@ const ProfileScreen = ({ navigation, route }) => {
                         };
                         axios(config)
                             .then(async (response) => {
-                                setkey(String(parseInt(key) + 1))
+                                var pro = await AsyncStorage.getItem('profile')
+                                if (pro !== null) {
+                                    pro = JSON.parse(pro)
+                                    axios({
+                                        method: 'post',
+                                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${token}`,
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        data: JSON.stringify({
+                                            "email": pro.email,
+                                        })
+                                    })
+                                        .then(async (response) => {
+                                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                            setkey(String(parseInt(key) + 1))
+                                        })
+                                        .catch((error) => {
+                                        })
+                                }
                             }).catch((error) => {
                                 console.log(error, "asd")
                                 alert('Could not update Profile Picture, please try again later')

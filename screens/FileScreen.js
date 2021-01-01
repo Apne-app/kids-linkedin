@@ -30,6 +30,7 @@ import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import axios from 'axios';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { reverse } from 'ramda';
 var RNFS = require('react-native-fs');
 const CleverTap = require('clevertap-react-native');
 
@@ -115,7 +116,7 @@ const FileScreen = (props) => {
                 }
             }
         }
-
+        arr = reverse(arr)
         setFiles([...arr]);
 
         setSelecting(false);
@@ -137,6 +138,7 @@ const FileScreen = (props) => {
             setStringImages(s);
             fls.sort();
             // console.log(fls[0]['images']);
+            fls = reverse(fls)
             setFiles([...fls]);
         }
         catch (err) {
@@ -189,6 +191,7 @@ const FileScreen = (props) => {
                         return 0;
                     });
                     // setStringImages(s);
+                    amp = reverse(amp)
                     setFiles([...amp])
 
                 })
@@ -332,7 +335,7 @@ const FileScreen = (props) => {
                 z.push(files[i]);
             }
         }
-
+        z = reverse(z)
         setFiles([...z]);
 
 
@@ -343,7 +346,9 @@ const FileScreen = (props) => {
         var a = Date.parse(x);
         var b = new Date();
         // console.log(a)
-        return b - a < 86400000 ? 'Today' : b - a < 2 * 86400000 ? 'Yesterday' : x.split('GMT')[0];
+        var da = x.split('GMT')[0].split(' ')
+        da = da[0] + ', ' + da[1] + ' ' + da[2] + ' ' + da[3]
+        return b - a < 86400000 ? ['Today'] : b - a < 2 * 86400000 ? ['Yesterday'] : da;
     }
 
 
@@ -427,15 +432,15 @@ const FileScreen = (props) => {
                             files.map((item, i) => {
                                 return (
                                     <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-                                    <Card style={{ borderRadius: 20 }} >
-                                    <TouchableOpacity
-                                        style={{ borderRadius: 20 }}
-                                        onPress={() => {
-                                            viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
-                                        }}>
+                                        <Card style={{ borderRadius: 20 }} >
+                                            <TouchableOpacity
+                                                style={{ borderRadius: 20 }}
+                                                onPress={() => {
+                                                    viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
+                                                }}>
                                                 <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
                                                     <View style={{ flexDirection: 'row' }}>
-                                                        <Text style={{ fontFamily: 'NunitoSans-Regular', alignSelf: 'flex-start', marginHorizontal: 4, fontWeight: 'bold', marginBottom: 10, flex: 8 }}>{item["cloud"] ? createDate(item['images'][0]['time']) : createDate(item['images'][0]['path'].split('Images/')[1].split('/')[0])}</Text>
+                                                        <Text style={{ fontFamily: 'NunitoSans-Bold', alignSelf: 'flex-start', marginHorizontal: 4, marginBottom: 10, flex: 8 }}>{item["cloud"] ? createDate(item['images'][0]['time']) : createDate(item['images'][0]['path'].split('Images/')[1].split('/')[0])}</Text>
                                                         {item['cloud'] ? <Icon type="Feather" name="cloud" style={{ flex: 1, alignSelf: 'flex-end', color: "#327feb", fontSize: 20, marginHorizontal: 4, marginBottom: 10 }} /> : null}
                                                     </View>
                                                     <Body style={{ flexDirection: 'row' }}>
@@ -458,8 +463,8 @@ const FileScreen = (props) => {
                                                     {item['images'][item['images'].length - 1]['name'].split('_')[0] !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item['images'][0]['name'].split('_')[0]}</Chip> : null}
 
                                                 </CardItem>
-                                                </TouchableOpacity>
-                                            </Card>
+                                            </TouchableOpacity>
+                                        </Card>
                                     </View>
                                 )
                             })
@@ -480,7 +485,7 @@ const FileScreen = (props) => {
                         containerStyle={{ right: 8 }}
                         style={{ backgroundColor: '#327FEB', bottom: height * 0.08 }}
                         position="bottomRight"
-                        // onPress={() => setVisible(true)}
+                    // onPress={() => setVisible(true)}
                     >
                         <Icon type="FontAwesome" name='send' style={{ color: "#fff", fontSize: 27, marginRight: 5 }} />
                     </Fab> :
