@@ -1,8 +1,14 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard } from 'react-native'
-import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import {
+    React, 
+    Component,
+    useState,
+    useEffect,
+    useRef,
+    Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard
+    
+} from '../Modules/CommonImports.js';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
 import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';

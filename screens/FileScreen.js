@@ -1,41 +1,27 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useEffect } from 'react';
 import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    Dimensions,
-    FlatList,
-    RefreshControl,
-    PermissionsAndroid,
-    BackHandler,
-    Modal,
-    Platform,
-    ImageBackground,
-    ScrollView,
-    CheckBox
-} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import { Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon } from 'native-base';
-import CameraRoll from "@react-native-community/cameraroll";
-import { Chip } from 'react-native-paper';
-import ImageView from "react-native-image-viewing";
-import { RNS3 } from 'react-native-aws3';
-import { useFocusEffect } from "@react-navigation/native";
-import analytics from '@segment/analytics-react-native';
-import { getUniqueId, getManufacturer } from 'react-native-device-info';
-import ScreenHeader from '../Modules/ScreenHeader'
-import CompButton from '../Modules/CompButton'
-import axios from 'axios';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { reverse } from 'ramda';
+    React, 
+    Component, 
+    useEffect,
+    StyleSheet, Text, View, Image, Dimensions, FlatList, RefreshControl, PermissionsAndroid, BackHandler, Modal, Platform, ImageBackground, ScrollView, CheckBox,
+    AsyncStorage,
+    Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon,
+    axios,
+    analytics, getUniqueId, getManufacturer,
+    CameraRoll,
+    Chip,
+    ImageView,
+    useFocusEffect,
+    ScreenHeader,
+    CompButton,
+    TouchableOpacity,
+    reverse,
+    height,
+    width
+} from '../Modules/CommonImports.js';
 var RNFS = require('react-native-fs');
-const CleverTap = require('clevertap-react-native');
 
-var height = Dimensions.get('screen').height;
-var width = Dimensions.get('screen').width;
 
 var dir_path = Platform.OS === 'ios' ? RNFS.LibraryDirectoryPath : RNFS.ExternalDirectoryPath;
 
@@ -72,7 +58,6 @@ const FileScreen = (props) => {
         }, []));
 
     useEffect(() => {
-        CleverTap.recordEvent('testEvent');
         const check = async () => {
             var x = await AsyncStorage.getItem('children');
             if (x) {
@@ -144,6 +129,9 @@ const FileScreen = (props) => {
         catch (err) {
             console.log(err);
         }
+        setTimeout(() => {
+            
+        }, 1000);
         try {
 
             var x = await AsyncStorage.getItem('children')
@@ -164,6 +152,13 @@ const FileScreen = (props) => {
                     // var s = stringImages;
                     for (var i = 0; i < response.data["0"].length;) {
                         var m = response.data["0"][i].split(x + '/')[1].split('/')[0];
+                        // console.log(stringImages.includes(m), m, stringImages);
+                        if(s.includes(m))
+                        {
+                            // console.log(m, 'asdas');
+                            i++;
+                            continue;
+                        }
                         // s += m + ', ';
                         var n = JSON.parse(m);
                         var tme = new Date(n);
@@ -179,7 +174,7 @@ const FileScreen = (props) => {
                             arry.push({ 'cloud': 1, 'images': ar, 'timestamp': tme });
                         }
                     }
-                    console.log(s);
+                    console.log(s, "adasaa");
                     var amp = [...arry, ...fls]
                     // console.log(amp[0]);
                     amp.sort(function (a, b) {
@@ -436,7 +431,8 @@ const FileScreen = (props) => {
                                             <TouchableOpacity
                                                 style={{ borderRadius: 20 }}
                                                 onPress={() => {
-                                                    viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
+                                                    console.log(item['images'][0]['time']);
+                                                    // viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
                                                 }}>
                                                 <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
                                                     <View style={{ flexDirection: 'row' }}>

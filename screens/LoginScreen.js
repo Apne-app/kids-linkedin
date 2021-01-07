@@ -153,9 +153,12 @@ const LoginScreen = ({ route, navigation }) => {
     };
     axios(config)
       .then(function (response) {
+        console.log(response.data.token)
+        var t = `http://104.199.146.206:5000/login/?token=${response.data.token}`;
+        console.log(t)
         axios({
           method: 'post',
-          url: `http://104.199.146.206:5000/login/?token=${response.data.token}`,
+          url: t ,
           headers: {
             'Content-Type': 'application/json'
           },
@@ -178,6 +181,7 @@ const LoginScreen = ({ route, navigation }) => {
 
               } catch (e) {
                 // saving error
+                console.log(e)
               }
             }
             storeProfile()

@@ -1,7 +1,9 @@
-import React from 'react';
+import {
+  React, 
+  BackHandler,
+  useFocusEffect,
+} from '../Modules/CommonImports.js';
 import Camera from '../components/Camera'
-import {BackHandler} from 'react-native'
-import { useFocusEffect } from "@react-navigation/native";
 
 const CameraScreen = ({navigation, route}) => {
 
