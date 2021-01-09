@@ -38,6 +38,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { reverse } from 'ramda';
 import { WebView } from 'react-native-webview';
+import { CropView } from 'react-native-image-crop-tools';
+import ImagePicker from 'react-native-image-picker';
+import BottomSheet from 'reanimated-bottom-sheet';
+import ViewShot from "react-native-view-shot";
+import Draggable from 'react-native-draggable';
 import SpinnerButton from 'react-native-spinner-button';
 import CompHeader from '../Modules/CompHeader'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -72,6 +77,7 @@ export {
     configureFonts, DefaultTheme, PaperProvider,
     SpinnerButton,
     sha256,
+    ImagePicker, CropView, BottomSheet, ViewShot, Draggable,
     SimpleAnimation,
     SafeAreaProvider,
     StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList

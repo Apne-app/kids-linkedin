@@ -431,8 +431,8 @@ const FileScreen = (props) => {
                                             <TouchableOpacity
                                                 style={{ borderRadius: 20 }}
                                                 onPress={() => {
-                                                    console.log(item['images'][0]['time']);
-                                                    // viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
+                                                    // console.log(item['images'][0]['time']);
+                                                    viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
                                                 }}>
                                                 <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
                                                     <View style={{ flexDirection: 'row' }}>
