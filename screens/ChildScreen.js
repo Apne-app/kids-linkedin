@@ -6,24 +6,20 @@ import {
     useState,
     useEffect,
     useRef,
-    Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard
-    
+    Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard,
+    Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon,
+    DefaultTheme, configureFonts,
+    SpinnerButton,
+    AsyncStorage,
+    analytics,
+    useFocusEffect,
+    axios,
+    sha256,
+    getUniqueId, getManufacturer,
+    SimpleAnimation,
+    ScrollView, TouchableOpacity,
+    height, width
 } from '../Modules/CommonImports.js';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';
-import SpinnerButton from 'react-native-spinner-button';
-import AsyncStorage from '@react-native-community/async-storage';
-import LoginForm from '../components/Login';
-import SignUpForm from '../components/SignUp';
-import axios from 'axios';
-import LinkedIn from '../components/LinkedIn'
-import analytics from '@segment/analytics-react-native';
-import { getUniqueId, getManufacturer } from 'react-native-device-info';
-import { sha256 } from 'react-native-sha256';
-import { SimpleAnimation } from 'react-native-simple-animations';
-import { useFocusEffect } from "@react-navigation/native";
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-var height = Dimensions.get('screen').height;
-var width = Dimensions.get('screen').width;
 const ChildScreen = ({ route, navigation }) => {
     const scrollcheck = useRef(null)
     useFocusEffect(
