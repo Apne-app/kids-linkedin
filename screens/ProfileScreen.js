@@ -655,7 +655,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 styles={{ borderRadius: 10, margin: 10 }}
                 options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Take Photo</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                 cancelButtonIndex={2}
-                onPress={(index) => { index == 0 ? pickImage('gallery') : pickImage('camera') }}
+                onPress={(index) => { index == 0 ? pickImage('gallery') : index == 1 ? pickImage('camera') : null }}
             />
         </View>)
     }
@@ -760,6 +760,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         var child = children['0']
                         var axios = require('axios');
                         var data = JSON.stringify({ "cid": child.id, "change": "image", "name": child.data.name, "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
+
                         var config = {
                             method: 'post',
                             url: `http://104.199.158.211:5000/update_child/?token=${token}`,
@@ -771,27 +772,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         axios(config)
                             .then(async (response) => {
-                                var pro = await AsyncStorage.getItem('profile')
-                                if (pro !== null) {
-                                    pro = JSON.parse(pro)
-                                    // console.log(JSON.stringify(response.data.token));
-                                    axios({
-                                        method: 'post',
-                                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${token}`,
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        data: JSON.stringify({
-                                            "email": pro.email,
-                                        })
-                                    })
-                                        .then(async (response) => {
-                                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                            setkey(String(parseInt(key) + 1))
-                                        })
-                                        .catch((error) => {
-                                        })
-                                }
+                                setkey(String(parseInt(key) + 1))
                             }).catch((error) => {
                                 console.log(error, "asd")
                                 alert('Could not update Profile Picture, please try again later')
@@ -843,26 +824,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         };
                         axios(config)
                             .then(async (response) => {
-                                var pro = await AsyncStorage.getItem('profile')
-                                if (pro !== null) {
-                                    pro = JSON.parse(pro)
-                                    axios({
-                                        method: 'post',
-                                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${token}`,
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        data: JSON.stringify({
-                                            "email": pro.email,
-                                        })
-                                    })
-                                        .then(async (response) => {
-                                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                            setkey(String(parseInt(key) + 1))
-                                        })
-                                        .catch((error) => {
-                                        })
-                                }
+                                setkey(String(parseInt(key) + 1))
                             }).catch((error) => {
                                 console.log(error, "asd")
                                 alert('Could not update Profile Picture, please try again later')

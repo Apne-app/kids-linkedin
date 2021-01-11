@@ -28,6 +28,7 @@ import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import WebView from 'react-native-webview';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import * as Animatable from 'react-native-animatable';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -72,6 +73,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [actid, setactid] = useState('f137b98f-0d0d-11eb-8255-128a130028af');
     const [type, settype] = useState('like');
     const [display, setdisplay] = useState('none');
+    const [slidedisplay, setslidedisplay] = useState('none');
     const [children, setchildren] = useState('notyet')
     const [status, setstatus] = useState('0')
     const [options, setoptions] = useState({})
@@ -87,6 +89,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [selecting, setSelecting] = useState(false)
     const [actionstatus, setActionStatus] = useState(0);
     const [news, setNews] = useState([]);
+    const slideRef = useRef(null);
     const [quizOffset, setQuizOffset] = useState(10);
     const [newsOffset, setNewsOffset] = useState(10);
     const [refreshing, setRefreshing] = useState(false);
@@ -294,7 +297,7 @@ const FeedScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id='+data.activity+'%26apn=com.genioclub.app').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity + '%26apn=com.genioclub.app').then((data) => {
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
@@ -604,24 +607,40 @@ const FeedScreen = ({ navigation, route }) => {
     const there = (props) => {
         return (
             <SafeAreaProvider>
-                <SafeAreaView style={{ flex: 1 }} style={{ flex: 1 }} forceInset={{ top: 'always' }}>
+                <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{ marginTop: 20 }}
                         apiKey="9ecz2uw6ezt9"
                         appId="96078"
                         token={children['0']['data']['gsToken']}
                     >
-                        <FlatFeed Footer={() => {
-                            return (
-                                <BottomSheet
-                                    ref={sheetRefLike}
-                                    snapPoints={[height - 200, 400, 0]}
-                                    initialSnap={2}
-                                    borderRadius={25}
-                                    renderContent={renderLikes}
-                                />
-                            )
-                        }} notify={true} navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                        <Features style={{ backgroundColor: '#f9f9f9' }} />
+                        <FlatFeed
+                            Footer={() => {
+                                return (
+                                    <BottomSheet
+                                        ref={sheetRefLike}
+                                        snapPoints={[height - 200, 400, 0]}
+                                        initialSnap={2}
+                                        borderRadius={25}
+                                        renderContent={renderLikes}
+                                    />
+                                )
+                            }} notify={true} navigation={navigation} feedGroup="timeline" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                        <Animatable.View style={{ display: slidedisplay }} animation="slideInRight" useNativeDriver duration={3000} ref={slideRef}>
+                            <View>
+                                <View style={{ position: 'absolute', right: 0, backgroundColor: feedstate === 0 ? '#327feb' : '#fff', height: 46, width: 50, bottom: 152, borderTopLeftRadius: 43, borderBottomLeftRadius: 43, elevation: 40 }}>
+                                    <Icon name={'dynamic-feed'} type={'MaterialIcons'} style={{ fontSize: 20, color: feedstate == 0 ? '#fff' : '#327feb', marginLeft: 18, marginTop: 10 }} />
+                                </View>
+                                <View style={{ position: 'absolute', right: 0, backgroundColor: feedstate === 1 ? '#327feb' : '#fff', height: 46, width: 50, bottom: 96, borderTopLeftRadius: 43, borderBottomLeftRadius: 43, elevation: 40 }}>
+                                    <Icon name={'clipboard-pencil'} type={'Foundation'} style={{ fontSize: 20, color: feedstate == 1 ? '#fff' : '#327feb', marginLeft: 18, marginTop: 10 }} />
+                                </View>
+                                <View style={{ position: 'absolute', right: 0, backgroundColor: feedstate === 2 ? '#327feb' : '#fff', height: 46, width: 50, bottom: 40, borderTopLeftRadius: 43, borderBottomLeftRadius: 43, elevation: 40 }}>
+                                    <Icon name={'newspaper-outline'} type={'Ionicons'} style={{ fontSize: 20, color: feedstate == 2 ? '#fff' : '#327feb', marginLeft: 18, marginTop: 10 }} />
+                                </View>
+                            </View>
+                        </Animatable.View>
+
                     </StreamApp>
                     <BottomSheet
                         ref={sheetRefReport}
@@ -674,6 +693,7 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="96078"
                         token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'}
                     >
+                        <Features style={{ backgroundColor: '#f9f9f9' }} />
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet
@@ -1263,7 +1283,6 @@ const FeedScreen = ({ navigation, route }) => {
                     }
                 }}
             >
-                <Features style={{ backgroundColor: '#f9f9f9' }} />
                 {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : notthere()}
             </SafeAreaView>
             {/* <Fab

@@ -89,7 +89,7 @@ export default class App extends React.Component {
         style={[
           styles.slide,
           {
-            backgroundColor: "#fff",
+            backgroundColor: '#fff',
           },
         ]}>
         <View style={styles.imagecontainer}>
