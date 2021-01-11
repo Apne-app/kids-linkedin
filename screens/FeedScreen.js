@@ -614,7 +614,6 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="96078"
                         token={children['0']['data']['gsToken']}
                     >
-                        <Features style={{ backgroundColor: '#f9f9f9' }} />
                         <FlatFeed
                             Footer={() => {
                                 return (
@@ -693,7 +692,6 @@ const FeedScreen = ({ navigation, route }) => {
                         appId="96078"
                         token={'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'}
                     >
-                        <Features style={{ backgroundColor: '#f9f9f9' }} />
                         <FlatFeed Footer={() => {
                             return (
                                 <BottomSheet
