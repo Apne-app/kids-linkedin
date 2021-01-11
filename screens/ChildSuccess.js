@@ -1,14 +1,25 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, Alert, BackHandler, Dimensions, Image } from 'react-native'
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer } from 'native-base';
-import axios from 'axios';
-import AsyncStorage from '@react-native-community/async-storage';
-import { useFocusEffect } from "@react-navigation/native";
-var height = Dimensions.get('screen').height;
-var width = Dimensions.get('screen').width;
+import {
+    React, 
+    Component,
+    useState,
+    useEffect,
+    useRef,
+    Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard,
+    Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer,
+    DefaultTheme, configureFonts, PaperProvider,
+    SpinnerButton,
+    AsyncStorage,
+    analytics,
+    useFocusEffect,
+    axios,
+    sha256,
+    getUniqueId, getManufacturer,
+    SimpleAnimation,
+    ScrollView, TouchableOpacity,
+    height, width,
+} from '../Modules/CommonImports.js';
 const ChildSuccess = ({ navigation }) => {
 
     useFocusEffect(

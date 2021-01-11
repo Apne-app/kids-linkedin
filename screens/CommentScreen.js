@@ -1,16 +1,26 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
-import CompHeader from '../Modules/CompHeader'
-import AsyncStorage from '@react-native-community/async-storage';
-var height = Dimensions.get('screen').height;
+
+import {
+    React, 
+    Component,
+    useState,
+    useEffect,
+    useRef,
+    SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore,
+    Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea,
+    DefaultTheme, configureFonts, PaperProvider,
+    AsyncStorage,
+    analytics,
+    useFocusEffect,
+    axios,
+    SafeAreaProvider,
+    getUniqueId, getManufacturer,
+    height, width,
+    StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList
+} from '../Modules/CommonImports.js'; 
+import CompHeader from '../Modules/CompHeader';
 var halfHeight = height / 2;
-var width = Dimensions.get('screen').width;
 const CommentScreen = ({ navigation, route }) => {
     const [children, setchildren] = useState('notyet')
     useEffect(() => {

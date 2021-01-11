@@ -1,19 +1,29 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useState, useRef } from 'react';
-import { ScrollView, StatusBar, Switch, BackHandler, StyleSheet, View, Image, TextInput, ImageBackground, Dimensions, FlatList, Text, TouchableOpacity } from 'react-native';
-import { CropView } from 'react-native-image-crop-tools';
-import AsyncStorage from '@react-native-community/async-storage';
-import ImagePicker from 'react-native-image-picker';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
-import BottomSheet from 'reanimated-bottom-sheet';
-import ViewShot from "react-native-view-shot";
-import Draggable from 'react-native-draggable';
-import { useFocusEffect } from "@react-navigation/native";
-import CompHeader from '../Modules/CompHeader';
 
-var height = Dimensions.get('screen').height;
-var width = Dimensions.get('screen').width;
+import {
+  React, 
+  Component,
+  useState, useRef,
+  StyleSheet, Text, View, Image, Dimensions, FlatList, RefreshControl, PermissionsAndroid, BackHandler, Modal, Platform, ImageBackground, ScrollView, CheckBox,
+  AsyncStorage,
+  Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon,
+  axios,
+  analytics, getUniqueId, getManufacturer,
+  CameraRoll,
+  Chip,
+  ImageView,
+  useFocusEffect,
+  CompHeader,
+  ImagePicker, CropView, BottomSheet, ViewShot, Draggable,
+  ScreenHeader,
+  CompButton,
+  TouchableOpacity,
+  reverse,
+  height,
+  width
+} from '../Modules/CommonImports.js';
+
 
 var halfHeight = height * 0.5;
 

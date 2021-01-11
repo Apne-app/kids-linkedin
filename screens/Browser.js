@@ -1,10 +1,18 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState } from 'react';
-import { Share, View, Image, BackHandler, TouchableOpacity, Text } from 'react-native';
-import { WebView } from 'react-native-webview';
-import CompHeader from '../Modules/CompHeader'
-import { useFocusEffect } from "@react-navigation/native";
+import {
+    React, 
+    Component,
+    useState,
+    Share, View, Image, BackHandler, TouchableOpacity, Text,
+    AsyncStorage,
+    Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon,
+    useFocusEffect,
+    ScreenHeader,
+    CompButton,
+    WebView,
+    CompHeader
+} from '../Modules/CommonImports.js';
 // import koading from '../assets/loading.gif'
 const BackButton = ({ navigation }) => {
     <TouchableOpacity

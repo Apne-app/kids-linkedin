@@ -1,25 +1,26 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  FlatList,
-  PermissionsAndroid,
-  Modal,
+  React, 
+  Component,
+  StyleSheet, Text, View, Image, Dimensions, FlatList, RefreshControl, PermissionsAndroid, BackHandler, Modal, Platform, ImageBackground, ScrollView, CheckBox,
   AsyncStorage,
-  ScrollView
-} from 'react-native';
-import { Container, Header, Tab, Tabs, ScrollableTab, Footer, FooterTab, Button, Icon } from 'native-base';
-import CameraRoll from "@react-native-community/cameraroll";
+  Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon,
+  axios,
+  analytics, getUniqueId, getManufacturer,
+  CameraRoll,
+  Chip,
+  ImageView,
+  useFocusEffect,
+  ScreenHeader,
+  CompButton,
+  TouchableOpacity,
+  reverse,
+  height,
+  width
+} from '../Modules/CommonImports.js';
 
 
-var height = Dimensions.get('screen').height;
-var width = Dimensions.get('screen').width;
 // import FastImage from 'react-native-fast-image';
 
 const Gallery = (props) =>  {
