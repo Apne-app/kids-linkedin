@@ -312,7 +312,7 @@ const FeedScreen = ({ navigation, route }) => {
                 Header={
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
+                            <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data})}>
                                 <Image
                                     source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '' }}
                                     style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
@@ -332,7 +332,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 cancelButtonIndex={2}
                                 onPress={(index) => { index == 1 ? report(props.activity) : null; }}
                             />
-                            <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
+                            <Right><TouchableOpacity onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
                         </View>
                         {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
                     </View>
@@ -606,7 +606,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const there = (props) => {
         return (
-            <SafeAreaProvider>
+            <SafeAreaProvider style={{display: feedstate == 0 ? 'flex' : 'none'}}>
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{ marginTop: 20 }}
@@ -683,7 +683,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const notthere = () => {
         return (
-            <SafeAreaProvider>
+            <SafeAreaProvider style={{display: feedstate == 0 ? 'flex' : 'none'}}>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableWithoutFeedback>
                 <SafeAreaView style={{ flex: 1 }} style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
@@ -805,7 +805,7 @@ const FeedScreen = ({ navigation, route }) => {
 
 
         return (
-            <SafeAreaView style={{ flex: 1 }} style={{ backgroundColor: '#f9f9f9' }}
+            <SafeAreaView style={{ flex: 1, display: 'none' }} style={{ backgroundColor: '#f9f9f9'}}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
@@ -1002,7 +1002,7 @@ const FeedScreen = ({ navigation, route }) => {
 
 
         return (
-            <SafeAreaView style={{ flex: 1 }} style={{ backgroundColor: '#f9f9f9' }}
+            <SafeAreaView style={{ flex: 1, display: 'none' }} style={{ backgroundColor: '#f9f9f9' }}
                 // onScroll={({nativeEvent}) => {
                 //     if (isCloseToBottom(nativeEvent)) {
                 //       console.log("end")
@@ -1067,6 +1067,12 @@ const FeedScreen = ({ navigation, route }) => {
                                                 <View style={{ marginVertical: 5 }}>
                                                     <Text style={{ textAlign: 'justify', marginHorizontal: 20 }}>{(((item['desc'].replace(/<[^>]*>/g, '')).substring)(0, 200 - 3)) + '...'}</Text>
                                                     <Text style={{ textAlign: 'justify', marginHorizontal: 20, fontWeight: 'bold' }}>Click here to read more...</Text>
+                                                </View>
+                                                <View>
+                                                    <Image
+                                                        source={{ uri: "https://prepacademyschools.org/wp-content/uploads/2017/07/Blog-Post-29-Raising-Happy-Children.jpg" }}
+                                                        style={{ width: width, height: 300, }}
+                                                    />
                                                 </View>
                                             </View>
                                         </TouchableOpacity>
@@ -1213,6 +1219,8 @@ const FeedScreen = ({ navigation, route }) => {
     const setnewnotifun = () => {
         setnewnoti(false)
     }
+
+
     return (
         <>
             <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
@@ -1289,7 +1297,9 @@ const FeedScreen = ({ navigation, route }) => {
                 }}
             >
                 <Features style={{ backgroundColor: '#f9f9f9' }} />
-                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News() }
+                {/*children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News() */}
+                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
+                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && feedstate == 1 ? Quiz() : feedstate == 0 ? null: News()}
             </SafeAreaView>
             {/* <Fab
                 active={selecting}

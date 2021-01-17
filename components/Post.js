@@ -689,7 +689,7 @@ const Upload = ({ route, navigation }) => {
       <Text style={{ margin: 15, marginTop: 20, fontSize: 20, fontFamily: 'NunitoSans-Bold' }}>Download PDF</Text>
 
       <Form>
-        <Item floatingLabel>
+        <Item fixedLabel>
           <Label style={{ fontFamily: 'NuntoSans-Regular' }}>PDF Name</Label>
           <Input
             onChangeText={text => setFileName(text)}

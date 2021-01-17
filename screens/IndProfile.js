@@ -38,6 +38,7 @@ const IndProfile = ({ navigation, route }) => {
     const [certi, setCerti] = useState([]);
     const [courses, setCourses] = useState([])
     const [children, setchildren] = useState({})
+    const [profile, setProfile] = useState({});
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
     const [status, setstatus] = useState('3')
     const optionsRef = React.useRef(null);
@@ -52,6 +53,7 @@ const IndProfile = ({ navigation, route }) => {
             }
             const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
             var user = client.feed('user', route['params']['id'] + 'id');
+            setProfile(user.client);
             var follows = await user.followers()
             var user = client.feed('timeline', route['params']['id'] + 'id');
             var following = await user.following()
@@ -389,10 +391,123 @@ const IndProfile = ({ navigation, route }) => {
             />
         );
     };
+
+    const refProfileSheet = useRef(null);
+    const showProfileSheet = () => {
+        refProfileSheet.current.show()
+    }
+
+    const report = async (x) => {
+
+        // console.log(children);
+        var y = await AsyncStorage.getItem('children');
+        analytics.track('Post Reported', {
+            userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+            deviceID: getUniqueId()
+        })
+        var now = new Date();
+        var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+        datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+
+        var body = {
+            "created_by": children["0"]["data"]["unique_id"],
+            "reported_name": x["actor"]["data"]["name"],
+            "post_id": x["id"],
+            "images": x["image"],
+            "reported_id": x["actor"]["id"].split("id")[0],
+            "reported_time": datetime
+        }
+
+        var config = {
+            method: 'post',
+            url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: body
+        };
+        axios(config)
+            .then(function (response) {
+                // console.log(JSON.stringify(response.data));
+                // setLoading(false);
+                if (response.data == "success") {
+                    setShowToast(true);
+                }
+            })
+            .catch(function (error) {
+                alert(error);
+                // setLoading(false)
+            });
+
+        // console.log(body);
+
+    }
+
+    const reportProfile = async () => {
+
+        // console.log(children);
+
+
+        var y = await AsyncStorage.getItem('children');
+        analytics.track('Profile Reported', {
+            userID: y ? JSON.parse(y)["0"]["data"]["unique_id"] : null,
+            deviceID: getUniqueId()
+        })
+        var now = new Date();
+        var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+        datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+
+        var body = {
+            "created_by": children["0"]["data"]["gsToken"],
+            "created_by_name": children["0"]["data"]["name"],
+            "reported_id": route['params']['id'],
+            "reported_name": route['params']['data']['name'],
+            "reported_time": datetime
+        }
+
+        var config = {
+            method: 'post',
+            url: 'https://the-office-2z27nzutoq-el.a.run.app/report_profile',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: body
+        };
+        // console.log(body)
+        axios(config)
+            .then(function (response) {
+                // console.log(JSON.stringify(response.data));
+                // setLoading(false);
+                if (response.data == "success") {
+                    // setShowToast(true);
+                    console.log('success')
+                }
+                else
+                {
+                    console.log(response.data)
+                }
+            })
+            .catch(function (error) {
+                alert(error);
+                // setLoading(false)
+            });
+
+        // console.log(body);
+
+    }
+
     return (
         Object.keys(children).length ?
             <View>
-                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
+                <ActionSheet
+                    useNativeDriver={true}
+                    ref={refProfileSheet}
+                    styles={{ borderRadius: 0, margin: 10 }}
+                    options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share Profile</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                    cancelButtonIndex={2}
+                    onPress={(index) => { index == 1 ? reportProfile() : null; }}
+                />
+                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login')} />
                 <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                     <StreamApp
                         apiKey={'9ecz2uw6ezt9'}

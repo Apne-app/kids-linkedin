@@ -308,6 +308,19 @@ const App = (props) => {
     },
   };
 
+  const sidewaysConfig = (route, navigation) => ({
+    headerShown: false,
+    gestureEnabled: true,
+    cardOverlayEnabled: true,
+    headerStatusBarHeight:
+      navigation
+        .dangerouslyGetState()
+        .routes.findIndex((r) => r.key === route.key) > 0
+        ? 0
+        : undefined,
+    ...TransitionPresets.SlideFromRightIOS,
+  })
+
   return (
     <Provider store={store}>
       <PersistGate
@@ -318,48 +331,26 @@ const App = (props) => {
           <Stack.Navigator initialRouteName={'IntroSlider'}>
             <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
             <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
-            <Stack.Screen options={{ headerShown: false }} name="IndProf" component={IndProfile} />
-            <Stack.Screen options={{ headerShown: false }} name="Searching" component={Searching} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="IndProf" component={IndProfile} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Searching" component={Searching} />
             <Stack.Screen options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
             <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
             <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
             <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
-            <Stack.Screen options={{ headerShown: false }} name="Preview" component={ImagePreview} />
-            <Stack.Screen options={({ route, navigation }) => ({
-              headerShown: false,
-              gestureEnabled: true,
-              cardOverlayEnabled: true,
-              headerStatusBarHeight:
-                navigation
-                  .dangerouslyGetState()
-                  .routes.findIndex((r) => r.key === route.key) > 0
-                  ? 0
-                  : undefined,
-              ...TransitionPresets.SlideFromRightIOS,
-            })} name="SinglePost" component={SinglePostScreen} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Preview" component={ImagePreview} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="SinglePost" component={SinglePostScreen} />
             <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
             <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
-            <Stack.Screen options={{ headerShown: false }} name="CreatePost" component={PostScreen} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="CreatePost" component={PostScreen} />
             <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
             <Stack.Screen options={{ headerShown: false }} name="AddText" component={AddText} />
             <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
-            <Stack.Screen options={({ route, navigation }) => ({
-              headerShown: false,
-              gestureEnabled: true,
-              cardOverlayEnabled: true,
-              headerStatusBarHeight:
-                navigation
-                  .dangerouslyGetState()
-                  .routes.findIndex((r) => r.key === route.key) > 0
-                  ? 0
-                  : undefined,
-              ...TransitionPresets.SlideFromRightIOS,
-            })} name="Browser" component={Browser} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Browser" component={Browser} />
             <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
             <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
-            <Stack.Screen options={{ headerShown: false }} name="Settings" component={Settings} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
             <Stack.Screen options={{ headerShown: false }} name="Comments" component={Comments} />
-            <Stack.Screen options={{ headerShown: false }} name="Notifications" component={NotificationScreen} />
+            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Notifications" component={NotificationScreen} />
             <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
             <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
             <Stack.Screen options={{ headerShown: false }} name="Includes" component={Includes} />
