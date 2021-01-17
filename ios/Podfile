@@ -44,6 +44,8 @@ target 'kids' do
 
   pod 'clevertap-react-native', :path => '../node_modules/clevertap-react-native'
 
+  pod 'react-native-exoplayer', :path => '../node_modules/react-native-exoplayer'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing

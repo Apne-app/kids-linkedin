@@ -22,7 +22,7 @@ import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, Re
 import LikeButton from '../components/LikeButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
-import VideoPlayer from 'react-native-video-controls';
+var VideoPlayer = require('react-native-exoplayer');
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { LinkPreview } from '@flyerhq/react-native-link-preview'

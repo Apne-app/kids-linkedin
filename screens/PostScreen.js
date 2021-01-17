@@ -12,10 +12,9 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SliderBox } from "react-native-image-slider-box";
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import { RNS3 } from 'react-native-aws3';
-import VideoPlayer from 'react-native-video-controls';
+var VideoPlayer = require('react-native-exoplayer');
 import { connect } from 'getstream';
 import CompHeader from '../Modules/CompHeader';
-import Video from 'react-native-video';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;

@@ -2,7 +2,7 @@
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
-import VideoPlayer from 'react-native-video-controls';
+var VideoPlayer = require('react-native-exoplayer');
 const VideoFullScreen = ({ route, navigation }) => {
     return (
         <VideoPlayer

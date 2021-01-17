@@ -9,7 +9,6 @@ import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, Re
 import LikeButton from '../components/LikeButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
-import VideoPlayer from 'react-native-video-controls';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
 import axios from 'axios';
@@ -29,6 +28,7 @@ import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import WebView from 'react-native-webview';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
+var VideoPlayer = require('react-native-exoplayer');
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -160,6 +160,9 @@ const FeedScreen = ({ navigation, route }) => {
 
         // console.log(children);
         var y = await AsyncStorage.getItem('children');
+        var q = await AsyncStorage.getItem('profile');
+        q = JSON.parse(q)
+        console.log(q)
         analytics.track('Post Reported', {
             userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
@@ -169,14 +172,12 @@ const FeedScreen = ({ navigation, route }) => {
         datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 
         var body = {
-            "created_by": children["0"]["data"]["gsToken"],
-            "reported_name": x["actor"]["data"]["name"],
-            "post_id": x["id"],
-            "images": x["image"],
-            "reported_id": x["actor"]["id"].split("id")[0],
-            "reported_time": datetime
+            "created_by": q['id'],
+            "created_by_name": q['email'],
+            "created_by_child": children["0"]["id"],
+            "post_data": JSON.stringify(x),
+            "reported_time": datetime,
         }
-
         var config = {
             method: 'post',
             url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
@@ -192,13 +193,12 @@ const FeedScreen = ({ navigation, route }) => {
                 if (response.data == "success") {
                     setShowToast(true);
                 }
+                console.log(response.data)
             })
             .catch(function (error) {
                 alert(error);
                 // setLoading(false)
             });
-
-        // console.log(body);
 
     }
 
@@ -244,6 +244,8 @@ const FeedScreen = ({ navigation, route }) => {
             </Form>
         </View>
     );
+    var d = new Date();
+    var year = parseInt(d.getFullYear());
     const CustomActivity = (props) => {
         const refActionSheet = useRef(null);
         const showActionSheet = () => {
@@ -321,7 +323,7 @@ const FeedScreen = ({ navigation, route }) => {
                             <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
                                 <View style={{ flexDirection: 'column', marginLeft: 5 }}>
                                     <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{props.activity.actor.data ? props.activity.actor.data.type : null}</Text>
+                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{props.activity.actor.data ? props.activity.actor.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(props.activity.actor.data.year)) + ' years old (Managed by parents)' : props.activity.actor.data.type : null}</Text>
                                 </View>
                             </TouchableWithoutFeedback>
                             <ActionSheet
@@ -604,6 +606,13 @@ const FeedScreen = ({ navigation, route }) => {
             </SafeAreaView>
         )
     }
+    const Video = ({ url }) => {
+        return (
+            VideoPlayer.showVideoPlayer(url).then(() => {
+                // onReachEnd
+            })
+        )
+    }
     const there = (props) => {
         return (
             <SafeAreaProvider>
@@ -875,8 +884,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10, paddingHorizontal: 20 }}>
                                             <TouchableOpacity style={{ flexDirection: 'row' }} onPress={async () => {
                                                 if (status === '3') {
-                                                    try
-                                                    {
+                                                    try {
 
                                                         var arr = quiz;
                                                         if (item.liked_by.includes(children["0"]["data"]["gsToken"])) {
@@ -886,63 +894,62 @@ const FeedScreen = ({ navigation, route }) => {
                                                             setQuiz([...arr]);
                                                             var axios = require('axios');
                                                             var data = JSON.stringify({ "request_type": "unliked", "id": item.id, "likes_count": arr[index].likes_count, "liked_by": arr[index].liked_by });
-                                                            
+
                                                             var config = {
                                                                 method: 'post',
                                                                 url: 'https://9c9qtqg8x7.execute-api.ap-south-1.amazonaws.com/default/quizAggregator',
                                                                 headers: {
-                                                                'Content-Type': 'application/json'
-                                                            },
-                                                            data: data
-                                                        };
-                                                        
-                                                        axios(config)
-                                                            .then(function (response) {
-                                                                // console.log(JSON.stringify(response.data));
-                                                            })
-                                                            .catch(function (error) {
-                                                                console.log(error);
-                                                            });
+                                                                    'Content-Type': 'application/json'
+                                                                },
+                                                                data: data
+                                                            };
 
-                                                        // console.log(item.liked_by)
-                                                    }
-                                                    else {
-                                                        // console.log(children["0"]["data"]["gsToken"])
-                                                        arr[index].liked_by += children["0"]["data"]["gsToken"] + ',';
-                                                        arr[index].likes_count += 1;
-                                                        setQuiz([...arr])
-                                                        var axios = require('axios');
-                                                        var data = JSON.stringify({ "request_type": "liked", "id": item.id, "likes_count": arr[index].likes_count, "liked_by": arr[index].liked_by });
+                                                            axios(config)
+                                                                .then(function (response) {
+                                                                    // console.log(JSON.stringify(response.data));
+                                                                })
+                                                                .catch(function (error) {
+                                                                    console.log(error);
+                                                                });
 
-                                                        var config = {
-                                                            method: 'post',
-                                                            url: 'https://9c9qtqg8x7.execute-api.ap-south-1.amazonaws.com/default/quizAggregator',
-                                                            headers: {
-                                                                'Content-Type': 'application/json'
-                                                            },
-                                                            data: data
-                                                        };
-
-                                                        axios(config)
-                                                            .then(function (response) {
-                                                                console.log(JSON.stringify(response.data));
-                                                            })
-                                                            .catch(function (error) {
-                                                                console.log(error);
-                                                            });
+                                                            // console.log(item.liked_by)
                                                         }
+                                                        else {
+                                                            // console.log(children["0"]["data"]["gsToken"])
+                                                            arr[index].liked_by += children["0"]["data"]["gsToken"] + ',';
+                                                            arr[index].likes_count += 1;
+                                                            setQuiz([...arr])
+                                                            var axios = require('axios');
+                                                            var data = JSON.stringify({ "request_type": "liked", "id": item.id, "likes_count": arr[index].likes_count, "liked_by": arr[index].liked_by });
+
+                                                            var config = {
+                                                                method: 'post',
+                                                                url: 'https://9c9qtqg8x7.execute-api.ap-south-1.amazonaws.com/default/quizAggregator',
+                                                                headers: {
+                                                                    'Content-Type': 'application/json'
+                                                                },
+                                                                data: data
+                                                            };
+
+                                                            axios(config)
+                                                                .then(function (response) {
+                                                                    console.log(JSON.stringify(response.data));
+                                                                })
+                                                                .catch(function (error) {
+                                                                    console.log(error);
+                                                                });
+                                                        }
+                                                    }
+                                                    catch (err) {
+                                                        navigation.navigate('Login');
+                                                    }
                                                 }
-                                                catch(err) {
+                                                else {
                                                     navigation.navigate('Login');
                                                 }
-                                            }
-                                            else
-                                            {
-                                                navigation.navigate('Login');
-                                            }
 
                                             }}>
-                                                <Icon type="MaterialIcons" name={ status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 26 }} />
+                                                <Icon type="MaterialIcons" name={status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 26 }} />
                                                 <Text style={{ marginTop: 3 }}> {item.likes_count}</Text>
                                             </TouchableOpacity>
                                             <Right>
@@ -1057,7 +1064,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                         </TouchableWithoutFeedback>
                                                         <TouchableWithoutFeedback >
                                                             <View style={{ flexDirection: 'column', marginLeft: 10 }}>
-                                                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{item.heading.length > 26 ? ((item.heading.substring)(0, 29 - 3))+"...":item.heading}</Text>
+                                                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{item.heading.length > 26 ? ((item.heading.substring)(0, 29 - 3)) + "..." : item.heading}</Text>
                                                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327feb' }}>Powered By: {item.source}</Text>
                                                             </View>
                                                         </TouchableWithoutFeedback>
@@ -1132,7 +1139,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                 }
 
                                             }}>
-                                                <Icon type="MaterialIcons" name={ status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 26 }} />
+                                                <Icon type="MaterialIcons" name={status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 26 }} />
                                                 <Text style={{ marginTop: 3 }}> {item.likes_count}</Text>
                                             </TouchableOpacity>
                                             <Right>
@@ -1288,8 +1295,11 @@ const FeedScreen = ({ navigation, route }) => {
                     }
                 }}
             >
+                <View style={{ height: 100, width: width }}>
+                    <Video url={'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'} />
+                </View>
                 <Features style={{ backgroundColor: '#f9f9f9' }} />
-                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News() }
+                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News()}
             </SafeAreaView>
             {/* <Fab
                 active={selecting}

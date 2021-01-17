@@ -21,7 +21,7 @@ import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, Re
 import LikeButton from '../components/LikeButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
-import VideoPlayer from 'react-native-video-controls';
+var VideoPlayer = require('react-native-exoplayer');
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
@@ -488,6 +488,29 @@ const ProfileScreen = ({ navigation, route }) => {
         }
         var images = []
         props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
+        const deletepost = (id1) => {
+            Alert.alert("Alert", "Are you sure you want to delete the post? The action cannot be reversed", [
+                {
+                    text: "Cancel",
+                    onPress: () => null,
+                    style: "cancel"
+                },
+                {
+                    text: "YES", onPress: () => {
+                        const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
+                        var user = client.feed('user', children['0']['id'] + 'id');
+                        console.log(id1.id)
+                        user.removeActivity(id1.id).then(() => {
+                            setkey(String(parseInt(key) + 1))
+                        }).catch(() => {
+                            alert(
+                                "There was an error deleting your post, please try again later."
+                            )
+                        })
+                    }
+                }
+            ]);
+        }
         return (
             <Activity
                 Header={
@@ -505,9 +528,9 @@ const ProfileScreen = ({ navigation, route }) => {
                                 useNativeDriver={true}
                                 ref={refActionSheet}
                                 styles={{ borderRadius: 0, margin: 10 }}
-                                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Delete Post</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                 cancelButtonIndex={2}
-                                onPress={(index) => { index == 1 ? report(props.activity) : null; }}
+                                onPress={(index) => { index == 1 ? deletepost(props.activity) : null; }}
                             />
                             <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
                         </View>
