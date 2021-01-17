@@ -22,7 +22,7 @@ import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, Re
 import LikeButton from '../components/LikeButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
-import VideoPlayer from 'react-native-video-controls';
+var VideoPlayer = require('react-native-exoplayer');
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
@@ -401,6 +401,9 @@ const IndProfile = ({ navigation, route }) => {
 
         // console.log(children);
         var y = await AsyncStorage.getItem('children');
+        var q = await AsyncStorage.getItem('profile');
+        q = JSON.parse(q)
+        console.log(q)
         analytics.track('Post Reported', {
             userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
@@ -410,14 +413,12 @@ const IndProfile = ({ navigation, route }) => {
         datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 
         var body = {
-            "created_by": children["0"]["data"]["unique_id"],
-            "reported_name": x["actor"]["data"]["name"],
-            "post_id": x["id"],
-            "images": x["image"],
-            "reported_id": x["actor"]["id"].split("id")[0],
-            "reported_time": datetime
+            "created_by": q['id'],
+            "created_by_name": q['email'],
+            "created_by_child": children["0"]["id"],
+            "post_data": JSON.stringify(x),
+            "reported_time": datetime,
         }
-
         var config = {
             method: 'post',
             url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
@@ -433,13 +434,12 @@ const IndProfile = ({ navigation, route }) => {
                 if (response.data == "success") {
                     setShowToast(true);
                 }
+                console.log(response.data)
             })
             .catch(function (error) {
                 alert(error);
                 // setLoading(false)
             });
-
-        // console.log(body);
 
     }
 
@@ -449,8 +449,11 @@ const IndProfile = ({ navigation, route }) => {
 
 
         var y = await AsyncStorage.getItem('children');
-        analytics.track('Profile Reported', {
-            userID: y ? JSON.parse(y)["0"]["data"]["unique_id"] : null,
+        var q = await AsyncStorage.getItem('profile');
+        q = JSON.parse(q)
+        console.log(q)
+        analytics.track('Post Reported', {
+            userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
         })
         var now = new Date();
@@ -458,11 +461,12 @@ const IndProfile = ({ navigation, route }) => {
         datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 
         var body = {
-            "created_by": children["0"]["data"]["gsToken"],
-            "created_by_name": children["0"]["data"]["name"],
+            "created_by": q['id'],
+            "created_by_name": q['email'],
+            "created_by_child": children["0"]["id"],
             "reported_id": route['params']['id'],
             "reported_name": route['params']['data']['name'],
-            "reported_time": datetime
+            "reported_time": datetime,
         }
 
         var config = {

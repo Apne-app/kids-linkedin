@@ -11,7 +11,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import ReplyIcon from '../images/icons/heart.png';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
-import VideoPlayer from 'react-native-video-controls';
+var VideoPlayer = require('react-native-exoplayer');
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import { useFocusEffect } from "@react-navigation/native";
