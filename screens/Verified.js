@@ -53,7 +53,7 @@ const Unverified = ({ navigation, route }) => {
             var token = '';
             var config = {
                 method: 'post',
-                url: 'http://104.199.146.206:5000/getToken',
+                url: 'https://api.genio.app/get-out/getToken',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -66,7 +66,7 @@ const Unverified = ({ navigation, route }) => {
                     pro = JSON.parse(pro)
                     axios({
                         method: 'post',
-                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                        url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
                         headers: {
                             'Content-Type': 'application/json'
                         },

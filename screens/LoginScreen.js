@@ -106,7 +106,7 @@ const LoginScreen = ({ route, navigation }) => {
 
     var config = {
       method: 'post',
-      url: 'http://104.199.146.206:5000/getToken',
+      url: 'https://api.genio.app/get-out/getToken',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -145,7 +145,7 @@ const LoginScreen = ({ route, navigation }) => {
 
     var config = {
       method: 'post',
-      url: 'http://104.199.146.206:5000/getToken',
+      url: 'https://api.genio.app/get-out/getToken',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -154,7 +154,7 @@ const LoginScreen = ({ route, navigation }) => {
     axios(config)
       .then(function (response) {
         console.log(response.data.token)
-        var t = `http://104.199.146.206:5000/login/?token=${response.data.token}`;
+        var t = `https://api.genio.app/get-out/login/?token=${response.data.token}`;
         console.log(t)
         axios({
           method: 'post',
@@ -185,7 +185,7 @@ const LoginScreen = ({ route, navigation }) => {
               }
             }
             storeProfile()
-            axios.get('http://35.229.160.51:80/send2/' + response.data.uuid + '/' + response.data.email + '/')
+            axios.get('https://api.genio.app/shining/send2/' + response.data.uuid + '/' + response.data.email + '/')
               .then((response) => {
                 console.log(response.data)
                 if (response.data == 'wrong id!') {

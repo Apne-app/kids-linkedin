@@ -204,7 +204,7 @@ const Settings = ({ navigation }) => {
         var token = '';
         var config1 = {
             method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
+            url: 'https://api.genio.app/get-out/getToken',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -214,7 +214,7 @@ const Settings = ({ navigation }) => {
             .then(async function (response) {
                 var config = {
                     method: 'post',
-                    url: `http://104.199.158.211:5000/update_child/?token=${response.data.token}`,
+                    url: `https://api.genio.app/matrix/update_child/?token=${response.data.token}`,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -224,7 +224,7 @@ const Settings = ({ navigation }) => {
                     .then(async (response1) => {
                         axios({
                             method: 'post',
-                            url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                            url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
                             headers: {
                                 'Content-Type': 'application/json'
                             },

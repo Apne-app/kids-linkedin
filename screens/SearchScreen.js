@@ -109,7 +109,7 @@ const SearchScreen = ({ route, navigation }) => {
 
           var config = {
             method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
+            url: 'https://api.genio.app/get-out/getToken',
             headers: {
               'Content-Type': 'application/json'
             },

@@ -90,7 +90,7 @@ const Searching = ({ route, navigation }) => {
 
         var config = {
             method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
+            url: 'https://api.genio.app/get-out/getToken',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -136,7 +136,7 @@ const Searching = ({ route, navigation }) => {
         setSearchQuery(query)
     };
     const followid = (id) => {
-        axios.get('http://104.199.158.211:5000/follow/' + currentid + '/' + id)
+        axios.get('https://api.genio.app/matrix/follow/' + currentid + '/' + id)
             .then(async (response) => {
                 if (response.data == 'success') {
                     var place = follows;

@@ -168,12 +168,12 @@ const IndProfile = ({ navigation, route }) => {
     const followid = (id) => {
         // console.log("asd");
         if (followPerson == 'Follow') {
-            // console.log('http://104.199.158.211:5000/follow/' + currentid + '/' + id)
+            // console.log('https://api.genio.app/matrix/follow/' + currentid + '/' + id)
             var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
 
             var config = {
                 method: 'post',
-                url: 'http://104.199.146.206:5000/getToken',
+                url: 'https://api.genio.app/get-out/getToken',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -184,7 +184,7 @@ const IndProfile = ({ navigation, route }) => {
                     // console.log(JSON.stringify(response.data.token));
                     axios({
                         method: 'post',
-                        url: 'http://104.199.158.211:5000/follow/' + `?token=${response.data.token}`,
+                        url: 'https://api.genio.app/matrix/follow/' + `?token=${response.data.token}`,
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -212,7 +212,7 @@ const IndProfile = ({ navigation, route }) => {
 
             var config = {
                 method: 'post',
-                url: 'http://104.199.146.206:5000/getToken',
+                url: 'https://api.genio.app/get-out/getToken',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -223,7 +223,7 @@ const IndProfile = ({ navigation, route }) => {
                     // console.log(JSON.stringify(response.data.token));
                     axios({
                         method: 'post',
-                        url: 'http://104.199.158.211:5000/unfollow/' + currentid + '/' + id + `?token=${response.data.token}`,
+                        url: 'https://api.genio.app/matrix/unfollow/' + currentid + '/' + id + `?token=${response.data.token}`,
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -421,7 +421,7 @@ const IndProfile = ({ navigation, route }) => {
         }
         var config = {
             method: 'post',
-            url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
+            url: 'https://api.genio.app/the-office/report',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -471,7 +471,7 @@ const IndProfile = ({ navigation, route }) => {
 
         var config = {
             method: 'post',
-            url: 'https://the-office-2z27nzutoq-el.a.run.app/report_profile',
+            url: 'https://api.genio.app/the-office/report_profile',
             headers: {
                 'Content-Type': 'application/json'
             },

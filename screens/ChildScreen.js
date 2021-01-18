@@ -135,7 +135,7 @@ const ChildScreen = ({ route, navigation }) => {
 
                 var config = {
                     method: 'post',
-                    url: 'http://104.199.146.206:5000/getToken',
+                    url: 'https://api.genio.app/get-out/getToken',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -147,7 +147,7 @@ const ChildScreen = ({ route, navigation }) => {
                         // console.log(JSON.stringify(response.data.token));
                         axios({
                             method: 'post',
-                            url: 'http://104.199.158.211:5000/child/' + `?token=${response.data.token}`,
+                            url: 'https://api.genio.app/matrix/child/' + `?token=${response.data.token}`,
                             headers: {
                                 'Content-Type': 'application/json'
                             },

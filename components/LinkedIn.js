@@ -56,7 +56,7 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
             // console.log(a, b, c)
             axios({
               method: 'post',
-              url: 'http://104.199.146.206:5000/authLinkedin/' + `?token=${authtoken}`,
+              url: 'https://api.genio.app/get-out/authLinkedin/' + `?token=${authtoken}`,
               headers: {
                 'Content-Type': 'application/json'
               },
@@ -69,7 +69,7 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data));
                   axios({
                     method: 'post',
-                    url: 'http://104.199.158.211:5000/getchild/' + `?token=${authtoken}`,
+                    url: 'https://api.genio.app/matrix/getchild/' + `?token=${authtoken}`,
                     headers: {
                       'Content-Type': 'application/json'
                     },

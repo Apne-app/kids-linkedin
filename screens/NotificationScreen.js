@@ -100,7 +100,7 @@ const NotificationScreen = ({ route, navigation }) => {
 
           var config = {
             method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
+            url: 'https://api.genio.app/get-out/getToken',
             headers: {
               'Content-Type': 'application/json'
             },
@@ -112,7 +112,7 @@ const NotificationScreen = ({ route, navigation }) => {
               // console.log(JSON.stringify(response.data.token));
               axios({
                 method: 'post',
-                url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
                 headers: {
                   'Content-Type': 'application/json'
                 },
@@ -125,7 +125,7 @@ const NotificationScreen = ({ route, navigation }) => {
                   console.log(response.data[0]['id'])
                   axios({
                     method: 'get',
-                    url: 'https://magnolia-2z27nzutoq-el.a.run.app/' + response.data[0]['id'],
+                    url: 'https://api.genio.app/magnolia/' + response.data[0]['id'],
                     headers: {
                       'Content-Type': 'application/json'
                     },
@@ -179,7 +179,7 @@ const NotificationScreen = ({ route, navigation }) => {
     setrefreshing(true)
     axios({
       method: 'get',
-      url: 'https://magnolia-2z27nzutoq-el.a.run.app/' + children[0]['id'],
+      url: 'https://api.genio.app/magnolia/' + children[0]['id'],
       headers: {
         'Content-Type': 'application/json'
       },

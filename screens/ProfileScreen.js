@@ -266,7 +266,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
         var config = {
             method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
+            url: 'https://api.genio.app/get-out/getToken',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -726,7 +726,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     pro = JSON.parse(pro)
                     axios({
                         method: 'post',
-                        url: 'http://104.199.158.211:5000/getchild/' + `?token=${token}`,
+                        url: 'https://api.genio.app/matrix/getchild/' + `?token=${token}`,
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -786,7 +786,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         var config = {
                             method: 'post',
-                            url: `http://104.199.158.211:5000/update_child/?token=${token}`,
+                            url: `https://api.genio.app/matrix/update_child/?token=${token}`,
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -839,7 +839,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         var config = {
                             method: 'post',
-                            url: `http://104.199.158.211:5000/update_child/?token=${token}`,
+                            url: `https://api.genio.app/matrix/update_child/?token=${token}`,
                             headers: {
                                 'Content-Type': 'application/json'
                             },

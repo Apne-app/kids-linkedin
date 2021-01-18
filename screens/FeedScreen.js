@@ -25,7 +25,6 @@ import YoutubePlayer from "react-native-youtube-iframe";
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
-import WebView from 'react-native-webview';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
 var VideoPlayer = require('react-native-exoplayer');
@@ -180,7 +179,7 @@ const FeedScreen = ({ navigation, route }) => {
         }
         var config = {
             method: 'post',
-            url: 'https://the-office-2z27nzutoq-el.a.run.app/report',
+            url: 'https://api.genio.app/the-office/report',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -442,7 +441,7 @@ const FeedScreen = ({ navigation, route }) => {
                 if (!message.data.includes('opened')) {
                     axios({
                         method: 'get',
-                        url: 'https://magnolia-2z27nzutoq-el.a.run.app/' + String(children[0]['id']),
+                        url: 'https://api.genio.app/magnolia/' + String(children[0]['id']),
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -512,7 +511,7 @@ const FeedScreen = ({ navigation, route }) => {
                 sendMessage(String(child['0']['id']))
                 axios({
                     method: 'get',
-                    url: 'https://magnolia-2z27nzutoq-el.a.run.app/' + String(child[0]['id']),
+                    url: 'https://api.genio.app/magnolia/' + String(child[0]['id']),
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -560,7 +559,7 @@ const FeedScreen = ({ navigation, route }) => {
 
                     var config = {
                         method: 'post',
-                        url: 'http://104.199.146.206:5000/getToken',
+                        url: 'https://api.genio.app/get-out/getToken',
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -572,7 +571,7 @@ const FeedScreen = ({ navigation, route }) => {
                             // console.log(JSON.stringify(response.data.token));
                             axios({
                                 method: 'post',
-                                url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                                url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
@@ -599,13 +598,13 @@ const FeedScreen = ({ navigation, route }) => {
             check()
         }, 3000);
     }, [])
-    const renderYoutube = () => {
-        return (
-            <SafeAreaView style={{ flex: 1 }} style={{ height: height - 80 }}>
-                <WebView source={{ uri: youtube }} />
-            </SafeAreaView>
-        )
-    }
+    // const renderYoutube = () => {
+    //     return (
+    //         <SafeAreaView style={{ flex: 1 }} style={{ height: height - 80 }}>
+    //             <WebView source={{ uri: youtube }} />
+    //         </SafeAreaView>
+    //     )
+    // }
     const Video = ({ url }) => {
         return (
             VideoPlayer.showVideoPlayer(url).then(() => {
@@ -657,7 +656,7 @@ const FeedScreen = ({ navigation, route }) => {
                         borderRadius={25}
                         renderContent={renderReport}
                     />
-                    <BottomSheet
+                    {/* <BottomSheet
                         ref={sheetYoutube}
                         enabledContentTapInteraction={false}
                         snapPoints={[height - 200, 0]}
@@ -665,7 +664,7 @@ const FeedScreen = ({ navigation, route }) => {
                         initialSnap={1}
                         borderRadius={2}
                         renderContent={renderYoutube}
-                    />
+                    /> */}
                 </SafeAreaView>
                 <Snackbar
                     visible={showToast}

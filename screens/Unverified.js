@@ -22,7 +22,7 @@ const Unverified = ({ navigation, route }) => {
         var token = '';
         var config = {
             method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
+            url: 'https://api.genio.app/get-out/getToken',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -35,7 +35,7 @@ const Unverified = ({ navigation, route }) => {
                 pro = JSON.parse(pro)
                 axios({
                     method: 'post',
-                    url: 'http://104.199.158.211:5000/getchild/' + `?token=${response.data.token}`,
+                    url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -133,7 +133,7 @@ const Unverified = ({ navigation, route }) => {
         var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
         var config = {
             method: 'post',
-            url: 'http://104.199.146.206:5000/getToken',
+            url: 'https://api.genio.app/get-out/getToken',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -153,7 +153,7 @@ const Unverified = ({ navigation, route }) => {
             setactive(false)
             axios({
                 method: 'post',
-                url: `http://104.199.146.206:5000/login/?token=${token}`,
+                url: `https://api.genio.app/get-out/login/?token=${token}`,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -169,7 +169,7 @@ const Unverified = ({ navigation, route }) => {
                     }
                 }
                 storeProfile()
-                axios.get('http://35.229.160.51:80/send2/' + response.data.uuid + '/' + response.data.email + '/')
+                axios.get('https://api.genio.app/shining/send2/' + response.data.uuid + '/' + response.data.email + '/')
                     .then((response) => {
                         console.log(response.data)
                         if (response.data == 'wrong id!') {

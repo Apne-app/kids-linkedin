@@ -45,7 +45,7 @@ const SignUpForm = ({ navigation }) => {
     sha256(signup.password)
       .then((hash) => {
         console.log(hash)
-        axios.get('http://104.199.146.206:5000/signup/' + signup.email + '/' + hash + '/none/')
+        axios.get('https://api.genio.app/get-out/signup/' + signup.email + '/' + hash + '/none/')
           .then((response) => {
             console.log(response.data)
           })
