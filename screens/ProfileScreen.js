@@ -19,6 +19,7 @@ import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
+import FeedComponent from '../Modules/FeedComponent'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 var VideoPlayer = require('react-native-exoplayer');
@@ -659,7 +660,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: 'white', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
                     </TouchableOpacity>
                     <View style={{ marginBottom: 400 }}>
-                        <FlatFeed feedGroup="user" Activity={CustomActivity} options={{ withOwnReactions: true }} />
+                        <FlatFeed feedGroup="user" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ withOwnReactions: true }} />
                     </View>
                 </StreamApp>
             </ScrollView>

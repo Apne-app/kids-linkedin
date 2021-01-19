@@ -21,6 +21,7 @@ import CompButton from '../Modules/CompButton'
 import WebView from 'react-native-webview';
 import { getUniqueId } from 'react-native-device-info';
 import analytics from '@segment/analytics-react-native';
+import FeedComponent from '../Modules/FeedComponent'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -50,6 +51,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
     const status = route.params.status
+    const children = route.params.children
     const [website, setwebsite] = useState('https://genio.app')
     const websiteref = React.useRef();
     const onKeyboardShow = (event) => {
@@ -71,12 +73,6 @@ const SinglePostScreen = ({ navigation, route }) => {
         const refActionSheet = useRef(null);
         const showActionSheet = () => {
             refActionSheet.current.show()
-        }
-        const addcomment = (event) => {
-            console.log(event)
-        }
-        const settext = (text) => {
-            setcurrentCommment(text)
         }
         const footer = (id, data) => {
             return (
@@ -205,7 +201,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 appId={'96078'}
                 token={route.params.token}
             >
-                <CustomActivity props={route.params.activity} />
+                <CustomActivity props={route.params.activity} status={status} children={children} navigation={navigation} route={route} />
                 {status === '3' ? <CommentBox
                     key={'1'}
                     // noKeyboardAccessory={true}
@@ -226,16 +222,6 @@ const SinglePostScreen = ({ navigation, route }) => {
                             actid: route.params.activity.activity.id,
                             comment: text
                         })
-                        // console.log({
-                        //     userID: route.params.token,
-                        //     deviceID: getUniqueId(),
-                        //     by: route.params.id,
-                        //     byname: route.params.name,
-                        //     byimage: route.params.image,
-                        //     to: parseInt(route.params.activity.activity.actor.id.replace('id', '')),
-                        //     actid: route.params.activity.activity.id
-                        // }
-                        // )
                     }}
                     avatarProps={{
                         source: route.params.image,
