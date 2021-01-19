@@ -387,9 +387,18 @@ const App = (props) => {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
-        setstatus(data.status)
-        setchildren(data.children)
-        setprofile(data.profie)
+        if (data.status) {
+          setstatus(data.status)
+        }
+        if (data.children) {
+          setchildren(data.children)
+        }
+        if (data.profile) {
+          setprofile(data.profile)
+        }
+        if (data.notifications) {
+          setnotifications(data.notifications)
+        }
       },
     }),
     []

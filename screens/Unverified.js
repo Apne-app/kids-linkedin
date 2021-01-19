@@ -19,7 +19,6 @@ const Unverified = ({ navigation, route }) => {
     const appState = useRef(AppState.currentState);
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
     const { Update } = React.useContext(AuthContext);
-    Update({ children: {}, status: '1', profile: {} })
     const login = async () => {
         var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
         var token = '';
@@ -48,7 +47,8 @@ const Unverified = ({ navigation, route }) => {
                 })
                     .then(async (response) => {
                         await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                        Update({ children: response.data, status: '3', profile: pro })
+                        var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
+                        Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
                         if (Object.keys(response.data).length) {
                             await AsyncStorage.setItem('status', '3')
                             navigation.reset({
