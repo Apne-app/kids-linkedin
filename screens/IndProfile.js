@@ -38,12 +38,12 @@ const IndProfile = ({ navigation, route }) => {
     const [currentid, setcurrentid] = React.useState('');
     const [certi, setCerti] = useState([]);
     const [courses, setCourses] = useState([])
-    const children = route.params.children
+    var children = route.params.children
     if (children) {
         //do nothing
     }
     else {
-        children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
+        children = ([{ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } }])
     }
     const [profile, setProfile] = useState({});
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
