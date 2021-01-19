@@ -68,26 +68,19 @@ updateStyle('LikeButton', {
         fontFamily: 'NunitoSans-Bold'
     },
 });
-const FeedScreen = ({ navigation, route, data }) => {
-    console.log(route)
+const FeedScreen = ({ navigation, route }) => {
     const [actid, setactid] = useState('f137b98f-0d0d-11eb-8255-128a130028af');
     const [type, settype] = useState('like');
-    const [display, setdisplay] = useState('none');
     const [slidedisplay, setslidedisplay] = useState('none');
-    const [children, setchildren] = useState('notyet')
-    const [status, setstatus] = useState('0')
-    const [options, setoptions] = useState({})
+    const children = route.params.children
+    const status = route.params.status
     const sheetRefLike = React.useRef(null);
-    const sheetYoutube = React.useRef(null)
     const [showToast, setShowToast] = useState(false)
     const [feedstate, setFeedState] = useState(0);
-    const sheetRefCom = React.useRef(null);
     const [reportedProfile, setReportedProfile] = useState({});
     const sheetRefReport = React.useRef(null);
     const [reportType, setReportType] = useState('')
     const [reportComment, setReportComment] = useState('');
-    const [selecting, setSelecting] = useState(false)
-    const [actionstatus, setActionStatus] = useState(0);
     const [news, setNews] = useState([]);
     const slideRef = useRef(null);
     const [quizOffset, setQuizOffset] = useState(10);
@@ -96,7 +89,6 @@ const FeedScreen = ({ navigation, route, data }) => {
     const [quiz, setQuiz] = useState([]);
     const [newnoti, setnewnoti] = useState(false);
     const [numnoti, setnumnoti] = useState(0);
-    const [youtube, setyoutube] = useState('https://youtube.com');
     const onShare = async (message) => {
         try {
             const result = await Share.share({
@@ -426,17 +418,6 @@ const FeedScreen = ({ navigation, route, data }) => {
         ...DefaultTheme,
         fonts: configureFonts(fontConfig),
     };
-    const notifi = () => {
-        return (<NewActivitiesNotification labelSingular={'Post'} labelPlural={'Posts'} />)
-    }
-    useEffect(() => {
-        const check = async () => {
-            var st = await AsyncStorage.getItem('status')
-            setstatus(st)
-        }
-        check()
-    }, [])
-    var ws = ''
     const socketUrl = 'ws://35.154.132.35:8765/';
     const {
         sendMessage,
@@ -519,10 +500,8 @@ const FeedScreen = ({ navigation, route, data }) => {
     }, [])
     useEffect(() => {
         const check = async () => {
-            var child = await AsyncStorage.getItem('children')
+            var child = children
             if (child != null) {
-                child = JSON.parse(child)
-                setchildren(child)
                 sendMessage(String(child['0']['id']))
                 axios({
                     method: 'get',
@@ -557,69 +536,11 @@ const FeedScreen = ({ navigation, route, data }) => {
                 })
             }
             else {
-                setchildren({})
             }
         }
         check()
     }, [])
 
-    useEffect(() => {
-        const check = async () => {
-            var st = await AsyncStorage.getItem('status')
-            if (st == '3') {
-                var pro = await AsyncStorage.getItem('profile')
-                if (pro !== null) {
-                    pro = JSON.parse(pro)
-                    var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
-
-                    var config = {
-                        method: 'post',
-                        url: 'https://api.genio.app/dark-knight/getToken',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: data
-                    };
-
-                    axios(config)
-                        .then(function (response) {
-                            // console.log(JSON.stringify(response.data.token));
-                            axios({
-                                method: 'post',
-                                url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                data: JSON.stringify({
-                                    "email": pro.email,
-                                })
-                            })
-                                .then(async (response) => {
-                                    setchildren(response.data)
-                                    await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                })
-                                .catch((error) => {
-                                })
-                        })
-                        .catch(function (error) {
-                        });
-                }
-            }
-            else {
-                // console.log('helo')
-            }
-        }
-        setTimeout(() => {
-            check()
-        }, 3000);
-    }, [])
-    // const renderYoutube = () => {
-    //     return (
-    //         <SafeAreaView style={{ flex: 1 }} style={{ height: height - 80 }}>
-    //             <WebView source={{ uri: youtube }} />
-    //         </SafeAreaView>
-    //     )
-    // }
     const Video = ({ url }) => {
         return (
             VideoPlayer.showVideoPlayer(url).then(() => {
@@ -1322,8 +1243,8 @@ const FeedScreen = ({ navigation, route, data }) => {
             </View>*/}
                 <Features style={{ backgroundColor: '#f9f9f9' }} />
                 {/*children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News() */}
-                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
-                {children == 'notyet' ? loading() :  feedstate == 1 ? Quiz() : feedstate == 0 ? null: News()}
+                {status == '3' ? there() : notthere()}
+                {feedstate == 1 ? Quiz() : feedstate == 0 ? null: News()}
             </SafeAreaView>
             {/* <Fab
                 active={selecting}

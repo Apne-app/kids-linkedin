@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StatusBar, Image, TouchableOpacity } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
+import AuthContext from './Context/Data';
 import { NavigationContainer } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { createStackNavigator } from '@react-navigation/stack'
@@ -37,7 +38,7 @@ import PostScreenNavig from './screens/PostScreenNavig'
 import PostFolder from './components/PostFolder'
 import Comments from './screens/CommentScreen'
 import dynamicLinks from '@react-native-firebase/dynamic-links';
-import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar'
+import axios from 'axios';
 import messaging from '@react-native-firebase/messaging';
 import IndProfile from './screens/IndProfile';
 import Includes from './Modules/Includes';
@@ -70,7 +71,9 @@ const App = (props) => {
   const [status, setstatus] = useState('')
   const [profile, setprofile] = useState({})
   const [children, setchildren] = useState({})
-  var data = { children: children, status: status, profile: profile }
+  const [joined, setjoined] = useState({})
+  const [notifications, setnotifications] = useState({})
+  var data = { children: children, status: status, profile: profile, joined: joined, notifications: notifications }
   const onReceived = (notification) => {
     console.log("Notification received: ", notification);
   }
@@ -160,21 +163,47 @@ const App = (props) => {
     const data = async () => {
       var stat = await AsyncStorage.getItem('status');
       var profile1 = await AsyncStorage.getItem('profile');
-      if(profile1){
+      var notifications1 = await AsyncStorage.getItem('notifications');
+      if (profile1) {
         profile1 = JSON.parse(profile1)
       }
       var children1 = await AsyncStorage.getItem('children');
-      if(children1){
+      if (children1) {
         children1 = JSON.parse(children1)
       }
-      setstatus(stat)
-      console.log(stat)
-      setprofile(profile1)
-      setchildren(children1)
-      setloading(false)
+      if (notifications1) {
+        notifications1 = JSON.parse(notifications1)
+      }
+      var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+      var config = {
+        method: 'post',
+        url: 'https://api.genio.app/dark-knight/getToken',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: data
+      };
+      var response = await axios(config)
+      axios.get('https://api.genio.app/sherlock/recently/0' + `/?token=${response.data.token}`)
+        .then(async (response) => {
+          setjoined(response.data)
+          setstatus(stat)
+          setprofile(profile1)
+          setchildren(children1)
+          setnotifications(notifications1)
+          setloading(false)
+        })
+        .catch((error) => {
+          console.log(error)
+          setstatus(stat)
+          setprofile(profile1)
+          setchildren(children1)
+          setnotifications(notifications1)
+          setloading(false)
+        })
     }
     data()
-  })
+  }, [])
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
     });
@@ -358,44 +387,60 @@ const App = (props) => {
       }
     }
     check()
-  })
+  }, [])
+  const authContext = React.useMemo(
+    () => ({
+      Update: async data => {
+        // In a production app, we need to send some data (usually username, password) to server and get a token
+        // We will also need to handle errors if sign in failed
+        // After getting token, we need to persist the token using `AsyncStorage`
+        // In the example, we'll use a dummy token
+        setstatus(data.status)
+        setchildren(data.children)
+        setprofile(data.profie)
+      },
+    }),
+    []
+  );
   if (loading) {
     return <View style={{ backgroundColor: '#327feb' }} />
   }
   else {
     SplashScreen.hide()
     return (
-      <NavigationContainer ref={containerRef}>
-        <Stack.Navigator initialRouteName={!status ? 'IntroSlider' : status === '2' ? 'Child' : 'Home'}>
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Child" component={ChildScreen} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="IndProf" component={IndProfile} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Searching" component={Searching} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Verified" component={Verified} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Unverified" component={Unverified} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Home" component={Bottom} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Preview" component={ImagePreview} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="SinglePost" component={SinglePostScreen} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Intro" component={IntroScreen} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Camera" component={Camera} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="CreatePost" component={PostScreen} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Gallery" component={Gallery} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="AddText" component={AddText} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="PostScreen" component={Upload} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Browser" component={Browser} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Comments" component={Comments} />
-          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Notifications" component={NotificationScreen} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidUser" component={KidUser} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Includes" component={Includes} />
-          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
-        </Stack.Navigator>
-        <NotifierRoot ref={notifierRef} />
-      </NavigationContainer>
+      <AuthContext.Provider value={authContext}>
+        <NavigationContainer ref={containerRef}>
+          <Stack.Navigator initialRouteName={!status ? 'IntroSlider' : status === '2' ? 'Child' : 'Home'}>
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Child" component={ChildScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="IndProf" component={IndProfile} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Searching" component={Searching} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Verified" component={Verified} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Unverified" component={Unverified} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Home" component={Bottom} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Preview" component={ImagePreview} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="SinglePost" component={SinglePostScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Intro" component={IntroScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Camera" component={Camera} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="CreatePost" component={PostScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Gallery" component={Gallery} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="AddText" component={AddText} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="PostScreen" component={Upload} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Browser" component={Browser} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Comments" component={Comments} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Notifications" component={NotificationScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidUser" component={KidUser} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Includes" component={Includes} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
+          </Stack.Navigator>
+          <NotifierRoot ref={notifierRef} />
+        </NavigationContainer>
+      </AuthContext.Provider>
     );
   }
 };

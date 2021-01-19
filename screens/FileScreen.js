@@ -39,7 +39,7 @@ const FileScreen = (props) => {
     const [tagsPresent, setTagsPresent] = React.useState(false)
     const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
     const [tag, setTag] = React.useState('All');
-    const [status, setstatus] = React.useState('3');
+    const status = props.route.status
 
     const [refreshing, setRefreshing] = React.useState(false);
 

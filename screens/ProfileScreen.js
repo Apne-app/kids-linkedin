@@ -98,8 +98,8 @@ const fontConfig = {
     },
 };
 const ProfileScreen = ({ navigation, route }) => {
-    const [children, setchildren] = useState('notyet')
-    const [status, setstatus] = useState('3')
+    const children = route.params.children
+    const status = route.params.status
     const [place, setplace] = useState('')
     const [data, setdata] = useState({ 'followers': [], 'following': [], type: 'loading' })
     const [certi, setCerti] = useState([]);
@@ -697,60 +697,6 @@ const ProfileScreen = ({ navigation, route }) => {
             </View>
         )
     }
-    useEffect(() => {
-        const check = async () => {
-            var child = await AsyncStorage.getItem('children')
-            if (child != null) {
-                child = JSON.parse(child)
-                setchildren(child)
-            }
-            else {
-                setchildren({})
-            }
-        }
-        check()
-    }, [])
-    useEffect(() => {
-        const check = async () => {
-            var st = await AsyncStorage.getItem('status')
-            setstatus(st)
-        }
-        check()
-    }, [])
-    useEffect(() => {
-        const check = async () => {
-            var st = await AsyncStorage.getItem('status')
-            if (st == '3') {
-                var pro = await AsyncStorage.getItem('profile')
-                if (pro !== null) {
-                    pro = JSON.parse(pro)
-                    axios({
-                        method: 'post',
-                        url: 'https://api.genio.app/matrix/getchild/' + `?token=${token}`,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: JSON.stringify({
-                            "email": pro.email,
-                        })
-                    })
-                        .then(async (response) => {
-                            setchildren(response.data)
-                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                        })
-                        .catch((error) => {
-                            console.log(error)
-                        })
-                }
-            }
-            else {
-                // console.log('helo')
-            }
-        }
-        setTimeout(() => {
-            check()
-        }, 3000);
-    }, [])
     const pickImage = (type) => {
         if (type === 'gallery') {
             ImagePicker.openPicker({

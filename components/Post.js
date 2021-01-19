@@ -72,30 +72,18 @@ const Upload = ({ route, navigation }) => {
   })
 
   const [uploading, setUploading] = React.useState({});
-  const [status, setstatus] = useState('1')
-  useEffect(() => {
-    const check = async () => {
-      var st = await AsyncStorage.getItem('status')
-      setstatus(st)
-    }
-    check()
-  }, [])
-
+  const status = route.params.status
   const [active, setActive] = React.useState(1)
   const [openImg, setopenImage] = React.useState(0);
-
   const [filename, setFileName] = React.useState('')
   const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
-
   const [selectedStatus, setSelectedStatus] = React.useState('Select All')
   const [deleteCount, setDeleteCount] = React.useState(0)
-
   const [orig, setOrig] = React.useState('');
   const [origImages, setOrigImages] = React.useState([])
   const [time, setTime] = React.useState('');
   const [selecting, setSelecting] = React.useState(false);
   const [showToast, setShowToast] = React.useState(false);
-
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
   const [selectedTag, setTag] = React.useState('Genio');
   const [explore, setExplore] = React.useState([

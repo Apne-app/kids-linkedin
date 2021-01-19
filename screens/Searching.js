@@ -44,39 +44,13 @@ const theme = {
 
 
 const Searching = ({ route, navigation }) => {
-
     const [searchQuery, setSearchQuery] = React.useState('');
     const [result, setresult] = React.useState([]);
-    const [follows, setfollows] = React.useState([]);
     const [token, setToken] = React.useState('');
-    const [currentid, setcurrentid] = React.useState('');
-    useEffect(() => {
-        const addfollows = async () => {
-            var children = await AsyncStorage.getItem('children')
-            console.log(children)
-            children = JSON.parse(children)['0']
-            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-            var user = client.feed('timeline', children['id'] + 'id');
-            var follows = await user.following()
-            var data = []
-            follows['results'].map(item => {
-                data.push(item['target_id'].replace('user:', '').replace('id', ''))
-            })
-            setfollows(data)
-        }
-        addfollows()
-    }, [])
+    const status = route.params.status
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                // Alert.alert("Hold on!", "Are you sure you want to Exit?", [
-                //     {
-                //         text: "Cancel",
-                //         onPress: () => null,
-                //         style: "cancel"
-                //     },
-                //     { text: "YES", onPress: () => BackHandler.exitApp() }
-                // ]);
                 navigation.pop()
                 return true;
             };
@@ -99,26 +73,18 @@ const Searching = ({ route, navigation }) => {
 
         axios(config)
             .then(function (response) {
-                // console.log(JSON.stringify(response.data.token));
                 setToken(response.data.token)
             })
             .catch(function (error) {
                 console.log(error);
             });
 
-        const addfollows = async () => {
-            var children = await AsyncStorage.getItem('children')
-            console.log(children)
-            children = JSON.parse(children)['0']
-            setcurrentid(children['id'])
-        }
-        addfollows()
     }, [])
     const [doing, setdoing] = useState(false)
     const onChangeSearch = query => {
         setdoing(true)
         if (query != '') {
-            axios.get('http://35.221.164.203:5000/keyword/' + query.toLowerCase() + `/0?token=${token}`)
+            axios.get('https://api.genio.app/sherlock/keyword/' + query.toLowerCase() + `/0?token=${token}`)
                 .then(async (response) => {
                     setresult([])
                     var keys = Object.keys(response.data)
@@ -135,16 +101,6 @@ const Searching = ({ route, navigation }) => {
         }
         setSearchQuery(query)
     };
-    const followid = (id) => {
-        axios.get('https://api.genio.app/matrix/follow/' + currentid + '/' + id)
-            .then(async (response) => {
-                if (response.data == 'success') {
-                    var place = follows;
-                    place.push(String(id));
-                    setfollows(place)
-                }
-            })
-    }
     const renderItem = ({ item }) => {
         return (
             <View key={item.id} style={{ alignSelf: 'center', margin: 1 }}>
@@ -159,10 +115,10 @@ const Searching = ({ route, navigation }) => {
                         if (x) {
                             x = JSON.parse(x)
                             if (Object.keys(x).length == 0) {
-                              await AsyncStorage.removeItem('children');
-                              x = null
+                                await AsyncStorage.removeItem('children');
+                                x = null
                             }
-                          }
+                        }
                         analytics.track('Searched Kid Opened', {
                             userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                             deviceID: getUniqueId()
@@ -186,14 +142,6 @@ const Searching = ({ route, navigation }) => {
 
         );
     };
-    const [status, setstatus] = useState('3')
-    useEffect(() => {
-        const data = async () => {
-            var st = await AsyncStorage.getItem('status')
-            setstatus(st)
-        }
-        data()
-    }, [])
     return (
         <ScrollView keyboardShouldPersistTaps='handled'>
             <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'transparent', height: 110 }}>

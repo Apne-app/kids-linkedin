@@ -5,7 +5,6 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
-import axios from 'axios';
 import ScreenHeader from '../Modules/ScreenHeader'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
@@ -44,21 +43,19 @@ const theme = {
 
 
 const SearchScreen = ({ route, navigation }) => {
-
-  const [joined, setjoined] = React.useState({ '0': { 'data': { 'name': 'Loading', 'profileImage': '' }, 'id': '0' } })
-  const [children, setchildren] = useState('notyet')
-  const [status, setstatus] = useState('3')
+  const joined = route.params.joined
+  console.log(route.params)
+  const children = route.params.children
+  const status = route.params.status
   useEffect(() => {
     const check = async () => {
-      var x = await AsyncStorage.getItem('children');
-      if (x) {
-        x = JSON.parse(x)
-        if (Object.keys(x).length == 0) {
+      if (children) {
+        if (Object.keys(children).length == 0) {
           await AsyncStorage.removeItem('children');
-          x = null
+          children = null
         }
         analytics.screen('Search Screen', {
-          userID: x ? x["0"]["data"]["gsToken"] : null,
+          userID: children ? children["0"]["id"] : null,
           deviceID: getUniqueId()
         })
       }
@@ -69,14 +66,6 @@ const SearchScreen = ({ route, navigation }) => {
         })
       }
 
-      var child = await AsyncStorage.getItem('children')
-      if (child != null) {
-        child = JSON.parse(child)
-        setchildren(child)
-      }
-      else {
-        setchildren({})
-      }
     }
     check()
   }, [])
@@ -91,54 +80,6 @@ const SearchScreen = ({ route, navigation }) => {
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, []));
-  useEffect(() => {
-    const check = async () => {
-      var st = await AsyncStorage.getItem('status')
-      setstatus(st)
-    }
-    check()
-  }, [])
-  useEffect(() => {
-    const check = async () => {
-      var st = await AsyncStorage.getItem('status')
-      if (st == '3') {
-        var pro = await AsyncStorage.getItem('profile')
-        if (pro !== null) {
-          pro = JSON.parse(pro)
-          var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
-
-          var config = {
-            method: 'post',
-            url: 'https://api.genio.app/dark-knight/getToken',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            data: data
-          };
-          axios(config)
-            .then(async function (response) {
-              console.log(JSON.stringify(response.data.token));
-              axios.get('http://35.221.164.203:5000/recently/0' + `/?token=${response.data.token}`)
-                .then(async (response) => {
-                  setjoined(response.data)
-                })
-                .catch((error) => {
-                  console.log(error)
-                })
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-
-
-        }
-      }
-      else {
-        // console.log('helo')
-      }
-    }
-    check()
-  }, [])
   const there = () => {
     return (
       <Container>

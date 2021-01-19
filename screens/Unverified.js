@@ -10,6 +10,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useFocusEffect } from "@react-navigation/native";
 import { Snackbar } from 'react-native-paper';
 import CountDown from 'react-native-countdown-component';
+import AuthContext from '../Context/Data';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -17,6 +18,8 @@ const Unverified = ({ navigation, route }) => {
     const [logging, setlogging] = useState(false)
     const appState = useRef(AppState.currentState);
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
+    const { Update } = React.useContext(AuthContext);
+    Update({ children: {}, status: '1', profile: {} })
     const login = async () => {
         var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
         var token = '';
@@ -45,11 +48,12 @@ const Unverified = ({ navigation, route }) => {
                 })
                     .then(async (response) => {
                         await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                        Update({ children: response.data, status: '3', profile: pro })
                         if (Object.keys(response.data).length) {
                             await AsyncStorage.setItem('status', '3')
                             navigation.reset({
                                 index: 0,
-                                routes: [{ name: 'Home'}],
+                                routes: [{ name: 'Home' }],
                             });
 
                         }

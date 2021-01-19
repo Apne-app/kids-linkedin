@@ -32,7 +32,6 @@ function urlify(text) {
 }
 
 const SinglePostScreen = ({ navigation, route }) => {
-
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -46,12 +45,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                 BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
         }, []));
-
     const keyboardDidShowListener = React.useRef();
     const scrollref = React.useRef();
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
-    const [status, setstatus] = useState('3')
+    const status = route.params.status
     const [website, setwebsite] = useState('https://genio.app')
     const websiteref = React.useRef();
     const onKeyboardShow = (event) => {
@@ -60,13 +58,6 @@ const SinglePostScreen = ({ navigation, route }) => {
     const onKeyboardHide = () => {
 
     };
-    React.useEffect(() => {
-        const check = async () => {
-            var st = await AsyncStorage.getItem('status')
-            setstatus(st)
-        }
-        check()
-    }, [])
     useEffect(() => {
         if (route.params.activity.activity.own_reactions.comment) {
             setcomments(route.params.activity.activity.own_reactions.comment)
