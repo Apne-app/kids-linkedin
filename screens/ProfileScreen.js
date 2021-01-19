@@ -261,7 +261,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 setToken(response.data.token)
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error, 'aamb');
             });
 
 
@@ -302,17 +302,17 @@ const ProfileScreen = ({ navigation, route }) => {
                     url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}/${token}`,
                     headers: {}
                 };
-                axios(config)
-                    .then(function (response) {
-                        // console.log((response.data));
-                        var arr = [];
-                        Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-                        setCerti([...arr])
-                        // console.log(arr);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                // axios(config)
+                //     .then(function (response) {
+                //         // console.log((response.data));
+                //         var arr = [];
+                //         Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
+                //         setCerti([...arr])
+                //         // console.log(arr);
+                //     })
+                //     .catch(function (error) {
+                //         console.log(error, "aanb");
+                //     });
 
                 config = {
                     method: 'get',
