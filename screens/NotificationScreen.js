@@ -19,12 +19,12 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
 
-  const [children, setchildren] = useState('notyet')
-  const [notifications, setnotifications] = useState({})
-  const [keys, setkeys] = useState([])
+  const children = route.params.children
+  const notifications = route.params.notifications
+  const keys = Object.keys(notifications).reverse()
   const [extra, setextra] = useState([])
   const [fetched, setfetched] = useState(false)
-  const [status, setstatus] = useState('0')
+  const status = route.params.status
   const [refreshing, setrefreshing] = useState(false)
   const [place, setplace] = useState('1')
 
@@ -41,9 +41,8 @@ const NotificationScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const check = async () => {
-      var x = await AsyncStorage.getItem('children');
+      var x = children
       if (x) {
-        x = JSON.parse(x)
         if (Object.keys(x).length == 0) {
           await AsyncStorage.removeItem('children');
           x = null
@@ -58,33 +57,6 @@ const NotificationScreen = ({ route, navigation }) => {
           userID: null,
           deviceID: getUniqueId()
         })
-      }
-
-      var child = await AsyncStorage.getItem('children')
-      if (child != null) {
-        child = JSON.parse(child)
-        setchildren(child)
-      }
-    }
-    check()
-  }, [])
-  useEffect(() => {
-    const check = async () => {
-      var st = await AsyncStorage.getItem('status')
-      var noti = await AsyncStorage.getItem('notifications')
-      setstatus(st)
-      if (st === '3') {
-        var newnoti = await AsyncStorage.getItem('newnoti')
-        if (noti) {
-          noti = JSON.parse(noti)
-          setfetched(true)
-          setnotifications(noti)
-          setkeys(Object.keys(noti).reverse())
-          if (newnoti) {
-            newnoti = Array(newnoti)
-            setextra(newnoti)
-          }
-        }
       }
     }
     check()
@@ -121,8 +93,6 @@ const NotificationScreen = ({ route, navigation }) => {
                 })
               })
                 .then(async (response) => {
-                  setchildren(response.data)
-                  console.log(response.data[0]['id'])
                   axios({
                     method: 'get',
                     url: 'https://api.genio.app/magnolia/' + response.data[0]['id'],
@@ -134,7 +104,7 @@ const NotificationScreen = ({ route, navigation }) => {
                     // })
                   }).then(async (data) => {
                     setfetched(true)
-                    setnotifications(data.data)
+                    // setnotifications(data.data)
                     setplace(String(Math.random()))
                     var noti = await AsyncStorage.getItem('notifications')
                     noti = JSON.parse(noti)
@@ -152,7 +122,7 @@ const NotificationScreen = ({ route, navigation }) => {
                     setextra(arr)
                     AsyncStorage.removeItem('newnoti')
                     AsyncStorage.setItem('notifications', JSON.stringify(data.data))
-                    setkeys(data2)
+                    // setkeys(data2)
                   })
                   // console.log(response);
                   await AsyncStorage.setItem('children', JSON.stringify(response.data))
@@ -188,7 +158,7 @@ const NotificationScreen = ({ route, navigation }) => {
       // })
     }).then(async (data) => {
       setfetched(true)
-      setnotifications(data.data)
+      // setnotifications(data.data)
       var noti = await AsyncStorage.getItem('notifications')
       noti = JSON.parse(noti)
       var arr = []
@@ -204,7 +174,7 @@ const NotificationScreen = ({ route, navigation }) => {
       }
       setextra(arr)
       setrefreshing(false)
-      setkeys(data2)
+      // setkeys(data2)
       AsyncStorage.removeItem('newnoti')
       AsyncStorage.setItem('notifications', JSON.stringify(data.data))
     })
@@ -237,16 +207,16 @@ const NotificationScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <>
-        {!keys.length && fetched &&
+        {!keys.length && 
           <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
             <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
             <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
             <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
           </View>
         }
-        {!fetched &&
+        {/* {!fetched &&
           loading()
-        }
+        } */}
         <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }>
@@ -272,7 +242,7 @@ const NotificationScreen = ({ route, navigation }) => {
   return (
     <>
       <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
-      {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
+      {status == '3' ? there() : notthere()}
     </>
   );
 }

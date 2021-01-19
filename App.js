@@ -184,23 +184,15 @@ const App = (props) => {
         data: data
       };
       var response = await axios(config)
-      axios.get('https://api.genio.app/sherlock/recently/0' + `/?token=${response.data.token}`)
-        .then(async (response) => {
-          setjoined(response.data)
-          setstatus(stat)
-          setprofile(profile1)
-          setchildren(children1)
-          setnotifications(notifications1)
-          setloading(false)
-        })
-        .catch((error) => {
-          console.log(error)
-          setstatus(stat)
-          setprofile(profile1)
-          setchildren(children1)
-          setnotifications(notifications1)
-          setloading(false)
-        })
+      var response1 = await axios.get('https://api.genio.app/sherlock/recently/0' + `/?token=${response.data.token}`)
+      var response2 = await axios.get('https://api.genio.app/magnolia/' + children1[0]['id'])
+      setnotifications(response2.data)
+      setjoined(response1.data)
+      setstatus(stat)
+      setprofile(profile1)
+      setchildren(children1)
+      setnotifications(notifications1)
+      setloading(false)
     }
     data()
   }, [])

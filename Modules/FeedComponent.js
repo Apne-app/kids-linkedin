@@ -59,7 +59,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                                 by: x["0"]["id"],
                                 byname: x["0"]['data']["name"],
                                 byimage: x["0"]['data']["image"],
-                                to: parseInt(props.activity.actor.id.replace('id', '')),
+                                to: (props.activity.actor.id.replace('id', '')),
                                 actid: id
                             })
                         }
@@ -128,7 +128,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
             Content={
                 <View>
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
-                        {props.activity.object === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 10, marginBottom: 15 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                        {props.activity.object === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 15 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                         <View style={{ alignSelf: 'center' }}>
                             {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                 source={{ uri: props.activity.image.split(", ")[0] }}

@@ -1,4 +1,5 @@
-// @flow
+/* eslint-disable eslint-comments/no-unlimited-disable */
+/* eslint-disable */
 import React from 'react';
 import { View, TextInput, Text, ScrollView } from 'react-native';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
@@ -86,7 +87,7 @@ class CommentBox extends React.Component<Props, State> {
 
     const styles = buildStylesheet('commentBox', this.props.styles);
     const input = (
-      <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={styles.container}>
+      <ScrollView keyboardShouldPersistTaps='handled' contentContainerStyle={[styles.container, { backgroundColor:'#fafafa'}]}>
         {this.props.noAvatar || (
           <Avatar
             size={48}
@@ -122,7 +123,7 @@ class CommentBox extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <View style={{ height: this.props.height }} />
+        <View style={{ height: this.props.height, backgroundColor:'#f7f7f7' }} />
         <KeyboardAccessory verticalOffset={-300}>
           {input}
         </KeyboardAccessory>
