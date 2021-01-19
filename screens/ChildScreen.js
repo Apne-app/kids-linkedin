@@ -6,7 +6,7 @@ import {
     useState,
     useEffect,
     useRef,
-    Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, TextInput, KeyboardAvoidingView, Keyboard,
+    Text, StyleSheet, Alert, BackHandler, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard,
     Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon,
     DefaultTheme, configureFonts,
     SpinnerButton,
@@ -21,6 +21,7 @@ import {
     height, width
 } from '../Modules/CommonImports.js';
 import AuthContext from '../Context/Data';
+import { TextInput } from 'react-native';
 const ChildScreen = ({ route, navigation }) => {
     const scrollcheck = useRef(null)
     const { Update } = React.useContext(AuthContext);
@@ -180,10 +181,14 @@ const ChildScreen = ({ route, navigation }) => {
                                     Update({ children: response1.data, status: '3', profile: pro, notifications: {} })
                                     navigation.navigate('ChildSuccess')
                                 }
+                                else {
+                                    alert('There was some error, please try again later')
+                                }
                             })
                     })
                     .catch(function (error) {
                         console.log(error);
+                        alert('There was some error, please try again later')
                     });
 
 
@@ -255,7 +260,7 @@ const ChildScreen = ({ route, navigation }) => {
                                     alignSelf: 'center',
                                     backgroundColor: '#327FEB',
                                     height: 36,
-                                    marginRight: 20
+                                    marginRight: 20,
                                 }}
                                 isLoading={Loading}
                                 spinnerType='BarIndicator'

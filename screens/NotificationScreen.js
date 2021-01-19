@@ -150,17 +150,16 @@ const NotificationScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <>
-        {!keys.length &&
-          <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
-            <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
-            <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
-            <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
-          </View>
-        }
         <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }>
-          {data()}
+          {!keys.length ?
+            <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
+              <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
+              <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
+              <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
+            </View>
+            : data()}
         </ScrollView>
       </>
     );
