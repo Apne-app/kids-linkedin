@@ -82,6 +82,7 @@ const App: () => React$Node = (props) => {
     // console.log(props.route.params);
     // await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': uri}) );
     var tm= new Date();
+    // console.log( 'sad', props.route.params.images)
     props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": [...props.route.params.images, { 'height': dim.height, 'width': dim.width, 'uri': uri, 'prevImg': prevUri}], 'time': props.route.params.time })
     // });
   }
@@ -222,12 +223,13 @@ const App: () => React$Node = (props) => {
             // console.log("aaaaa");
             // try {
             // await AsyncStorage.setItem('@scanImg', JSON.stringify(res) );
-            console.log(res);
+            // console.log(res);
             // setPrevUri(uri);
             // setUri(res.uri);
             setDim({ height: JSON.parse(res.height), width: JSON.parse(res.width) })
             setcroppedi(true)
             var tm = new Date();
+            // console.log(props.route.params)
             if(editing)
             {
             var ar = [...props.route.params.images];
@@ -295,7 +297,8 @@ const App: () => React$Node = (props) => {
           !croppedi ?
             <TouchableOpacity style={{ height: 40 }} onPress={async () => {
               cropViewRef.current.saveImage(true, 90)
-
+              // tokeShot();
+              // console.log('aaaaa')
             }} >
               <View style={styles.Next}>
                 <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold' }}>
@@ -307,6 +310,7 @@ const App: () => React$Node = (props) => {
             <TouchableOpacity style={{ height: 40 }} onPress={async () => {
               // cropViewRef.current.saveImage(true, 90)
               // :
+              // console.log('bbbb')
               takeShot();
 
               // cropViewRef.rotateImage(false);

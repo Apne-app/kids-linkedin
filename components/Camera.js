@@ -481,7 +481,7 @@ export default class ExampleApp extends PureComponent {
       var tm = new Date();
       tm = tm.getTime();
       // console.log(tm);
-      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params ? this.props.route.params.images : [], 'time': this.props.route.params ? this.props.route.params.time : tm });
+      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params.images ? this.props.route.params.images : [], 'time': this.props.route.params ? this.props.route.params.time : tm });
       // console.log(data);
 
     }
