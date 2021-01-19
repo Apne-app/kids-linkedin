@@ -628,7 +628,7 @@ const ProfileScreen = ({ navigation, route }) => {
     return (
         <View key={key}>
             <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
-            {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
+            {status == '3' ? there() : notthere()}
         </View>
     );
 };

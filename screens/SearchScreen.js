@@ -164,7 +164,7 @@ const SearchScreen = ({ route, navigation }) => {
   return (
     <>
       <ScreenHeader screen={'Search'} icon={status === '3' ? 'search' : ''} fun={() => navigation.navigate('Searching')} />
-      {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
+      {status === '3' ? there() : notthere()}
     </>
   );
 }

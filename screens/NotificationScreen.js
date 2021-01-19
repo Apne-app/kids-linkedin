@@ -15,7 +15,6 @@ import AuthContext from '../Context/Data';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
-
   const children = route.params.children
   const notifications = route.params.notifications
   const keys = Object.keys(notifications).reverse()
@@ -173,10 +172,10 @@ const NotificationScreen = ({ route, navigation }) => {
     )
   }
   return (
-    <View key={place}>
+    <>
       <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
       {status == '3' ? there() : notthere()}
-    </View>
+    </>
   );
 }
 

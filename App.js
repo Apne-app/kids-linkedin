@@ -73,7 +73,8 @@ const App = (props) => {
   const [children, setchildren] = useState({})
   const [joined, setjoined] = useState({})
   const [notifications, setnotifications] = useState({})
-  var data = { children: children, status: status, profile: profile, joined: joined, notifications: notifications }
+  const [newnoti, setnewnoti] = useState([])
+  var data = { children: children, status: status, profile: profile, joined: joined, notifications: notifications, newnoti: newnoti }
   const onReceived = (notification) => {
     console.log("Notification received: ", notification);
   }
@@ -185,7 +186,10 @@ const App = (props) => {
       };
       var response = await axios(config)
       var response1 = await axios.get('https://api.genio.app/sherlock/recently/0' + `/?token=${response.data.token}`)
-      var response2 = await axios.get('https://api.genio.app/magnolia/' + children1[0]['id'])
+      var response2 = { data: {} }
+      if (children1) {
+        response2 = await axios.get('https://api.genio.app/magnolia/' + children1[0]['id'])
+      }
       setnotifications(response2.data)
       setjoined(response1.data)
       setstatus(stat)
@@ -398,6 +402,9 @@ const App = (props) => {
         }
         if (data.notifications) {
           setnotifications(data.notifications)
+        }
+        if (data.newnoti) {
+          setnewnoti(data.newnoti)
         }
       },
     }),

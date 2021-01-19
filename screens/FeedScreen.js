@@ -11,6 +11,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
+import AuthContext from '../Context/Data';
 import axios from 'axios';
 import * as rssParser from 'react-native-rss-parser';
 import { useFocusEffect } from "@react-navigation/native";
@@ -73,8 +74,10 @@ const FeedScreen = ({ navigation, route }) => {
     const [actid, setactid] = useState('f137b98f-0d0d-11eb-8255-128a130028af');
     const [type, settype] = useState('like');
     const [slidedisplay, setslidedisplay] = useState('none');
+    const { Update } = React.useContext(AuthContext);
     const children = route.params.children
     const status = route.params.status
+    const notifications = route.params.notifications
     const sheetRefLike = React.useRef(null);
     const [showToast, setShowToast] = useState(false)
     const [feedstate, setFeedState] = useState(0);
@@ -89,7 +92,6 @@ const FeedScreen = ({ navigation, route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [quiz, setQuiz] = useState([]);
     const [newnoti, setnewnoti] = useState(false);
-    const [numnoti, setnumnoti] = useState(0);
     const onShare = async (message) => {
         try {
             const result = await Share.share({
@@ -303,8 +305,7 @@ const FeedScreen = ({ navigation, route }) => {
                         //   "email": pro.email,
                         // })
                     }).then(async (data) => {
-                        var noti = await AsyncStorage.getItem('notifications')
-                        noti = JSON.parse(noti)
+                        var noti = notifications
                         var arr = []
                         if (noti) {
                             var data1 = Object.keys(noti).reverse()
@@ -318,86 +319,73 @@ const FeedScreen = ({ navigation, route }) => {
                                 }
                             }
                             if (arr.length) {
-                                AsyncStorage.setItem('newnoti', String(arr))
+                                Update({ notifications: data.data, newnoti: arr })
                                 setnewnoti(true)
+                            }
+                            else {
+                                Update({ notifications: data.data })
                             }
                         }
                         else {
+                            var arr = Object.keys(data.data)
+                            Update({ notifications: data.data, newnoti: arr })
                             setnewnoti(true)
                         }
-                        AsyncStorage.setItem('notifications', JSON.stringify(data.data))
                     })
                 }
             }
         },
         //Will attempt to reconnect on all close events, such as server shutting down
-        shouldReconnect: (closeEvent) => true,
+        shouldReconnect: (closeEvent) => false,
     });
-    useEffect(() => {
-        const check = async () => {
-            var child = await AsyncStorage.getItem('children')
-            if (child != null) {
-                child = JSON.parse(child)
-                // console.log(webSocket.current)
-                // if (webSocket.current == null) {
-                //     webSocket.current = new WebSocket("ws://35.154.132.35:8765/");
-                //     webSocket.current.onopen = (data) => {
-                //         alert('alert')
-                //     }
-                //     webSocket.current.onmessage = (message) => {
-                //         alert(message)
-                //     };
-                // }
-
-                // return () => webSocket.current.close();
-            }
-            else {
-            }
-        }
-        check()
-    }, [])
-    useEffect(() => {
-        const check = async () => {
-            var child = children
-            if (child != null) {
-                sendMessage(String(child['0']['id']))
-                axios({
-                    method: 'get',
-                    url: 'https://api.genio.app/magnolia/' + String(child[0]['id']),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    // data: JSON.stringify({
-                    //   "email": pro.email,
-                    // })
-                }).then(async (data) => {
-                    var noti = await AsyncStorage.getItem('notifications')
-                    noti = JSON.parse(noti)
-                    var arr = []
-                    if (noti) {
-                        var data1 = Object.keys(noti).reverse()
-                        var data2 = Object.keys(data.data).reverse()
-                        for (var i = 0; i < data2.length; i++) {
-                            if (!data1.includes(data2[i])) {
-                                arr.push(data2[i])
-                            }
-                            else {
-                                break;
-                            }
-                        }
-                        if (arr.length) {
-                            AsyncStorage.setItem('newnoti', String(arr))
-                            setnewnoti(true)
-                        }
-                    }
-                    AsyncStorage.setItem('notifications', JSON.stringify(data.data))
-                })
-            }
-            else {
-            }
-        }
-        check()
-    }, [])
+    // useEffect(() => {
+    //     const check = async () => {
+    //         var child = children
+    //         if (child != null) {
+    //             sendMessage(String(child['0']['id']))
+    //             axios({
+    //                 method: 'get',
+    //                 url: 'https://api.genio.app/magnolia/' + String(child[0]['id']),
+    //                 headers: {
+    //                     'Content-Type': 'application/json'
+    //                 },
+    //                 // data: JSON.stringify({
+    //                 //   "email": pro.email,
+    //                 // })
+    //             }).then(async (data) => {
+    //                 var noti = notifications
+    //                 var arr = []
+    //                 if (noti) {
+    //                     var data1 = Object.keys(noti).reverse()
+    //                     var data2 = Object.keys(data.data).reverse()
+    //                     for (var i = 0; i < data2.length; i++) {
+    //                         if (!data1.includes(data2[i])) {
+    //                             arr.push(data2[i])
+    //                         }
+    //                         else {
+    //                             break;
+    //                         }
+    //                     }
+    //                     if (arr.length) {
+    //                         Update({ notifications: data.data, newnoti: arr })
+    //                         setnewnoti(true)
+    //                     }
+    //                     else {
+    //                         Update({ notifications: data.data })
+    //                     }
+    //                 }
+    //                 else {
+    //                     var arr = Object.keys(data.data)
+    //                     Update({ notifications: data.data, newnoti: arr })
+    //                     setnewnoti(true)
+    //                 }
+    //             })
+    //         }
+    //         else {
+    //         }
+    //     }
+    //     check()
+    // }, [])
 
     const Video = ({ url }) => {
         return (
@@ -568,7 +556,6 @@ const FeedScreen = ({ navigation, route }) => {
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-
         setQuiz([]);
         setNews([]);
         setRefreshing(false)
