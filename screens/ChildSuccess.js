@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import {
-    React, 
+    React,
     Component,
     useState,
     useEffect,
@@ -20,6 +20,7 @@ import {
     ScrollView, TouchableOpacity,
     height, width,
 } from '../Modules/CommonImports.js';
+import { StackActions } from '@react-navigation/native';
 const ChildSuccess = ({ navigation }) => {
 
     useFocusEffect(
@@ -44,10 +45,9 @@ const ChildSuccess = ({ navigation }) => {
         }, []));
 
     setTimeout(() => {
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home'}],
-        });
+        navigation.dispatch(
+            StackActions.replace('Home')
+        );
     }, 2000);
     return (
         <View style={{ backgroundColor: 'white', height: height, width: width }}>

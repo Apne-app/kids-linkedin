@@ -84,7 +84,7 @@ const Searching = ({ route, navigation }) => {
     const onChangeSearch = query => {
         setdoing(true)
         if (query != '') {
-            axios.get('https://api.genio.app/sherlock/keyword/' + query.toLowerCase() + `/0?token=${token}`)
+            axios.get('https://api.genio.app/sherlock/keyword/' + query.toLowerCase() + `/0/?token=${token}`)
                 .then(async (response) => {
                     setresult([])
                     var keys = Object.keys(response.data)
@@ -93,7 +93,7 @@ const Searching = ({ route, navigation }) => {
                     setdoing(false)
                 })
                 .catch((error) => {
-                    console.log(error)
+                    console.log(error.config)
                 })
         }
         if (query == '') {
