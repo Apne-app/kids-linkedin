@@ -158,8 +158,8 @@ const ProfileScreen = ({ navigation, route }) => {
                             spinnerType='BarIndicator'
                             onPress={async () => {
                                 setLoading(true);
-                                var children = await AsyncStorage.getItem('children')
-                                children = JSON.parse(children)['0']
+                                var children = route.params.children
+                                children = children['0']
                                 var data = JSON.stringify({ "gstoken": children['data']['gsToken'], "course_url": course.url, "course_name": course.name, "course_org": course.org });
 
                                 var config = {
@@ -223,10 +223,8 @@ const ProfileScreen = ({ navigation, route }) => {
     useEffect(() => {
 
         const analyse = async () => {
-            var x = await AsyncStorage.getItem('children');
+            var x = route.params.children;
             if (x) {
-                console.log(x)
-                x = JSON.parse(x)
                 if (Object.keys(x).length == 0) {
                     await AsyncStorage.removeItem('children');
                     x = null
@@ -268,9 +266,9 @@ const ProfileScreen = ({ navigation, route }) => {
 
 
         const addfollows = async () => {
-            var children = await AsyncStorage.getItem('children')
+            var children = route.params.children
             if (children != null) {
-                children = JSON.parse(children)['0']
+                children = children['0']
                 const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
                 var user = client.feed('user', children['id'] + 'id');
                 var follows = await user.followers()
@@ -285,9 +283,9 @@ const ProfileScreen = ({ navigation, route }) => {
     }, [])
     useEffect(() => {
         const profileImage = async () => {
-            var children = await AsyncStorage.getItem('children')
+            var children = route.params.children
             if (children != null) {
-                children = JSON.parse(children)['0']
+                children = children['0']
                 setsource(children['data']['image'])
             }
             // console.log(follows)
@@ -296,9 +294,9 @@ const ProfileScreen = ({ navigation, route }) => {
     }, [])
     useEffect(() => {
         const addCerti = async () => {
-            var children = await AsyncStorage.getItem('children')
+            var children = route.params.children
             if (children != null) {
-                children = JSON.parse(children)['0']
+                children = children['0']
                 var config = {
                     method: 'get',
                     url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}/${token}`,
@@ -343,8 +341,8 @@ const ProfileScreen = ({ navigation, route }) => {
         setRefreshing(true);
 
         const addfollows = async () => {
-            var children = await AsyncStorage.getItem('children')
-            children = JSON.parse(children)['0']
+            var children = route.params.children
+            children = children['0']
             const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
             var user = client.feed('user', children['id'] + 'id');
             var follows = await user.followers()
@@ -357,8 +355,8 @@ const ProfileScreen = ({ navigation, route }) => {
         addfollows();
 
         const addCerti = async () => {
-            var children = await AsyncStorage.getItem('children')
-            children = JSON.parse(children)['0']
+            var children = route.params.children
+            children = children['0']
             var config = {
                 method: 'get',
                 url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${children['data']['gsToken']}/${token}`,
@@ -457,9 +455,9 @@ const ProfileScreen = ({ navigation, route }) => {
                     </View>
                     <TouchableOpacity
                         onPress={async () => {
-                            var x = await AsyncStorage.getItem('children');
+                            var x = route.params.children;
                             analytics.track('Opened website', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                                userID: x ? x["0"]["data"]["gsToken"] : null,
                                 deviceID: getUniqueId()
                             })
                             navigation.navigate('Browser', { url: "https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'], heading: 'Website' })
