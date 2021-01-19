@@ -2,19 +2,16 @@
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, BackHandler, TextInput, RefreshControl } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
+import { Icon } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
-import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, NotificationFeed } from 'react-native-activity-feed';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import CompHeader from '../Modules/CompHeader';
 import CompButton from '../Modules/CompButton'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from 'react-native-gesture-handler';
-import { saveNotifications } from "../Actions/saveNotifications"
-import { connect } from "react-redux";
+import AuthContext from '../Context/Data';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
@@ -23,11 +20,10 @@ const NotificationScreen = ({ route, navigation }) => {
   const notifications = route.params.notifications
   const keys = Object.keys(notifications).reverse()
   const [extra, setextra] = useState([])
-  const [fetched, setfetched] = useState(false)
   const status = route.params.status
   const [refreshing, setrefreshing] = useState(false)
   const [place, setplace] = useState('1')
-
+  const { Update } = React.useContext(AuthContext);
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -63,121 +59,68 @@ const NotificationScreen = ({ route, navigation }) => {
   }, [])
   useEffect(() => {
     const check = async () => {
-      var st = await AsyncStorage.getItem('status')
-      if (st == '3') {
-        var pro = await AsyncStorage.getItem('profile')
-        if (pro !== null) {
-          pro = JSON.parse(pro)
-          var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
-
-          var config = {
-            method: 'post',
-            url: 'https://api.genio.app/dark-knight/getToken',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            data: data
-          };
-
-          axios(config)
-            .then(function (response) {
-              // console.log(JSON.stringify(response.data.token));
-              axios({
-                method: 'post',
-                url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                data: JSON.stringify({
-                  "email": pro.email,
-                })
-              })
-                .then(async (response) => {
-                  axios({
-                    method: 'get',
-                    url: 'https://api.genio.app/magnolia/' + response.data[0]['id'],
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    // data: JSON.stringify({
-                    //   "email": pro.email,
-                    // })
-                  }).then(async (data) => {
-                    setfetched(true)
-                    // setnotifications(data.data)
-                    setplace(String(Math.random()))
-                    var noti = await AsyncStorage.getItem('notifications')
-                    noti = JSON.parse(noti)
-                    var arr = []
-                    var data1 = Object.keys(noti).reverse()
-                    var data2 = Object.keys(data.data).reverse()
-                    for (var i = 0; i < data2.length; i++) {
-                      if (!data1.includes(data2[i])) {
-                        arr.push(data2[i])
-                      }
-                      else {
-                        break;
-                      }
-                    }
-                    setextra(arr)
-                    AsyncStorage.removeItem('newnoti')
-                    AsyncStorage.setItem('notifications', JSON.stringify(data.data))
-                    // setkeys(data2)
-                  })
-                  // console.log(response);
-                  await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                })
-                .catch((error) => {
-                  console.log(error)
-                })
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-
+      if (status == '3') {
+        var data = await axios({
+          method: 'get',
+          url: 'https://api.genio.app/magnolia/' + children[0]['id'],
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          // data: JSON.stringify({
+          //   "email": pro.email,
+          // })
+        })
+        var noti = notifications
+        var arr = []
+        var data1 = Object.keys(noti).reverse()
+        var data2 = Object.keys(data.data).reverse()
+        for (var i = 0; i < data2.length; i++) {
+          if (!data1.includes(data2[i])) {
+            arr.push(data2[i])
+          }
+          else {
+            break;
+          }
         }
+        setextra(arr)
+        AsyncStorage.removeItem('newnoti')
+        Update({ notifications: data.data })
+        AsyncStorage.setItem('notifications', JSON.stringify(data.data))
+        setplace(String(Math.random()))
       }
       else {
         // console.log('helo')
       }
     }
-    setTimeout(() => {
-      check()
-    }, 3000);
+    check()
   }, [])
-  const refresh = () => {
+  const refresh = async () => {
     setrefreshing(true)
-    axios({
+    var data = await axios({
       method: 'get',
       url: 'https://api.genio.app/magnolia/' + children[0]['id'],
       headers: {
         'Content-Type': 'application/json'
       },
-      // data: JSON.stringify({
-      //   "email": pro.email,
-      // })
-    }).then(async (data) => {
-      setfetched(true)
-      // setnotifications(data.data)
-      var noti = await AsyncStorage.getItem('notifications')
-      noti = JSON.parse(noti)
-      var arr = []
-      var data1 = Object.keys(noti).reverse()
-      var data2 = Object.keys(data.data).reverse()
-      for (var i = 0; i < data2.length; i++) {
-        if (!data1.includes(data2[i])) {
-          arr.push(data2[i])
-        }
-        else {
-          break;
-        }
-      }
-      setextra(arr)
-      setrefreshing(false)
-      // setkeys(data2)
-      AsyncStorage.removeItem('newnoti')
-      AsyncStorage.setItem('notifications', JSON.stringify(data.data))
     })
+    var noti = notifications
+    var arr = []
+    var data1 = Object.keys(noti).reverse()
+    var data2 = Object.keys(data.data).reverse()
+    for (var i = 0; i < data2.length; i++) {
+      if (!data1.includes(data2[i])) {
+        arr.push(data2[i])
+      }
+      else {
+        break;
+      }
+    }
+    setextra(arr)
+    Update({ notifications: data.data })
+    AsyncStorage.removeItem('newnoti')
+    AsyncStorage.setItem('notifications', JSON.stringify(data.data))
+    setplace(String(Math.random()))
+    setrefreshing(false)
   }
   const data = () => {
     var arr = []
@@ -207,29 +150,19 @@ const NotificationScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <>
-        {!keys.length && 
+        {!keys.length &&
           <View style={{ marginTop: '40%', alignItems: 'center', padding: 40 }}>
             <Icon type="Feather" name="x-circle" style={{ fontSize: 78 }} onPress={() => navigation.navigate('Profile')} />
             <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
             <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
           </View>
         }
-        {/* {!fetched &&
-          loading()
-        } */}
         <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }>
           {data()}
         </ScrollView>
       </>
-    );
-  }
-  const loading = () => {
-    return (
-      <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
-      </View>
     );
   }
   const notthere = () => {
@@ -240,10 +173,10 @@ const NotificationScreen = ({ route, navigation }) => {
     )
   }
   return (
-    <>
+    <View key={place}>
       <CompHeader screen={'Notifications'} icon={'back'} goback={() => navigation.navigate('Home')} />
       {status == '3' ? there() : notthere()}
-    </>
+    </View>
   );
 }
 

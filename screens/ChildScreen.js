@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import {
-    React, 
+    React,
     Component,
     useState,
     useEffect,
@@ -20,8 +20,10 @@ import {
     ScrollView, TouchableOpacity,
     height, width
 } from '../Modules/CommonImports.js';
+import AuthContext from '../Context/Data';
 const ChildScreen = ({ route, navigation }) => {
     const scrollcheck = useRef(null)
+    const { Update } = React.useContext(AuthContext);
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -160,11 +162,23 @@ const ChildScreen = ({ route, navigation }) => {
                                 "acctype": "Kid"
                             })
                         })
-                            .then(async (response) => {
-                                if (response.data.split(', ').length == 2) {
+                            .then(async (response2) => {
+                                if (response2.data.split(', ').length == 2) {
                                     await AsyncStorage.setItem('status', '3')
                                     // console.log(response.data)
-                                    navigation.navigate('ChildSuccess')
+                                    var response1 = await axios({
+                                        method: 'post',
+                                        url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        data: JSON.stringify({
+                                            "email": pro.email,
+                                        })
+                                    })
+                                    await AsyncStorage.setItem('children', JSON.stringify(response1.data))
+                                    Update({ children: response1.data, status: '3', profile: pro, notifications: {} })
+                                    tion.navigate('ChildSuccess')
                                 }
                             })
                     })
