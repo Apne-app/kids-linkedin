@@ -111,7 +111,12 @@ const FileScreen = (props) => {
         var s = "";
         var x = props.route.params.children
         // console.log(x)
-        x = x["0"]["data"]["gsToken"];
+        try{
+            x = x["0"]["data"]["gsToken"];
+        }
+        catch(err){
+            
+        }
         try {
 
             var result = await RNFS.readDir(`${dir_path}/Images`);
