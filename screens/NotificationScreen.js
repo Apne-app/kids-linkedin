@@ -84,6 +84,7 @@ const NotificationScreen = ({ route, navigation }) => {
         setextra(arr)
         AsyncStorage.removeItem('newnoti')
         Update({ notifications: data.data })
+        console.log(data.data)
         AsyncStorage.setItem('notifications', JSON.stringify(data.data))
         setplace(String(Math.random()))
       }

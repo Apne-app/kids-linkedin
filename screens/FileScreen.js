@@ -39,7 +39,7 @@ const FileScreen = (props) => {
     const [tagsPresent, setTagsPresent] = React.useState(false)
     const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
     const [tag, setTag] = React.useState('All');
-    const status = props.route.status
+    const status = props.route.params.status
 
     const [refreshing, setRefreshing] = React.useState(false);
 
@@ -59,9 +59,8 @@ const FileScreen = (props) => {
 
     useEffect(() => {
         const check = async () => {
-            var x = await AsyncStorage.getItem('children');
+            var x = props.route.params.children;
             if (x) {
-                x = JSON.parse(x)
                 if (Object.keys(x).length == 0) {
                     await AsyncStorage.removeItem('children');
                     x = null
@@ -77,8 +76,7 @@ const FileScreen = (props) => {
                     deviceID: getUniqueId()
                 })
             }
-            var st = await AsyncStorage.getItem('status')
-            setstatus(st)
+            // setstatus(st)
         }
         check()
     }, [])
@@ -111,8 +109,9 @@ const FileScreen = (props) => {
     const showAll = async () => {
         var fls = [];
         var s = "";
-        var x = await AsyncStorage.getItem('children')
-        x = JSON.parse(x)["0"]["data"]["gsToken"];
+        var x = props.route.params.children
+        // console.log(x)
+        x = x["0"]["data"]["gsToken"];
         try {
 
             var result = await RNFS.readDir(`${dir_path}/Images`);
@@ -134,8 +133,11 @@ const FileScreen = (props) => {
         setTimeout(() => {
             
         }, 1000);
-        try {
-            
+        if(status == 3)
+        {
+
+            try {
+                
             // console.log(data)
             var config = {
                 method: 'get',
@@ -152,7 +154,7 @@ const FileScreen = (props) => {
                     // var s = stringImages;
                     for (var i = 0; i < response.data["0"].length;) {
                         var m = response.data["0"][i].split(x + '/')[1].split('/')[0];
-                        // console.log(stringImages.includes(m), m, stringImages);
+                        // console.log(stringImages.includes(m), m, stringImages, s.includes(m), response.data["0"][i]);
                         if(s.includes(m))
                         {
                             // console.log(m, 'asdas');
@@ -194,8 +196,13 @@ const FileScreen = (props) => {
                     console.log(error, "asdas");
                     setSynced(true);
                 });
+            }
+            catch (error) {
+                setSynced(true);
+            }
         }
-        catch (error) {
+        else
+        {
             setSynced(true);
         }
 
@@ -285,9 +292,9 @@ const FileScreen = (props) => {
 
     const viewImages = async (i, tm) => {
 
-        var x = await AsyncStorage.getItem('children');
+        var x = props.route.params.children;
         analytics.track('A collection Selected to view', {
-            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+            userID: x ? x["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
         })
         var arr = [...files];
@@ -388,9 +395,8 @@ const FileScreen = (props) => {
                         // style={{marginTop: 5}}
                         renderItem={({ item, i }) => (
                             <Chip key={i} style={{ backgroundColor: tag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: tag == item ? "#fff" : "#327FEB" }} onPress={async () => {
-                                var x = await AsyncStorage.getItem('children');
+                                var x = props.route.params.children;
                                 if (x) {
-                                    x = JSON.parse(x)
                                     if (Object.keys(x).length == 0) {
                                         await AsyncStorage.removeItem('children');
                                         x = null
@@ -431,7 +437,7 @@ const FileScreen = (props) => {
                                             <TouchableOpacity
                                                 style={{ borderRadius: 20 }}
                                                 onPress={() => {
-                                                    // console.log(item['images'][0]['time']);
+                                                    // console.log(item['images'][0]['time'] ? item['images'][0]['time'] : item['images'][0]['path'].split('Images/')[1].split('/')[0]);
                                                     viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
                                                 }}>
                                                 <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
