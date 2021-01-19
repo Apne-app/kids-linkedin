@@ -109,7 +109,7 @@ export default class App extends React.Component {
         this.props.navigation.navigate('Home', {
           screen: 'Post'
         });
-        await AsyncStorage.setItem('status', '-1')
+        await AsyncStorage.setItem('status', '0')
       }} block dark style={{ marginTop: 10, backgroundColor: '#327FEB', borderRadius: 30, height: 60, width: width * 0.86, alignSelf: 'center', marginBottom: 10 }}>
         <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 2 }}>Continue</Text>
       </Button>
@@ -118,7 +118,7 @@ export default class App extends React.Component {
 
   _renderDoneButton = () => {
     return (
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} block dark style={{ backgroundColor: '#fff', borderRadius: 30, width: width * 0.86, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
+      <TouchableOpacity onPress={async() => {this.props.navigation.navigate('Login'); await AsyncStorage.setItem('status', '0')}} block dark style={{ backgroundColor: '#fff', borderRadius: 30, width: width * 0.86, alignSelf: 'center', marginBottom: 40, marginHorizontal: 20 }}>
         <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Sign up/Login</Text>
       </TouchableOpacity>
     );

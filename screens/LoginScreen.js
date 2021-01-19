@@ -153,18 +153,17 @@ const LoginScreen = ({ route, navigation }) => {
     };
     axios(config)
       .then(function (response) {
-        console.log(response.data.token)
         var t = `https://api.genio.app/get-out/login/?token=${response.data.token}`;
-        console.log(t)
         axios({
           method: 'post',
-          url: t ,
+          url: t,
           headers: {
             'Content-Type': 'application/json'
           },
           data: JSON.stringify({ "email": email.split(' ')[0], "lnkdId": "default" })
         })
           .then(async (response) => {
+            console.log(response.data)
             const storeProfile = async () => {
               try {
                 await AsyncStorage.setItem('profile', JSON.stringify(response.data))
@@ -174,13 +173,14 @@ const LoginScreen = ({ route, navigation }) => {
                 /// 3 means child+verified
                 await AsyncStorage.setItem('status', '1')
 
-                analytics.identify(response.data.uuid, {
+                analytics.identify(String(response.data.id), {
                   email: response.data.email
                 })
 
 
               } catch (e) {
-                // saving error
+                setLoading(false);
+                alert('There was an error, please try again')
                 console.log(e)
               }
             }
@@ -189,6 +189,7 @@ const LoginScreen = ({ route, navigation }) => {
               .then((response) => {
                 console.log(response.data)
                 if (response.data == 'wrong id!') {
+                  setLoading(false);
                   alert('There was an error, please try again')
                 }
                 else {
@@ -198,6 +199,7 @@ const LoginScreen = ({ route, navigation }) => {
               })
               .catch((response) => {
                 console.log(response)
+                setLoading(false);
                 alert('There was an error, please try again')
               })
 

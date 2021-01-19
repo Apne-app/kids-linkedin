@@ -16,13 +16,13 @@ import { Snackbar } from 'react-native-paper';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-const Settings = ({ navigation }) => {
+const Settings = ({ navigation, route }) => {
     const [isSwitchOn, setIsSwitchOn] = React.useState(false);
-    const [children, setchildren] = React.useState({});
+    const children = route.params.children
     const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
     const [logging, setlogging] = React.useState(false);
     const [newname, setnewname] = React.useState('default123');
-    const [status, setstatus] = useState('1')
+    const status = route.params.status
     const [key, setkey] = useState('2')
     const [change, setchange] = useState(false)
     const [keyboardOffset, setKeyboardOffset] = useState(400);
@@ -30,19 +30,6 @@ const Settings = ({ navigation }) => {
     const onKeyboardShow = event => {
         setKeyboardOffset(event.endCoordinates.height + 400);
     }
-    useEffect(() => {
-        const check = async () => {
-            var child = await AsyncStorage.getItem('children')
-            if (child != null) {
-                child = JSON.parse(child)
-                setchildren(child)
-            }
-            else {
-                setchildren({})
-            }
-        }
-        check()
-    }, [])
 
     const onKeyboardHide = () => setKeyboardOffset(400);
 
@@ -57,24 +44,6 @@ const Settings = ({ navigation }) => {
         };
     }, []);
 
-
-    const handleEmail = () => {
-        const to = ['support@genio.app'] // string or array of email addresses
-        email(to, {
-            // Optional additional arguments
-            // cc: ['bazzy@moo.com', 'doooo@daaa.com'], // string or array of email addresses
-            // bcc: 'mee@mee.com', // string or array of email addresses
-            subject: 'Your Genio Feedback',
-            body: 'Write your feedback here'
-        }).catch(console.error)
-    }
-    useEffect(() => {
-        const check = async () => {
-            var st = await AsyncStorage.getItem('status')
-            setstatus(st)
-        }
-        check()
-    }, [])
     const onToggleSwitch = async () => {
         var x = await AsyncStorage.getItem('children');
         if (isSwitchOn) {
@@ -270,12 +239,12 @@ const Settings = ({ navigation }) => {
                 <View style={{ margin: 25 }}>
                     <View >
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
-                        <TextInput editable={status === '3' ? true : false} keyboardType={'name-phone-pad'} value={status === '3' ? newname == 'default123' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : newname : 'Please Login to edit Kid\'s Name'} onChangeText={(text) => { setnewname(text); setchange(false) }} editable={status === '3' ? true : false} placeholder={status === '3' ? '' : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <TextInput editable={status === '3' ? true : false} keyboardType={'name-phone-pad'} value={status === '3' ? newname == 'default123' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : newname : 'Login to edit Kid\'s Name'} onChangeText={(text) => { setnewname(text); setchange(false) }} editable={status === '3' ? true : false} placeholder={status === '3' ? '' : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                         <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, display: newname === 'default123' || change ? 'none' : 'flex' }} onPress={() => save()} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text>
                         </Button>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
-                        <TextInput editable={false} placeholder={status === '3' ? children['0']['data']['year'] : 'Please Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <TextInput editable={false} placeholder={status === '3' ? children['0']['data']['year'] : 'Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                         {/*<View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-Bold", marginVertical: 15, marginLeft: 23 }}>Push Notifications</Text>
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>

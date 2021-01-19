@@ -66,16 +66,14 @@ console.ignoredYellowBox = ['Warning: Failed propType: SceneView'];
 
 const App = (props) => {
   const notifierRef = useRef(null)
-  React.useEffect(() => {
-    console.log("aaa", props);
-  }, [])
-  // useEffect(() => {
-  //   StatusBar.setBarStyle('dark-content')
-  // })
+  const [loading, setloading] = useState(true)
+  const [status, setstatus] = useState('')
+  const [profile, setprofile] = useState({})
+  const [children, setchildren] = useState({})
+  var data = { children: children, status: status, profile: profile }
   const onReceived = (notification) => {
     console.log("Notification received: ", notification);
   }
-
   const onOpened = (openResult) => {
     containerRef.current?.navigate(openResult.notification.payload.additionalData.screen)
     console.log('Message: ', openResult.notification.payload.body);
@@ -113,18 +111,8 @@ const App = (props) => {
 
 
   function Bottom(props) {
-
-    // console.log(props.route.params);
-    // React.useEffect(() => {
-    //   SplashScreen.hide();
-    // }, [])
-    // SplashScreen.hide();
-
     return (
       <BottomNav.Navigator
-        // tabBar={props => (
-        //   <AnimatedTabBar dotColor={"#327FEB"} barColor={'white'} tabs={tabs} {...props} />
-        // )} 
         tabBarOptions={{
           activeTintColor: 'purple', adaptive: true, allowFontScaling: true, style: {
             height: 65, borderWidth: 0.5,
@@ -136,54 +124,59 @@ const App = (props) => {
           }
         }}
       >
-        <BottomNav.Screen name="Feed" component={FeedScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon name="home" style={{ color: "#327feb", fontSize: 24 }} type="Feather" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Home</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: "grey", fontSize: 24 }} type="Feather" name="home" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Home</Text></View> }} />
-        <BottomNav.Screen name="Search" component={SearchScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Search</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Search</Text></View> }} />
-        <BottomNav.Screen name="Post" style={{ backgroundColor: 'transparent' }} component={PostScreenNavig} options={{ tabBarLabel: '', tabBarButton: props => <TouchableOpacity {...props} style={{ bottom: 30, backgroundColor: 'transparent' }} ><LinearGradient locations={[0.9, 1]} colors={['transparent', '#f5f5f5']} style={{ borderRadius: 10000 }}><Icon name={'camera'} type="Feather" style={{ backgroundColor: '#327FEB', borderRadius: 10000, color: 'white', width: 65, height: 65, fontSize: 25, padding: 20.5, marginBottom: 4 }} /></LinearGradient></TouchableOpacity> }} />
-        <BottomNav.Screen name="Files" component={FileScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Collections</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Collections</Text></View> }} />
-        <BottomNav.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="user" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Profile</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24 }} type="Feather" name="user" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Profile</Text></View> }} />
+        <BottomNav.Screen initialParams={data} name="Feed" component={FeedScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon name="home" style={{ color: "#327feb", fontSize: 24 }} type="Feather" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Home</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: "grey", fontSize: 24 }} type="Feather" name="home" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Home</Text></View> }} />
+        <BottomNav.Screen initialParams={data} name="Search" component={SearchScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Search</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Search</Text></View> }} />
+        <BottomNav.Screen initialParams={data} name="Post" style={{ backgroundColor: 'transparent' }} component={PostScreenNavig} options={{ tabBarLabel: '', tabBarButton: props => <TouchableOpacity {...props} style={{ bottom: 30, backgroundColor: 'transparent' }} ><LinearGradient locations={[0.9, 1]} colors={['transparent', '#f5f5f5']} style={{ borderRadius: 10000 }}><Icon name={'camera'} type="Feather" style={{ backgroundColor: '#327FEB', borderRadius: 10000, color: 'white', width: 65, height: 65, fontSize: 25, padding: 20.5, marginBottom: 4 }} /></LinearGradient></TouchableOpacity> }} />
+        <BottomNav.Screen initialParams={data} name="Files" component={FileScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Collections</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Collections</Text></View> }} />
+        <BottomNav.Screen initialParams={data} name="Profile" component={ProfileScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="user" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Profile</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24 }} type="Feather" name="user" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Profile</Text></View> }} />
       </BottomNav.Navigator>
     )
   }
 
 
+  // useEffect(() => {
+  //   CleverTap.recordEvent('App Opened');
 
-  const [init, setinit] = useState('Login')
+  //   const send = async () => {
+  //     var x = await AsyncStorage.getItem('status');
+  //     if (x) {
+  //       if (x == '2') {
+  //         containerRef.current?.navigate('Child')
+  //         setinit('Child')
+  //       }
+  //       if (x == '-1') {
+  //         containerRef.current?.navigate('Home')
+  //         setinit('Home')
+  //       }
+  //       if (x == '3') {
+  //         containerRef.current?.navigate('Home')
+  //         setinit('Home')
+  //       }
+  //     }
+  //   }
+  //   send();
+  // }, [])
   useEffect(() => {
-    CleverTap.recordEvent('App Opened');
-
-    const send = async () => {
-      var x = await AsyncStorage.getItem('status');
-      if (x) {
-        if (x == '2') {
-          containerRef.current?.navigate('Child')
-          setinit('Child')
-        }
-        if (x == '-1') {
-          containerRef.current?.navigate('Home')
-          setinit('Home')
-        }
-        if (x == '3') {
-          containerRef.current?.navigate('Home')
-          setinit('Home')
-        }
+    const data = async () => {
+      var stat = await AsyncStorage.getItem('status');
+      var profile1 = await AsyncStorage.getItem('profile');
+      if(profile1){
+        profile1 = JSON.parse(profile1)
       }
-      SplashScreen.hide();
+      var children1 = await AsyncStorage.getItem('children');
+      if(children1){
+        children1 = JSON.parse(children1)
+      }
+      setstatus(stat)
+      console.log(stat)
+      setprofile(profile1)
+      setchildren(children1)
+      setloading(false)
     }
-    send();
-  }, [])
-
+    data()
+  })
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      // alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-      // console.log(remoteMessage)
-      // Notifier.showNotification({
-      //   title: remoteMessage.notification.title,
-      //   description: remoteMessage.notification.body,
-      //   duration: 3000,
-      //   showAnimationDuration: 800,
-      //   showEasing: Easing.bounce,
-      //   hideOnPress: true,
-      // });
     });
 
     return unsubscribe;
@@ -231,7 +224,6 @@ const App = (props) => {
       })
       .catch(() => {
         // console.log('do nothing')
-        SplashScreen.hide();
       }
       )
   }, []);
@@ -320,47 +312,92 @@ const App = (props) => {
         : undefined,
     ...TransitionPresets.SlideFromRightIOS,
   })
+  useEffect(() => {
+    const check = async () => {
+      var st = await AsyncStorage.getItem('status')
+      if (st == '3') {
+        var pro = await AsyncStorage.getItem('profile')
+        if (pro !== null) {
+          pro = JSON.parse(pro)
+          var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+          var config = {
+            method: 'post',
+            url: 'https://api.genio.app/get-out/getToken',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            data: data
+          };
 
-  return (
-    <Provider store={store}>
-      <PersistGate
-        loading={null}
-        persistor={persistor}
-      >
-        <NavigationContainer ref={containerRef}>
-          <Stack.Navigator initialRouteName={'IntroSlider'}>
-            <Stack.Screen options={{ headerShown: false }} name="Child" component={ChildScreen} />
-            <Stack.Screen options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="IndProf" component={IndProfile} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Searching" component={Searching} />
-            <Stack.Screen options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
-            <Stack.Screen options={{ headerShown: false }} name="Verified" component={Verified} />
-            <Stack.Screen options={{ headerShown: false }} name="Unverified" component={Unverified} />
-            <Stack.Screen options={{ headerShown: false }} name="Home" component={Bottom} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Preview" component={ImagePreview} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="SinglePost" component={SinglePostScreen} />
-            <Stack.Screen options={{ headerShown: false }} name="Intro" component={IntroScreen} />
-            <Stack.Screen options={{ headerShown: false }} name="Camera" component={Camera} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="CreatePost" component={PostScreen} />
-            <Stack.Screen options={{ headerShown: false }} name="Gallery" component={Gallery} />
-            <Stack.Screen options={{ headerShown: false }} name="AddText" component={AddText} />
-            <Stack.Screen options={{ headerShown: false }} name="PostScreen" component={Upload} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Browser" component={Browser} />
-            <Stack.Screen options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
-            <Stack.Screen options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
-            <Stack.Screen options={{ headerShown: false }} name="Comments" component={Comments} />
-            <Stack.Screen options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Notifications" component={NotificationScreen} />
-            <Stack.Screen options={{ headerShown: false }} name="KidUser" component={KidUser} />
-            <Stack.Screen options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
-            <Stack.Screen options={{ headerShown: false }} name="Includes" component={Includes} />
-            <Stack.Screen options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
-          </Stack.Navigator>
-          <NotifierRoot ref={notifierRef} />
-        </NavigationContainer>
-      </PersistGate>
-    </Provider>
-  );
+          axios(config)
+            .then(function (response) {
+              // console.log(JSON.stringify(response.data.token));
+              axios({
+                method: 'post',
+                url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({
+                  "email": pro.email,
+                })
+              })
+                .then(async (response) => {
+                  setchildren(response.data)
+                  await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                })
+                .catch((error) => {
+                })
+            })
+            .catch(function (error) {
+            });
+        }
+      }
+      else {
+        // console.log('helo')
+      }
+    }
+    check()
+  })
+  if (loading) {
+    return <View style={{ backgroundColor: '#327feb' }} />
+  }
+  else {
+    SplashScreen.hide()
+    return (
+      <NavigationContainer ref={containerRef}>
+        <Stack.Navigator initialRouteName={!status ? 'IntroSlider' : status === '2' ? 'Child' : 'Home'}>
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Child" component={ChildScreen} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="IndProf" component={IndProfile} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Searching" component={Searching} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Verified" component={Verified} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Unverified" component={Unverified} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Home" component={Bottom} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Preview" component={ImagePreview} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="SinglePost" component={SinglePostScreen} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Intro" component={IntroScreen} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Camera" component={Camera} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="CreatePost" component={PostScreen} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Gallery" component={Gallery} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="AddText" component={AddText} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="PostScreen" component={Upload} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Browser" component={Browser} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Comments" component={Comments} />
+          <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Notifications" component={NotificationScreen} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidUser" component={KidUser} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Includes" component={Includes} />
+          <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
+        </Stack.Navigator>
+        <NotifierRoot ref={notifierRef} />
+      </NavigationContainer>
+    );
+  }
 };
 
 codePush.sync({

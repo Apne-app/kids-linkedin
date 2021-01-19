@@ -6,7 +6,7 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
-import LikeButton from '../components/LikeButton'
+import LikeButton from '../components/LikeButton';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -68,7 +68,8 @@ updateStyle('LikeButton', {
         fontFamily: 'NunitoSans-Bold'
     },
 });
-const FeedScreen = ({ navigation, route }) => {
+const FeedScreen = ({ navigation, route, data }) => {
+    console.log(route)
     const [actid, setactid] = useState('f137b98f-0d0d-11eb-8255-128a130028af');
     const [type, settype] = useState('like');
     const [display, setdisplay] = useState('none');
@@ -96,11 +97,25 @@ const FeedScreen = ({ navigation, route }) => {
     const [newnoti, setnewnoti] = useState(false);
     const [numnoti, setnumnoti] = useState(0);
     const [youtube, setyoutube] = useState('https://youtube.com');
-
-    // In functional React component
-
-    // This can also be an async getter function. See notes below on Async Urls.
-
+    const onShare = async (message) => {
+        try {
+            const result = await Share.share({
+                message:
+                    message,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -298,7 +313,7 @@ const FeedScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity + '%26apn=com.genioclub.app').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + props.activity.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity.id + '%26apn=com.genioclub.app').then((data) => {
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
@@ -313,7 +328,7 @@ const FeedScreen = ({ navigation, route }) => {
                 Header={
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data})}>
+                            <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
                                 <Image
                                     source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '' }}
                                     style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
@@ -331,7 +346,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 styles={{ borderRadius: 0, margin: 10 }}
                                 options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                 cancelButtonIndex={2}
-                                onPress={(index) => { index == 1 ? report(props.activity) : null; }}
+                                onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + props.activity.id + '%26apn=com.genioclub.app') : null }}
                             />
                             <Right><TouchableOpacity onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
                         </View>
@@ -341,11 +356,11 @@ const FeedScreen = ({ navigation, route }) => {
                 Content={
                     <View>
                         <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
-                            {props.activity.object === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 10 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                            {props.activity.object === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 10, marginBottom: 15 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
                             <View style={{ alignSelf: 'center' }}>
                                 {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
                                     source={{ uri: props.activity.image.split(", ")[0] }}
-                                    style={{ width: width, height: 340, marginTop: 20, borderRadius: 0 }}
+                                    style={{ width: width, height: 340, borderRadius: 0 }}
                                 /> : <View style={{ height: 340 }}><SliderBox
                                     images={props.activity.image.split(", ").filter(n => n)}
                                     dotColor="#FFEE58"
@@ -614,7 +629,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const there = (props) => {
         return (
-            <SafeAreaProvider style={{display: feedstate == 0 ? 'flex' : 'none'}}>
+            <SafeAreaProvider style={{ display: feedstate == 0 ? 'flex' : 'none' }}>
                 <SafeAreaView style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{ marginTop: 20 }}
@@ -691,7 +706,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const notthere = () => {
         return (
-            <SafeAreaProvider style={{display: feedstate == 0 ? 'flex' : 'none'}}>
+            <SafeAreaProvider style={{ display: feedstate == 0 ? 'flex' : 'none' }}>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableWithoutFeedback>
                 <SafeAreaView style={{ flex: 1 }} style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
@@ -813,7 +828,7 @@ const FeedScreen = ({ navigation, route }) => {
 
 
         return (
-            <SafeAreaView style={{ flex: 1, display: 'none' }} style={{ backgroundColor: '#f9f9f9'}}
+            <SafeAreaView style={{ flex: 1, display: 'none' }} style={{ backgroundColor: '#f9f9f9' }}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
@@ -1308,7 +1323,7 @@ const FeedScreen = ({ navigation, route }) => {
                 <Features style={{ backgroundColor: '#f9f9f9' }} />
                 {/*children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News() */}
                 {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
-                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && feedstate == 1 ? Quiz() : feedstate == 0 ? null: News()}
+                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && feedstate == 1 ? Quiz() : feedstate == 0 ? null : News()}
             </SafeAreaView>
             {/* <Fab
                 active={selecting}
