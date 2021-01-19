@@ -559,7 +559,7 @@ const FeedScreen = ({ navigation, route }) => {
 
                     var config = {
                         method: 'post',
-                        url: 'https://api.genio.app/get-out/getToken',
+                        url: 'https://api.genio.app/dark-knight/getToken',
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -755,7 +755,7 @@ const FeedScreen = ({ navigation, route }) => {
                             onPress={() => {
                                 setTimeout(() => {
                                     item[0] == 'Feed' ? setFeedState(0) : item[0] == 'Quiz' ? setFeedState(1) : setFeedState(2);
-                                }, 200);
+                                }, 150);
                             }}>
                             <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center', height: 40, width: 100, borderRadius: 20, backgroundColor: feedstate == index ? "#327feb" : '#fff', marginHorizontal: 6, marginBottom: 3, elevation: 3 }} >
                                 <Icon name={item[1]} type={item[2]} style={{ fontSize: 20, color: feedstate == index ? '#fff' : '#327feb' }} />
@@ -1308,7 +1308,7 @@ const FeedScreen = ({ navigation, route }) => {
                 <Features style={{ backgroundColor: '#f9f9f9' }} />
                 {/*children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News() */}
                 {children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? there() : notthere()}
-                {children == 'notyet' ? loading() : Object.keys(children).length > 0 && feedstate == 1 ? Quiz() : feedstate == 0 ? null: News()}
+                {children == 'notyet' ? loading() :  feedstate == 1 ? Quiz() : feedstate == 0 ? null: News()}
             </SafeAreaView>
             {/* <Fab
                 active={selecting}

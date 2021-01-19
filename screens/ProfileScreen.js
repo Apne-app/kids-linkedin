@@ -266,7 +266,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
         var config = {
             method: 'post',
-            url: 'https://api.genio.app/get-out/getToken',
+            url: 'https://api.genio.app/dark-knight/getToken',
             headers: {
                 'Content-Type': 'application/json'
             },
