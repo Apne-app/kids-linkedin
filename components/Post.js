@@ -317,7 +317,7 @@ const Upload = ({ route, navigation }) => {
         const filePathInCache = item.uri;
         const filePathInAlbum = `${albumPath}/${fileName}`;
 
-        // console.log(fileName, filePathInCache, filePathInAlbum);
+        // console.log( "aaaa ", fileName, filePathInCache, filePathInAlbum);
         return RNFS.mkdir(albumPath)
           .then(() => {
             RNFS.copyFile(filePathInCache, filePathInAlbum)
