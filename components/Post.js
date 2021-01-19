@@ -198,6 +198,26 @@ const Upload = ({ route, navigation }) => {
 
   }
 
+  const backButtonChange3 = () => {
+
+    const onBackPress = () => {
+      sheetRef.current.snapTo(1);
+      const onBackNew = () => {
+          navigation.navigate('Home')
+          return true;
+      };
+      BackHandler.addEventListener("hardwareBackPress", onBackNew);
+      return () =>
+          BackHandler.removeEventListener("hardwareBackPress", onBackNew);
+    };
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+  }
+
+
+
   React.useEffect(() => {
 
     const sevent = async () => {
@@ -337,52 +357,6 @@ const Upload = ({ route, navigation }) => {
     route.params.time = 0;
   }
 
-  // if(route.params.edited)
-  // {
-  //   console.log("asd");
-  //   route.params.edited = 0;
-  //   const backBehaviour = () => {
-
-  //    const backAction = async () => {
-
-  //         closeRef.current.snapTo(0)
-
-  //         return true;
-  //       };
-
-  //       const backHandler = BackHandler.addEventListener(
-  //         "hardwareBackPress",
-  //         backAction
-  //       );
-
-  //       return () =>
-  //         BackHandler.removeEventListener("hardwareBackPress", backAction);
-  //   }
-  //   backBehaviour();
-  // }
-  // else{
-  //   const backBehaviour = () => {
-
-  //   const backAction = async () => {
-
-
-  //         navigation.navigate('Home', { screen: 'Files' })
-
-
-  //         return true;
-  //       };
-
-  //       const backHandler = BackHandler.addEventListener(
-  //         "hardwareBackPress",
-  //         backAction
-  //       );
-
-  //       return () =>
-  //         BackHandler.removeEventListener("hardwareBackPress", backAction);
-  //   }
-  //   backBehaviour();
-
-  // }
 
   React.useEffect(() => {
     const backBehaviour = () => {
@@ -390,7 +364,7 @@ const Upload = ({ route, navigation }) => {
 
       const backAction = async () => {
 
-        console.log("asdl")
+        console.log(route.params.edited)
         if (route.params.edited) {
 
           closeRef.current.snapTo(0)
@@ -414,29 +388,6 @@ const Upload = ({ route, navigation }) => {
     backBehaviour();
   })
 
-  // useFocusEffect(
-  //       React.useCallback(() => {
-  //       const backAction = async () => {
-
-
-  //         navigation.navigate('Home', { screen: 'Files' })
-
-
-  //         return true;
-  //       };
-
-  //       const backHandler = BackHandler.addEventListener(
-  //         "hardwareBackPress",
-  //         backAction
-  //       );
-
-  //       return () =>
-  //         BackHandler.removeEventListener("hardwareBackPress", backAction);
-
-  //   }, []));
-
-
-  // getImages();
 
   function randomStr(len, arr) {
     var ans = '';
@@ -670,6 +621,22 @@ const Upload = ({ route, navigation }) => {
       }
       setExplore([...array]);
       setSelecting(false);
+      if(array.length == 1)
+      {
+        console.log("s", array.length)
+        const onBackPress = () => {
+          const onBackNew = () => {
+              navigation.navigate('Home')
+              return true;
+          };
+          BackHandler.addEventListener("hardwareBackPress", onBackNew);
+          return () =>
+              BackHandler.removeEventListener("hardwareBackPress", onBackNew);
+        };
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+        return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }
     }
   }
 

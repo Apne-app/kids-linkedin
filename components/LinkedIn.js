@@ -25,6 +25,7 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
   let a, b, c;
   let i = 0;
   let tk = "";
+
   // const [token, setToken] = React.useState('');
 
   const [linkedinInfo, setLinkedInfo] = React.useState({
@@ -36,6 +37,7 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
   async function getInfo(token) {
 
     loaderHandler();
+    // console.log(authtoken)
     tk = token;
     await axios.get("https://api.linkedin.com/v2/me/?projection=(id,firstName,lastName,email-address,profilePicture(displayImage~:playableStreams))", { headers: { 'Authorization': "Bearer " + token } })
       .then(response => {

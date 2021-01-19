@@ -173,7 +173,7 @@ const Settings = ({ navigation, route }) => {
         var token = '';
         var config1 = {
             method: 'post',
-            url: 'https://api.genio.app/get-out/getToken',
+            url: 'https://api.genio.app/dark-knight/getToken',
             headers: {
                 'Content-Type': 'application/json'
             },

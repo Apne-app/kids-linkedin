@@ -111,6 +111,8 @@ const FileScreen = (props) => {
     const showAll = async () => {
         var fls = [];
         var s = "";
+        var x = await AsyncStorage.getItem('children')
+        x = JSON.parse(x)["0"]["data"]["gsToken"];
         try {
 
             var result = await RNFS.readDir(`${dir_path}/Images`);
@@ -133,10 +135,7 @@ const FileScreen = (props) => {
             
         }, 1000);
         try {
-
-            var x = await AsyncStorage.getItem('children')
-            x = JSON.parse(x)["0"]["data"]["gsToken"];
-            // console.log(JSON.parse(x)["0"]["data"]["gsToken"])
+            
             // console.log(data)
             var config = {
                 method: 'get',
@@ -149,6 +148,7 @@ const FileScreen = (props) => {
                 .then(function (response) {
                     var arry = [];
                     var ar1 = [...fls]
+                    // console.log(response.data)
                     // var s = stringImages;
                     for (var i = 0; i < response.data["0"].length;) {
                         var m = response.data["0"][i].split(x + '/')[1].split('/')[0];
@@ -174,7 +174,7 @@ const FileScreen = (props) => {
                             arry.push({ 'cloud': 1, 'images': ar, 'timestamp': tme });
                         }
                     }
-                    console.log(s, "adasaa");
+                    // console.log(s, "adasaa");
                     var amp = [...arry, ...fls]
                     // console.log(amp[0]);
                     amp.sort(function (a, b) {
@@ -188,7 +188,7 @@ const FileScreen = (props) => {
                     // setStringImages(s);
                     amp = reverse(amp)
                     setFiles([...amp])
-
+                    setSynced(true)
                 })
                 .catch(function (error) {
                     console.log(error, "asdas");
