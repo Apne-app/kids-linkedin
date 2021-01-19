@@ -391,6 +391,13 @@ const App = (props) => {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
+        if(data.logout){
+          setstatus('0')
+          setchildren(null)
+          setprofile(null)
+          setnotifications(null)
+          setnewnoti(null)
+        }
         if (data.status) {
           setstatus(data.status)
         }

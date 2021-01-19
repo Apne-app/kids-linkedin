@@ -17,7 +17,7 @@ var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
   const children = route.params.children
   const notifications = route.params.notifications
-  const keys = Object.keys(notifications).reverse()
+  const keys = notifications ? Object.keys(notifications).reverse() : []
   const [extra, setextra] = useState([])
   const status = route.params.status
   const [refreshing, setrefreshing] = useState(false)
@@ -168,7 +168,7 @@ const NotificationScreen = ({ route, navigation }) => {
   const notthere = () => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <CompButton message={'Signup/Login to view/recieve notifications'} />
+        <CompButton message={'Signup/Login to view/receive notifications'} />
       </View>
     )
   }

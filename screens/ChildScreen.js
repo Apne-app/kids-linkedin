@@ -178,7 +178,7 @@ const ChildScreen = ({ route, navigation }) => {
                                     })
                                     await AsyncStorage.setItem('children', JSON.stringify(response1.data))
                                     Update({ children: response1.data, status: '3', profile: pro, notifications: {} })
-                                    tion.navigate('ChildSuccess')
+                                    navigation.navigate('ChildSuccess')
                                 }
                             })
                     })

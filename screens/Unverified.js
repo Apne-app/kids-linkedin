@@ -46,22 +46,20 @@ const Unverified = ({ navigation, route }) => {
                     })
                 })
                     .then(async (response) => {
-                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                        var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
-                        Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
                         if (Object.keys(response.data).length) {
+                            await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                            var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
+                            Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
                             await AsyncStorage.setItem('status', '3')
                             navigation.reset({
                                 index: 0,
                                 routes: [{ name: 'Home' }],
                             });
-
                         }
                         else {
                             await AsyncStorage.setItem('status', '2')
                             navigation.navigate('Child', { screen: route.params ? Object.keys(route.params).includes('screen') ? route.params.screen : 'Home' : 'Home' })
                         }
-                        console.log(response.data)
                     })
                 var x = await AsyncStorage.getItem('status');
             })

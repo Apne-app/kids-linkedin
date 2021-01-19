@@ -14,6 +14,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader'
 import { Snackbar } from 'react-native-paper';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
+import AuthContext from '../Context/Data';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const Settings = ({ navigation, route }) => {
@@ -27,6 +28,7 @@ const Settings = ({ navigation, route }) => {
     const [change, setchange] = useState(false)
     const [keyboardOffset, setKeyboardOffset] = useState(400);
     const [showToast, setShowToast] = useState(false)
+    const { Update } = React.useContext(AuthContext);
     const onKeyboardShow = event => {
         setKeyboardOffset(event.endCoordinates.height + 400);
     }
@@ -83,7 +85,8 @@ const Settings = ({ navigation, route }) => {
             })
             var arr = await AsyncStorage.getAllKeys()
             await AsyncStorage.multiRemove(arr)
-            await AsyncStorage.setItem('status', '-1')
+            await AsyncStorage.setItem('status', '0')
+            Update({ children: null, notifications: null, newnoti: null, status: '0', 'logout': true })
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Login' }],
