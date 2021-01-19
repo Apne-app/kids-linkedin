@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import email from 'react-native-email'
 import analytics from '@segment/analytics-react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { StackActions } from '@react-navigation/native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader'
@@ -87,10 +88,7 @@ const Settings = ({ navigation, route }) => {
             await AsyncStorage.multiRemove(arr)
             await AsyncStorage.setItem('status', '0')
             Update({ children: null, notifications: null, newnoti: null, status: '0', 'logout': true })
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Login' }],
-            });
+            navigation.push('Login')
         }
 
     }
@@ -206,10 +204,10 @@ const Settings = ({ navigation, route }) => {
                         })
                             .then(async (response) => {
                                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: 'Profile' }],
-                                });
+                                Update({ children: response.data })
+                                navigation.dispatch(
+                                    StackActions.replace('Home')
+                                );
                                 setkey(newname)
                                 setchange(true)
                                 setShowToast(true)
