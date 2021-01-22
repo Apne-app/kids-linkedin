@@ -88,7 +88,10 @@ const Settings = ({ navigation, route }) => {
             await AsyncStorage.multiRemove(arr)
             await AsyncStorage.setItem('status', '0')
             Update({ children: null, notifications: null, newnoti: null, status: '0', 'logout': true })
-            navigation.push('Login')
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            });
         }
 
     }

@@ -6,11 +6,10 @@ import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } fr
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Spinner, Segment, Thumbnail } from 'native-base';
 import LinkedInModal from '../screens/react-native-linkedin';
 import AsyncStorage from '@react-native-community/async-storage';
-import { StackActions } from '@react-navigation/native';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import axios from 'axios';
-
+import AuthContext from '../Context/Data';
 var height = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
   container: {
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
 })
 
 const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
-
+  const { Update } = React.useContext(AuthContext);
   let a, b, c;
   let i = 0;
   let tk = "";
@@ -70,6 +69,7 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
 
                 try {
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data));
+                  var pro = response.data
                   axios({
                     method: 'post',
                     url: 'https://api.genio.app/matrix/getchild/' + `?token=${authtoken}`,
@@ -79,12 +79,11 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
                     data: data
                   })
                     .then(async (response) => {
-                      await AsyncStorage.setItem('children', JSON.stringify(response.data))
                       if (Object.keys(response.data).length) {
+                        await AsyncStorage.setItem('children', JSON.stringify(response.data))
                         var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
                         await AsyncStorage.setItem('status', '3')
                         Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
-                        await AsyncStorage.setItem('status', '3')
                         navigation.reset({
                           index: 0,
                           routes: [{ name: 'Home' }],

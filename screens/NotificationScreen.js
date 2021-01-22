@@ -69,7 +69,7 @@ const NotificationScreen = ({ route, navigation }) => {
           //   "email": pro.email,
           // })
         })
-        var noti = notifications
+        var noti = notifications?notifications:{}
         var arr = []
         var data1 = Object.keys(noti).reverse()
         var data2 = Object.keys(data.data).reverse()
@@ -102,7 +102,7 @@ const NotificationScreen = ({ route, navigation }) => {
         'Content-Type': 'application/json'
       },
     })
-    var noti = notifications
+    var noti = notifications?notifications:{}
     var arr = []
     var data1 = Object.keys(noti).reverse()
     var data2 = Object.keys(data.data).reverse()
