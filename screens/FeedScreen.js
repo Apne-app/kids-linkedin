@@ -92,25 +92,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [quiz, setQuiz] = useState([]);
     const [newnoti, setnewnoti] = useState(false);
-    const onShare = async (message) => {
-        try {
-            const result = await Share.share({
-                message:
-                    message,
-            });
-            if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    // shared with activity type of result.activityType
-                } else {
-                    // shared
-                }
-            } else if (result.action === Share.dismissedAction) {
-                // dismissed
-            }
-        } catch (error) {
-            alert(error.message);
-        }
-    };
+
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
