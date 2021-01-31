@@ -932,7 +932,7 @@ const Upload = ({ route, navigation }) => {
                         }
                       }
                       else {
-                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', { "images": ar, 'time': time })
+                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', { "images": ar, 'time': time, 'tag': selectedTag })
                       }
                     }}>
                       <View

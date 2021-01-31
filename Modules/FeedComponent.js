@@ -35,6 +35,25 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
+    const onShare = async (message) => {
+        try {
+            const result = await Share.share({
+                message:
+                    message,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
     var d = new Date();
     var year = parseInt(d.getFullYear());
     const footer = (id, data) => {
@@ -85,7 +104,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                     }}
                 />
                 <Icon onPress={() => {
-                    Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + props.activity.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity.id + '%26apn=com.genioclub.app').then((data) => {
+                    Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity.id + '%26apn=com.genioclub.app').then((data) => {
                     }).catch(() => {
                         alert('Make sure Whatsapp installed on your device');
                     });
@@ -94,7 +113,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
         </View>)
     }
     var images = []
-    props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
+    props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item  }) : null) : null
     return (
         <Activity
             Header={
@@ -102,7 +121,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
                             <Image
-                                source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '' }}
+                                source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage  : '' }}
                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                         </TouchableWithoutFeedback>

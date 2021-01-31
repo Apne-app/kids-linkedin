@@ -49,18 +49,18 @@ const IndProfile = ({ navigation, route }) => {
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
     const status = route.params.status
     const optionsRef = React.useRef(null);
-    useEffect(() => {
-        const addfollows = async () => {
-            const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
-            var user = client.feed('user', route['params']['id'] + 'id');
-            setProfile(user.client);
-            var follows = await user.followers()
-            var user = client.feed('timeline', route['params']['id'] + 'id');
-            var following = await user.following()
-            setdata({ 'followers': follows['results'], 'following': following['results'] })
-        }
-        addfollows()
-    }, [])
+    // useEffect(() => {
+    //     const addfollows = async () => {
+    //         const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
+    //         var user = client.feed('user', route['params']['id'] + 'id');
+    //         setProfile(user.client);
+    //         var follows = await user.followers()
+    //         var user = client.feed('timeline', route['params']['id'] + 'id');
+    //         var following = await user.following()
+    //         setdata({ 'followers': follows['results'], 'following': following['results'] })
+    //     }
+    //     addfollows()
+    // }, [])
     // useEffect(() => {
     //     // console.log(route.params)
     //     const addfollows = async () => {
@@ -131,19 +131,19 @@ const IndProfile = ({ navigation, route }) => {
         // addCerti();
     }, [])
 
-    useEffect(() => {
-        const addfollows = async () => {
-            var children = await AsyncStorage.getItem('children')
-            if (children) {
-                children = JSON.parse(children)['0']
-            }
-            else {
-                children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
-            }
-            setcurrentid(children['id'])
-        }
-        addfollows()
-    }, [])
+    // useEffect(() => {
+    //     const addfollows = async () => {
+    //         var children = await AsyncStorage.getItem('children')
+    //         if (children) {
+    //             children = JSON.parse(children)['0']
+    //         }
+    //         else {
+    //             children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
+    //         }
+    //         setcurrentid(children['id'])
+    //     }
+    //     addfollows()
+    // }, [])
     const followid = (id) => {
         // console.log("asd");
         if (followPerson == 'Follow') {
@@ -335,7 +335,8 @@ const IndProfile = ({ navigation, route }) => {
         // console.log(body);
 
     }
-
+    var d = new Date();
+    var year = parseInt(d.getFullYear());
     return (
         Object.keys(children).length ?
             <View>
@@ -358,15 +359,16 @@ const IndProfile = ({ navigation, route }) => {
                             <TouchableOpacity style={{ flexDirection: 'row' }}>
                                 <Image
                                     source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
-                                    style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30 }}
+                                    style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
                                 />
                             </TouchableOpacity>
                             <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
                                 <View style={{ flexDirection: 'row' }}>
                                     <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
                                 </View>
+                                {console.log(route.params.data.year)}
                                 <View style={{ flexDirection: 'row' }}>
-                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route['params']['data']['type']}</Text>
+                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
                                 </View>
                                 {/* <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius: 10, marginLeft: -20 }}>
                                 <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>

@@ -51,6 +51,25 @@ const SinglePostScreen = ({ navigation, route }) => {
     const status = route.params.status
     const children = route.params.children
     var d = new Date();
+        const onShare = async (message) => {
+        try {
+            const result = await Share.share({
+                message:
+                    message,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
     var year = parseInt(d.getFullYear());
     useEffect(() => {
         if (route.params.activity.activity.own_reactions.comment) {
@@ -112,7 +131,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + props.activity.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity.id + '%26apn=com.genioclub.app').then((data) => {
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity.id + '%26apn=com.genioclub.app').then((data) => {
                         }).catch(() => {
                             alert('Make sure Whatsapp installed on your device');
                         });
@@ -182,7 +201,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
             </View>))
         var images = []
-        props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
+        props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item  }) : null) : null
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
             <ScrollView ref={scrollref}>

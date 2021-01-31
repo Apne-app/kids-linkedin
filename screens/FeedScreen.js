@@ -92,25 +92,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [refreshing, setRefreshing] = useState(false);
     const [quiz, setQuiz] = useState([]);
     const [newnoti, setnewnoti] = useState(false);
-    const onShare = async (message) => {
-        try {
-            const result = await Share.share({
-                message:
-                    message,
-            });
-            if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    // shared with activity type of result.activityType
-                } else {
-                    // shared
-                }
-            } else if (result.action === Share.dismissedAction) {
-                // dismissed
-            }
-        } catch (error) {
-            alert(error.message);
-        }
-    };
+
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -521,7 +503,7 @@ const FeedScreen = ({ navigation, route }) => {
 
     const Features = () => {
         return (
-            <View style={{ backgroundColor: "#f9f9f9", margin: 'auto', justifyContent: 'center' }}>
+            <View style={{ backgroundColor: "#f9f9f9", margin: 'auto', justifyContent: 'center', zIndex: 1000, height: 60 }}>
                 <FlatList
                     data={[["Feed", "dynamic-feed", "MaterialIcons"], ["Quiz", "clipboard-pencil", "Foundation"], ["News", "newspaper-outline", "Ionicons"]]}
                     scrollEnabled={true}
@@ -530,7 +512,7 @@ const FeedScreen = ({ navigation, route }) => {
                         alignSelf: 'center'
                     }}
                     // showsHorizontalScrollIndicator={false}
-                    style={{ marginTop: 15 }}
+                    style={{ marginTop: 10 }}
                     renderItem={({ item, index }) => (
                         <TouchableOpacity
                             key={item}
@@ -624,7 +606,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 contentContainerStyle={{
                                     flexGrow: 1,
                                 }}
-                                style={{ marginTop: 15, marginBottom: 50 }}
+                                style={{ marginBottom: 50 }}
                                 renderItem={({ item, index }) => (
                                     <View style={{ marginVertical: 10, backgroundColor: '#fff', elevation: 2 }}>
                                         <TouchableOpacity
@@ -825,7 +807,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 contentContainerStyle={{
                                     flexGrow: 1,
                                 }}
-                                style={{ marginTop: 15, marginBottom: 50 }}
+                                style={{ marginBottom: 50 }}
                                 renderItem={({ item, index }) => (
                                     <View style={{ marginVertical: 10, backgroundColor: '#fff', elevation: 2 }}>
                                         <TouchableOpacity

@@ -181,7 +181,7 @@ export default class ExampleApp extends PureComponent {
           this.sheetRef.snapTo(1);
         }
         else if (this.props.route.params && this.props.route.params.images) {
-          this.props.navigation.navigate('PostScreen', { "reload": 1, "images": [...this.props.route.params.images] })
+          this.props.navigation.navigate('PostScreen', { "reload": 1, "images": [...this.props.route.params.images], "tag": this.props.route.params.tag ? this.props.route.params.tag : 'Genio' })
           // console.log(this.props.route.params);
         }
         else {
@@ -309,7 +309,7 @@ export default class ExampleApp extends PureComponent {
 
     const goback = () => {
       if (this.props.route.params && this.props.route.params.images) {
-        this.props.navigation.navigate('PostScreen', { "reload": 1, "images": this.props.route.params.images ? { ...this.props.route.params.images } : null })
+        this.props.navigation.navigate('PostScreen', { "reload": 1, "images": this.props.route.params.images ? { ...this.props.route.params.images } : null, "tag": this.props.route.params.tag ? this.props.route.params.tag : 'Genio' })
         console.log(this.props.route.params);
       }
       else {

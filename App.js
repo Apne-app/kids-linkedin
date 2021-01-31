@@ -342,19 +342,25 @@ const App = (props) => {
       var st = await AsyncStorage.getItem('status')
       if (st == '3') {
         var pro = await AsyncStorage.getItem('profile')
-        if (pro !== null) {
-          pro = JSON.parse(pro)
-          var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
-          var config = {
-            method: 'post',
-            url: 'https://api.genio.app/get-out/getToken',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            data: data
-          };
+        var ch = await AsyncStorage.getItem('children');
+        if(ch) {
+          setchildren(JSON.parse(ch));
+        }
+        else {
 
-          axios(config)
+          if (pro !== null) {
+            pro = JSON.parse(pro)
+            var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+            var config = {
+              method: 'post',
+              url: 'https://api.genio.app/get-out/getToken',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              data: data
+            };
+            
+            axios(config)
             .then(function (response) {
               // console.log(JSON.stringify(response.data.token));
               axios({
@@ -367,15 +373,16 @@ const App = (props) => {
                   "email": pro.email,
                 })
               })
-                .then(async (response) => {
-                  setchildren(response.data)
-                  await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                })
-                .catch((error) => {
-                })
+              .then(async (response) => {
+                setchildren(response.data)
+                await AsyncStorage.setItem('children', JSON.stringify(response.data))
+              })
+              .catch((error) => {
+              })
             })
             .catch(function (error) {
             });
+          }
         }
       }
       else {

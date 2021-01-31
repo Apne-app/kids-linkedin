@@ -83,7 +83,7 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
                         await AsyncStorage.setItem('children', JSON.stringify(response.data))
                         var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
                         await AsyncStorage.setItem('status', '3')
-                        Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
+                        await Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
                         navigation.reset({
                           index: 0,
                           routes: [{ name: 'Home' }],
