@@ -85,6 +85,15 @@ const Settings = ({ navigation, route }) => {
                 deviceID: getUniqueId()
             })
             var arr = await AsyncStorage.getAllKeys()
+            var index = arr.indexOf("camerastatus");
+            if (index > -1) {
+              arr.splice(index, 1);
+            }
+            index = arr.indexOf("loginheaders");
+            if (index > -1) {
+              arr.splice(index, 1);
+            }
+            // console.log(arr)
             await AsyncStorage.multiRemove(arr)
             await AsyncStorage.setItem('status', '0')
             Update({ children: null, notifications: null, newnoti: null, status: '0', 'logout': true })

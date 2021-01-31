@@ -197,9 +197,9 @@ const FileScreen = (props) => {
                         }
                         setStringImages(s);
                         fls.sort();
-                        // console.log(fls[0]['images']);
+                        console.log(fls);
                         fls = reverse(fls)
-                        setFiles([...amp]);
+                        setFiles([...amp, ...fls]);
                         setSynced(true)
                     }
                     catch (err) {
@@ -218,6 +218,26 @@ const FileScreen = (props) => {
         }
         else
         {
+            try {
+
+                var result = await RNFS.readDir(`${dir_path}/Images`);
+                for (var i = 0; i < result.length; i++) {
+                    var res = await RNFS.readDir(result[i]['path']);
+                    fls.push({ 'images': res, 'cloud': 0, "timestamp": result[i]['name'] });
+                    // console.log(res.length);
+                    
+                }
+                setStringImages(s);
+                fls.sort();
+                console.log(fls);
+                fls = reverse(fls)
+                setFiles([...fls]);
+                setSynced(true)
+            }
+            catch (err) {
+                console.log(err);
+                setSynced(true)
+            }
             setSynced(true);
         }
 
