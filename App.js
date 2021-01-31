@@ -190,6 +190,13 @@ const App = (props) => {
       if (children1) {
         response2 = await axios.get('https://api.genio.app/magnolia/' + children1[0]['id'])
       }
+
+      axios.get('https://api.genio.app/get-out/loginheaders/')
+      .then(loginheaders => {
+        loginheaders = loginheaders.data;
+        AsyncStorage.setItem('loginheaders', JSON.stringify(loginheaders));
+      })
+
       setnotifications(response2.data)
       setjoined(response1.data)
       setstatus(stat)

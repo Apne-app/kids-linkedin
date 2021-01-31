@@ -117,27 +117,7 @@ const FileScreen = (props) => {
         catch(err){
             
         }
-        try {
 
-            var result = await RNFS.readDir(`${dir_path}/Images`);
-            for (var i = 0; i < result.length; i++) {
-                var res = await RNFS.readDir(result[i]['path']);
-                fls.push({ 'images': res, 'cloud': 0, "timestamp": result[i]['name'] });
-                // console.log();
-                s = s + res[0]['name'].split('_')[1].split('-')[0] + ', ';
-            }
-            setStringImages(s);
-            fls.sort();
-            // console.log(fls[0]['images']);
-            fls = reverse(fls)
-            setFiles([...fls]);
-        }
-        catch (err) {
-            console.log(err);
-        }
-        setTimeout(() => {
-            
-        }, 1000);
         if(status == 3)
         {
 
@@ -159,13 +139,14 @@ const FileScreen = (props) => {
                     // var s = stringImages;
                     for (var i = 0; i < response.data["0"].length;) {
                         var m = response.data["0"][i].split(x + '/')[1].split('/')[0];
+                        s = s + m+'-'+response.data.length + ', ';
                         // console.log(stringImages.includes(m), m, stringImages, s.includes(m), response.data["0"][i]);
-                        if(s.includes(m))
-                        {
-                            // console.log(m, 'asdas');
-                            i++;
-                            continue;
-                        }
+                        // if(s.includes(m+response.data.length))
+                        // {
+                        //     // console.log(m, 'asdas');
+                        //     i++;
+                        //     continue;
+                        // }
                         // s += m + ', ';
                         var n = JSON.parse(m);
                         var tme = new Date(n);
@@ -194,8 +175,37 @@ const FileScreen = (props) => {
                     });
                     // setStringImages(s);
                     amp = reverse(amp)
-                    setFiles([...amp])
-                    setSynced(true)
+                    // setFiles([...amp])
+                    return amp
+                    
+                })
+                .then(async (amp) => {
+                    try {
+
+                        var result = await RNFS.readDir(`${dir_path}/Images`);
+                        for (var i = 0; i < result.length; i++) {
+                            var res = await RNFS.readDir(result[i]['path']);
+                            if(s.includes(res[0]['name'].split('_')[1].split('-')[0]+'-'+res.length))
+                            {
+                                console.log('asdas');
+                                i++;
+                                continue;
+                            }
+                            fls.push({ 'images': res, 'cloud': 0, "timestamp": result[i]['name'] });
+                            // console.log(res.length);
+                            
+                        }
+                        setStringImages(s);
+                        fls.sort();
+                        // console.log(fls[0]['images']);
+                        fls = reverse(fls)
+                        setFiles([...amp]);
+                        setSynced(true)
+                    }
+                    catch (err) {
+                        console.log(err);
+                        setSynced(true)
+                    }
                 })
                 .catch(function (error) {
                     console.log(error, "asdas");
@@ -211,6 +221,13 @@ const FileScreen = (props) => {
             setSynced(true);
         }
 
+
+
+        
+        // setTimeout(() => {
+            
+        // }, 1000);
+        
     }
 
 
@@ -260,6 +277,8 @@ const FileScreen = (props) => {
 
         const func = async () => {
 
+            setTag('All')
+
             let albums = await AsyncStorage.getItem("albums");
             // console.log(albums);
             albums = JSON.parse(albums);
@@ -295,7 +314,7 @@ const FileScreen = (props) => {
 
 
 
-    const viewImages = async (i, tm) => {
+    const viewImages = async (i, tm, tg) => {
 
         var x = props.route.params.children;
         analytics.track('A collection Selected to view', {
@@ -311,7 +330,7 @@ const FileScreen = (props) => {
 
             arr2.push(({ uri: arr[j]['path'], height: 200 }));
         }
-        props.navigation.navigate('PostScreen', { "selected": [...arr2], 'edit': 1, 'newTime': tm })
+        props.navigation.navigate('PostScreen', { "selected": [...arr2], 'edit': 1, 'newTime': tm, 'tag': tg })
     }
 
     const convertDate = (tm) => {
@@ -337,7 +356,8 @@ const FileScreen = (props) => {
         }
 
         for (var i = 0; i < files.length; i++) {
-            if (files[i]['tag'] == tag) {
+            // console.log(files[i]['images'][0]['name'].split('_')[0]);
+            if (files[i]['images'][0]['name'].split('_')[0] == tag) {
                 // { 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1] }
                 z.push(files[i]);
             }
@@ -363,7 +383,7 @@ const FileScreen = (props) => {
     return (
         <Container>
             <ScreenHeader screen={'Collections'} />
-            {status === '3' ? null : <TouchableOpacity onPress={() => props.navigation.navigate('Login', { screen: 'Files' })}><CompButton message={'Signup/Login to backup your collections'} /></TouchableOpacity>}
+            {status === '3' ? null : <TouchableOpacity onPress={() => props.navigation.navigate('Login', { screen: 'Files', type: 'collections_banner' })}><CompButton message={'Signup/Login to backup your collections'} /></TouchableOpacity>}
             <ImageView
                 images={selected}
                 imageIndex={0}
@@ -442,8 +462,9 @@ const FileScreen = (props) => {
                                             <TouchableOpacity
                                                 style={{ borderRadius: 20 }}
                                                 onPress={() => {
+                                                    // console.log(item['images'][0]['name'])
                                                     // console.log(item['images'][0]['time'] ? item['images'][0]['time'] : item['images'][0]['path'].split('Images/')[1].split('/')[0]);
-                                                    viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0]);
+                                                    viewImages(i, item['images'][0]['name'].split('_')[1].split('-')[0], item['images'][0]['name'].split('_')[0]);
                                                 }}>
                                                 <CardItem style={{ marginVertical: 5, flexDirection: 'column', borderRadius: 20 }}>
                                                     <View style={{ flexDirection: 'row' }}>
@@ -467,7 +488,7 @@ const FileScreen = (props) => {
                                                             </View>
                                                         </View> : null}
                                                     </Body>
-                                                    {item['images'][item['images'].length - 1]['name'].split('_')[0] !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item['images'][0]['name'].split('_')[0]}</Chip> : null}
+                                                    {item['images'][item['images'].length - 1]['name'].split('_')[0] !== 'Genio' ? <Chip key={i} style={{ backgroundColor: '#327FEB', margin: 4, marginTop: 16, paddingLeft: 5, paddingRight: 5, borderWidth: 0, borderColor: "#327FEB", alignSelf: 'flex-start' }} textStyle={{ color: "#fff" }}>{item['images'][item['images'].length - 1]['name'].split('_')[0]}</Chip> : null}
 
                                                 </CardItem>
                                             </TouchableOpacity>

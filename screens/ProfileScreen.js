@@ -498,13 +498,13 @@ const ProfileScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
-                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}>
                     <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
                         <Image source={require('../assets/profile.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
                     </View>
                 </TouchableWithoutFeedback>
-                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}>
                     <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Build your kid's very own portfolio using Genio and give a boost to their profile</Text>
                 </TouchableWithoutFeedback>
             </View>

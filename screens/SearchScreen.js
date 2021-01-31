@@ -142,8 +142,8 @@ const SearchScreen = ({ route, navigation }) => {
     console.log(children, status)
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Search' })}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Search', type: 'search_banner' })}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'search_banner' })}>
           <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
             <Image source={require('../assets/search.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
           </View>

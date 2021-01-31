@@ -10,7 +10,7 @@ import email from 'react-native-email'
 import analytics from '@segment/analytics-react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { StackActions } from '@react-navigation/native';
-import { getUniqueId, getManufacturer } from 'react-native-device-info';
+import { getUniqueId, getManufacturer, getVersion } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader'
 import { Snackbar } from 'react-native-paper';
@@ -277,10 +277,10 @@ const Settings = ({ navigation, route }) => {
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17, alignSelf: 'center', marginLeft: 40 }}>Contact Us</Text>
                             <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                         </Button>
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status === '3' ? logout() : navigation.navigate('Login')} >
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status === '3' ? logout() : navigation.navigate('Login', { type:'settings_login' })} >
                             <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{status === '3' ? 'Logout' : 'Login'}</Text>
                         </Button>
-                        <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 13, textAlign: 'center', marginTop: 2 }}>v0.2.0</Text>
+                        <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 13, textAlign: 'center', marginTop: 2 }}>v{getVersion()}</Text>
                     </View>
                 </View>
             </ScrollView>

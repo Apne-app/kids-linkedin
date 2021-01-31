@@ -83,7 +83,7 @@ const App: () => React$Node = (props) => {
     // await AsyncStorage.setItem('@scanImg', JSON.stringify({'height': 200, 'uri': uri}) );
     var tm= new Date();
     // console.log( 'sad', props.route.params.images)
-    props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": [...props.route.params.images, { 'height': dim.height, 'width': dim.width, 'uri': uri, 'prevImg': prevUri}], 'time': props.route.params.time })
+    props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": [...props.route.params.images, { 'height': dim.height, 'width': dim.width, 'uri': uri, 'prevImg': prevUri}], 'time': props.route.params.time, "tag": props.route.params.tag ? props.route.params.tag : 'Genio' })
     // });
   }
 
@@ -197,7 +197,7 @@ const App: () => React$Node = (props) => {
   );
   const goback = () => {
     // var x = new Date();
-    croppedi && editing ? setcroppedi(false) : editing ? props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images] }) : props.navigation.pop()
+    croppedi && editing ? setcroppedi(false) : editing ? props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images], "tag": props.route.params.tag ? props.route.params.tag : 'Genio' }) : props.navigation.pop()
   }
   return (
     <>
@@ -234,11 +234,11 @@ const App: () => React$Node = (props) => {
             {
             var ar = props.route.params.images ? [...props.route.params.images] : [];
             ar.splice(props.route.params.pos, props.route.params.pos+1, { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri });
-            props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": ar, 'time': props.route.params.time })
+            props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": ar, 'time': props.route.params.time, "tag": props.route.params.tag ? props.route.params.tag : 'Genio' })
             }
             else{
             var temp = { 'height': JSON.parse(res.height), 'width': JSON.parse(res.width), 'uri': res.uri, 'prevImg': uri };
-            props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": props.route.params.images ? [...props.route.params.images, temp] : [ temp ], 'time': props.route.params.time })
+            props.navigation.navigate('PostScreen', { "reload": 1, "edited": 1, "images": props.route.params.images ? [...props.route.params.images, temp] : [ temp ], 'time': props.route.params.time, "tag": props.route.params.tag ? props.route.params.tag : 'Genio' })
             }
 
 
@@ -283,7 +283,7 @@ const App: () => React$Node = (props) => {
         <TouchableOpacity
           style={{ height: 40 }}
           onPress={() => {
-            croppedi && editing ? setcroppedi(false) : editing ? props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images] }) : props.navigation.pop()
+            croppedi && editing ? setcroppedi(false) : editing ? props.navigation.navigate('PostScreen', { "reload": 1, "images": [...props.route.params.images], "tag": props.route.params.tag ? props.route.params.tag : 'Genio' }) : props.navigation.pop()
           }}
         >
           <View style={styles.Cancel}>

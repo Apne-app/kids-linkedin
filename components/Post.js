@@ -55,7 +55,7 @@ var width = Dimensions.get('screen').width;
 
 
 const Upload = ({ route, navigation }) => {
-
+  console.log(route.params)
   const [activefab, setActiveFab] = React.useState(false);
 
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -279,6 +279,8 @@ const Upload = ({ route, navigation }) => {
 
   if (route.params) {
     if (route.params.reload) {
+      console.log(route.params, 'aassadas')
+      setTag(route.params.tag)
       getImages();
       route.params.reload = 0;
     }
@@ -313,7 +315,7 @@ const Upload = ({ route, navigation }) => {
       const saveFile = async (base64) => {
         const albumPath = `${pathDir}/Images/${tme}`;
 
-        const fileName = `${selectedTag}_${tm}-${i}.png`;
+        const fileName = `Genio_${tm}-${i}.png`;
         const filePathInCache = item.uri;
         const filePathInAlbum = `${albumPath}/${fileName}`;
 
@@ -423,7 +425,8 @@ const Upload = ({ route, navigation }) => {
   if (route.params.edit) {
     route.params.edit = 0;
     setTime(route.params.newTime);
-
+    setTag(route.params.tag)
+    // console.log(route.params.tag, "asdadsad")
   }
 
   const myAsyncPDFFunction = async () => {
@@ -720,6 +723,11 @@ const Upload = ({ route, navigation }) => {
                 userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
                 deviceID: getUniqueId()
               })
+              x = JSON.parse(x)["0"]["data"]["gsToken"];
+              // console.log(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
+              axios.get(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
+              .then(res => console.log(res.data))
+              .catch(err => console.log("error: ", err))
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
 
             }}
@@ -932,7 +940,10 @@ const Upload = ({ route, navigation }) => {
                         }
                       }
                       else {
-                        var ar = [...explore]; ar.splice(0, 1); navigation.navigate('Camera', { "images": ar, 'time': time, 'tag': selectedTag })
+                        var ar = [...explore]; ar.splice(0, 1);
+                        var payload = { "images": ar, 'time': time, 'tag': selectedTag };
+                        // console.log(payload) 
+                        navigation.navigate('Camera', payload)
                       }
                     }}>
                       <View
@@ -1012,7 +1023,12 @@ const Upload = ({ route, navigation }) => {
             }}
             // style={{marginTop: 5}}
             renderItem={({ item, i }) => (
-              <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB", fontFamily: 'NunitoSans-Regular' }} onPress={() => selectedTag == item ? setTag('') : setTag(item)} >{item}</Chip>
+              <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB", fontFamily: 'NunitoSans-Regular' }} onPress={async () =>{
+                backButtonChange();
+                selectedTag == item ? setTag('Genio') : setTag(item)} 
+              } 
+              >
+              {item}</Chip>
             )}
             //Setting the number of column
             // numColumns={3}
@@ -1071,7 +1087,7 @@ const Upload = ({ route, navigation }) => {
               for (var i = 1; i < ar.length; i++) {
                 arr.push({ uri: ar[i]["uri"].includes("http") ? ar[i]["uri"] : 'file://' + ar[i]["uri"] })
               }
-              status === '3' ? navigation.navigate('CreatePost', { images: arr, tag: selectedTag }) : navigation.navigate('Login', { screen: 'Post' })
+              status === '3' ? navigation.navigate('CreatePost', { images: arr, tag: selectedTag }) : navigation.navigate('Login', { screen: 'Post', type: 'post_create' })
             }}
           >
             <View style={styles.Next}>
