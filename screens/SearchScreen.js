@@ -1,10 +1,11 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react'; 
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, FlatList, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import ScreenHeader from '../Modules/ScreenHeader'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
@@ -12,6 +13,7 @@ import CompButton from '../Modules/CompButton'
 import { useFocusEffect } from "@react-navigation/native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import FastImage from 'react-native-fast-image'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -98,14 +100,15 @@ const SearchScreen = ({ route, navigation }) => {
                   <View
                     key={item.id}
                     style={{ flex: 1, }}>
-                    <ImageBackground
+                    <FastImage
                       style={styles.image}
                       imageStyle={{ borderRadius: 100000 }}
                       source={{
                         uri: joined[item]['data']['image'],
+                        priority: FastImage.priority.high
                       }}
                     >
-                    </ImageBackground>
+                    </FastImage>
                     <View>
                       <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name']}</Text>
                     </View>
@@ -145,7 +148,7 @@ const SearchScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Search', type: 'search_banner' })}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
         <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'search_banner' })}>
           <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
-            <Image source={require('../assets/search.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+            <FastImage source={require('../assets/search.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
           </View>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
@@ -157,7 +160,7 @@ const SearchScreen = ({ route, navigation }) => {
   const loading = () => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
+        <FastImage source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
       </View>
     );
   }

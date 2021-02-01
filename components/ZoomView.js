@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'; 
 import { Platform, StyleSheet, View, Dimensions } from 'react-native';
 import { PinchGestureHandler, State } from 'react-native-gesture-handler';
 

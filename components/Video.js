@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react'; 
 import { StyleSheet, View, Platform } from 'react-native';
 import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 import Video from 'react-native-video';

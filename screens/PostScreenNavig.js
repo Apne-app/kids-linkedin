@@ -1,4 +1,4 @@
-import React, { Component }  from 'react';
+import React, { Component }  from 'react'; 
 import { Animated, Text, StyleSheet, Dimensions, View, ImageBackground, Image, TouchableOpacity, FlatList, PixelRatio } from 'react-native';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, Textarea } from 'native-base';
 import BottomSheet from 'reanimated-bottom-sheet';

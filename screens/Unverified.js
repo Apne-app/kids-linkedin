@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import { useFocusEffect } from "@react-navigation/native";
 import { Snackbar } from 'react-native-paper';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import CountDown from 'react-native-countdown-component';
 import AuthContext from '../Context/Data';
 var height = Dimensions.get('screen').height;
@@ -20,7 +21,7 @@ const Unverified = ({ navigation, route }) => {
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
     const { Update } = React.useContext(AuthContext);
     const login = async () => {
-        var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+        var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
         var token = '';
         var config = {
             method: 'post',
@@ -132,7 +133,7 @@ const Unverified = ({ navigation, route }) => {
         return () => unsubscribe();
     }, []);
     useEffect(() => {
-        var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+        var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
         var config = {
             method: 'post',
             url: 'https://api.genio.app/dark-knight/getToken',

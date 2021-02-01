@@ -1,11 +1,12 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { PureComponent } from 'react';
+import React, { PureComponent } from 'react'; 
 import { AppRegistry, ScrollView, Alert, TextInput, Platform, Dimensions, BackHandler, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Container, Header, Content, Spinner, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
 import Gallery from './Gallery'
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import Svg, {
   Use,
 } from 'react-native-svg';

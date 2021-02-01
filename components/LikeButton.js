@@ -1,5 +1,5 @@
 // @flow
-import * as React from 'react';
+import * as React from 'react'; 
 import {Text} from 'react-native';
 import { buildStylesheet } from '../styles';
 import {ReactionToggleIcon} from 'react-native-activity-feed';

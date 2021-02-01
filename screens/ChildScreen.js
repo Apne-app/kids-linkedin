@@ -21,6 +21,7 @@ import {
     height, width
 } from '../Modules/CommonImports.js';
 import AuthContext from '../Context/Data';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { TextInput } from 'react-native';
 const ChildScreen = ({ route, navigation }) => {
     const scrollcheck = useRef(null)
@@ -134,7 +135,7 @@ const ChildScreen = ({ route, navigation }) => {
                 var pro = await AsyncStorage.getItem('profile');
                 pro = JSON.parse(pro);
                 console.log(pro, "sad");
-                var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
                 var config = {
                     method: 'post',

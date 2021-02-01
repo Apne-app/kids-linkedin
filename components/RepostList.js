@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React from 'react';
+import React from 'react'; 
 import { ReactionList, SectionHeader } from 'react-native-activity-feed';
 import RepostItem from './RepostItem';
 import type { ReactionMap } from '../types';

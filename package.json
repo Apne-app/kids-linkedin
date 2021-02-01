@@ -55,7 +55,7 @@
     "react-native-email": "^1.1.0",
     "react-native-emoji-board": "^1.2.1",
     "react-native-exoplayer": "github:ngager-group/react-native-exoplayer",
-    "react-native-fast-image": "^8.3.2",
+    "react-native-fast-image": "^8.3.4",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.7.0",
     "react-native-haptic-feedback": "^1.11.0",

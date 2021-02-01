@@ -1,11 +1,12 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react'; 
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { StreamApp, FlatFeed, Activity, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
 import CommentBox from '../components/CommentBox'
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
@@ -22,6 +23,7 @@ import WebView from 'react-native-webview';
 import { getUniqueId } from 'react-native-device-info';
 import analytics from '@segment/analytics-react-native';
 import FeedComponent from '../Modules/FeedComponent'
+import FastImage from 'react-native-fast-image'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -51,7 +53,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const status = route.params.status
     const children = route.params.children
     var d = new Date();
-        const onShare = async (message) => {
+    const onShare = async (message) => {
         try {
             const result = await Share.share({
                 message:
@@ -157,8 +159,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                         onRequestClose={() => setIsVisible(false)}
                     /> : <View></View>}
                 <TouchableWithoutFeedback onPress={() => setIsVisible(true)} style={{ alignSelf: 'center' }}>
-                    {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <Image
-                        source={{ uri: props.activity.image.split(", ")[0] }}
+                    {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <FastImage
+                        source={{
+                            uri: props.activity.image.split(", ")[0],
+                            priority: FastImage.priority.high
+                        }}
                         style={{ width: width, height: 340, marginTop: 20 }}
                     /> : <View style={{ height: 340 }}><SliderBox
                         images={props.activity.image.split(", ").filter(n => n)}
@@ -201,7 +206,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
             </View>))
         var images = []
-        props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item  }) : null) : null
+        props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         props.activity.own_reactions['like'] ? console.log(props.activity.own_reactions['like'][0]) : null
         return (
             <ScrollView ref={scrollref}>
@@ -209,8 +214,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                     Header={
                         <View style={{ flexDirection: 'column' }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Image
-                                    source={{ uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '' }}
+                                <FastImage
+                                    source={{
+                                        uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '',
+                                        priority: FastImage.priority.high
+                                    }}
                                     style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                                 />
                                 <View style={{ flexDirection: 'column', marginLeft: 5 }}>
@@ -235,6 +243,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             </ScrollView>
         );
     };
+    console.log(children['0']['data']['status'])
     return (
         <View style={styles.container}>
             <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
@@ -244,7 +253,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 token={route.params.token}
             >
                 <CustomActivity props={route.params.activity} status={status} children={children} navigation={navigation} route={route} />
-                {status === '3' ? <CommentBox
+                {status === '3' ? children['0']['data']['status'] === 'inreview' ? <CompButton message={'Your profile is currently under review, and hyou have been temporarily banned from commenting'} back={'Home'} /> : <CommentBox
                     key={'1'}
                     textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
                     activity={route.params.activity.activity}

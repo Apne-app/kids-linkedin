@@ -6,6 +6,7 @@ import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } fr
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { useFocusEffect } from "@react-navigation/native";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -49,7 +50,7 @@ const Unverified = ({ navigation, route }) => {
     useEffect(() => {
         const getData = async () => {
 
-            var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
             var token = '';
             var config = {
                 method: 'post',

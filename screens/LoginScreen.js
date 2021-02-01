@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect, useRef } from 'react';
+import React, { Component, useState, useEffect, useRef } from 'react'; 
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvoidingView, Keyboard, ScrollView, TextInput, TouchableOpacity, BackHandler } from 'react-native'
 import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, Spinner, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
@@ -11,6 +11,7 @@ import SignUpForm from '../components/SignUp';
 import axios from 'axios';
 import LinkedIn from '../components/LinkedIn'
 import { useFocusEffect } from "@react-navigation/native";
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
 import analytics from '@segment/analytics-react-native';
@@ -102,7 +103,7 @@ const LoginScreen = ({ route, navigation }) => {
     }
     analyse();
 
-    var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+    var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
     var config = {
       method: 'post',
@@ -141,7 +142,7 @@ const LoginScreen = ({ route, navigation }) => {
       deviceID: getUniqueId()
     })
     setLoading(true);
-    var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+    var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
     var config = {
       method: 'post',

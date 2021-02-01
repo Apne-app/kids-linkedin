@@ -1,8 +1,9 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react'; 
 import { View, Text, StatusBar, Image, TouchableOpacity } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import AuthContext from './Context/Data';
 import { NavigationContainer } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -175,7 +176,7 @@ const App = (props) => {
       if (notifications1) {
         notifications1 = JSON.parse(notifications1)
       }
-      var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+      var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
       var config = {
         method: 'post',
         url: 'https://api.genio.app/dark-knight/getToken',
@@ -357,7 +358,7 @@ const App = (props) => {
 
           if (pro !== null) {
             pro = JSON.parse(pro)
-            var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
             var config = {
               method: 'post',
               url: 'https://api.genio.app/get-out/getToken',
@@ -381,6 +382,7 @@ const App = (props) => {
                 })
               })
               .then(async (response) => {
+                console.log(resopnse.data)
                 setchildren(response.data)
                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
               })

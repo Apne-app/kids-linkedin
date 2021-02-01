@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component } from 'react';
+import React, { Component } from 'react'; 
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail } from 'native-base';

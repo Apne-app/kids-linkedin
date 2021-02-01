@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; 
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -8,7 +8,7 @@ import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
 import axios from 'axios';
-import { SECRET_KEY, ACCESS_KEY } from '@env';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { useFocusEffect } from "@react-navigation/native";
 import { RNS3 } from 'react-native-aws3';
 import analytics from '@segment/analytics-react-native';
@@ -148,7 +148,7 @@ const IndProfile = ({ navigation, route }) => {
         // console.log("asd");
         if (followPerson == 'Follow') {
             // console.log('https://api.genio.app/matrix/follow/' + currentid + '/' + id)
-            var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
             var config = {
                 method: 'post',
@@ -187,7 +187,7 @@ const IndProfile = ({ navigation, route }) => {
 
         }
         else {
-            var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
             var config = {
                 method: 'post',
@@ -287,20 +287,20 @@ const IndProfile = ({ navigation, route }) => {
 
         var y = await AsyncStorage.getItem('children');
         var q = await AsyncStorage.getItem('profile');
-        q = JSON.parse(q)
-        console.log(q)
-        analytics.track('Post Reported', {
+        if (q) {
+            q = JSON.parse(q)
+        }
+        analytics.track('Profile Reported', {
             userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
         })
         var now = new Date();
         var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
         datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-
         var body = {
-            "created_by": q['id'],
-            "created_by_name": q['email'],
-            "created_by_child": children["0"]["id"],
+            "created_by": q ? q['id'] : 'nonloggedin',
+            "created_by_name": q ? q['email'] : 'nonloggedin',
+            "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
             "reported_id": route['params']['id'],
             "reported_name": route['params']['data']['name'],
             "reported_time": datetime,
@@ -321,6 +321,7 @@ const IndProfile = ({ navigation, route }) => {
                 // setLoading(false);
                 if (response.data == "success") {
                     // setShowToast(true);
+                    alert('Succesfully reported profile')
                     console.log('success')
                 }
                 else {

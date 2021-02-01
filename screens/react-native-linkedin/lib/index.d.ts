@@ -1,5 +1,5 @@
 /// <reference types="ramda" />
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from 'react'; 
 import PropTypes from 'prop-types';
 import querystring from 'query-string';
 export interface LinkedInToken {
