@@ -109,7 +109,7 @@ const SearchScreen = ({ route, navigation }) => {
                     >
                     </FastImage>
                     <View>
-                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name']}</Text>
+                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase()+joined[item]['data']['name'].substring(1)}</Text>
                     </View>
                   </View>
                   {/* <View

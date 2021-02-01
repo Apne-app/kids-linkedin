@@ -13,6 +13,7 @@ import { connect } from 'getstream';
 import { useFocusEffect } from "@react-navigation/native";
 import CompButton from '../Modules/CompButton';
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import FastImage from 'react-native-fast-image'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -124,8 +125,9 @@ const Searching = ({ route, navigation }) => {
                             deviceID: getUniqueId()
                         })
                     }}>
-                        <Image
-                            source={{ uri: item['data']['image'] }}
+                        <FastImage
+                            source={{ uri: item['data']['image'],
+                        priority:FastImage.priority.high }}
                             style={{ width: 60, height: 60, borderRadius: 306, }}
                         />
                         <View style={{ marginLeft: 20, flexDirection: 'column' }}>

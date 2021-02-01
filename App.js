@@ -261,6 +261,7 @@ const App = (props) => {
   }, []);
   // setInitialNavigationState(await getInitialState());
   const handleDynamicLink = async (link) => {
+    console.log(link)
     var pro = await AsyncStorage.getItem('profile')
     pro = JSON.parse(pro)
     if (pro) {

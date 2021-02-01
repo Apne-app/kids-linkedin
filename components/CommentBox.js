@@ -105,6 +105,7 @@ class CommentBox extends React.Component<Props, State> {
             console.log(event)
             this.postComment(event);
           }}
+          autoFocus={true}
           placeholder={t('Start Typing...')}
           returnKeyType="send"
           {...textInputProps}
