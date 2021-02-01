@@ -237,7 +237,9 @@ const LoginScreen = ({ route, navigation }) => {
   }
   return (
     <View style={styles.container}>
-      <CompHeader screen={'Login'} goback={() => {
+      <CompHeader screen={'Login'}
+       headerType={route.params.type}
+       goback={() => {
         if (navigation.canGoBack()) {
           navigation.pop()
         }

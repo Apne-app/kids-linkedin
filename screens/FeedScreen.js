@@ -412,7 +412,7 @@ const FeedScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <SafeAreaProvider style={{ display: feedstate == 0 ? 'flex' : 'none' }}>
-                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', 'type': 'feed_banner' })}><CompButton message={'Signup/Login to view posts from other kids'} back={'Home'} /></TouchableWithoutFeedback>
                 <SafeAreaView style={{ flex: 1 }} style={{ flex: 1 }} forceInset={{ top: 'always' }}>
                     <StreamApp
                         style={{ marginTop: 20 }}
@@ -659,11 +659,11 @@ const FeedScreen = ({ navigation, route }) => {
                                                         }
                                                     }
                                                     catch (err) {
-                                                        navigation.navigate('Login');
+                                                        navigation.navigate('Login', { 'type': 'feed_quiz' });
                                                     }
                                                 }
                                                 else {
-                                                    navigation.navigate('Login');
+                                                    navigation.navigate('Login', { 'type': 'feed_quiz' });
                                                 }
 
                                             }}>
@@ -859,7 +859,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                     }
                                                 }
                                                 else {
-                                                    navigation.navigate('Login');
+                                                    navigation.navigate('Login', { 'type': 'feed_news' });
                                                 }
 
                                             }}>

@@ -57,7 +57,7 @@ export default class ExampleApp extends PureComponent {
 
   componentDidMount() {
 
-
+    console.log(this.props.route.params, 'aaaaa')
     const func = async () => {
 
       var x = await AsyncStorage.getItem('children');
@@ -386,7 +386,7 @@ export default class ExampleApp extends PureComponent {
                       // setSelected(item.node.image.uri)
                       var tm = new Date();
                       tm = tm.getTime();
-                      this.props.navigation.navigate('Preview', { 'img': item.node.image.uri, 'images': this.props.route.params.images ? this.props.route.params.images : [], 'time': this.props.route.params.time ? this.props.route.params.time : tm });
+                      this.props.navigation.navigate('Preview', { 'img': item.node.image.uri, 'images': this.props.route.params.images ? this.props.route.params.images : [], 'time': this.props.route.params.time ? this.props.route.params.time : tm, "tag": this.props.route.params.tag ? this.props.route.params.tag : 'Genio' });
                       console.log(item);
                     }}>
                     <Image
@@ -481,7 +481,7 @@ export default class ExampleApp extends PureComponent {
       var tm = new Date();
       tm = tm.getTime();
       // console.log(tm);
-      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params.images ? this.props.route.params.images : [], 'time': this.props.route.params.time ? this.props.route.params.time : tm });
+      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params.images ? this.props.route.params.images : [], 'time': this.props.route.params.time ? this.props.route.params.time : tm, "tag": this.props.route.params.tag ? this.props.route.params.tag : 'Genio'  });
       // console.log(data);
 
     }

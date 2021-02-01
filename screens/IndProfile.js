@@ -349,7 +349,7 @@ const IndProfile = ({ navigation, route }) => {
                     cancelButtonIndex={2}
                     onPress={(index) => { index == 1 ? reportProfile() : null; }}
                 />
-                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login')} />
+                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                     <StreamApp
                         apiKey={'9ecz2uw6ezt9'}
@@ -407,7 +407,7 @@ const IndProfile = ({ navigation, route }) => {
                     </StreamApp>
                 </ScrollView>
             </View> : <View style={{ backgroundColor: 'white', height: height, width: width }}>
-                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login')} />
+                <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
             </View>
     );

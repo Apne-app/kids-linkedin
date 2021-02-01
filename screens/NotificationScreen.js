@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, Image, BackHandler, TextInput, RefreshControl } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, TouchableOpacity, View, ImageBackground, Image, BackHandler, TextInput, RefreshControl } from 'react-native'
 import { Icon } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -165,9 +165,9 @@ const NotificationScreen = ({ route, navigation }) => {
   }
   const notthere = () => {
     return (
-      <View style={{ backgroundColor: 'white', height: height, width: width }}>
+      <TouchableOpacity onPress={() => navigation.navigate('Login', { type: 'notifications_banner' })} style={{ backgroundColor: 'white', height: height, width: width }}>
         <CompButton message={'Signup/Login to view/receive notifications'} />
-      </View>
+      </TouchableOpacity>
     )
   }
   return (
