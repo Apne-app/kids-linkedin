@@ -287,20 +287,20 @@ const IndProfile = ({ navigation, route }) => {
 
         var y = await AsyncStorage.getItem('children');
         var q = await AsyncStorage.getItem('profile');
-        q = JSON.parse(q)
-        console.log(q)
-        analytics.track('Post Reported', {
+        if (q) {
+            q = JSON.parse(q)
+        }
+        analytics.track('Profile Reported', {
             userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
             deviceID: getUniqueId()
         })
         var now = new Date();
         var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
         datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-
         var body = {
-            "created_by": q['id'],
-            "created_by_name": q['email'],
-            "created_by_child": children["0"]["id"],
+            "created_by": q ? q['id'] : 'nonloggedin',
+            "created_by_name": q ? q['email'] : 'nonloggedin',
+            "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
             "reported_id": route['params']['id'],
             "reported_name": route['params']['data']['name'],
             "reported_time": datetime,
@@ -321,6 +321,7 @@ const IndProfile = ({ navigation, route }) => {
                 // setLoading(false);
                 if (response.data == "success") {
                     // setShowToast(true);
+                    alert('Succesfully reported profile')
                     console.log('success')
                 }
                 else {

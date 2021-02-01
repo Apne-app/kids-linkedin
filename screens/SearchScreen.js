@@ -12,6 +12,7 @@ import CompButton from '../Modules/CompButton'
 import { useFocusEffect } from "@react-navigation/native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import FastImage from 'react-native-fast-image'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -98,14 +99,15 @@ const SearchScreen = ({ route, navigation }) => {
                   <View
                     key={item.id}
                     style={{ flex: 1, }}>
-                    <ImageBackground
+                    <FastImage
                       style={styles.image}
                       imageStyle={{ borderRadius: 100000 }}
                       source={{
                         uri: joined[item]['data']['image'],
+                        priority: FastImage.priority.high
                       }}
                     >
-                    </ImageBackground>
+                    </FastImage>
                     <View>
                       <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name']}</Text>
                     </View>
@@ -145,7 +147,7 @@ const SearchScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Search' })}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>
         <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
           <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
-            <Image source={require('../assets/search.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+            <FastImage source={require('../assets/search.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
           </View>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile' })}>
@@ -157,7 +159,7 @@ const SearchScreen = ({ route, navigation }) => {
   const loading = () => {
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
-        <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
+        <FastImage source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
       </View>
     );
   }

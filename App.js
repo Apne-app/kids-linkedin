@@ -374,6 +374,7 @@ const App = (props) => {
                 })
               })
               .then(async (response) => {
+                console.log(resopnse.data)
                 setchildren(response.data)
                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
               })

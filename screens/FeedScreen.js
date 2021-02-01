@@ -147,51 +147,7 @@ const FeedScreen = ({ navigation, route }) => {
 
     //     return unsubscribe;
     // }, [navigation]);
-    const report = async (x) => {
-
-        // console.log(children);
-        var y = await AsyncStorage.getItem('children');
-        var q = await AsyncStorage.getItem('profile');
-        q = JSON.parse(q)
-        console.log(q)
-        analytics.track('Post Reported', {
-            userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
-            deviceID: getUniqueId()
-        })
-        var now = new Date();
-        var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
-        datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-
-        var body = {
-            "created_by": q['id'],
-            "created_by_name": q['email'],
-            "created_by_child": children["0"]["id"],
-            "post_data": JSON.stringify(x),
-            "reported_time": datetime,
-        }
-        var config = {
-            method: 'post',
-            url: 'https://api.genio.app/the-office/report',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: body
-        };
-        axios(config)
-            .then(function (response) {
-                // console.log(JSON.stringify(response.data));
-                // setLoading(false);
-                if (response.data == "success") {
-                    setShowToast(true);
-                }
-                console.log(response.data)
-            })
-            .catch(function (error) {
-                alert(error);
-                // setLoading(false)
-            });
-
-    }
+   
 
     const renderLikes = (props) => {
         if (type === 'like') {
