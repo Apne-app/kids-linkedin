@@ -480,6 +480,28 @@ const Upload = ({ route, navigation }) => {
     }
   }
 
+  // const updateLocalTag = () => {
+
+  //   const albumPath = `${pathDir}/Images/${tme}`;
+
+  //   const fileName = route.params.tag ? `${route.params.tag}_${}` : `Genio_${tm}-${i}.png`;
+  //   const filePathInCache = item.uri;
+  //   const filePathInAlbum = `${albumPath}/${fileName}`;
+  //   // console.log( "aaaa ", fileName, filePathInCache, filePathInAlbum);
+  //   return RNFS.mkdir(albumPath)
+  //     .then(() => {
+  //       RNFS.copyFile(filePathInCache, filePathInAlbum)
+  //         .then(() => {
+  //           uploadToS3(tm, fileName, filePathInAlbum);
+  //           console.log("Dir Made");
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.log('Could not create dir', error);
+  //     });
+
+  // }
+
   const deleteSingleImage = async (item) => {
     RNFS.unlink(item)
       .then(() => {
@@ -728,6 +750,7 @@ const Upload = ({ route, navigation }) => {
               axios.get(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
               .then(res => console.log(res.data))
               .catch(err => console.log("error: ", err))
+              updateLocalTag();
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
 
             }}
