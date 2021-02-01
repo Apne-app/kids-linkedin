@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from 'react';
+import * as React from 'react'; 
 import stream from 'getstream';
 
 import StreamAnalytics from 'stream-analytics';

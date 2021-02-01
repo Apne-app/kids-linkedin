@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; 
 import { TouchableOpacity, View, ViewPropTypes, Text, Modal, StyleSheet, Image, } from 'react-native';
 import { WebView } from 'react-native-webview';
 import PropTypes from 'prop-types';

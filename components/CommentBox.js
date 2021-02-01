@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React from 'react';
+import React from 'react'; 
 import { View, TextInput, Text, ScrollView } from 'react-native';
 import KeyboardAccessory from 'react-native-sticky-keyboard-accessory';
 import { Avatar } from 'react-native-activity-feed';
@@ -8,6 +8,7 @@ import { NativeSyntheticEvent } from 'react-native';
 import type { StyleSheetLike, ActivityData } from '../types';
 import type { Props as AvatarProps } from 'react-native-activity-feed';
 import type { Streami18Ctx } from '../Context/StreamApp';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { buildStylesheet } from '../styles';
 import { withTranslationContext } from '../Context';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';

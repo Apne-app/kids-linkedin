@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component } from 'react';
+import React, { Component } from 'react'; 
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button } from 'native-base';
 var height = Dimensions.get('screen').height;

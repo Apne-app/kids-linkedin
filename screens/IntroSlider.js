@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React from 'react';
+import React from 'react'; 
 import { View, SafeAreaView, Text, Image, StyleSheet, TouchableOpacity, StatusBar, Dimensions } from 'react-native';
 // import Icon from 'react-native-vector-icons/Ionicons';
 import { Icon, Button } from 'native-base'

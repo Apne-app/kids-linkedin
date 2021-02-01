@@ -1,11 +1,12 @@
 // @flow
 
-import React from 'react';
+import React from 'react'; 
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CoverImage from './CoverImage';
 import { Avatar, UploadImage } from 'react-native-activity-feed';
 import FormField from './FormField';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { StreamApp } from 'react-native-activity-feed';
 import type { UserData, StreamAppCtx } from '../types';
 

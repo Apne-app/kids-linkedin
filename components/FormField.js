@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; 
 import { View, TextInput, Text } from 'react-native';
 
 const FormField = ({ label, value, multiline, onChangeText }) => {

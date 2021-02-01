@@ -1,5 +1,5 @@
 
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef} from 'react'; 
 import { ScrollView, StatusBar, Switch,BackHandler, StyleSheet, View, Image, TextInput, ImageBackground, Dimensions, FlatList, Text, TouchableOpacity} from 'react-native';
 import {CropView} from 'react-native-image-crop-tools';
 import AsyncStorage from '@react-native-community/async-storage';

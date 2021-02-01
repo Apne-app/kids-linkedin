@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react'; 
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
@@ -9,8 +9,8 @@ import Share from 'react-native-share';
 import { Animated, ScrollView, TouchableWithoutFeedback, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
-import { SECRET_KEY, ACCESS_KEY } from '@env'
 import RNImageToPdf from 'react-native-image-to-pdf';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { enableScreens } from 'react-native-screens';
 import { Chip } from 'react-native-paper';
 import { Snackbar } from 'react-native-paper';
@@ -480,6 +480,28 @@ const Upload = ({ route, navigation }) => {
     }
   }
 
+  // const updateLocalTag = () => {
+
+  //   const albumPath = `${pathDir}/Images/${tme}`;
+
+  //   const fileName = route.params.tag ? `${route.params.tag}_${}` : `Genio_${tm}-${i}.png`;
+  //   const filePathInCache = item.uri;
+  //   const filePathInAlbum = `${albumPath}/${fileName}`;
+  //   // console.log( "aaaa ", fileName, filePathInCache, filePathInAlbum);
+  //   return RNFS.mkdir(albumPath)
+  //     .then(() => {
+  //       RNFS.copyFile(filePathInCache, filePathInAlbum)
+  //         .then(() => {
+  //           uploadToS3(tm, fileName, filePathInAlbum);
+  //           console.log("Dir Made");
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.log('Could not create dir', error);
+  //     });
+
+  // }
+
   const deleteSingleImage = async (item) => {
     RNFS.unlink(item)
       .then(() => {
@@ -728,6 +750,7 @@ const Upload = ({ route, navigation }) => {
               axios.get(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
               .then(res => console.log(res.data))
               .catch(err => console.log("error: ", err))
+              updateLocalTag();
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
 
             }}

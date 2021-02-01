@@ -1,9 +1,10 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react'; 
 import { SafeAreaView, Text, StyleSheet, Dimensions, TouchableOpacity, View, ImageBackground, Image, BackHandler, TextInput, RefreshControl } from 'react-native'
 import { Icon } from 'native-base';
 import axios from 'axios';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import AsyncStorage from '@react-native-community/async-storage';
 import CompHeader from '../Modules/CompHeader';
 import CompButton from '../Modules/CompButton'

@@ -187,7 +187,7 @@ const FileScreen = (props) => {
                             var res = await RNFS.readDir(result[i]['path']);
                             if(s.includes(res[0]['name'].split('_')[1].split('-')[0]+'-'+res.length))
                             {
-                                console.log('asdas');
+                                // console.log('asdas');
                                 i++;
                                 continue;
                             }

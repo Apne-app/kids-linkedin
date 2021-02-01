@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; 
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -8,7 +8,7 @@ import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
 import axios from 'axios';
-import { SECRET_KEY, ACCESS_KEY } from '@env';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { useFocusEffect } from "@react-navigation/native";
 import { RNS3 } from 'react-native-aws3';
 import analytics from '@segment/analytics-react-native';
@@ -148,7 +148,7 @@ const IndProfile = ({ navigation, route }) => {
         // console.log("asd");
         if (followPerson == 'Follow') {
             // console.log('https://api.genio.app/matrix/follow/' + currentid + '/' + id)
-            var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
             var config = {
                 method: 'post',
@@ -187,7 +187,7 @@ const IndProfile = ({ navigation, route }) => {
 
         }
         else {
-            var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
             var config = {
                 method: 'post',

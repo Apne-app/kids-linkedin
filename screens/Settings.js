@@ -6,6 +6,7 @@ import { Switch } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Body, Title, Right, Textarea } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import email from 'react-native-email'
 import analytics from '@segment/analytics-react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -182,7 +183,7 @@ const Settings = ({ navigation, route }) => {
         pro = JSON.parse(pro)
         child = JSON.parse(child)[0]
         var data = JSON.stringify({ "cid": child.id, "change": "name", "name": newname.toLowerCase(), "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
-        var data1 = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+        var data1 = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
         var token = '';
         var config1 = {
             method: 'post',

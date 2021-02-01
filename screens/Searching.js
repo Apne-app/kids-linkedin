@@ -1,12 +1,13 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react'; 
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image, TouchableOpacity, FlatList } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
 import axios from 'axios';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { connect } from 'getstream';
@@ -61,7 +62,7 @@ const Searching = ({ route, navigation }) => {
         }, []));
     useEffect(() => {
 
-        var data = JSON.stringify({ "username": "Shashwat", "password": "GenioKaPassword" });
+        var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
 
         var config = {
             method: 'post',
