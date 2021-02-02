@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useRef, useState } from 'react'; 
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StatusBar, Image, TouchableOpacity } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
@@ -193,10 +193,10 @@ const App = (props) => {
       }
 
       axios.get('https://api.genio.app/get-out/loginheaders/')
-      .then(loginheaders => {
-        loginheaders = loginheaders.data;
-        AsyncStorage.setItem('loginheaders', JSON.stringify(loginheaders));
-      })
+        .then(loginheaders => {
+          loginheaders = loginheaders.data;
+          AsyncStorage.setItem('loginheaders', JSON.stringify(loginheaders));
+        })
 
       setnotifications(response2.data)
       setjoined(response1.data)
@@ -234,43 +234,15 @@ const App = (props) => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
+        console.log(link)
         var pro = await AsyncStorage.getItem('profile')
-        pro = JSON.parse(pro)
         if (pro) {
+          pro = JSON.parse(pro)
           if (link.url.includes(pro.uuid)) {
             containerRef.current?.navigate('Verified')
             setinit('Verified')
           }
-          else {
-            if (link.url.includes('verify')) {
-              containerRef.current?.navigate('Unverified')
-            }
-            if (link.url.includes('post')) {
-              console.log(link)
-              containerRef.current?.navigate('Home')
-            }
-          }
         }
-        else {
-          // containerRef.current?.navigate('Login', { screen: 'Home' })
-        }
-      })
-      .catch(() => {
-        // console.log('do nothing')
-      }
-      )
-  }, []);
-  // setInitialNavigationState(await getInitialState());
-  const handleDynamicLink = async (link) => {
-    console.log(link)
-    var pro = await AsyncStorage.getItem('profile')
-    pro = JSON.parse(pro)
-    if (pro) {
-      if (link.url.includes(pro.uuid)) {
-        containerRef.current?.navigate('Verified')
-        setinit('Verified')
-      }
-      else {
         if (link.url.includes('verify')) {
           containerRef.current?.navigate('Unverified')
         }
@@ -296,9 +268,9 @@ const App = (props) => {
               .then((data) => {
                 console.log(data)
                 containerRef.current?.navigate('SinglePost', {
-                  id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: {
+                  id: children['0']['id'], name: children['0']['data']['name'], image: children['0']['data']['image'], activity: {
                     activity: data['results'][0], onAddReaction: addreaction
-                  }, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'
+                  }, token: children['0']['data']['gsToken']
                 })
               })
               .catch((data) => {
@@ -307,13 +279,117 @@ const App = (props) => {
               })
           }
           else {
-            containerRef.current?.navigate('Child')
+            const client = connect('9ecz2uw6ezt9', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', '96078');
+            var user = client.feed('timeline', 'admin', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM');
+            var id = link.url
+            const addreaction = (kind, activity, data, options) => {
+              client.reactions.add(
+                kind,
+                activity,
+                data,
+                options,
+              )
+            }
+            id = id.replace('https://link.genio.app/post?id=', '')
+            user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
+              .then((data) => {
+                console.log(data)
+                containerRef.current?.navigate('SinglePost', {
+                  id: 'admin', name: 'npne', image: 'none', activity: {
+                    activity: data['results'][0], onAddReaction: addreaction
+                  }, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'
+                })
+              })
+              .catch((data) => {
+                console.log(data)
+                containerRef.current?.navigate('Home')
+              })
           }
         }
+      })
+      .catch(() => {
+        // console.log('do nothing')
+      }
+      )
+  }, []);
+  // setInitialNavigationState(await getInitialState());
+  const handleDynamicLink = async (link) => {
+    console.log(link)
+    var pro = await AsyncStorage.getItem('profile')
+    if (pro) {
+      pro = JSON.parse(pro)
+      if (link.url.includes(pro.uuid)) {
+        containerRef.current?.navigate('Verified')
+        setinit('Verified')
       }
     }
-    else {
-      containerRef.current?.navigate('Login', { screen: 'Home' })
+    if (link.url.includes('verify')) {
+      containerRef.current?.navigate('Unverified')
+    }
+    if (link.url.includes('post')) {
+      var child = await AsyncStorage.getItem('children')
+      if (child) {
+        try {
+          var children = JSON.parse(child)
+          child = JSON.parse(child)
+          var status = await AsyncStorage.getItem('status');
+          const client = connect('9ecz2uw6ezt9', child['0']['data']['gsToken'], '96078');
+          var user = client.feed('timeline', child['0']['id'] + 'id', child['0']['data']['gsToken']);
+          var id = link.url
+          const addreaction = (kind, activity, data, options) => {
+            client.reactions.add(
+              kind,
+              activity,
+              data,
+              options,
+            )
+          }
+          id = id.replace('https://link.genio.app/post?id=', '')
+          user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
+            .then((data) => {
+              console.log(data)
+              containerRef.current?.navigate('SinglePost', {
+                id: children['0']['id'], name: children['0']['data']['name'], image: children['0']['data']['image'], activity: {
+                  activity: data['results'][0], onAddReaction: addreaction
+                }, token: children['0']['data']['gsToken']
+              })
+            })
+            .catch((data) => {
+              console.log(data)
+              containerRef.current?.navigate('Home')
+            })
+        }
+        catch (error) {
+          console.log(error)
+        }
+      }
+      else {
+        const client = connect('9ecz2uw6ezt9', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', '96078');
+        var user = client.feed('timeline', 'admin', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM');
+        var id = link.url
+        const addreaction = (kind, activity, data, options) => {
+          client.reactions.add(
+            kind,
+            activity,
+            data,
+            options,
+          )
+        }
+        id = id.replace('https://link.genio.app/post?id=', '')
+        user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
+          .then((data) => {
+            console.log(data)
+            containerRef.current?.navigate('SinglePost', {
+              id: 'admin', name: 'npne', image: 'none', activity: {
+                activity: data['results'][0], onAddReaction: addreaction
+              }, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'
+            })
+          })
+          .catch((data) => {
+            console.log(data)
+            containerRef.current?.navigate('Home')
+          })
+      }
     }
   };
   StatusBar.setBackgroundColor('#1A71EB')
@@ -352,7 +428,7 @@ const App = (props) => {
       if (st == '3') {
         var pro = await AsyncStorage.getItem('profile')
         var ch = await AsyncStorage.getItem('children');
-        if(ch) {
+        if (ch) {
           setchildren(JSON.parse(ch));
         }
         else {
@@ -368,30 +444,30 @@ const App = (props) => {
               },
               data: data
             };
-            
+
             axios(config)
-            .then(function (response) {
-              // console.log(JSON.stringify(response.data.token));
-              axios({
-                method: 'post',
-                url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                data: JSON.stringify({
-                  "email": pro.email,
+              .then(function (response) {
+                // console.log(JSON.stringify(response.data.token));
+                axios({
+                  method: 'post',
+                  url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  data: JSON.stringify({
+                    "email": pro.email,
+                  })
                 })
+                  .then(async (response) => {
+                    console.log(resopnse.data)
+                    setchildren(response.data)
+                    await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                  })
+                  .catch((error) => {
+                  })
               })
-              .then(async (response) => {
-                console.log(resopnse.data)
-                setchildren(response.data)
-                await AsyncStorage.setItem('children', JSON.stringify(response.data))
-              })
-              .catch((error) => {
-              })
-            })
-            .catch(function (error) {
-            });
+              .catch(function (error) {
+              });
           }
         }
       }

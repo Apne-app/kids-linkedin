@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useRef, useState, useEffect, useMemo } from 'react'; 
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { StreamApp, FlatFeed, Activity, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
@@ -140,6 +140,16 @@ const SinglePostScreen = ({ navigation, route }) => {
                         });
                     }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
                 </View>
+                <FlatList data={comments} renderItem={({ item }) => {
+                    return (
+                        <View style={{ flexDirection: 'row', padding: 10 }}>
+                            <Image source={{ uri: item.user.data.profileImage }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                            <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                                {item.data.text}
+                            </Text>
+                        </View>
+                    )
+                }} />
             </View>)
         }
         const [visible, setIsVisible] = React.useState(false);
@@ -253,7 +263,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 token={route.params.token}
             >
                 <CustomActivity props={route.params.activity} status={status} children={children} navigation={navigation} route={route} />
-                {status === '3' ? 1 ? <CompButton message={'Your profile is currently under review, and hyou have been temporarily banned from commenting'} back={'Home'} /> : <CommentBox
+                {status === '3' ? 0 ? <CompButton message={'You have been temporarily banned from commenting'} back={'Home'} /> : <CommentBox
                     key={'1'}
                     textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
                     activity={route.params.activity.activity}

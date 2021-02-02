@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useRef, useState, useEffect } from 'react'; 
+import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, TouchableOpacity, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -12,6 +12,7 @@ import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
 import axios from 'axios';
+import { connect } from 'getstream';
 import * as rssParser from 'react-native-rss-parser';
 import { useFocusEffect } from "@react-navigation/native";
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -36,48 +37,118 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
+    const deletepost = (id1) => {
+        Alert.alert("Alert", "Are you sure you want to delete the post? The action cannot be reversed", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            {
+                text: "YES", onPress: () => {
+                    const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
+                    var user = client.feed('user', children['0']['id'] + 'id');
+                    user.removeActivity(id1).then(() => {
+                    }).catch(() => {
+                        alert(
+                            "There was an error deleting your post, please try again later."
+                        )
+                    })
+                }
+            }
+        ]);
+    }
     const report = async (x) => {
         // console.log(children);
-        var y = await AsyncStorage.getItem('children');
-        var q = await AsyncStorage.getItem('profile');
-        if (q) {
-            q = JSON.parse(q)
-        }
-        analytics.track('Post Reported', {
-            userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
-            deviceID: getUniqueId()
-        })
-        var now = new Date();
-        var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
-        datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
-        var body = {
-            "created_by": q ? q['id'] : 'nonloggedin',
-            "created_by_name": q ? q['email'] : 'nonloggedin',
-            "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
-            "post_data": JSON.stringify(x),
-            "reported_time": datetime,
-        }
-        var config = {
-            method: 'post',
-            url: 'https://api.genio.app/the-office/report',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: body
-        };
-        axios(config)
-            .then(function (response) {
-                // console.log(JSON.stringify(response.data));
-                // setLoading(false);
-                if (response.data == "success") {
-                    alert('Succesfully reported post');
+        if (children) {
+            if (props.activity.actor.id == children['0']['id'] + 'id') {
+                deletepost(props.activity.id)
+            }
+            else {
+                var y = await AsyncStorage.getItem('children');
+                var q = await AsyncStorage.getItem('profile');
+                if (q) {
+                    q = JSON.parse(q)
                 }
-                console.log(response.data)
+                analytics.track('Post Reported', {
+                    userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+                    deviceID: getUniqueId()
+                })
+                var now = new Date();
+                var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+                datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+                var body = {
+                    "created_by": q ? q['id'] : 'nonloggedin',
+                    "created_by_name": q ? q['email'] : 'nonloggedin',
+                    "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
+                    "post_data": JSON.stringify(x),
+                    "reported_time": datetime,
+                }
+                var config = {
+                    method: 'post',
+                    url: 'https://api.genio.app/the-office/report',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: body
+                };
+                axios(config)
+                    .then(function (response) {
+                        // console.log(JSON.stringify(response.data));
+                        // setLoading(false);
+                        if (response.data == "success") {
+                            alert('Succesfully reported post');
+                        }
+                        console.log(response.data)
+                    })
+                    .catch(function (error) {
+                        alert(error);
+                        // setLoading(false)
+                    });
+            }
+        }
+        else {
+            var y = await AsyncStorage.getItem('children');
+            var q = await AsyncStorage.getItem('profile');
+            if (q) {
+                q = JSON.parse(q)
+            }
+            analytics.track('Post Reported', {
+                userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+                deviceID: getUniqueId()
             })
-            .catch(function (error) {
-                alert(error);
-                // setLoading(false)
-            });
+            var now = new Date();
+            var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+            datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+            var body = {
+                "created_by": q ? q['id'] : 'nonloggedin',
+                "created_by_name": q ? q['email'] : 'nonloggedin',
+                "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
+                "post_data": JSON.stringify(x),
+                "reported_time": datetime,
+            }
+            var config = {
+                method: 'post',
+                url: 'https://api.genio.app/the-office/report',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: body
+            };
+            axios(config)
+                .then(function (response) {
+                    // console.log(JSON.stringify(response.data));
+                    // setLoading(false);
+                    if (response.data == "success") {
+                        alert('Succesfully reported post');
+                    }
+                    console.log(response.data)
+                })
+                .catch(function (error) {
+                    alert(error);
+                    // setLoading(false)
+                });
+        }
 
     }
     const onShare = async (message) => {
@@ -158,6 +229,19 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
         </View>)
     }
     var images = []
+    var options = [<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>]
+    if (children) {
+        if (props.activity.actor.id == children['0']['id'] + 'id') {
+            options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Delete Post</Text>)
+        }
+        else {
+            options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>)
+        }
+    }
+    else {
+        options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>)
+    }
+    options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
     props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
     if (props.activity.status && props.activity.status === 'inreview') {
         return null
@@ -187,7 +271,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                                 useNativeDriver={true}
                                 ref={refActionSheet}
                                 styles={{ borderRadius: 0, margin: 10 }}
-                                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                                options={options}
                                 cancelButtonIndex={2}
                                 onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
                             />

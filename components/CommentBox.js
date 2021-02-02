@@ -103,15 +103,14 @@ class CommentBox extends React.Component<Props, State> {
           onChangeText={(text) => { this.setState({ text }) }}
           onSubmitEditing={(event) => {
             this.setState({ text: '' });
-            console.log(event)
-            this.postComment(event);
+            this.state.text?this.postComment(event):null
           }}
           autoFocus={true}
           placeholder={t('Start Typing...')}
           returnKeyType="send"
           {...textInputProps}
         />
-        <TouchableWithoutFeedback onPress={() => {
+        <TouchableWithoutFeedback style={{display:this.state.text?'flex':'none'}} onPress={() => {
           this.postComment2(this.state.text);
           this.setState({ text: '' });
         }}>

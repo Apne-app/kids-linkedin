@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useState, useRef } from 'react'; 
+import React, { useEffect, useState, useRef } from 'react';
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -286,6 +286,7 @@ const ProfileScreen = ({ navigation, route }) => {
             var children = route.params.children
             if (children != null) {
                 children = children['0']
+                console.log(children['data']['image'])
                 setsource(children['data']['image'])
             }
             // console.log(follows)
@@ -489,7 +490,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 ref={refActionSheet}
                 title={<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Change Profile Photo</Text>}
                 styles={{ borderRadius: 10, margin: 10 }}
-                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Take Photo</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                 cancelButtonIndex={2}
                 onPress={(index) => { index == 0 ? pickImage('gallery') : index == 1 ? pickImage('camera') : null }}
             />
@@ -520,7 +521,7 @@ const ProfileScreen = ({ navigation, route }) => {
             }).then(image => {
                 const file = {
                     uri: image.path,
-                    name: children['0']['data']['gsToken'] + '.png',
+                    name: children['0']['id'] + '.png',
                     type: "image/png",
                 }
 
@@ -574,7 +575,7 @@ const ProfileScreen = ({ navigation, route }) => {
             }).then(image => {
                 const file = {
                     uri: image.path,
-                    name: children['0']['data']['gsToken'] + '.png',
+                    name: children['0']['id'] + '.png',
                     type: "image/png",
                 }
 
@@ -593,9 +594,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     }
                     else {
                         var child = children['0']
-                        console.log(child.data.gsToken)
                         var data = JSON.stringify({ "cid": child.id, "change": "image", "name": child.data.name, "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
-
                         var config = {
                             method: 'post',
                             url: `https://api.genio.app/matrix/update_child/?token=${token}`,
