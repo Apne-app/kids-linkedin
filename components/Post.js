@@ -218,14 +218,18 @@ const Upload = ({ route, navigation }) => {
           x = null
         }
         analytics.screen('Post Screen', {
-          userID: x ? x["0"]["data"]["gsToken"] : null,
+          userID: x ? x["0"]["id"] : null,
           deviceID: getUniqueId()
         })
       }
-      analytics.screen('Post Screen', {
-        userID:  null,
-        deviceID: getUniqueId()
-      })
+      else
+      {
+
+        analytics.screen('Post Screen', {
+          userID:  null,
+          deviceID: getUniqueId()
+        })
+      }
     }
     sevent();
     const backAction = async () => {
@@ -456,7 +460,7 @@ const Upload = ({ route, navigation }) => {
           width: 900,
           height: Math.round(height / width * 900),
         },
-        quality: .7, // optional compression paramter
+        quality: .9, // optional compression paramter
       };
       const pdf = await RNImageToPdf.createPDFbyImages(options);
 
@@ -471,7 +475,7 @@ const Upload = ({ route, navigation }) => {
       }
 
 
-      console.log(pdf.filePath);
+      // console.log(pdf.filePath);
       alert('PDF Saved');
       sheetRef.current.snapTo(1)
     } catch (e) {
@@ -610,7 +614,7 @@ const Upload = ({ route, navigation }) => {
     setDeleteCount(0);
     var x = await AsyncStorage.getItem('children');
     analytics.track('Delete Images', {
-      userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+      userID: x ? JSON.parse(x)["0"]["id"] : null,
       deviceID: getUniqueId()
     })
     setSelecting(true);
@@ -683,7 +687,7 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('PDF Saved', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               myAsyncPDFFunction()
@@ -722,7 +726,7 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Did not save collection', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               deleteImages();
@@ -742,7 +746,7 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Collection Saved', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               x = JSON.parse(x)["0"]["data"]["gsToken"];
@@ -750,7 +754,6 @@ const Upload = ({ route, navigation }) => {
               axios.get(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
               .then(res => console.log(res.data))
               .catch(err => console.log("error: ", err))
-              updateLocalTag();
               saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
 
             }}
@@ -1048,6 +1051,11 @@ const Upload = ({ route, navigation }) => {
             renderItem={({ item, i }) => (
               <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB", fontFamily: 'NunitoSans-Regular' }} onPress={async () =>{
                 backButtonChange();
+                var x = await AsyncStorage.getItem('children');
+                analytics.track('CollectionTagSelected', {
+                  userID: x ? JSON.parse(x)["0"]["id"] : null,
+                  deviceID: getUniqueId()
+                })
                 selectedTag == item ? setTag('Genio') : setTag(item)} 
               } 
               >
@@ -1065,7 +1073,7 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Collection Shared', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               shareImage();

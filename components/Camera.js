@@ -69,7 +69,7 @@ export default class ExampleApp extends PureComponent {
           x = null
         }
         analytics.screen('Camera Screen', {
-          userID: x ? x["0"]["data"]["gsToken"] : null,
+          userID: x ? x["0"]["id"] : null,
           deviceID: getUniqueId()
         })
       }
@@ -409,7 +409,7 @@ export default class ExampleApp extends PureComponent {
             <TouchableOpacity onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Navigation from camera to Gallery', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] })
@@ -430,7 +430,7 @@ export default class ExampleApp extends PureComponent {
             <TouchableOpacity onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Navigation from camera to Collections', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
 
@@ -472,7 +472,7 @@ export default class ExampleApp extends PureComponent {
     // console.log(this.state.gallery);
     var x = await AsyncStorage.getItem('children');
     analytics.track('Image Taken', {
-      userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+      userID: x ? JSON.parse(x)["0"]["id"] : null,
       deviceID: getUniqueId()
     })
     this.setState({ ...this.state, imagetaken: true });
@@ -500,7 +500,6 @@ export default class ExampleApp extends PureComponent {
   }
 
   changeFlash = async () => {
-    console.log("asd");
     if (this.camera) {
       this.setState({
         ...this.state,

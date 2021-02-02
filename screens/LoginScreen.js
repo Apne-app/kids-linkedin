@@ -95,6 +95,12 @@ const LoginScreen = ({ route, navigation }) => {
   const input = useRef(null)
   useEffect(() => {
 
+    axios.get('https://api.genio.app/get-out/loginheaders/')
+    .then(loginheaders => {
+      loginheaders = loginheaders.data;
+      AsyncStorage.setItem('loginheaders', JSON.stringify(loginheaders));
+    })
+
     const analyse = async () => {
       analytics.screen('Login Screen', {
         userID: null,

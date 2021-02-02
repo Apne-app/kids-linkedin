@@ -75,6 +75,27 @@ const SinglePostScreen = ({ navigation, route }) => {
     };
     var year = parseInt(d.getFullYear());
     useEffect(() => {
+        const analyse = async () => {
+            var x = await AsyncStorage.getItem('children');
+            if (x) {
+                x = JSON.parse(x)
+                if (Object.keys(x).length == 0) {
+                    await AsyncStorage.removeItem('children');
+                    x = null
+                }
+                analytics.screen('SinglePostScreen', {
+                    userID: x ? x["0"]["id"] : null,
+                    deviceID: getUniqueId()
+                })
+            }
+            else {
+                analytics.screen('SinglePostScreen', {
+                    userID: null,
+                    deviceID: getUniqueId()
+                })
+            }
+        }
+        analyse();
         if (route.params.activity.activity.own_reactions.comment) {
             setcomments(route.params.activity.activity.own_reactions.comment)
         }
@@ -127,8 +148,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                         width={-80}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
-                            analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                            analytics.track('CommentIconPressed', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             });
                         }}

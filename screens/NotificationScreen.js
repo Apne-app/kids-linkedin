@@ -44,7 +44,7 @@ const NotificationScreen = ({ route, navigation }) => {
           x = null
         }
         analytics.screen('Notifications Screen', {
-          userID: x ? x["0"]["data"]["gsToken"] : null,
+          userID: x ? JSON.parse(x)["0"]["id"] : null,
           deviceID: getUniqueId()
         })
       }

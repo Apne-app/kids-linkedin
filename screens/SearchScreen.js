@@ -46,7 +46,7 @@ const theme = {
 
 const SearchScreen = ({ route, navigation }) => {
   const joined = route.params.joined
-  console.log(route.params)
+  // console.log(route.params)
   const children = route.params.children
   const status = route.params.status
   useEffect(() => {
@@ -94,9 +94,17 @@ const SearchScreen = ({ route, navigation }) => {
           <FlatList
             data={Object.keys(joined)}
             renderItem={({ item }) => {
-              console.log(joined[item]['id'])
+              // console.log(joined[item]['id'])
               return (
-                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={() => navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })}>
+                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={async () => {
+                  var x = await AsyncStorage.getItem('children');
+                  analytics.track('ProfileOpenedFromRecentlyJoined', {
+                      userID: x ? JSON.parse(x)["0"]["id"] : null,
+                      deviceID: getUniqueId()
+                  });
+                  navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })}
+                }
+                >
                   <View
                     key={item.id}
                     style={{ flex: 1, }}>
@@ -142,7 +150,7 @@ const SearchScreen = ({ route, navigation }) => {
     );
   }
   const notthere = () => {
-    console.log(children, status)
+    // console.log(children, status)
     return (
       <View style={{ backgroundColor: 'white', height: height, width: width }}>
         <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Search', type: 'search_banner' })}><CompButton message={'Signup/Login to find other kids'} /></TouchableOpacity>

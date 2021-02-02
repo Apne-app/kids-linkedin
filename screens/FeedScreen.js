@@ -128,7 +128,7 @@ const FeedScreen = ({ navigation, route }) => {
                     x = null
                 }
                 analytics.screen('Feed Screen', {
-                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    userID: x ? x["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
             }
@@ -473,7 +473,24 @@ const FeedScreen = ({ navigation, route }) => {
                     renderItem={({ item, index }) => (
                         <TouchableOpacity
                             key={item}
-                            onPress={() => {
+                            onPress={async () => {
+                                var x = await AsyncStorage.getItem('children');
+                                item[0] == 'Feed' ?
+                                analytics.track('FeedSwitchedtoPosts', {
+                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                    deviceID: getUniqueId()
+                                })
+                                :
+                                item[0] == 'Quiz' ?
+                                analytics.track('FeedSwitchedtoQuiz', {
+                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                    deviceID: getUniqueId()
+                                })
+                                :
+                                analytics.track('FeedSwitchedtoNews', {
+                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                    deviceID: getUniqueId()
+                                });
                                 setTimeout(() => {
                                     item[0] == 'Feed' ? setFeedState(0) : item[0] == 'Quiz' ? setFeedState(1) : setFeedState(2);
                                 }, 150);

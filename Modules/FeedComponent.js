@@ -71,7 +71,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                     q = JSON.parse(q)
                 }
                 analytics.track('Post Reported', {
-                    userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+                    userID: y ? JSON.parse(y)["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
                 var now = new Date();
@@ -114,7 +114,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                 q = JSON.parse(q)
             }
             analytics.track('Post Reported', {
-                userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+                userID: y ? JSON.parse(y)["0"]["id"] : null,
                 deviceID: getUniqueId()
             })
             var now = new Date();
@@ -152,6 +152,11 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
 
     }
     const onShare = async (message) => {
+        var x = await AsyncStorage.getItem('children');
+        analytics.track('SharePost', {
+            userID: x ? JSON.parse(x)["0"]["id"] : null,
+            deviceID: getUniqueId()
+        })
         try {
             const result = await Share.share({
                 message:
@@ -212,14 +217,19 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                     width={-80}
                     onPress={async () => {
                         var x = await AsyncStorage.getItem('children');
-                        analytics.track('Comment', {
-                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                        analytics.track('CommentIconPressed', {
+                            userID: x ? JSON.parse(x)["0"]["id"] : null,
                             deviceID: getUniqueId()
                         });
                         navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
                     }}
                 />
-                <Icon onPress={() => {
+                <Icon onPress={async () => {
+                    var x = await AsyncStorage.getItem('children');
+                    analytics.track('WhatsappShare', {
+                        userID: x ? JSON.parse(x)["0"]["id"] : null,
+                        deviceID: getUniqueId()
+                    });
                     Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + data.activity.id).then((data) => {
                     }).catch(() => {
                         alert('Please make sure Whatsapp is installed on your device');

@@ -230,7 +230,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     x = null
                 }
                 analytics.screen('Profile Screen', {
-                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    userID: x ? x["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
             }
@@ -454,11 +454,11 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         </View>*/}
                     </View>
-                    <TouchableOpacity
+                    {/*<TouchableOpacity
                         onPress={async () => {
                             var x = route.params.children;
                             analytics.track('Opened website', {
-                                userID: x ? x["0"]["data"]["gsToken"] : null,
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             })
                             navigation.navigate('Browser', { url: "https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'], heading: 'Website' })
@@ -471,7 +471,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: 'white', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>*/}
                     <View style={{ marginBottom: 400 }}>
                         <FlatFeed feedGroup="user" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ withOwnReactions: true }} />
                     </View>
