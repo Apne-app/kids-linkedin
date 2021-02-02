@@ -51,6 +51,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
     const status = route.params.status
+    console.log(status)
     const children = route.params.children
     var d = new Date();
     const onShare = async (message) => {
@@ -243,7 +244,6 @@ const SinglePostScreen = ({ navigation, route }) => {
             </ScrollView>
         );
     };
-    console.log(children['0']['data']['status'])
     return (
         <View style={styles.container}>
             <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
@@ -253,7 +253,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 token={route.params.token}
             >
                 <CustomActivity props={route.params.activity} status={status} children={children} navigation={navigation} route={route} />
-                {status === '3' ? children['0']['data']['status'] === 'inreview' ? <CompButton message={'Your profile is currently under review, and hyou have been temporarily banned from commenting'} back={'Home'} /> : <CommentBox
+                {status === '3' ? 1 ? <CompButton message={'Your profile is currently under review, and hyou have been temporarily banned from commenting'} back={'Home'} /> : <CommentBox
                     key={'1'}
                     textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
                     activity={route.params.activity.activity}
