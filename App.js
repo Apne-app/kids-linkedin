@@ -234,9 +234,9 @@ const App = (props) => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
-        console.log(link)
         var pro = await AsyncStorage.getItem('profile')
         if (pro) {
+          console.log("dlink: ",link)
           pro = JSON.parse(pro)
           if (link.url.includes(pro.uuid)) {
             containerRef.current?.navigate('Verified')
@@ -305,6 +305,14 @@ const App = (props) => {
                 containerRef.current?.navigate('Home')
               })
           }
+        }
+        if(link.url.includes('quiz'))
+        {
+          containerRef.current?.navigate('Post')
+        }
+        if(link.url.includes('news'))
+        {
+          containerRef.current?.navigate('Post')
         }
       })
       .catch(() => {
@@ -390,6 +398,14 @@ const App = (props) => {
             containerRef.current?.navigate('Home')
           })
       }
+    }
+    if(link.url.includes('quiz'))
+    {
+      containerRef.current?.navigate('Home', { goTo: 'quiz' })  
+    }
+    if(link.url.includes('news'))
+    {
+      containerRef.current?.navigate('Home', { 'goTo': 'news' })
     }
   };
   StatusBar.setBackgroundColor('#1A71EB')

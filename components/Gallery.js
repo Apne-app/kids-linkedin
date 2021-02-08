@@ -19,6 +19,7 @@ import {
   height,
   width
 } from '../Modules/CommonImports.js';
+import FastImage from 'react-native-fast-image'
 
 
 // import FastImage from 'react-native-fast-image';
@@ -49,7 +50,7 @@ const Gallery = (props) =>  {
                 console.log("You can use read from the storage 1");
 
                  CameraRoll.getPhotos({
-                    first: 100,
+                    first: 1000,
                     assetType: 'Photos',
                     })
                     .then(r => {
@@ -88,10 +89,11 @@ const Gallery = (props) =>  {
                     // console.log(props.navigation);  
                   }}>
                   {/*console.log(item.node.image.uri)*/}
-                  <Image
+                  <FastImage
                     style={styles.image}
                     source={{
                       uri: item.node.image.uri,
+                      priority: FastImage.priority.high
                     }}
                   />
                 </TouchableOpacity>

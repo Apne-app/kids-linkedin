@@ -21,7 +21,7 @@ class PostScreenNavig extends Component {
     this.focusListener = this.props.navigation.addListener("focus", async () => {
 
       const x = await AsyncStorage.getItem('camerastatus');
-
+      // await AsyncStorage.removeItem('camerastatus')
       if(x == "3")
       {
         setTimeout(() => {
@@ -73,7 +73,7 @@ class PostScreenNavig extends Component {
             active: 1 
           })
         }
-    }, 3000);  
+    }, 2000);  
   }
   
 
@@ -126,13 +126,17 @@ class PostScreenNavig extends Component {
             </TouchableOpacity>
             <View style={{margin: 10, backgroundColor: '#eef9ff', height: '62%', borderRadius: 10, alignItems: 'center'}}>
             <Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 15, marginVertical: 10}}></Text>
-            <Animated.Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 17, marginVertical: 10, display: this.state.active == 1 ? 'flex' : 'none', opacity: this.state.scan}}>📷 Scan</Animated.Text>
-            <Animated.Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 17, marginVertical: 10, display: this.state.active == 2 ? 'flex' : 'none', opacity: this.state.save}}>🎞️ Save to your collection</Animated.Text>
-            <Animated.Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 17, marginVertical: 10, display: this.state.active == 3 ? 'flex' : 'none', opacity: this.state.feedback}}>👥 Get feedback from parents and teachers</Animated.Text>
+            <Animated.Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 17, lineHeight: 20, marginVertical: 10, display: this.state.active == 1 ? 'flex' : 'none', opacity: this.state.scan}}>📷 Scan</Animated.Text>
+            <Animated.Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 17, lineHeight: 20, marginVertical: 10, display: this.state.active == 2 ? 'flex' : 'none', opacity: this.state.save}}>🎞️ Save to your collection</Animated.Text>
+            <Animated.Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 15, lineHeight: 20, marginVertical: 10, display: this.state.active == 3 ? 'flex' : 'none', opacity: this.state.feedback}}>👥 Get feedback from parents and teachers</Animated.Text>
             <Text style={{fontFamily: 'NunitoSans-Bold', fontSize: 15, marginVertical: 10}}></Text>
             <Button onPress={async () => {
                 AsyncStorage.setItem('camerastatus', "3");
                 var x = await AsyncStorage.getItem('children');
+                this.setState({
+                  ...this.state,
+                  visible: false
+                })
                 analytics.track('Go Button Pressed in CameraIntro', {
                   userID: x ? JSON.parse(x)["0"]["id"] : null,
                   deviceID: getUniqueId()
@@ -183,6 +187,10 @@ class PostScreenNavig extends Component {
         <Button onPress={async () => {
           AsyncStorage.setItem('camerastatus', "3");
           var x = await AsyncStorage.getItem('children');
+          this.setState({
+            ...this.state,
+            visible: false
+          })
           analytics.track('Scan and Save pressed CameraIntro', {
             userID: x ? JSON.parse(x)["0"]["id"] : null,
             deviceID: getUniqueId()

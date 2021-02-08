@@ -20,6 +20,7 @@ import {
     height,
     width
 } from '../Modules/CommonImports.js';
+import { Spinner } from 'native-base';
 import FastImage from 'react-native-fast-image'
 var RNFS = require('react-native-fs');
 
@@ -45,10 +46,10 @@ const FileScreen = (props) => {
     const [refreshing, setRefreshing] = React.useState(false);
 
 
-
     useFocusEffect(
         React.useCallback(() => {
             // uploadToS3();
+            showAll()
             const onBackPress = () => {
                 props.navigation.navigate('Home', { screen: 'Feed' })
                 return true;
@@ -253,7 +254,12 @@ const FileScreen = (props) => {
         
     }
 
-
+    if(props.route.params.reload)
+    {
+        console.log('noonasd')
+        showAll();
+        props.route.params.reload = 0;
+    }
 
 
 
@@ -473,8 +479,14 @@ const FileScreen = (props) => {
                 {
                     !synced ?
                         <View>
+                        {   props.route.params.children ?
+                            <View> 
                             <Image source={require('../assets/sync.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
                             <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Syncing</Text>
+                            </View>
+                            :
+                            <Spinner color='blue' style={{top: 90}} />
+                        }
                         </View>
                         :
                         files.length != 0 ?

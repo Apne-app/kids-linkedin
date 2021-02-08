@@ -21,6 +21,7 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.imagepicker.ImagePickerPackage;
 import com.imagepicker.ImagePickerPackage;
 import org.reactnative.camera.RNCameraPackage;
+import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;

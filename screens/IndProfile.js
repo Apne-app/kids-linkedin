@@ -378,7 +378,7 @@ const IndProfile = ({ navigation, route }) => {
                         token={children['0']['data']['gsToken']}
                     >
                         <View style={{ marginTop: 30, flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity onPress={() => console.log(route['params']['data']['image'], route['params']['data']['name'], route['params']['data']['unique_id'])} style={{ flexDirection: 'row' }}>
                                 <Image
                                     source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
                                     style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}

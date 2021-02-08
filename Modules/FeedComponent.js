@@ -224,7 +224,8 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                         navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
                     }}
                 />
-                <Icon onPress={async () => {
+                <TouchableOpacity style={{width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
+                onPress={async () => {
                     var x = await AsyncStorage.getItem('children');
                     analytics.track('WhatsappShare', {
                         userID: x ? JSON.parse(x)["0"]["id"] : null,
@@ -234,7 +235,10 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                     }).catch(() => {
                         alert('Please make sure Whatsapp is installed on your device');
                     });
-                }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
+                }}
+                >
+                <Icon  name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
+                </TouchableOpacity>
             </View>
         </View>)
     }
@@ -285,7 +289,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                                 cancelButtonIndex={2}
                                 onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
                             />
-                            <Right><TouchableOpacity onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
+                            <Right><TouchableOpacity style={{width: 70, alignItems: 'center',padding: 12}} onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
                         </View>
                         {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
                     </View>
@@ -341,4 +345,4 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
         );
     }
 };
-export default FeedComponent
+export default FeedComponent;
