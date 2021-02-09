@@ -49,7 +49,7 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                     const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
                     var user = client.feed('user', children['0']['id'] + 'id');
                     user.removeActivity(id1).then(() => {
-                        setplace(String(parseInt(place)+1))
+                        setplace(String(parseInt(place) + 1))
                     }).catch(() => {
                         alert(
                             "There was an error deleting your post, please try again later."
@@ -209,7 +209,8 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                 }}>
                     {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { 'type': 'feed_like' })}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                 </TouchableWithoutFeedback>
-                <Icon onPress={() => navigation.navigate('SinglePost', { id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', type:'comment' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                <Icon onPress={() => navigation.navigate('SinglePost', { id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', type: 'comment' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                <View style={{marginTop:0}}>
                 <ReactionIcon
                     labelSingle=" "
                     labelPlural=" "
@@ -225,20 +226,21 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                         navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
                     }}
                 />
-                <TouchableOpacity style={{width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
-                onPress={async () => {
-                    var x = await AsyncStorage.getItem('children');
-                    analytics.track('WhatsappShare', {
-                        userID: x ? JSON.parse(x)["0"]["id"] : null,
-                        deviceID: getUniqueId()
-                    });
-                    Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + data.activity.id).then((data) => {
-                    }).catch(() => {
-                        alert('Please make sure Whatsapp is installed on your device');
-                    });
-                }}
+                </View>
+                <TouchableOpacity style={{ width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
+                    onPress={async () => {
+                        var x = await AsyncStorage.getItem('children');
+                        analytics.track('WhatsappShare', {
+                            userID: x ? JSON.parse(x)["0"]["id"] : null,
+                            deviceID: getUniqueId()
+                        });
+                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + data.activity.id).then((data) => {
+                        }).catch(() => {
+                            alert('Please make sure Whatsapp is installed on your device');
+                        });
+                    }}
                 >
-                <Icon  name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
+                    <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                 </TouchableOpacity>
             </View>
         </View>)
@@ -272,7 +274,7 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                                     source={{
                                         uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '',
                                         priority: FastImage.priority.high,
-                                         cache:FastImage.cacheControl.web
+                                        cache: FastImage.cacheControl.web
                                     }}
                                     style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                                 />
@@ -291,7 +293,7 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                                 cancelButtonIndex={2}
                                 onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
                             />
-                            <Right><TouchableOpacity style={{width: 70, alignItems: 'center',padding: 12}} onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
+                            <Right><TouchableOpacity style={{ width: 70, alignItems: 'center', padding: 12 }} onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
                         </View>
                         {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
                     </View>

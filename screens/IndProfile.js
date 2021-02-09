@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useEffect, useState, useRef } from 'react'; 
+import React, { useEffect, useState, useRef } from 'react';
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -48,6 +48,19 @@ const IndProfile = ({ navigation, route }) => {
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
     const status = route.params.status
     const optionsRef = React.useRef(null);
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                navigation.pop()
+                return true;
+            };
+
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+        }, []));
     // useEffect(() => {
     //     const addfollows = async () => {
     //         const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
@@ -358,16 +371,24 @@ const IndProfile = ({ navigation, route }) => {
     }
     var d = new Date();
     var year = parseInt(d.getFullYear());
+    const Empty = ({name}) => {
+        return (<View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
+                <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
+                    <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+                </View>
+                <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{name+" hasn't posted anything yet. Check back later!"}</Text>
+        </View>)
+    }
     return (
         Object.keys(children).length ?
-            <View>
+            <View style={{ backgroundColor: '#f9f9f9' }}>
                 <ActionSheet
                     useNativeDriver={true}
                     ref={refProfileSheet}
                     styles={{ borderRadius: 0, margin: 10 }}
-                    options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share Profile</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
-                    cancelButtonIndex={2}
-                    onPress={(index) => { index == 1 ? reportProfile() : null; }}
+                    options={[<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                    cancelButtonIndex={1}
+                    onPress={(index) => { index == 0 ? reportProfile() : null; }}
                 />
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
@@ -376,18 +397,15 @@ const IndProfile = ({ navigation, route }) => {
                         appId={'96078'}
                         token={children['0']['data']['gsToken']}
                     >
-                        <View style={{ marginTop: 30, flexDirection: 'row' }}>
-                            <TouchableOpacity onPress={() => console.log(route['params']['data']['image'], route['params']['data']['name'], route['params']['data']['unique_id'])} style={{ flexDirection: 'row' }}>
-                                <Image
-                                    source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
-                                    style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
-                                />
-                            </TouchableOpacity>
-                            <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
-                                <View style={{ flexDirection: 'row' }}>
+                        <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
+                            <Image
+                                source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
+                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
+                            />
+                            <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap', backgroundColor: "#f9f9f9" }}>
+                                <View style={{ flexDirection: 'row', backgroundColor: '#f9f9f9' }}>
                                     <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
                                 </View>
-                                {console.log(route.params.data.year)}
                                 <View style={{ flexDirection: 'row' }}>
                                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
                                 </View>
@@ -423,10 +441,12 @@ const IndProfile = ({ navigation, route }) => {
 
                         </View>*/}
                         {/* </View> */}
-                        <FlatFeed userId={route['params']['id'] + 'id'} feedGroup="user" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ withOwnReactions: true }} />
+                        <View style={{marginBottom:200}}>
+                        <FlatFeed flatListProps={{ ListEmptyComponent: <Empty name={route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)} /> }} userId={route['params']['id'] + 'id'} feedGroup="user" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ withOwnReactions: true }} />
+                        </View>
                     </StreamApp>
                 </ScrollView>
-            </View> : <View style={{ backgroundColor: 'white', height: height, width: width }}>
+            </View > : <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
             </View>

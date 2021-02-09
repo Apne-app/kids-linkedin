@@ -511,6 +511,7 @@ const FileScreen = (props) => {
                                                             // console.log(item)
                                                             item['images'].map((it, ind) => {
                                                                 if (ind < 2 || item['images'].length == 3) {
+                                                                    console.log( it['path'])
                                                                     return <FastImage style={{ height: width * 0.24, width: width * 0.24, marginHorizontal: width * 0.01, borderRadius: 20 }} source={{ uri: item['cloud'] ? it['path'] : it['path'].includes('file:') ? it['path'] : "file://" + it['path'] }} />;
                                                                 }
                                                             })
