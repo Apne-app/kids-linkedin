@@ -60,7 +60,6 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
         ]);
     }
     const report = async (x) => {
-        // console.log(children);
         if (children) {
             if (props.activity.actor.id == children['0']['id'] + 'id') {
                 deletepost(props.activity.id)
@@ -210,22 +209,22 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                     {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { 'type': 'feed_like' })}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                 </TouchableWithoutFeedback>
                 <Icon onPress={() => navigation.navigate('SinglePost', { id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', type: 'comment' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
-                <View style={{marginTop:0}}>
-                <ReactionIcon
-                    labelSingle=" "
-                    labelPlural=" "
-                    counts={props.activity.reaction_counts}
-                    kind="comment"
-                    width={-80}
-                    onPress={async () => {
-                        var x = await AsyncStorage.getItem('children');
-                        analytics.track('CommentIconPressed', {
-                            userID: x ? JSON.parse(x)["0"]["id"] : null,
-                            deviceID: getUniqueId()
-                        });
-                        navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
-                    }}
-                />
+                <View style={{ marginTop: 0 }}>
+                    <ReactionIcon
+                        labelSingle=" "
+                        labelPlural=" "
+                        counts={props.activity.reaction_counts}
+                        kind="comment"
+                        width={-80}
+                        onPress={async () => {
+                            var x = await AsyncStorage.getItem('children');
+                            analytics.track('CommentIconPressed', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                deviceID: getUniqueId()
+                            });
+                            navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
+                        }}
+                    />
                 </View>
                 <TouchableOpacity style={{ width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
                     onPress={async () => {
@@ -264,88 +263,88 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
     //     return null
     // }
     // else {
-        return (
-            <Activity
-                Header={
-                    <View style={{ flexDirection: 'column' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
-                                <FastImage
-                                    source={{
-                                        uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '',
-                                        priority: FastImage.priority.high,
-                                        cache: FastImage.cacheControl.web
-                                    }}
-                                    style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
-                                />
-                            </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
-                                <View style={{ flexDirection: 'column', marginLeft: 5 }}>
-                                    <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
-                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{props.activity.actor.data ? props.activity.actor.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(props.activity.actor.data.year)) + ' years old (Managed by parents)' : props.activity.actor.data.type : null}</Text>
-                                </View>
-                            </TouchableWithoutFeedback>
-                            <ActionSheet
-                                useNativeDriver={true}
-                                ref={refActionSheet}
-                                styles={{ borderRadius: 0, margin: 10 }}
-                                options={options}
-                                cancelButtonIndex={2}
-                                onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
+    return (
+        <Activity
+            Header={
+                <View style={{ flexDirection: 'column' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
+                            <FastImage
+                                source={{
+                                    uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '',
+                                    priority: FastImage.priority.high,
+                                    cache: FastImage.cacheControl.web
+                                }}
+                                style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
-                            <Right><TouchableOpacity style={{ width: 70, alignItems: 'center', padding: 12 }} onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
-                        </View>
-                        {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
-                    </View>
-                }
-                Content={
-                    <View>
-                        <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
-                            {props.activity.object === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 15 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
-                            <View style={{ alignSelf: 'center' }}>
-                                {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <FastImage
-                                    source={{
-                                        uri: props.activity.image.split(", ")[0],
-                                        priority: FastImage.priority.high
-                                    }}
-                                    style={{ width: width, height: 340, borderRadius: 0 }}
-                                /> : <View style={{ height: 340 }}><SliderBox
-                                    images={props.activity.image.split(", ").filter(n => n)}
-                                    dotColor="#FFEE58"
-                                    inactiveDotColor="#90A4AE"
-                                    paginationBoxVerticalPadding={20}
-                                    sliderBoxHeight={340}
-                                    disableOnPress={true}
-                                    ImageComponentStyle={{ borderRadius: 0, width: width, height: 340, backgroundColor: 'transparent' }}
-                                    circleLoop={true}
-                                /></View> : <View></View>}
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': props.activity.actor.id.replace('id', ''), 'data': props.activity.actor.data })}>
+                            <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{props.activity.actor.data ? props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{props.activity.actor.data ? props.activity.actor.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(props.activity.actor.data.year)) + ' years old (Managed by parents)' : props.activity.actor.data.type : null}</Text>
                             </View>
                         </TouchableWithoutFeedback>
-                        {props.activity.object.includes('http') ?
-                            <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(props.activity.object)[0] }) } }} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
-                            : null}
-                        {props.activity.video ?
-                            <Video
-                                source={{ uri: props.activity.video }}
-                                rate={1.0}
-                                volume={1.0}
-                                isMuted={false}
-                                resizeMode="cover"
-                                // shouldPlay
-                                // usePoster={props.activity.poster?true:false}
-                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                                useNativeControls={true}
-                                style={{ width: width, height: 340 }}
-                            /> : null}
-                        {props.activity.youtube ?
-                            <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
-                            : null}
-                        {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
+                        <ActionSheet
+                            useNativeDriver={true}
+                            ref={refActionSheet}
+                            styles={{ borderRadius: 0, margin: 10 }}
+                            options={options}
+                            cancelButtonIndex={2}
+                            onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
+                        />
+                        <Right><TouchableOpacity style={{ width: 70, alignItems: 'center', padding: 12 }} onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
                     </View>
-                }
-                Footer={footer(props.activity.id, props)}
-            />
-        );
+                    {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
+                </View>
+            }
+            Content={
+                <View>
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props })}>
+                        {props.activity.object === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 15 }}>{props.activity.object === 'default123' ? '' : props.activity.object}</Text>}
+                        <View style={{ alignSelf: 'center' }}>
+                            {props.activity.image ? props.activity.image.split(", ").length - 1 == 1 ? <FastImage
+                                source={{
+                                    uri: props.activity.image.split(", ")[0],
+                                    priority: FastImage.priority.high
+                                }}
+                                style={{ width: width, height: 340, borderRadius: 0 }}
+                            /> : <View style={{ height: 340 }}><SliderBox
+                                images={props.activity.image.split(", ").filter(n => n)}
+                                dotColor="#FFEE58"
+                                inactiveDotColor="#90A4AE"
+                                paginationBoxVerticalPadding={20}
+                                sliderBoxHeight={340}
+                                disableOnPress={true}
+                                ImageComponentStyle={{ borderRadius: 0, width: width, height: 340, backgroundColor: 'transparent' }}
+                                circleLoop={true}
+                            /></View> : <View></View>}
+                        </View>
+                    </TouchableWithoutFeedback>
+                    {props.activity.object.includes('http') ?
+                        <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(props.activity.object)[0] }) } }} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                        : null}
+                    {props.activity.video ?
+                        <Video
+                            source={{ uri: props.activity.video }}
+                            rate={1.0}
+                            volume={1.0}
+                            isMuted={false}
+                            resizeMode="cover"
+                            // shouldPlay
+                            // usePoster={props.activity.poster?true:false}
+                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                            useNativeControls={true}
+                            style={{ width: width, height: 340 }}
+                        /> : null}
+                    {props.activity.youtube ?
+                        <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
+                        : null}
+                    {props.activity.tag === 'Genio' || props.activity.tag === 'Other' || props.activity.tag === '' || !Object.keys(props.activity).includes('tag') ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{props.activity.tag}</Text></View>}
+                </View>
+            }
+            Footer={footer(props.activity.id, props)}
+        />
+    );
     // }
 };
 export default FeedComponent;

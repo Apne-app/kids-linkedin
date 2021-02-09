@@ -33,7 +33,12 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
     lname: '',
     email: '',
   })
-
+  const loginnav = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    })
+  }
   async function getInfo(token) {
 
     loaderHandler();
@@ -83,14 +88,16 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
                         await AsyncStorage.setItem('children', JSON.stringify(response.data))
                         var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
                         await AsyncStorage.setItem('status', '3')
-                        Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
-                          .then(() => {
-                            navigation.reset({
-                              index: 0,
-                              routes: [{ name: 'Home' }],
-                            });
+                        Update({
+                          children: response.data, 'navigation': navigation, status: '3', profile: pro, notifications: response2.data
+                        }).then(() => {
+                          navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Home' }],
                           })
+                        })
                           .catch((error) => {
+                            console.log(error)
                             alert("we couldn't log you in, please try again later")
                           })
 

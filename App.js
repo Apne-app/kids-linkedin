@@ -217,7 +217,7 @@ const App = (props) => {
       .then(async (link) => {
         var pro = await AsyncStorage.getItem('profile')
         if (pro) {
-          console.log("dlink: ",link)
+          console.log("dlink: ", link)
           pro = JSON.parse(pro)
           if (link.url.includes(pro.uuid)) {
             containerRef.current?.navigate('Verified')
@@ -287,12 +287,10 @@ const App = (props) => {
               })
           }
         }
-        if(link.url.includes('quiz'))
-        {
+        if (link.url.includes('quiz')) {
           containerRef.current?.navigate('Post')
         }
-        if(link.url.includes('news'))
-        {
+        if (link.url.includes('news')) {
           containerRef.current?.navigate('Post')
         }
       })
@@ -380,12 +378,10 @@ const App = (props) => {
           })
       }
     }
-    if(link.url.includes('quiz'))
-    {
-      containerRef.current?.navigate('Home', { goTo: 'quiz' })  
+    if (link.url.includes('quiz')) {
+      containerRef.current?.navigate('Home', { goTo: 'quiz' })
     }
-    if(link.url.includes('news'))
-    {
+    if (link.url.includes('news')) {
       containerRef.current?.navigate('Home', { 'goTo': 'news' })
     }
   };
