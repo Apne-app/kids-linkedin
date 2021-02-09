@@ -121,8 +121,8 @@ const Searching = ({ route, navigation }) => {
                                 x = null
                             }
                         }
-                        analytics.track('Searched Kid Opened', {
-                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                        analytics.track('SearchedKidOpened', {
+                            userID: x ? JSON.parse(x)["0"]["id"] : null,
                             deviceID: getUniqueId()
                         })
                     }}>

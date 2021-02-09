@@ -6,12 +6,16 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
 import Share from 'react-native-share';
-import { Animated, ScrollView, TouchableWithoutFeedback, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
+import PushNotification from "react-native-push-notification";
+import { Animated, Linking, ScrollView, TouchableWithoutFeedback, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import RNImageToPdf from 'react-native-image-to-pdf';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { enableScreens } from 'react-native-screens';
+import { Notifier, Easing } from 'react-native-notifier';
+import FileViewer from 'react-native-file-viewer';
+import ImageViewer from 'react-native-image-zoom-viewer';
 import { Chip } from 'react-native-paper';
 import { Snackbar } from 'react-native-paper';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -84,6 +88,7 @@ const Upload = ({ route, navigation }) => {
   const [time, setTime] = React.useState('');
   const [selecting, setSelecting] = React.useState(false);
   const [showToast, setShowToast] = React.useState(false);
+  const [downloading, setDownloading] = React.useState(false);
   const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
   const [selectedTag, setTag] = React.useState('Genio');
   const [explore, setExplore] = React.useState([
@@ -116,6 +121,7 @@ const Upload = ({ route, navigation }) => {
   };
 
   const backButtonChange = () => {
+    // console.log('asdas')
 
     const backAction = async () => {
 
@@ -218,14 +224,18 @@ const Upload = ({ route, navigation }) => {
           x = null
         }
         analytics.screen('Post Screen', {
-          userID: x ? x["0"]["data"]["gsToken"] : null,
+          userID: x ? x["0"]["id"] : null,
           deviceID: getUniqueId()
         })
       }
-      analytics.screen('Post Screen', {
-        userID:  null,
-        deviceID: getUniqueId()
-      })
+      else
+      {
+
+        analytics.screen('Post Screen', {
+          userID:  null,
+          deviceID: getUniqueId()
+        })
+      }
     }
     sevent();
     const backAction = async () => {
@@ -430,7 +440,8 @@ const Upload = ({ route, navigation }) => {
   }
 
   const myAsyncPDFFunction = async () => {
-
+    setDownloading(true)
+    
     setTimeout(() => {
       setModalVisible(false);
 
@@ -440,7 +451,8 @@ const Upload = ({ route, navigation }) => {
 
       var arr = [];
 
-      explore.map(item => {
+      await explore.map(item => {
+        // console.log(explore)
         if (item.uri.length > 10) {
           var a = item.uri;
           a = a.replace('file:///', '');
@@ -448,35 +460,96 @@ const Upload = ({ route, navigation }) => {
           arr.push(a);
         }
       })
+      var savedImgs = []
+      for(var i = 1; i < explore.length; i++)
+      {
+        if(explore[i].uri.includes('http'))
+        {
+          savedImgs.push(`${RNFS.DownloadDirectoryPath}/${selectedTag}_${explore[i].uri.split('_')[1]}`)
+          await RNFS.downloadFile({
+            fromUrl: explore[i].uri,
+            toFile: `${RNFS.DownloadDirectoryPath}/${selectedTag}_${explore[i].uri.split('_')[1]}`,
+          }).promise;
+        }
+      }
+
+      // console.log(savedImgs);
+
+
+
 
       const options = {
-        imagePaths: arr,
+        imagePaths: explore[1].uri.includes('http') ? savedImgs : arr,
         name: `${filename}.pdf`,
         maxSize: { // optional maximum image dimension - larger images will be resized
           width: 900,
           height: Math.round(height / width * 900),
         },
-        quality: .7, // optional compression paramter
+        quality: .9, // optional compression paramter
       };
+      // console.log(options)
       const pdf = await RNImageToPdf.createPDFbyImages(options);
 
       let x = await AsyncStorage.getItem("albums");
       let albums = JSON.parse(x);
+      // console.log(albums)
       var c = 1;
-      for (var i = 0; i < albums.length; i++) {
+      for (var i = 0; i < albums ? albums.length : 0; i++) {
         if (albums[i]['albumName'] == filename) {
           c = 0;
           break;
         }
       }
 
+      var d = new Date();
+      await RNFS.moveFile(pdf.filePath, `${RNFS.DownloadDirectoryPath}/${filename}-${d.getTime()}.pdf`)
+      .then((success) => {
+        console.log('file moved!');
+      })
+      .catch((err) => {
+        console.log("Error: " + err.message);
+      });
 
-      console.log(pdf.filePath);
-      alert('PDF Saved');
+      setDownloading(false);
+      Notifier.showNotification({
+        title: 'PDF downloaded!',
+        description: 'Click here to open or go to downloads!',
+        duration: 8000,
+        showAnimationDuration: 800,
+        showEasing: Easing.bounce,
+        swipeEnabled: true,
+        onHidden: () => console.log('Hidden'),
+        onPress: () => {
+          FileViewer.open('file:/'+`${RNFS.DownloadDirectoryPath}/${filename}-${d.getTime()}.pdf`, { showOpenWithDialog: true })
+          .then(() => {
+            // success
+            console.log('success')
+          })
+          .catch(error => {
+            // error
+            console.log(error)
+          });
+          // navigation.navigate('Browser', { url: 'http://www.africau.edu/images/default/sample.pdf', heading: 'PDF' })
+        },
+        hideOnPress: true,
+      });
+      await savedImgs.map(item => {
+        console.log(item)
+        RNFS.unlink(item)
+        .then(() => {
+          console.log('FILE DELETED');
+        })
+        // `unlink` will throw an error, if the item to unlink does not exist
+        .catch((err) => {
+          console.log(err.message);
+        });
+      })
       sheetRef.current.snapTo(1)
     } catch (e) {
-      console.log(e);
+      console.log(e)
+      alert("Couldn't save pdf. Please try again");
       sheetRef.current.snapTo(1)
+      setDownloading(false);
     }
   }
 
@@ -601,6 +674,10 @@ const Upload = ({ route, navigation }) => {
     if (selecting) {
       setSelecting(false)
     }
+    else if(!route.params.edited)
+    {
+      navigation.navigate('Home', { screen: 'Files' })
+    }
     else {
       setBottomSheetOpen(true)
       closeRef.current.snapTo(0);
@@ -610,7 +687,7 @@ const Upload = ({ route, navigation }) => {
     setDeleteCount(0);
     var x = await AsyncStorage.getItem('children');
     analytics.track('Delete Images', {
-      userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+      userID: x ? JSON.parse(x)["0"]["id"] : null,
       deviceID: getUniqueId()
     })
     setSelecting(true);
@@ -683,16 +760,21 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('PDF Saved', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               myAsyncPDFFunction()
             }}
           >
             <View style={styles.Next}>
+              {
+                downloading ?
+                <Image source={require('../assets/log_loader.gif')} style={{ width: 30, height: 30, alignSelf: 'center', marginLeft: 55 }} />
+                :
               <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginBottom: 4 }}>
                 Download
               </Text>
+            }
             </View>
           </TouchableOpacity>
         </View>
@@ -722,7 +804,7 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Did not save collection', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               deleteImages();
@@ -741,17 +823,21 @@ const Upload = ({ route, navigation }) => {
             style={{ height: 50 }}
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
+              console.log(x)
               analytics.track('Collection Saved', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
-              x = JSON.parse(x)["0"]["data"]["gsToken"];
               // console.log(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
-              axios.get(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
-              .then(res => console.log(res.data))
-              .catch(err => console.log("error: ", err))
-              updateLocalTag();
-              saveImages(); deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
+              if(x)
+              {
+
+                x = JSON.parse(x)["0"]["data"]["gsToken"];
+                axios.get(`https://1wkidtgaxf.execute-api.ap-south-1.amazonaws.com/default/setTagForCollection?token=${x}&time=${time}&newtag=${selectedTag}`)
+                .then(res => console.log(res.data))
+                .catch(err => console.log("error: ", err))
+              }
+              deleteOrigImages(); navigation.navigate('Home', { screen: 'Feed' })
 
             }}
           >
@@ -835,7 +921,7 @@ const Upload = ({ route, navigation }) => {
           visible={visible}
           onRequestClose={() => { setSelected([]); setVisible(false); }}
           HeaderComponent={() => {
-            return (<Header style={{ backgroundColor: 'white', height: 60 }}>
+            return (<Header style={{ backgroundColor: '#327feb', height: 60 }}>
               <View style={{ flexDirection: 'row', marginTop: 14, flex: 1 }}>
                 <TouchableOpacity onPress={() => { setSelected([]); setVisible(false); }}><Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 1, marginTop: 3.5 }} source={require('../Icons/close.png')} /></TouchableOpacity>
               </View>
@@ -887,7 +973,7 @@ const Upload = ({ route, navigation }) => {
             )
           }}
         />
-        <ScrollView style={{ height: selecting ? height * 0.9 : height * 0.6, backgroundColor: '#f9f9f9' }}>
+        <ScrollView style={{ height: selecting ? height * 0.9 : height * 0.6, backgroundColor: '#f9f9f9' }} >
           <FlatList
             data={explore}
             style={{ marginLeft: width * 0.05, marginRight: width * 0.06, marginVertical: width * 0.03 }}
@@ -935,8 +1021,8 @@ const Upload = ({ route, navigation }) => {
                         >
                           {
                             selecting ?
-                              <View style={{ width: 25, height: 25, borderRadius: 20, backgroundColor: item.selected ? "#327feb" : "#fff", borderColor: "#327feb", borderWidth: item.selected ? 0 : 3, position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center' }} >
-                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#fff", }} /> : null}
+                              <View style={{ width: item.selected ? 33 : 28, height: item.selected ? 33 : 28, borderRadius: 20, backgroundColor: item.selected ? "#327feb" : "#fff", borderColor: item.selected ? "#fff" : "#327feb", borderWidth: item.selected ? 3 : 3, position: 'absolute', opacity: 1, zIndex: 100, top: 10, right: 10, alignItems: 'center', justifyContent: 'center' }} >
+                                {item.selected ? <Icon type="Feather" name="check" style={{ color: "#fff", fontSize: 22 }} /> : null}
                               </View>
                               :
                               <View />
@@ -1048,6 +1134,11 @@ const Upload = ({ route, navigation }) => {
             renderItem={({ item, i }) => (
               <Chip key={i} style={{ backgroundColor: selectedTag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: selectedTag != item ? 1 : 0, borderColor: "#327FEB", borderRadius: 30 }} textStyle={{ color: selectedTag == item ? "#fff" : "#327FEB", fontFamily: 'NunitoSans-Regular' }} onPress={async () =>{
                 backButtonChange();
+                var x = await AsyncStorage.getItem('children');
+                analytics.track('CollectionTagSelected', {
+                  userID: x ? JSON.parse(x)["0"]["id"] : null,
+                  deviceID: getUniqueId()
+                })
                 selectedTag == item ? setTag('Genio') : setTag(item)} 
               } 
               >
@@ -1065,7 +1156,7 @@ const Upload = ({ route, navigation }) => {
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Collection Shared', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
               })
               shareImage();
@@ -1094,6 +1185,7 @@ const Upload = ({ route, navigation }) => {
               saveImages(); deleteOrigImages();
               navigation.navigate('Home', {
                 screen: 'Files',
+                reload: 1
               })
             }}
           >
@@ -1354,8 +1446,8 @@ const styles = StyleSheet.create({
   Cancel: {
     alignSelf: 'center',
     flexDirection: 'row',
-    padding: 10,
-    marginBottom: 4,
+    padding: 8,
+    // marginBottom: 4,
     backgroundColor: '#fff',
     borderRadius: 30,
     borderWidth: 1,

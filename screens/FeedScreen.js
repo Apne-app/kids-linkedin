@@ -94,8 +94,22 @@ const FeedScreen = ({ navigation, route }) => {
     const [quiz, setQuiz] = useState([]);
     const [newnoti, setnewnoti] = useState(false);
 
+
     useFocusEffect(
         React.useCallback(() => {
+            console.log('sadsadasd: ', route.params.goTo)
+            if(route.params.goTo)
+            {
+                if(route.params.goTo == 'quiz')
+                {
+                    setFeedState(1)
+                }
+                if(route.params.goTo == 'news')
+                {
+                    setFeedState(2)
+                }
+                route.params.goTo = false
+            }
             const onBackPress = () => {
                 Alert.alert("Hold on!", "Are you sure you want to Exit?", [
                     {
@@ -128,7 +142,7 @@ const FeedScreen = ({ navigation, route }) => {
                     x = null
                 }
                 analytics.screen('Feed Screen', {
-                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    userID: x ? x["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
             }
@@ -474,7 +488,24 @@ const FeedScreen = ({ navigation, route }) => {
                     renderItem={({ item, index }) => (
                         <TouchableOpacity
                             key={item}
-                            onPress={() => {
+                            onPress={async () => {
+                                var x = await AsyncStorage.getItem('children');
+                                item[0] == 'Feed' ?
+                                analytics.track('FeedSwitchedtoPosts', {
+                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                    deviceID: getUniqueId()
+                                })
+                                :
+                                item[0] == 'Quiz' ?
+                                analytics.track('FeedSwitchedtoQuiz', {
+                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                    deviceID: getUniqueId()
+                                })
+                                :
+                                analytics.track('FeedSwitchedtoNews', {
+                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                    deviceID: getUniqueId()
+                                });
                                 setTimeout(() => {
                                     item[0] == 'Feed' ? setFeedState(0) : item[0] == 'Quiz' ? setFeedState(1) : setFeedState(2);
                                 }, 150);
@@ -674,7 +705,7 @@ const FeedScreen = ({ navigation, route }) => {
                                             </TouchableOpacity>
                                             <Right>
                                                 <Icon onPress={() => {
-                                                    Linking.openURL('whatsapp://send?text=Hey! Check out this quiz' + ' on the new Genio app:' + item['link'] + ' \n Find more such quizzes at: https://link.genio.app/?link=https://link.genio.app/post?id=3a100e54-2d98-11eb-b373-0289d2c29892%26apn=com.genioclub.app').then((data) => {
+                                                    Linking.openURL('whatsapp://send?text=Hey! Check out this and many more quizzes' + ' on the new Genio app: https://link.genio.app/quiz').then((data) => {
                                                     }).catch(() => {
                                                         alert('Make sure Whatsapp installed on your device');
                                                     });
@@ -685,6 +716,37 @@ const FeedScreen = ({ navigation, route }) => {
                                 )}
                                 //Setting the number of column
                                 numColumns={1}
+                                onEndReached={async () => {
+                                    var axios = require('axios');
+                                    var data = JSON.stringify({ "request_type": "get", "offset": quizOffset });
+    
+                                    var config = {
+                                        method: 'post',
+                                        url: 'https://9c9qtqg8x7.execute-api.ap-south-1.amazonaws.com/default/quizAggregator',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        data: data
+                                    };
+    
+                                    axios(config)
+                                        .then(function (response) {
+                                            // console.log(JSON.stringify(response.data));
+                                            // if(response.data.length == 0)
+                                            // {
+                                            //     alert("No more quizzes available right now")
+                                            // }
+    
+                                            setQuiz([...quiz, ...response.data]);
+                                            setQuizOffset(quizOffset + response.data.length);
+                                        })
+                                        .catch(function (error) {
+                                            setQuiz(['err'])
+                                        });
+    
+    
+                                }}
+                                onEndReachedThreshold={2}
                                 // horizontal={true}
                                 keyExtractor={(item, index) => index.toString()}
                             />}
@@ -870,7 +932,7 @@ const FeedScreen = ({ navigation, route }) => {
                                             </TouchableOpacity>
                                             <Right>
                                                 <Icon onPress={() => {
-                                                    Linking.openURL('whatsapp://send?text=Hey! Check out this news' + ' on the new Genio app:' + item['link'] + ' \n Find more such articles at: https://link.genio.app/?link=https://link.genio.app/post?id=3a100e54-2d98-11eb-b373-0289d2c29892%26apn=com.genioclub.app').then((data) => {
+                                                    Linking.openURL('whatsapp://send?text=Hey! Check out this: \n*' + item.heading + '*\nand many more news' + ' on the new Genio app: https://link.genio.app/news').then((data) => {
                                                     }).catch(() => {
                                                         alert('Make sure Whatsapp installed on your device');
                                                     });
@@ -881,6 +943,38 @@ const FeedScreen = ({ navigation, route }) => {
                                 )}
                                 //Setting the number of column
                                 numColumns={1}
+                                onEndReached={async () => {
+                                    // console.log('end')
+                                    var axios = require('axios');
+                                    var data = JSON.stringify({ "request_type": "get", "offset": newsOffset });
+    
+                                    var config = {
+                                        method: 'post',
+                                        url: 'https://uv4nn2mtxa.execute-api.ap-south-1.amazonaws.com/default/newsAggregator',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        data: data
+                                    };
+    
+                                    axios(config)
+                                        .then(function (response) {
+                                            // console.log(JSON.stringify(response.data));
+                                            // if(response.data.length == 0)
+                                            // {
+                                            //     alert("No more news to show!")
+                                            // }
+                                            setNews([...news, ...response.data]);
+                                            setNewsOffset(newsOffset + response.data.length);
+                                        })
+                                        .catch(function (error) {
+                                            console.log(error)
+                                            setNews(['err'])
+                                        });
+    
+    
+                                }}
+                                onEndReachedThreshold={2}
                                 // horizontal={true}
                                 keyExtractor={(item, index) => index.toString()}
                             />}
@@ -953,6 +1047,7 @@ const FeedScreen = ({ navigation, route }) => {
             <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
             <SafeAreaView style={{ flex: 1 }}
                 onScroll={({ nativeEvent }) => {
+                    console.log('isclose')
                     if (isCloseToBottom(nativeEvent)) {
                         if (feedstate == 2) {
                             const asyncNews = async () => {

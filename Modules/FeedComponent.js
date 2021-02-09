@@ -72,7 +72,7 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                     q = JSON.parse(q)
                 }
                 analytics.track('Post Reported', {
-                    userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+                    userID: y ? JSON.parse(y)["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
                 var now = new Date();
@@ -115,7 +115,7 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                 q = JSON.parse(q)
             }
             analytics.track('Post Reported', {
-                userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+                userID: y ? JSON.parse(y)["0"]["id"] : null,
                 deviceID: getUniqueId()
             })
             var now = new Date();
@@ -153,6 +153,11 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
 
     }
     const onShare = async (message) => {
+        var x = await AsyncStorage.getItem('children');
+        analytics.track('SharePost', {
+            userID: x ? JSON.parse(x)["0"]["id"] : null,
+            deviceID: getUniqueId()
+        })
         try {
             const result = await Share.share({
                 message:
@@ -213,19 +218,28 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                     width={-80}
                     onPress={async () => {
                         var x = await AsyncStorage.getItem('children');
-                        analytics.track('Comment', {
-                            userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                        analytics.track('CommentIconPressed', {
+                            userID: x ? JSON.parse(x)["0"]["id"] : null,
                             deviceID: getUniqueId()
                         });
                         navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })
                     }}
                 />
-                <Icon onPress={() => {
+                <TouchableOpacity style={{width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
+                onPress={async () => {
+                    var x = await AsyncStorage.getItem('children');
+                    analytics.track('WhatsappShare', {
+                        userID: x ? JSON.parse(x)["0"]["id"] : null,
+                        deviceID: getUniqueId()
+                    });
                     Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + data.activity.id).then((data) => {
                     }).catch(() => {
                         alert('Please make sure Whatsapp is installed on your device');
                     });
-                }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
+                }}
+                >
+                <Icon  name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
+                </TouchableOpacity>
             </View>
         </View>)
     }
@@ -277,7 +291,7 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                                 cancelButtonIndex={2}
                                 onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
                             />
-                            <Right><TouchableOpacity onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
+                            <Right><TouchableOpacity style={{width: 70, alignItems: 'center',padding: 12}} onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
                         </View>
                         {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
                     </View>
@@ -332,4 +346,4 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
         );
     }
 };
-export default FeedComponent
+export default FeedComponent;

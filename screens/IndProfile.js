@@ -127,6 +127,27 @@ const IndProfile = ({ navigation, route }) => {
                 });
 
         }
+        const analyse = async () => {
+            var x = route.params.children;
+            if (x) {
+                if (Object.keys(x).length == 0) {
+                    await AsyncStorage.removeItem('children');
+                    x = null
+                }
+                analytics.screen('OtherProfileScreen', {
+                    userID: x ? x["0"]["id"] : null,
+                    deviceID: getUniqueId()
+                })
+            }
+            else {
+                analytics.screen('Profile Screen', {
+                    userID: null,
+                    deviceID: getUniqueId()
+                })
+            }
+
+        }
+        analyse();
         // addCerti();
     }, [])
 
@@ -241,7 +262,7 @@ const IndProfile = ({ navigation, route }) => {
         q = JSON.parse(q)
         console.log(q)
         analytics.track('Post Reported', {
-            userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+            userID: y ? JSON.parse(y)["0"]["id"] : null,
             deviceID: getUniqueId()
         })
         var now = new Date();
@@ -290,7 +311,7 @@ const IndProfile = ({ navigation, route }) => {
             q = JSON.parse(q)
         }
         analytics.track('Profile Reported', {
-            userID: y ? JSON.parse(y)["0"]["data"]["gsToken"] : null,
+            userID: y ? JSON.parse(y)["0"]["id"] : null,
             deviceID: getUniqueId()
         })
         var now = new Date();
@@ -356,7 +377,7 @@ const IndProfile = ({ navigation, route }) => {
                         token={children['0']['data']['gsToken']}
                     >
                         <View style={{ marginTop: 30, flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ flexDirection: 'row' }}>
+                            <TouchableOpacity onPress={() => console.log(route['params']['data']['image'], route['params']['data']['name'], route['params']['data']['unique_id'])} style={{ flexDirection: 'row' }}>
                                 <Image
                                     source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
                                     style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}

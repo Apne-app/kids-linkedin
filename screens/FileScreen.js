@@ -20,6 +20,7 @@ import {
     height,
     width
 } from '../Modules/CommonImports.js';
+import { Spinner } from 'native-base';
 import FastImage from 'react-native-fast-image'
 var RNFS = require('react-native-fs');
 
@@ -45,10 +46,10 @@ const FileScreen = (props) => {
     const [refreshing, setRefreshing] = React.useState(false);
 
 
-
     useFocusEffect(
         React.useCallback(() => {
             // uploadToS3();
+            showAll()
             const onBackPress = () => {
                 props.navigation.navigate('Home', { screen: 'Feed' })
                 return true;
@@ -67,7 +68,7 @@ const FileScreen = (props) => {
                     x = null
                 }
                 analytics.screen('Collections Screen', {
-                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    userID: x ? x["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
             }
@@ -139,8 +140,9 @@ const FileScreen = (props) => {
                     // console.log(response.data)
                     // var s = stringImages;
                     for (var i = 0; i < response.data["0"].length;) {
+                        // console.log(response.data["0"].length)
                         var m = response.data["0"][i].split(x + '/')[1].split('/')[0];
-                        s = s + m+'-'+response.data.length + ', ';
+                        s = s + m+'-'+response.data["0"].length + ', ';
                         // console.log(stringImages.includes(m), m, stringImages, s.includes(m), response.data["0"][i]);
                         // if(s.includes(m+response.data.length))
                         // {
@@ -186,6 +188,7 @@ const FileScreen = (props) => {
                         var result = await RNFS.readDir(`${dir_path}/Images`);
                         for (var i = 0; i < result.length; i++) {
                             var res = await RNFS.readDir(result[i]['path']);
+                            console.log(res[0]['name'].split('_')[1].split('-')[0], s)
                             if(s.includes(res[0]['name'].split('_')[1].split('-')[0]+'-'+res.length))
                             {
                                 // console.log('asdas');
@@ -251,7 +254,12 @@ const FileScreen = (props) => {
         
     }
 
-
+    if(props.route.params.reload)
+    {
+        console.log('noonasd')
+        showAll();
+        props.route.params.reload = 0;
+    }
 
 
 
@@ -339,7 +347,7 @@ const FileScreen = (props) => {
 
         var x = props.route.params.children;
         analytics.track('A collection Selected to view', {
-            userID: x ? x["0"]["data"]["gsToken"] : null,
+            userID: x ? x["0"]["id"] : null,
             deviceID: getUniqueId()
         })
         var arr = [...files];
@@ -448,7 +456,7 @@ const FileScreen = (props) => {
                                         x = null
                                     }
                                     analytics.track('Collection Chip Pressed', {
-                                        userID: x ? x["0"]["data"]["gsToken"] : null,
+                                        userID: x ? x["0"]["id"] : null,
                                         deviceID: getUniqueId()
                                     })
 
@@ -471,8 +479,14 @@ const FileScreen = (props) => {
                 {
                     !synced ?
                         <View>
+                        {   props.route.params.children ?
+                            <View> 
                             <Image source={require('../assets/sync.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />
                             <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>Syncing</Text>
+                            </View>
+                            :
+                            <Spinner color='blue' style={{top: 90}} />
+                        }
                         </View>
                         :
                         files.length != 0 ?

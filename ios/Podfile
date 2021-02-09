@@ -46,6 +46,8 @@ target 'kids' do
 
   pod 'react-native-exoplayer', :path => '../node_modules/react-native-exoplayer'
 
+  pod 'RNFileViewer', :path => '../node_modules/react-native-file-viewer'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing

@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { StreamApp, FlatFeed, Activity, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
@@ -11,6 +11,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
 import { useFocusEffect } from "@react-navigation/native";
+import ImageViewer from 'react-native-image-zoom-viewer';
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -26,7 +27,7 @@ import FastImage from 'react-native-fast-image'
 import { connect } from 'getstream';
 import { Video } from 'expo-av';
 
-      
+
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -83,20 +84,40 @@ const SinglePostScreen = ({ navigation, route }) => {
                 '9ecz2uw6ezt9',
                 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM',
                 '96078'
-              );
+            );
             const reactions = await client.reactions.filter({
                 'activity_id': route.params.activity.activity.id
-              });
-              var dat = []
-              reactions.results.map((item)=>{
-                if(item['kind']=='comment'){
+            });
+            var dat = []
+            reactions.results.map((item) => {
+                if (item['kind'] == 'comment') {
                     dat.push(item)
                 }
-              })
-              setcomments(dat)
+            })
+            setcomments(dat)
+            const analyse = async () => {
+                var x = await AsyncStorage.getItem('children');
+                if (x) {
+                    x = JSON.parse(x)
+                    if (Object.keys(x).length == 0) {
+                        await AsyncStorage.removeItem('children');
+                        x = null
+                    }
+                    analytics.screen('SinglePostScreen', {
+                        userID: x ? x["0"]["id"] : null,
+                        deviceID: getUniqueId()
+                    })
+                }
+                else {
+                    analytics.screen('SinglePostScreen', {
+                        userID: null,
+                        deviceID: getUniqueId()
+                    })
+                }
+            }
+            analyse();
         }
-       data()
-
+        data()
     }, [])
 
     const [place, setplace] = useState('')
@@ -145,18 +166,27 @@ const SinglePostScreen = ({ navigation, route }) => {
                         width={-80}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
-                            analytics.track('Comment', {
-                                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                            analytics.track('CommentIconPressed', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             });
                         }}
                     />
-                    <Icon onPress={() => {
-                        Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + data.activity.id + '%26apn=com.genioclub.app').then((data) => {
-                        }).catch(() => {
-                            alert('Make sure Whatsapp installed on your device');
-                        });
-                    }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
+                    <TouchableOpacity style={{ width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
+                        onPress={async () => {
+                            var x = await AsyncStorage.getItem('children');
+                            analytics.track('WhatsappShare', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                deviceID: getUniqueId()
+                            });
+                            Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + data.activity.id).then((data) => {
+                            }).catch(() => {
+                                alert('Please make sure Whatsapp is installed on your device');
+                            });
+                        }}
+                    >
+                        <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
+                    </TouchableOpacity>
                 </View>
                 <FlatList data={comments} renderItem={({ item }) => {
                     return (
@@ -209,18 +239,18 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
 
                 {props.activity.video ?
-                      <Video
-                      source={{ uri: props.activity.video }}
-                      rate={1.0}
-                      volume={1.0}
-                      isMuted={false}
-                      resizeMode="cover"
-                      // shouldPlay
-                      // usePoster={props.activity.poster?true:false}
-                      // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                      useNativeControls={true}
-                      style={{ width: width, height: 340 }}
-                  /> : null}
+                    <Video
+                        source={{ uri: props.activity.video }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode="cover"
+                        // shouldPlay
+                        // usePoster={props.activity.poster?true:false}
+                        // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                        useNativeControls={true}
+                        style={{ width: width, height: 340 }}
+                    /> : null}
                 {props.activity.youtube ?
                     <YoutubePlayer
                         videoId={props.activity.youtube} // The YouTube video ID
@@ -260,7 +290,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                     cancelButtonIndex={2}
                                     onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
                                 />
-                                <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
+                                <Right><TouchableOpacity style={{ width: 70, alignItems: 'center', padding: 12 }} onPress={() => { showActionSheet(); }} ><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></TouchableOpacity></Right>
                             </View>
                         </View>
                     }

@@ -66,6 +66,8 @@ const Browser = ({ navigation, route }) => {
 
             </View>
             <WebView
+                bounces={false}
+                scrollEnabled={false} 
                 source={{
                     uri: url
                 }}

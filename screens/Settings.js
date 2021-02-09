@@ -52,13 +52,13 @@ const Settings = ({ navigation, route }) => {
         var x = await AsyncStorage.getItem('children');
         if (isSwitchOn) {
             analytics.track('Push Notifications Turned Off', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
             })
         }
         else {
             analytics.track('Push Notifications Turned On', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
             })
         }
@@ -82,15 +82,11 @@ const Settings = ({ navigation, route }) => {
             setlogging(true)
             var x = await AsyncStorage.getItem('children');
             analytics.track('Logged Out', {
-                userID: x ? JSON.parse(x)["0"]["data"]["gsToken"] : null,
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
             })
             var arr = await AsyncStorage.getAllKeys()
             var index = arr.indexOf("camerastatus");
-            if (index > -1) {
-              arr.splice(index, 1);
-            }
-            index = arr.indexOf("loginheaders");
             if (index > -1) {
               arr.splice(index, 1);
             }
@@ -163,7 +159,7 @@ const Settings = ({ navigation, route }) => {
                     x = null
                 }
                 analytics.screen('Settings Screen', {
-                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    userID: x ? x["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
             }
@@ -265,8 +261,13 @@ const Settings = ({ navigation, route }) => {
                     </View>*/}
                     </View>
                     <View style={{ flexDirection: 'column', marginTop: '40%' }}>
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => {
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={async () => {
                             sheetRef.current.snapTo(0);
+                            var x = await AsyncStorage.getItem('children');
+                            analytics.track('GiveFeedback', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                deviceID: getUniqueId()
+                            })
                             const onBackPress = () => {
                                 sheetRef.current.snapTo(1);
                                 const onBackNew = () => {
@@ -283,7 +284,20 @@ const Settings = ({ navigation, route }) => {
                         }} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Give Feedback</Text>
                         </Button>
-                        <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={() => Linking.openURL('whatsapp://send?text=&phone=+918861024466')} >
+                        <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={async () =>{
+                            var x = await AsyncStorage.getItem('children');
+                            analytics.track('ContactUs', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                deviceID: getUniqueId()
+                            })
+                            axios.get('https://api.genio.app/get-out/whatsappcontact/')
+                            .then(whatsappcontact => {
+                                whatsappcontact = whatsappcontact.data;
+                                Linking.openURL('whatsapp://send?text=&phone='+whatsappcontact)
+                            })
+                        } 
+                        } 
+                        >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17, alignSelf: 'center', marginLeft: 40 }}>Contact Us</Text>
                             <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                         </Button>

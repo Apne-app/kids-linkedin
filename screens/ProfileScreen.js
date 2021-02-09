@@ -239,7 +239,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     x = null
                 }
                 analytics.screen('Profile Screen', {
-                    userID: x ? x["0"]["data"]["gsToken"] : null,
+                    userID: x ? x["0"]["id"] : null,
                     deviceID: getUniqueId()
                 })
             }
@@ -473,7 +473,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         onPress={async () => {
                             var x = route.params.children;
                             analytics.track('Opened website', {
-                                userID: x ? x["0"]["data"]["gsToken"] : null,
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             })
                             navigation.navigate('Browser', { url: "https://eager-bohr-ef70c5.netlify.app/" + children['0']['data']['gsToken'], heading: 'Website' })

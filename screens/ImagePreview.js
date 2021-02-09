@@ -275,8 +275,27 @@ const App: () => React$Node = (props) => {
       {
         !croppedi &&
         <View style={{flexDirection:'row', alignSelf:'center', backgroundColor: '#efefef', height:50, marginTop:20}}>
-          <TouchableOpacity onPress={() => cropViewRef.current.rotateImage(false)} style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360, marginRight: 50,}} source={require('../Icons/rotate_left.png')} /></TouchableOpacity>
-          <TouchableOpacity onPress={() => cropViewRef.current.rotateImage(true)} style={{backgroundColor: '000'}}><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360,  }} source={require('../Icons/rotate_right.png')} /></TouchableOpacity>
+          <TouchableOpacity onPress={async () => {
+            var x = await AsyncStorage.getItem('children');
+              analytics.track('ImageLeftRotated', {
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                deviceID: getUniqueId()
+              })
+            cropViewRef.current.rotateImage(false)
+          }
+          }
+            style={{backgroundColor: '000'}}
+            ><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360, marginRight: 50,}} source={require('../Icons/rotate_left.png')} /></TouchableOpacity>
+          <TouchableOpacity onPress={async () => {
+            var x = await AsyncStorage.getItem('children');
+              analytics.track('ImageRightRotated', {
+                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                deviceID: getUniqueId()
+              })
+            cropViewRef.current.rotateImage(true)} 
+          }
+            style={{backgroundColor: '000'}}
+            ><Image style={{ height: 50, width: 50, backgroundColor: "transparent", elevation:80, borderRadius:360,  }} source={require('../Icons/rotate_right.png')} /></TouchableOpacity>
           </View>
       }
       <View style={{ height: height * 0.16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: '#efefef' }}>
