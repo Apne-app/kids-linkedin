@@ -260,10 +260,10 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
     }
     options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
     props.activity.image ? props.activity.image.split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
-    if (props.activity.status && props.activity.status === 'inreview') {
-        return null
-    }
-    else {
+    // if (props.activity.status && props.activity.status === 'inreview') {
+    //     return null
+    // }
+    // else {
         return (
             <Activity
                 Header={
@@ -346,6 +346,6 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                 Footer={footer(props.activity.id, props)}
             />
         );
-    }
+    // }
 };
 export default FeedComponent;

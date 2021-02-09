@@ -97,6 +97,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const [key, setkey] = useState('1')
     const [posts, setposts] = useState(1)
     const { Update } = React.useContext(AuthContext);
+    const [source, setsource] = useState('')
     const [course, setCourse] = useState({
         org: '',
         url: '',
@@ -107,7 +108,6 @@ const ProfileScreen = ({ navigation, route }) => {
             const client = connect('9ecz2uw6ezt9', children[0]['data']['gsToken'], '96078');
             var user = client.feed('user', children[0]['id'] + 'id');
             var post = await user.get({ limit: 5 })
-            console.log(post['results'])
             setposts(post['results'].length)
         }
         data()
@@ -419,14 +419,13 @@ const ProfileScreen = ({ navigation, route }) => {
 
     }, []);
 
-    const [source, setsource] = useState('')
     const there = () => {
         return (<View key={place} style={{ backgroundColor: "#f9f9f9" }}>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
                     appId={'96078'}
-                    token={children['0']['data']['gsToken']}
+                    token={children[0]['data']['gsToken']}
                 >
                     <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
                         <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
@@ -615,8 +614,16 @@ const ProfileScreen = ({ navigation, route }) => {
                                             })
                                         })
                                             .then(async (response) => {
-                                                Update({ 'children': response.data })
+                                                var resp = response.data
+                                                if (!source.includes(response.data[0]['id'])) {
+                                                    navigation.reset({
+                                                        index: 0,
+                                                        routes: [{ name: 'Home' }],
+                                                    });
+                                                }
                                                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
+                                                Update({ 'children': resp })
                                                 setplacefun(String(parseInt(place) + 1))
                                             })
                                             .catch((error) => {
@@ -698,9 +705,16 @@ const ProfileScreen = ({ navigation, route }) => {
                                             })
                                         })
                                             .then(async (response) => {
-                                                Update({ 'children': response.data })
+                                                if (!source.includes(response.data[0]['id'])) {
+                                                    navigation.reset({
+                                                        index: 0,
+                                                        routes: [{ name: 'Home' }],
+                                                    });
+                                                }
+                                                var resp = response.data
                                                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                                setplacefun(String(parseInt(place) + 1))
+                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
+                                                Update({ 'children': resp })
                                             })
                                             .catch((error) => {
                                             })

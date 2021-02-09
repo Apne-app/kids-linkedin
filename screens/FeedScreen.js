@@ -369,7 +369,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         renderContent={renderLikes}
                                     />
                                 )
-                            }} notify={true} navigation={navigation} feedGroup="timeline" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ reactions: ['like', 'comment'] }} />
+                            }} noPagination={false} notify={true} navigation={navigation} feedGroup="timeline" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }}  />
                         <Animatable.View style={{ display: slidedisplay }} animation="slideInRight" useNativeDriver duration={3000} ref={slideRef}>
                             <View>
                                 <View style={{ position: 'absolute', right: 0, backgroundColor: feedstate === 0 ? '#327feb' : '#fff', height: 46, width: 50, bottom: 152, borderTopLeftRadius: 43, borderBottomLeftRadius: 43, elevation: 40 }}>

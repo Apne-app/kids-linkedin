@@ -192,12 +192,13 @@ const SinglePostScreen = ({ navigation, route }) => {
                 </View>
                 <FlatList data={comments} renderItem={({ item }) => {
                     return (
-                        <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <Image source={{ uri: item.user.data.profileImage }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
-                            <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
-                                {item.data.text}
-                            </Text>
-                        </View>
+                        item.user ?
+                            <View style={{ flexDirection: 'row', padding: 10 }}>
+                                <Image source={{ uri: item.user.data.profileImage }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                                    {item.data.text}
+                                </Text>
+                            </View> : null
                     )
                 }} />
             </View>)
