@@ -27,11 +27,23 @@ import FastImage from 'react-native-fast-image'
 const Gallery = (props) =>  {
 
     const [gallery, setGallery] = React.useState([]);
+    const [galleryInventory, setGalleryInventory] = React.useState([]);
+    const [offset, setOffset] = React.useState(0);
 
     const[selected, setSelected] = React.useState('');
 
 
     // console.log(route.params);
+
+    const loadMore = () =>  {
+      let arr = []
+      for(var i = offset; i < offset+100; i++)
+      {
+        arr.push(galleryInventory[i]);
+      }
+      setGallery([ ...gallery, ...arr ]);
+      setOffset(offset+50);
+    }
 
     React.useEffect(() => {
 
@@ -54,8 +66,14 @@ const Gallery = (props) =>  {
                     assetType: 'Photos',
                     })
                     .then(r => {
-                    setGallery([ ...r.edges ]);
-                    setSelected(r.edges[0].node.image.uri)
+                    setGalleryInventory([ ...r.edges ]);
+                    let arr = []
+                    for(var i = offset; i < offset+100; i++)
+                    {
+                      arr.push(r.edges[i]);
+                    }
+                    setGallery([ ...gallery, ...arr ]);
+                    setSelected(r.edges[0].node.image.uri);
                     console.log(r.edges[0].node.image.uri);
                     })
                     .catch((err) => {
@@ -102,6 +120,8 @@ const Gallery = (props) =>  {
             //Setting the number of column
             numColumns={3}
             keyExtractor={(item, index) => index.toString()}
+            onEndReached={() => loadMore()}
+            onEndReachedThreshold={20}
           />
         </ScrollView>
       );
