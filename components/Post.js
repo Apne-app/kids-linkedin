@@ -465,10 +465,11 @@ const Upload = ({ route, navigation }) => {
       {
         if(explore[i].uri.includes('http'))
         {
-          savedImgs.push(`${RNFS.DownloadDirectoryPath}/${selectedTag}_${explore[i].uri.split('_')[1]}`)
+          var xy = randomStr(10, '12345abcdepq75xyz');
+          savedImgs.push(`${RNFS.DownloadDirectoryPath}/${xy}.png`)
           await RNFS.downloadFile({
             fromUrl: explore[i].uri,
-            toFile: `${RNFS.DownloadDirectoryPath}/${selectedTag}_${explore[i].uri.split('_')[1]}`,
+            toFile: `${RNFS.DownloadDirectoryPath}/${xy}.png`,
           }).promise;
         }
       }
@@ -534,7 +535,7 @@ const Upload = ({ route, navigation }) => {
         hideOnPress: true,
       });
       await savedImgs.map(item => {
-        console.log(item)
+        // console.log(item)
         RNFS.unlink(item)
         .then(() => {
           console.log('FILE DELETED');
@@ -547,9 +548,9 @@ const Upload = ({ route, navigation }) => {
       sheetRef.current.snapTo(1)
     } catch (e) {
       console.log(e)
-      alert("Couldn't save pdf. Please try again");
-      sheetRef.current.snapTo(1)
       setDownloading(false);
+      sheetRef.current.snapTo(1)
+      alert("Couldn't save pdf. Please try again");
     }
   }
 
