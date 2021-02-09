@@ -158,20 +158,22 @@ const SinglePostScreen = ({ navigation, route }) => {
                         {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { type: 'feed_like' })}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                     </TouchableWithoutFeedback>
                     <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
-                    <ReactionIcon
-                        labelSingle=" "
-                        labelPlural=" "
-                        counts={props.activity.reaction_counts}
-                        kind="comment"
-                        width={-80}
-                        onPress={async () => {
-                            var x = await AsyncStorage.getItem('children');
-                            analytics.track('CommentIconPressed', {
-                                userID: x ? JSON.parse(x)["0"]["id"] : null,
-                                deviceID: getUniqueId()
-                            });
-                        }}
-                    />
+                    <View style={{ marginTop: 0 }}>
+                        <ReactionIcon
+                            labelSingle=" "
+                            labelPlural=" "
+                            counts={props.activity.reaction_counts}
+                            kind="comment"
+                            width={-80}
+                            onPress={async () => {
+                                var x = await AsyncStorage.getItem('children');
+                                analytics.track('CommentIconPressed', {
+                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                    deviceID: getUniqueId()
+                                });
+                            }}
+                        />
+                    </View>
                     <TouchableOpacity style={{ width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');

@@ -102,6 +102,16 @@ const ProfileScreen = ({ navigation, route }) => {
         url: '',
         name: ''
     })
+    useEffect(() => {
+        const data = async () => {
+            const client = connect('9ecz2uw6ezt9', children[0]['data']['gsToken'], '96078');
+            var user = client.feed('user', children[0]['id'] + 'id');
+            var post = await user.get({ limit: 5 })
+            console.log(post['results'])
+            setposts(post['results'].length)
+        }
+        data()
+    }, [])
     const setplacefun = async (val) => {
         const client = connect('9ecz2uw6ezt9', children[0]['data']['gsToken'], '96078');
         var user = client.feed('user', children[0]['id'] + 'id');
@@ -292,7 +302,6 @@ const ProfileScreen = ({ navigation, route }) => {
         addfollows()
     }, [])
     useEffect(() => {
-        console.log(children['0']['data']['image'])
         const profileImage = async () => {
             var children = route.params.children
             if (children != null) {
