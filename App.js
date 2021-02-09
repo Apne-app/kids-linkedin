@@ -58,7 +58,6 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import { Provider } from 'react-redux';
 import { store, persistor } from './Store/store';
 const CleverTap = require('clevertap-react-native');
-
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
@@ -176,34 +175,16 @@ const App = (props) => {
       if (notifications1) {
         notifications1 = JSON.parse(notifications1)
       }
-      var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-      var config = {
-        method: 'post',
-        url: 'https://api.genio.app/dark-knight/getToken',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data: data
-      };
-      var response = await axios(config)
-      var response1 = await axios.get('https://api.genio.app/sherlock/recently/0' + `/?token=${response.data.token}`)
-      var response2 = { data: {} }
-      if (children1) {
-        response2 = await axios.get('https://api.genio.app/magnolia/' + children1[0]['id'])
-      }
 
       axios.get('https://api.genio.app/get-out/loginheaders/')
         .then(loginheaders => {
           loginheaders = loginheaders.data;
           AsyncStorage.setItem('loginheaders', JSON.stringify(loginheaders));
         })
-
-      setnotifications(response2.data)
-      setjoined(response1.data)
-      setstatus(stat)
       setprofile(profile1)
       setchildren(children1)
       setnotifications(notifications1)
+      setstatus(stat)
       setloading(false)
     }
     data()
@@ -501,6 +482,9 @@ const App = (props) => {
         }
         if (data.newnoti) {
           setnewnoti(data.newnoti)
+        }
+        if (data.joined) {
+          setjoined(data.joined)
         }
       },
     }),

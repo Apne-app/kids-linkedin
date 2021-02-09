@@ -28,11 +28,11 @@ import CompButton from '../Modules/CompButton'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
-import FastImage from 'react-native-fast-image'
-var VideoPlayer = require('react-native-exoplayer');
+import FastImage from 'react-native-fast-image';
+import { Video } from 'expo-av';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-const FeedComponent = ({ props, status, children, navigation, route }) => {
+const FeedComponent = ({ props, status, children, navigation, route, place, setplace }) => {
     const refActionSheet = useRef(null);
     const showActionSheet = () => {
         refActionSheet.current.show()
@@ -49,6 +49,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                     const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
                     var user = client.feed('user', children['0']['id'] + 'id');
                     user.removeActivity(id1).then(() => {
+                        setplace(String(parseInt(place)+1))
                     }).catch(() => {
                         alert(
                             "There was an error deleting your post, please try again later."
@@ -203,7 +204,7 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                 }}>
                     {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { 'type': 'feed_like' })}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
                 </TouchableWithoutFeedback>
-                <Icon onPress={() => navigation.navigate('SinglePost', { id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
+                <Icon onPress={() => navigation.navigate('SinglePost', { id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: props, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', type:'comment' })} name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
                 <ReactionIcon
                     labelSingle=" "
                     labelPlural=" "
@@ -256,7 +257,8 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                                 <FastImage
                                     source={{
                                         uri: props.activity.actor.data ? props.activity.actor.data.profileImage : '',
-                                        priority: FastImage.priority.high
+                                        priority: FastImage.priority.high,
+                                         cache:FastImage.cacheControl.web
                                     }}
                                     style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                                 />
@@ -307,18 +309,17 @@ const FeedComponent = ({ props, status, children, navigation, route }) => {
                             <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(props.activity.object)[0] }) } }} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                             : null}
                         {props.activity.video ?
-                            <VideoPlayer
-                                seekColor={'#327FEB'}
-                                toggleResizeModeOnFullscreen={false}
-                                tapAnywhereToPause={true}
-                                paused={true}
-                                disableFullscreen={true}
-                                disableBack={true}
-                                disableVolume={true}
-                                style={{ borderRadius: 0, width: width, height: 340, }}
+                            <Video
                                 source={{ uri: props.activity.video }}
-                                navigator={navigation}
-                            // onEnterFullscreen={()=>navigation.navigate('VideoFull',{'uri':props.activity.video})}
+                                rate={1.0}
+                                volume={1.0}
+                                isMuted={false}
+                                resizeMode="cover"
+                                // shouldPlay
+                                // usePoster={props.activity.poster?true:false}
+                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                                useNativeControls={true}
+                                style={{ width: width, height: 340 }}
                             /> : null}
                         {props.activity.youtube ?
                             <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />

@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { useRef, useState, useEffect } from 'react'; 
+import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, TouchableOpacity, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -30,7 +30,7 @@ import FeedComponent from '../Modules/FeedComponent'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
-var VideoPlayer = require('react-native-exoplayer');
+import { Video } from 'expo-av';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -148,7 +148,7 @@ const FeedScreen = ({ navigation, route }) => {
 
     //     return unsubscribe;
     // }, [navigation]);
-   
+
 
     const renderLikes = (props) => {
         if (type === 'like') {
@@ -326,13 +326,14 @@ const FeedScreen = ({ navigation, route }) => {
     //     check()
     // }, [])
 
-    const Video = ({ url }) => {
-        return (
-            VideoPlayer.showVideoPlayer(url).then(() => {
-                // onReachEnd
-            })
-        )
-    }
+    // const Video = ({ url }) => {
+    //     return (
+    //         VideoPlayer.showVideoPlayer(url).then(() => {
+    //             // onReachEnd
+    //         })
+    //     )
+    // }
+
     const there = (props) => {
         return (
             <SafeAreaProvider style={{ display: feedstate == 0 ? 'flex' : 'none' }}>
@@ -354,7 +355,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         renderContent={renderLikes}
                                     />
                                 )
-                            }} notify={true} navigation={navigation} feedGroup="timeline" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ withOwnReactions: true }} />
+                            }} notify={true} navigation={navigation} feedGroup="timeline" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ reactions: ['like', 'comment'] }} />
                         <Animatable.View style={{ display: slidedisplay }} animation="slideInRight" useNativeDriver duration={3000} ref={slideRef}>
                             <View>
                                 <View style={{ position: 'absolute', right: 0, backgroundColor: feedstate === 0 ? '#327feb' : '#fff', height: 46, width: 50, bottom: 152, borderTopLeftRadius: 43, borderBottomLeftRadius: 43, elevation: 40 }}>

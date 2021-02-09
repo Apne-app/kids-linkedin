@@ -11,7 +11,6 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
 import { useFocusEffect } from "@react-navigation/native";
-var VideoPlayer = require('react-native-exoplayer');
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -24,6 +23,10 @@ import { getUniqueId } from 'react-native-device-info';
 import analytics from '@segment/analytics-react-native';
 import FeedComponent from '../Modules/FeedComponent'
 import FastImage from 'react-native-fast-image'
+import { connect } from 'getstream';
+import { Video } from 'expo-av';
+
+      
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -75,9 +78,24 @@ const SinglePostScreen = ({ navigation, route }) => {
     };
     var year = parseInt(d.getFullYear());
     useEffect(() => {
-        if (route.params.activity.activity.own_reactions.comment) {
-            setcomments(route.params.activity.activity.own_reactions.comment)
+        const data = async () => {
+            const client = connect(
+                '9ecz2uw6ezt9',
+                'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM',
+                '96078'
+              );
+            const reactions = await client.reactions.filter({
+                'activity_id': route.params.activity.activity.id
+              });
+              var dat = []
+              reactions.results.map((item)=>{
+                if(item['kind']=='comment'){
+                    dat.push(item)
+                }
+              })
+              setcomments(dat)
         }
+       data()
 
     }, [])
 
@@ -191,20 +209,18 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
 
                 {props.activity.video ?
-                    <VideoPlayer
-                        seekColor={'#327FEB'}
-                        toggleResizeModeOnFullscreen={false}
-                        tapAnywhereToPause={true}
-                        playInBackground={false}
-                        paused={true}
-                        disableFullscreen={true}
-                        disableBack={true}
-                        disableVolume={true}
-                        style={{ width: width, height: 340 }}
-                        source={{ uri: props.activity.video }}
-                        navigator={navigation}
-                        onExitFullscreen={() => navigation.pop()}
-                    /> : null}
+                      <Video
+                      source={{ uri: props.activity.video }}
+                      rate={1.0}
+                      volume={1.0}
+                      isMuted={false}
+                      resizeMode="cover"
+                      // shouldPlay
+                      // usePoster={props.activity.poster?true:false}
+                      // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                      useNativeControls={true}
+                      style={{ width: width, height: 340 }}
+                  /> : null}
                 {props.activity.youtube ?
                     <YoutubePlayer
                         videoId={props.activity.youtube} // The YouTube video ID
@@ -242,7 +258,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                     styles={{ borderRadius: 0, margin: 10 }}
                                     options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                                     cancelButtonIndex={2}
-                                    onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://link.genio.app/?link=https://link.genio.app/post?id=' + props.activity.id + '%26apn=com.genioclub.app') : null }}
+                                    onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
                                 />
                                 <Right><Icon onPress={() => { showActionSheet(); }} name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, marginRight: 20, color: '#383838' }} /></Right>
                             </View>
@@ -265,6 +281,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 <CustomActivity props={route.params.activity} status={status} children={children} navigation={navigation} route={route} />
                 {status === '3' ? 0 ? <CompButton message={'You have been temporarily banned from commenting'} back={'Home'} /> : <CommentBox
                     key={'1'}
+                    type={route.params.type}
                     textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
                     activity={route.params.activity.activity}
                     onSubmit={(text) => {

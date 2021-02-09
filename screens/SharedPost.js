@@ -10,7 +10,6 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
 import { useFocusEffect } from "@react-navigation/native";
-var VideoPlayer = require('react-native-exoplayer');
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import BottomSheet from 'reanimated-bottom-sheet';

@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react'; 
+import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, FlatList, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -13,7 +13,9 @@ import CompButton from '../Modules/CompButton'
 import { useFocusEffect } from "@react-navigation/native";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import FastImage from 'react-native-fast-image'
+import FastImage from 'react-native-fast-image';
+import AuthContext from '../Context/Data';
+import axios from 'axios';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -45,10 +47,29 @@ const theme = {
 
 
 const SearchScreen = ({ route, navigation }) => {
-  const joined = route.params.joined
-  console.log(route.params)
+  const { Update } = React.useContext(AuthContext);
+  const [joined, setjoined] = useState({})
+  const [place, setplace] = useState('1')
   const children = route.params.children
   const status = route.params.status
+  useEffect(() => {
+    const data = async () => {
+      var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+      var config = {
+        method: 'post',
+        url: 'https://api.genio.app/dark-knight/getToken',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: data
+      };
+      var response = await axios(config)
+      var response1 = await axios.get('https://api.genio.app/sherlock/recently/0' + `/?token=${response.data.token}`)
+      // Update({ 'joined': response1.data })
+      setjoined(response1.data)
+    }
+    data()
+  }, [])
   useEffect(() => {
     const check = async () => {
       if (children) {
@@ -84,7 +105,7 @@ const SearchScreen = ({ route, navigation }) => {
     }, []));
   const there = () => {
     return (
-      <Container>
+      <Container key={place}>
         <Content style={styles.container}>
           <View style={{ flexDirection: 'row' }}>
             <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
@@ -110,7 +131,7 @@ const SearchScreen = ({ route, navigation }) => {
                     >
                     </FastImage>
                     <View>
-                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase()+joined[item]['data']['name'].substring(1)}</Text>
+                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)}</Text>
                     </View>
                   </View>
                   {/* <View

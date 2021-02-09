@@ -7,9 +7,11 @@ import { ScrollView } from 'react-native-gesture-handler';
 import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import FastImage from 'react-native-fast-image'
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { useFocusEffect } from "@react-navigation/native";
 import { RNS3 } from 'react-native-aws3';
+import AuthContext from '../Context/Data';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -22,7 +24,6 @@ import LikeButton from '../components/LikeButton'
 import FeedComponent from '../Modules/FeedComponent'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
-var VideoPlayer = require('react-native-exoplayer');
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
@@ -84,7 +85,7 @@ const fontConfig = {
 const ProfileScreen = ({ navigation, route }) => {
     const children = route.params.children
     const status = route.params.status
-    const [place, setplace] = useState('')
+    const [place, setplace] = useState(0)
     const [data, setdata] = useState({ 'followers': [], 'following': [], type: 'loading' })
     const [certi, setCerti] = useState([]);
     const [Loading, setLoading] = useState(false)
@@ -94,12 +95,20 @@ const ProfileScreen = ({ navigation, route }) => {
     const [refreshing, setRefreshing] = React.useState(false);
     const [bottomType, setBottomType] = useState('')
     const [key, setkey] = useState('1')
+    const [posts, setposts] = useState(1)
+    const { Update } = React.useContext(AuthContext);
     const [course, setCourse] = useState({
         org: '',
         url: '',
         name: ''
     })
-
+    const setplacefun = async (val) => {
+        const client = connect('9ecz2uw6ezt9', children[0]['data']['gsToken'], '96078');
+        var user = client.feed('user', children[0]['id'] + 'id');
+        var post = await user.get({ limit: 5 })
+        setposts(post['results'].length)
+        setplace(val)
+    }
     const refActionSheet = useRef(null);
     useFocusEffect(
         React.useCallback(() => {
@@ -271,10 +280,11 @@ const ProfileScreen = ({ navigation, route }) => {
                 children = children['0']
                 const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
                 var user = client.feed('user', children['id'] + 'id');
+                var post = await user.get({ limit: 5 })
+                setposts(post['results'].length)
                 var follows = await user.followers()
                 var user = client.feed('timeline', children['id'] + 'id');
                 var following = await user.following()
-                console.log(follows)
                 setdata({ 'followers': follows['results'], 'following': following['results'], type: children['data']['type'] })
             }
             // console.log(follows)
@@ -282,6 +292,7 @@ const ProfileScreen = ({ navigation, route }) => {
         addfollows()
     }, [])
     useEffect(() => {
+        console.log(children['0']['data']['image'])
         const profileImage = async () => {
             var children = route.params.children
             if (children != null) {
@@ -401,21 +412,24 @@ const ProfileScreen = ({ navigation, route }) => {
 
     const [source, setsource] = useState('')
     const there = () => {
-        return (<View>
+        return (<View key={place} style={{ backgroundColor: "#f9f9f9" }}>
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                 <StreamApp
                     apiKey={'9ecz2uw6ezt9'}
                     appId={'96078'}
                     token={children['0']['data']['gsToken']}
                 >
-                    <View style={{ marginTop: 30, flexDirection: 'row' }}>
+                    <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
                         <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
-                            <Image
-                                source={{ uri: source }}
+                            <FastImage
+                                source={{
+                                    uri: source,
+                                    cache: FastImage.cacheControl.web
+                                }}
                                 style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
                             />
-                            <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: 'white', borderWidth: 2, marginLeft: -35 }}>
-                                <Icon name="camera" type="Feather" style={{ color: 'white', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
+                            <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: '#f9f9f9', borderWidth: 2, marginLeft: -35 }}>
+                                <Icon name="camera" type="Feather" style={{ color: '#f9f9f9', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
                             </View>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
@@ -424,15 +438,16 @@ const ProfileScreen = ({ navigation, route }) => {
                             </View>
                             <View style={{ flexDirection: 'row', }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{'Kid'}</Text>
+                                {/* <Icon onPress={()=>setplacefun(String(parseInt(place)+1))} name="refresh-ccw" type="Feather" style={{ color: 'black', alignSelf: 'center', fontSize: 18, marginLeft:10, marginTop:2}} /> */}
                             </View>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                    {/* <View style={{ backgroundColor: '#f9f9f9', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
                         <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                            {/* <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                            <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>2</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                            </View> */}
+                            </View>
                             <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
@@ -442,7 +457,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                             </View>
                         </View>
-                        {/*<View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                             <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
@@ -452,9 +467,9 @@ const ProfileScreen = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Courses</Text>
                             </TouchableOpacity>
 
-                        </View>*/}
-                    </View>
-                    <TouchableOpacity
+                        </View>
+                    </View> */}
+                    {/* <TouchableOpacity
                         onPress={async () => {
                             var x = route.params.children;
                             analytics.track('Opened website', {
@@ -470,27 +485,38 @@ const ProfileScreen = ({ navigation, route }) => {
                         }}
 
                         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: 'white', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
-                    </TouchableOpacity>
-                    <View style={{ marginBottom: 400 }}>
-                        <FlatFeed feedGroup="user" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ withOwnReactions: true }} />
-                    </View>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 15, backgroundColor: '#327FEB', color: '#f9f9f9', width: 100, textAlign: 'center', padding: 3, borderRadius: 15 }}>{'Website'}</Text>
+                    </TouchableOpacity> */}
+                    {posts ?
+                        <View style={{ marginBottom: 400, backgroundColor: "#f9f9f9", marginTop: 20 }}>
+                            <FlatFeed feedGroup="user" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} place={place} setplace={setplacefun} /> }} options={{ withOwnReactions: true }} />
+                        </View> :
+                        <View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
+                            <TouchableWithoutFeedback onPress={() => navigation.navigate('Camera')}>
+                                <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
+                                    <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+                                </View>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={() => navigation.navigate('Camera')}>
+                                <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Create a post now and share your kid's talents to the community of Genio</Text>
+                            </TouchableWithoutFeedback>
+                        </View>}
+
                 </StreamApp>
             </ScrollView>
-            <BottomSheet
+            {/* <BottomSheet
                 ref={optionsRef}
                 snapPoints={[height * 0.5, 0, -200]}
                 initialSnap={2}
                 enabledGestureInteraction={true}
                 borderRadius={25}
                 renderContent={renderOptions}
-            />
+            /> */}
             <ActionSheet
                 useNativeDriver={true}
                 ref={refActionSheet}
-                title={<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Change Profile Photo</Text>}
                 styles={{ borderRadius: 10, margin: 10 }}
-                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Open Camera</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Cancel</Text>]}
                 cancelButtonIndex={2}
                 onPress={(index) => { index == 0 ? pickImage('gallery') : index == 1 ? pickImage('camera') : null }}
             />
@@ -498,7 +524,7 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     const notthere = () => {
         return (
-            <View style={{ backgroundColor: 'white', height: height, width: width }}>
+            <View style={{ backgroundColor: '#f9f9f9', height: height, width: width }}>
                 <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}>
                     <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
@@ -555,7 +581,40 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         axios(config)
                             .then(async (response) => {
-                                setkey(String(parseInt(key) + 1))
+                                var pro = route.params.profile
+                                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+                                var config = {
+                                    method: 'post',
+                                    url: 'https://api.genio.app/get-out/getToken',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    data: data
+                                };
+
+                                axios(config)
+                                    .then(function (response) {
+                                        // console.log(JSON.stringify(response.data.token));
+                                        axios({
+                                            method: 'post',
+                                            url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            data: JSON.stringify({
+                                                "email": pro.email,
+                                            })
+                                        })
+                                            .then(async (response) => {
+                                                Update({ 'children': response.data })
+                                                await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                                setplacefun(String(parseInt(place) + 1))
+                                            })
+                                            .catch((error) => {
+                                            })
+                                    })
+                                    .catch(function (error) {
+                                    });
                             }).catch((error) => {
                                 console.log(error, "asd")
                                 alert('Could not update Profile Picture, please try again later')
@@ -605,7 +664,40 @@ const ProfileScreen = ({ navigation, route }) => {
                         };
                         axios(config)
                             .then(async (response) => {
-                                setkey(String(parseInt(key) + 1))
+                                var pro = route.params.profile
+                                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+                                var config = {
+                                    method: 'post',
+                                    url: 'https://api.genio.app/get-out/getToken',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    data: data
+                                };
+
+                                axios(config)
+                                    .then(function (response) {
+                                        // console.log(JSON.stringify(response.data.token));
+                                        axios({
+                                            method: 'post',
+                                            url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            data: JSON.stringify({
+                                                "email": pro.email,
+                                            })
+                                        })
+                                            .then(async (response) => {
+                                                Update({ 'children': response.data })
+                                                await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                                setplacefun(String(parseInt(place) + 1))
+                                            })
+                                            .catch((error) => {
+                                            })
+                                    })
+                                    .catch(function (error) {
+                                    });
                             }).catch((error) => {
                                 console.log(error, "asd")
                                 alert('Could not update Profile Picture, please try again later')
@@ -617,7 +709,7 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     const loading = () => {
         return (
-            <View style={{ backgroundColor: 'white', height: height, width: width }}>
+            <View style={{ backgroundColor: '#f9f9f9', height: height, width: width }}>
                 <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
             </View>
         );

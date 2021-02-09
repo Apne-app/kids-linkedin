@@ -11,7 +11,6 @@ import cl.json.ShareApplication;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 import com.horcrux.svg.SvgPackage;
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
-import com.ngager.videoplayer.VideoPlayerPackage; 
 import com.anyline.RNImageToPDF.RNImageToPdfPackage;
 import com.rnfs.RNFSPackage;
 import com.genioclub.app.generated.BasePackageList;

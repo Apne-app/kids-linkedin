@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react'; 
+import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image, TouchableOpacity, FlatList } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -127,8 +127,11 @@ const Searching = ({ route, navigation }) => {
                         })
                     }}>
                         <FastImage
-                            source={{ uri: item['data']['image'],
-                        priority:FastImage.priority.high }}
+                            source={{
+                                uri: item['data']['image'],
+                                priority: FastImage.priority.high,
+                                cache: FastImage.cacheControl.web
+                            }}
                             style={{ width: 60, height: 60, borderRadius: 306, }}
                         />
                         <View style={{ marginLeft: 20, flexDirection: 'column' }}>
