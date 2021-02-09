@@ -746,7 +746,7 @@ const FeedScreen = ({ navigation, route }) => {
     
     
                                 }}
-                                onEndReachedThreshold={2}
+                                onEndReachedThreshold={4}
                                 // horizontal={true}
                                 keyExtractor={(item, index) => index.toString()}
                             />}
@@ -974,7 +974,7 @@ const FeedScreen = ({ navigation, route }) => {
     
     
                                 }}
-                                onEndReachedThreshold={2}
+                                onEndReachedThreshold={4}
                                 // horizontal={true}
                                 keyExtractor={(item, index) => index.toString()}
                             />}
