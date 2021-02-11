@@ -111,11 +111,12 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
                   // navigation.navigate('Child');
                 } catch (e) {
                   // saving error
+                  alert("Network error, please restart the app!")
                 }
               })
-              .catch(err => console.log(err, "aa"))
+              .catch(err => alert("Network error, please restart the app!"))
           })
-          .catch(error => console.log(error, "bb"));
+          .catch(error => alert("Network error, please restart the app!"));
       })
       .then(() => console.log(linkedinInfo))
       .catch(err => {
