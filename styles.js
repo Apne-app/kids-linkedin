@@ -303,14 +303,15 @@ export const styles = {
       paddingTop: 5,
       paddingBottom: 5,
       marginLeft: 15,
+      fontSize: 28
     },
     text: {
       fontWeight: '700',
     },
     image: {
-      marginRight: 5,
-      width: 24,
-      height: 24,
+      marginRight: 10,
+      width: 34,
+      height: 34,
     },
   }),
   pagerBlock: StyleSheet.create({

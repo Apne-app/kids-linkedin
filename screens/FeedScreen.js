@@ -15,6 +15,7 @@ import AuthContext from '../Context/Data';
 import axios from 'axios';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import * as rssParser from 'react-native-rss-parser';
+import FastImage from 'react-native-fast-image';
 import { useFocusEffect } from "@react-navigation/native";
 import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
@@ -508,7 +509,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 });
                                 setTimeout(() => {
                                     item[0] == 'Feed' ? setFeedState(0) : item[0] == 'Quiz' ? setFeedState(1) : setFeedState(2);
-                                }, 150);
+                                }, 80);
                             }}>
                             <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center', height: 40, width: 100, borderRadius: 20, backgroundColor: feedstate == index ? "#327feb" : '#fff', marginHorizontal: 6, marginBottom: 3, elevation: 3 }} >
                                 <Icon name={item[1]} type={item[2]} style={{ fontSize: 20, color: feedstate == index ? '#fff' : '#327feb' }} />
@@ -607,8 +608,11 @@ const FeedScreen = ({ navigation, route }) => {
                                                 <View style={{ flexDirection: 'column', marginTop: 10 }}>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                                         <TouchableWithoutFeedback >
-                                                            <Image
-                                                                source={{ uri: 'data:image/jpeg;base64,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' }}
+                                                            <FastImage
+                                                                source={{ uri: item.avatar,
+                                                                    priority: FastImage.priority.high,
+                                                                    cache: FastImage.cacheControl.web
+                                                                }}
                                                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                                                             />
                                                         </TouchableWithoutFeedback>
@@ -625,8 +629,11 @@ const FeedScreen = ({ navigation, route }) => {
                                                     <Text style={{ textAlign: 'justify', marginHorizontal: 20, fontWeight: 'bold', color: "#327feb" }}>Click here to go to quiz</Text>
                                                 </View>
                                                 <View>
-                                                    <Image
-                                                        source={{ uri: item.image }}
+                                                    <FastImage
+                                                        source={{ uri: item.image,
+                                                            priority: FastImage.priority.high,
+                                                            cache: FastImage.cacheControl.web
+                                                        }}
                                                         style={{ width: width, height: 300, }}
                                                     />
                                                 </View>
@@ -700,8 +707,8 @@ const FeedScreen = ({ navigation, route }) => {
                                                 }
 
                                             }}>
-                                                <Icon type="MaterialIcons" name={status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 26 }} />
-                                                <Text style={{ marginTop: 3 }}> {item.likes_count}</Text>
+                                                <Icon type="MaterialIcons" name={status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 32 }} />
+                                                <Text style={{ marginTop: 8 }}> {item.likes_count}</Text>
                                             </TouchableOpacity>
                                             <Right>
                                                 <Icon onPress={() => {
@@ -709,7 +716,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                     }).catch(() => {
                                                         alert('Make sure Whatsapp installed on your device');
                                                     });
-                                                }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
+                                                }} name="whatsapp" type="Fontisto" style={{ fontSize: 28, marginLeft: '55%', color: '#4FCE5D' }} />
                                             </Right>
                                         </View>
                                     </View>
@@ -839,8 +846,11 @@ const FeedScreen = ({ navigation, route }) => {
                                                 <View style={{ flexDirection: 'column', marginTop: 10 }}>
                                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                                         <TouchableWithoutFeedback onPress={() => console.log('asd')}>
-                                                            <Image
-                                                                source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5tLK4cCPUENPA01-VE1bpZv3rajvx9LhcKQ&usqp=CAU' }}
+                                                            <FastImage
+                                                                source={{ uri: item.avatar,
+                                                                    priority: FastImage.priority.high,
+                                                                    cache: FastImage.cacheControl.web
+                                                                }}
                                                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                                                             />
                                                         </TouchableWithoutFeedback>
@@ -927,8 +937,8 @@ const FeedScreen = ({ navigation, route }) => {
                                                 }
 
                                             }}>
-                                                <Icon type="MaterialIcons" name={status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 26 }} />
-                                                <Text style={{ marginTop: 3 }}> {item.likes_count}</Text>
+                                                <Icon type="MaterialIcons" name={status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? "lightbulb" : "lightbulb-outline" : 'lightbulb-outline'} style={{ color: status == '3' ? item.liked_by.includes(children["0"]["data"]["gsToken"]) ? '#ffc900' : "#000" : "#000", fontSize: 32 }} />
+                                                <Text style={{ marginTop: 8 }}> {item.likes_count}</Text>
                                             </TouchableOpacity>
                                             <Right>
                                                 <Icon onPress={() => {
@@ -936,7 +946,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                     }).catch(() => {
                                                         alert('Make sure Whatsapp installed on your device');
                                                     });
-                                                }} name="whatsapp" type="Fontisto" style={{ fontSize: 20, marginLeft: '55%', color: '#4FCE5D' }} />
+                                                }} name="whatsapp" type="Fontisto" style={{ fontSize: 28, marginLeft: '55%', color: '#4FCE5D' }} />
                                             </Right>
                                         </View>
                                     </View>
