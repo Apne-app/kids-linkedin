@@ -98,14 +98,11 @@ const FeedScreen = ({ navigation, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             console.log('sadsadasd: ', route.params.goTo)
-            if(route.params.goTo)
-            {
-                if(route.params.goTo == 'quiz')
-                {
+            if (route.params.goTo) {
+                if (route.params.goTo == 'quiz') {
                     setFeedState(1)
                 }
-                if(route.params.goTo == 'news')
-                {
+                if (route.params.goTo == 'news') {
                     setFeedState(2)
                 }
                 route.params.goTo = false
@@ -369,7 +366,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         renderContent={renderLikes}
                                     />
                                 )
-                            }} noPagination={false} notify={true} navigation={navigation} feedGroup="timeline" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }}  />
+                            }} noPagination={false} notify={true} navigation={navigation} feedGroup="timeline" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} />
                         <Animatable.View style={{ display: slidedisplay }} animation="slideInRight" useNativeDriver duration={3000} ref={slideRef}>
                             <View>
                                 <View style={{ position: 'absolute', right: 0, backgroundColor: feedstate === 0 ? '#327feb' : '#fff', height: 46, width: 50, bottom: 152, borderTopLeftRadius: 43, borderBottomLeftRadius: 43, elevation: 40 }}>
@@ -491,21 +488,21 @@ const FeedScreen = ({ navigation, route }) => {
                             onPress={async () => {
                                 var x = await AsyncStorage.getItem('children');
                                 item[0] == 'Feed' ?
-                                analytics.track('FeedSwitchedtoPosts', {
-                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
-                                    deviceID: getUniqueId()
-                                })
-                                :
-                                item[0] == 'Quiz' ?
-                                analytics.track('FeedSwitchedtoQuiz', {
-                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
-                                    deviceID: getUniqueId()
-                                })
-                                :
-                                analytics.track('FeedSwitchedtoNews', {
-                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
-                                    deviceID: getUniqueId()
-                                });
+                                    analytics.track('FeedSwitchedtoPosts', {
+                                        userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                        deviceID: getUniqueId()
+                                    })
+                                    :
+                                    item[0] == 'Quiz' ?
+                                        analytics.track('FeedSwitchedtoQuiz', {
+                                            userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                            deviceID: getUniqueId()
+                                        })
+                                        :
+                                        analytics.track('FeedSwitchedtoNews', {
+                                            userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                            deviceID: getUniqueId()
+                                        });
                                 setTimeout(() => {
                                     item[0] == 'Feed' ? setFeedState(0) : item[0] == 'Quiz' ? setFeedState(1) : setFeedState(2);
                                 }, 150);
@@ -719,7 +716,7 @@ const FeedScreen = ({ navigation, route }) => {
                                 onEndReached={async () => {
                                     var axios = require('axios');
                                     var data = JSON.stringify({ "request_type": "get", "offset": quizOffset });
-    
+
                                     var config = {
                                         method: 'post',
                                         url: 'https://9c9qtqg8x7.execute-api.ap-south-1.amazonaws.com/default/quizAggregator',
@@ -728,7 +725,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         },
                                         data: data
                                     };
-    
+
                                     axios(config)
                                         .then(function (response) {
                                             // console.log(JSON.stringify(response.data));
@@ -736,15 +733,15 @@ const FeedScreen = ({ navigation, route }) => {
                                             // {
                                             //     alert("No more quizzes available right now")
                                             // }
-    
+
                                             setQuiz([...quiz, ...response.data]);
                                             setQuizOffset(quizOffset + response.data.length);
                                         })
                                         .catch(function (error) {
                                             setQuiz(['err'])
                                         });
-    
-    
+
+
                                 }}
                                 onEndReachedThreshold={4}
                                 // horizontal={true}
@@ -947,7 +944,7 @@ const FeedScreen = ({ navigation, route }) => {
                                     // console.log('end')
                                     var axios = require('axios');
                                     var data = JSON.stringify({ "request_type": "get", "offset": newsOffset });
-    
+
                                     var config = {
                                         method: 'post',
                                         url: 'https://uv4nn2mtxa.execute-api.ap-south-1.amazonaws.com/default/newsAggregator',
@@ -956,7 +953,7 @@ const FeedScreen = ({ navigation, route }) => {
                                         },
                                         data: data
                                     };
-    
+
                                     axios(config)
                                         .then(function (response) {
                                             // console.log(JSON.stringify(response.data));
@@ -971,8 +968,8 @@ const FeedScreen = ({ navigation, route }) => {
                                             console.log(error)
                                             setNews(['err'])
                                         });
-    
-    
+
+
                                 }}
                                 onEndReachedThreshold={4}
                                 // horizontal={true}

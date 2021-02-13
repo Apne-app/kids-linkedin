@@ -7,6 +7,7 @@ import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Sea
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton';
+import { Viewport } from '@skele/components'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import AsyncStorage from '@react-native-community/async-storage';
@@ -30,10 +31,13 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
 import FastImage from 'react-native-fast-image';
 import { Video } from 'expo-av';
+import VideoPlayer from 'expo-video-player'
+import InViewPort from "@coffeebeanslabs/react-native-inviewport";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const FeedComponent = ({ props, status, children, navigation, route, place, setplace }) => {
     const refActionSheet = useRef(null);
+    var videoRef = React.createRef();
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
@@ -324,18 +328,51 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                         <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(props.activity.object)[0] }) } }} text={props.activity.object} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                         : null}
                     {props.activity.video ?
-                        <Video
-                            source={{ uri: props.activity.video }}
-                            rate={1.0}
-                            volume={1.0}
-                            isMuted={false}
-                            resizeMode="cover"
-                            // shouldPlay
-                            // usePoster={props.activity.poster?true:false}
-                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                            useNativeControls={true}
-                            style={{ width: width, height: 340 }}
-                        /> : null}
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
+                            {/* <Video
+                                source={{ uri: props.activity.video }}
+                                rate={1.0}
+                                volume={1.0}
+                                isMuted={false}
+                                resizeMode="cover"
+                                // shouldPlay
+                                // usePoster={props.activity.poster?true:false}
+                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                                ref={videoRef}
+                                useNativeControls={true}
+                                playInBackground={false}
+                                playWhenInactive={false}
+                                onViewportEnter={() => console.log('Entered!')}
+                                onViewportLeave={() => console.log('Left!')}
+                                style={{ width: width, height: 340 }}
+                            /> */}
+                            <InViewPort onChange={(value) => value ? null : videoRef.pauseAsync()}>
+
+                                <VideoPlayer
+                                    videoProps={{
+                                        source: { uri: props.activity.video },
+                                        rate: 1.0,
+                                        volume: 1.0,
+                                        isMuted: false,
+                                        videoRef: v => videoRef = v,
+                                        resizeMode: Video.RESIZE_MODE_CONTAIN,
+                                        // shouldPlay
+                                        // usePoster={props.activity.poster?true:false}
+                                        // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                                        playInBackground: false,
+                                        playWhenInactive: false,
+                                        width: width,
+                                        height: 340,
+
+                                    }}
+                                    width={width}
+                                    height={340}
+                                    switchToLandscape={() => videoRef.presentFullscreenPlayer()}
+                                    sliderColor={'#327FEB'}
+                                    inFullscreen={false}
+                                />
+                            </InViewPort>
+                        </View> : null}
                     {props.activity.youtube ?
                         <Thumbnail onPress={() => { navigation.navigate('SinglePost', { image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: props }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + props.activity.youtube} />
                         : null}
