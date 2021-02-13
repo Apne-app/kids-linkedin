@@ -89,7 +89,7 @@ const Upload = ({ route, navigation }) => {
   const [selecting, setSelecting] = React.useState(false);
   const [showToast, setShowToast] = React.useState(false);
   const [downloading, setDownloading] = React.useState(false);
-  const [tags, setTags] = React.useState(['Homework', 'Certificate', 'Award', 'Other']);
+  const [tags, setTags] = React.useState(['Painting', 'Cooking', 'Drawing', 'Project', 'STEM', 'Other']);
   const [selectedTag, setTag] = React.useState('Genio');
   const [explore, setExplore] = React.useState([
     {

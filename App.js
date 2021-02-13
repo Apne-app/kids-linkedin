@@ -72,9 +72,10 @@ const App = (props) => {
   const [profile, setprofile] = useState({})
   const [children, setchildren] = useState({})
   const [joined, setjoined] = useState({})
+  const [camerastatus, setCameraStatus] = useState(null);
   const [notifications, setnotifications] = useState({})
   const [newnoti, setnewnoti] = useState([])
-  var data = { children: children, status: status, profile: profile, joined: joined, notifications: notifications, newnoti: newnoti }
+  var data = { children: children, status: status, profile: profile, joined: joined, notifications: notifications, newnoti: newnoti, camerastatus: camerastatus }
   const onReceived = (notification) => {
     console.log("Notification received: ", notification);
   }
@@ -421,6 +422,10 @@ const App = (props) => {
       if (st == '3') {
         var pro = await AsyncStorage.getItem('profile')
         var ch = await AsyncStorage.getItem('children');
+        var cmr = await AsyncStorage.getItem('camerastatus');
+        if(cmr) {
+          setCameraStatus(cmr);
+        }
         if (ch) {
           setchildren(JSON.parse(ch));
         }
@@ -497,6 +502,9 @@ const App = (props) => {
         }
         if (data.joined) {
           setjoined(data.joined)
+        }
+        if(data.camerastatus) {
+          setCameraStatus(data.camerastatus)
         }
       },
     }),

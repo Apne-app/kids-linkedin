@@ -39,7 +39,7 @@ const FileScreen = (props) => {
     const [synced, setSynced] = React.useState(false);
     const [stringImages, setStringImages] = React.useState("");
     const [tagsPresent, setTagsPresent] = React.useState(false)
-    const [tags, setTags] = React.useState(['All', 'Homework', 'Certificate', 'Award', 'Other']);
+    const [tags, setTags] = React.useState(['All', 'Painting', 'Cooking', 'Drawing', 'Project', 'STEM', 'Other']);
     const [tag, setTag] = React.useState('All');
     const status = props.route.params.status
 

@@ -446,7 +446,7 @@ const IndProfile = ({ navigation, route }) => {
                         </View>
                     </StreamApp>
                 </ScrollView>
-            </View > : <View style={{ backgroundColor: 'white', height: height, width: width }}>
+            </View> : <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
             </View>

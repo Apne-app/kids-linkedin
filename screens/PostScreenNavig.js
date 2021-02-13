@@ -20,7 +20,8 @@ class PostScreenNavig extends Component {
 
     this.focusListener = this.props.navigation.addListener("focus", async () => {
 
-      const x = await AsyncStorage.getItem('camerastatus');
+      const x = this.props.route.params.camerastatus
+
       // await AsyncStorage.removeItem('camerastatus')
       if(x == "3")
       {
