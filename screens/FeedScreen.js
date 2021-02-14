@@ -504,9 +504,9 @@ const FeedScreen = ({ navigation, route }) => {
                                             userID: x ? JSON.parse(x)["0"]["id"] : null,
                                             deviceID: getUniqueId()
                                         });
-                                setTimeout(() => {
+                                // setTimeout(() => {
                                     item[0] == 'Feed' ? setFeedState(0) : item[0] == 'Quiz' ? setFeedState(1) : setFeedState(2);
-                                }, 80);
+                                // }, 280);
                             }}>
                             <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center', color: "#fff", justifyContent: 'center', height: 40, width: 100, borderRadius: 20, backgroundColor: feedstate == index ? "#327feb" : '#fff', marginHorizontal: 6, marginBottom: 3, elevation: 3 }} >
                                 <Icon name={item[1]} type={item[2]} style={{ fontSize: 20, color: feedstate == index ? '#fff' : '#327feb' }} />
