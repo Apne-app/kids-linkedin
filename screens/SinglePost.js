@@ -26,7 +26,7 @@ import FeedComponent from '../Modules/FeedComponent'
 import FastImage from 'react-native-fast-image'
 import { connect } from 'getstream';
 import { Video } from 'expo-av';
-
+import VideoPlayer from 'expo-video-player'
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -37,6 +37,7 @@ function urlify(text) {
 }
 
 const SinglePostScreen = ({ navigation, route }) => {
+    var videoRef = React.createRef();
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -55,7 +56,6 @@ const SinglePostScreen = ({ navigation, route }) => {
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
     const status = route.params.status
-    console.log(status)
     const children = route.params.children
     var d = new Date();
     const onShare = async (message) => {
@@ -191,6 +191,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
                 <FlatList data={comments} renderItem={({ item }) => {
+                    console.log(item.data.text)
                     return (
                         item.user ?
                             <View style={{ flexDirection: 'row', padding: 10 }}>
@@ -198,7 +199,12 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
                                     {item.data.text}
                                 </Text>
-                            </View> : null
+                            </View> : <View style={{ flexDirection: 'row', padding: 10 }}>
+                                <Image source={require('../images/profile.jpg')} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                                    {item.data.text}
+                                </Text>
+                            </View>
                     )
                 }} />
             </View>)
@@ -242,17 +248,28 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
 
                 {props.activity.video ?
-                    <Video
-                        source={{ uri: props.activity.video }}
-                        rate={1.0}
-                        volume={1.0}
-                        isMuted={false}
-                        resizeMode="cover"
-                        // shouldPlay
-                        // usePoster={props.activity.poster?true:false}
-                        // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                        useNativeControls={true}
-                        style={{ width: width, height: 340 }}
+                    <VideoPlayer
+                        videoProps={{
+                            source: { uri: props.activity.video },
+                            rate: 1.0,
+                            volume: 1.0,
+                            isMuted: false,
+                            videoRef: v => videoRef = v,
+                            resizeMode: Video.RESIZE_MODE_CONTAIN,
+                            // shouldPlay
+                            // usePoster={props.activity.poster?true:false}
+                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                            playInBackground: false,
+                            playWhenInactive: false,
+                            width: width,
+                            height: 340,
+
+                        }}
+                        width={width}
+                        height={340}
+                        switchToLandscape={() => videoRef.presentFullscreenPlayer()}
+                        sliderColor={'#327FEB'}
+                        inFullscreen={false}
                     /> : null}
                 {props.activity.youtube ?
                     <YoutubePlayer
