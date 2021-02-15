@@ -3,8 +3,9 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
-import { StreamApp, FlatFeed, Activity, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
+import { StreamApp, FlatFeed, Activity, CommentItem, updateStyle, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList, SinglePost } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
+import ReactionIcon from '../components/ReactionIcon'
 import CommentBox from '../components/CommentBox'
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -55,6 +56,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const scrollref = React.useRef();
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
+    const [place, setplace] = useState('1')
     const status = route.params.status
     const children = route.params.children
     var d = new Date();
@@ -120,7 +122,6 @@ const SinglePostScreen = ({ navigation, route }) => {
         data()
     }, [])
 
-    const [place, setplace] = useState('')
     const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
         const showActionSheet = () => {
@@ -128,53 +129,39 @@ const SinglePostScreen = ({ navigation, route }) => {
         }
         const footer = (id, data) => {
             return (<View>
+                <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: -10, marginBottom: 8 }} />
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={async () => {
-                        if (status === '3') {
+                    <ReactionIcon
+                        labelSingle="like"
+                        labelPlural="likes"
+                        counts={props.activity.reaction_counts}
+                        kind="like"
+                        width={-80}
+                        onPress={async () => {
+                            setplace(String(parseInt(place) + 1))
                             var x = await AsyncStorage.getItem('children');
-                            var done = 0
-                            data.activity.own_reactions.like ? data.activity.own_reactions.like.map((item) => {
-                                var by = String(JSON.parse(x)["0"]["id"]) + 'id'
-                                if ((item.user_id) == by) {
-                                    done = 1
-                                }
-                            }) : null
-                            if (done == 0) {
-                                console.log('doing')
-                                x = JSON.parse(x)
-                                analytics.track('Like', {
-                                    userID: x["0"]["data"]["gsToken"],
-                                    deviceID: getUniqueId(),
-                                    by: x["0"]["id"],
-                                    byname: x["0"]['data']["name"],
-                                    byimage: x["0"]['data']["image"],
-                                    to: (props.activity.actor.id.replace('id', '')),
-                                    actid: id
-                                })
-                            }
-                        }
-
-                    }}>
-                        {status === '3' ? <LikeButton   {...props} /> : <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { type: 'feed_like' })}><View pointerEvents={'none'}><LikeButton   {...props} /></View></TouchableWithoutFeedback>}
-                    </TouchableWithoutFeedback>
-                    <Icon name="message-circle" type="Feather" style={{ fontSize: 22, marginLeft: 10, marginRight: -10 }} />
-                    <View style={{ marginTop: 0 }}>
-                        <ReactionIcon
-                            labelSingle=" "
-                            labelPlural=" "
-                            counts={props.activity.reaction_counts}
-                            kind="comment"
-                            width={-80}
-                            onPress={async () => {
-                                var x = await AsyncStorage.getItem('children');
-                                analytics.track('CommentIconPressed', {
-                                    userID: x ? JSON.parse(x)["0"]["id"] : null,
-                                    deviceID: getUniqueId()
-                                });
-                            }}
-                        />
-                    </View>
-                    <TouchableOpacity style={{ width: 50, marginLeft: '55%', padding: 10, alignItems: 'center' }}
+                            analytics.track('LikeNumberPressed', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                deviceID: getUniqueId()
+                            });
+                        }}
+                    />
+                    <ReactionIcon
+                        labelSingle="comment"
+                        labelPlural="comments"
+                        counts={props.activity.reaction_counts}
+                        kind="comment"
+                        width={-80}
+                        onPress={async () => {
+                            setplace(String(parseInt(place) + 1))
+                            var x = await AsyncStorage.getItem('children');
+                            analytics.track('CommentNumberPressed', {
+                                userID: x ? JSON.parse(x)["0"]["id"] : null,
+                                deviceID: getUniqueId()
+                            });
+                        }}
+                    />
+                    <TouchableOpacity style={{ width: 50, marginLeft: '40%', alignItems: 'center' }}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('WhatsappShare', {
@@ -187,11 +174,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                             });
                         }}
                     >
-                        <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
+                        <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 28, color: '#4FCE5D' }} />
                     </TouchableOpacity>
                 </View>
+                <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
                 <FlatList data={comments} renderItem={({ item }) => {
-                    console.log(item.data.text)
                     return (
                         item.user ?
                             <View style={{ flexDirection: 'row', padding: 10 }}>
@@ -321,7 +308,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         );
     };
     return (
-        <View style={styles.container}>
+        <View key={place} style={styles.container}>
             <CompHeader style={{ position: 'absolute' }} screen={route.params.activity.activity.actor.data.name[0].toUpperCase() + route.params.activity.activity.actor.data.name.slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
             <StreamApp
                 apiKey={'9ecz2uw6ezt9'}

@@ -230,7 +230,7 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                         }}
                     />
                 </View>
-                <TouchableOpacity style={{ width: 50, marginLeft: '55%', padding: 10, right: 12, alignItems: 'center' }}
+                <TouchableOpacity style={{ width: 50, marginLeft: '53%', padding: 10, right: 12, alignItems: 'center' }}
                     onPress={async () => {
                         var x = await AsyncStorage.getItem('children');
                         analytics.track('WhatsappShare', {
