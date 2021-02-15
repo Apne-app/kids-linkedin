@@ -554,7 +554,7 @@ const App = (props) => {
 };
 
 codePush.sync({
-  updateDialog: true,
-  installMode: codePush.InstallMode.IMMEDIATE
+  updateDialog: false,
+  installMode: codePush.InstallMode.ON_NEXT_RESUME
 });
 export default codePush(App);

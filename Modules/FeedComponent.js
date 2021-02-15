@@ -368,6 +368,8 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                                     }}
                                     width={width}
                                     height={340}
+                                    hideControlsTimerDuration={1000}
+                                    showControlsOnLoad={true}
                                     switchToLandscape={() => videoRef.presentFullscreenPlayer()}
                                     sliderColor={'#327FEB'}
                                     inFullscreen={false}

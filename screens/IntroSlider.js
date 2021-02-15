@@ -19,7 +19,7 @@ const data = [
   },
   {
     title: 'Create',
-    text: 'Upload what you have done',
+    text: 'Upload what your kid has done',
     image: require('../images/Science.png'),
     bg: '#febe29',
   },
