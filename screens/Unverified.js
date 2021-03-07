@@ -50,7 +50,7 @@ const Unverified = ({ navigation, route }) => {
                         if (Object.keys(response.data).length) {
                             await AsyncStorage.setItem('children', JSON.stringify(response.data))
                             var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
-                            Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
+                            await Update({ children: response.data, status: '3', profile: pro, notifications: response2.data })
                             await AsyncStorage.setItem('status', '3')
                             navigation.reset({
                                 index: 0,
@@ -73,7 +73,7 @@ const Unverified = ({ navigation, route }) => {
         const getData = async () => {
             var pro = await AsyncStorage.getItem('profile')
             pro = JSON.parse(pro)
-            var ws = new WebSocket('ws://3.7.102.69:8765');
+            var ws = new WebSocket('ws://login.api.genio.app:8765');
             ws.onopen = () => {
                 // connection opened
                 ws.send(pro.uuid); // send a message

@@ -59,6 +59,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const [place, setplace] = useState('1')
     const status = route.params.status
     const children = route.params.children
+    console.log( route.params.activity.activity.id, route.params.activity.activity.actor.id)
     var d = new Date();
     const onShare = async (message) => {
         try {
@@ -121,7 +122,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         }
         data()
     }, [])
-
+    console.log(route.params.activity.activity.image)
     const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
         const showActionSheet = () => {

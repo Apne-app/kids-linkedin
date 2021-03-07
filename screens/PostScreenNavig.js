@@ -208,12 +208,12 @@ class PostScreenNavig extends Component {
         ref={this.sheetRef}
         snapPoints={[height*0.5, -50]}
         initialSnap={0}
-        onOpenStart={() => {
-          setBottomSheetOpen(true);
-        }}
-        onCloseStart={() => {
-          setBottomSheetOpen(false);
-        }}
+        // onOpenStart={() => {
+        //   setBottomSheetOpen(true);
+        // }}
+        // onCloseStart={() => {
+        //   setBottomSheetOpen(false);
+        // }}
         enabledGestureInteraction={true}
         borderRadius={30}
         renderContent={renderContent}

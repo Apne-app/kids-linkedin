@@ -21,8 +21,8 @@ import {
     height,
     width
 } from '../Modules/CommonImports.js';
-import Gallery from '../components/Gallery'
-const GalleryScreen = ({ navigation, route }) => {
+import VideoGallery from '../components/VideoGallery'
+const VideoScreen = ({ navigation, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -45,9 +45,9 @@ const GalleryScreen = ({ navigation, route }) => {
                 height: height,
             }}
         >
-            <CompHeader goback={() => navigation.pop()} screen={'Gallery'} />
-            <Gallery  images={route.params.images} navigation={navigation} />
+            <CompHeader goback={() => navigation.pop()} screen={'Videos'} />
+            <VideoGallery images={route.params.images} navigation={navigation} />
         </View>
     )
 }
-export default GalleryScreen
+export default VideoScreen

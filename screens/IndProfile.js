@@ -48,6 +48,7 @@ const IndProfile = ({ navigation, route }) => {
     const [data, setdata] = useState({ 'followers': [], 'following': [] })
     const status = route.params.status
     const optionsRef = React.useRef(null);
+    console.log(route['params']['id'])
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {

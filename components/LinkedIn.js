@@ -10,6 +10,7 @@ import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import axios from 'axios';
 import AuthContext from '../Context/Data';
+import CodePush from 'react-native-code-push';
 var height = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
   container: {
@@ -88,25 +89,17 @@ const LinkedIn = ({ navigation, authtoken, loaderHandler }) => {
                         await AsyncStorage.setItem('children', JSON.stringify(response.data))
                         var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
                         await AsyncStorage.setItem('status', '3')
-                        Update({
-                          children: response.data, 'navigation': navigation, status: '3', profile: pro, notifications: response2.data
-                        }).then(() => {
-                          navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Home' }],
-                          })
-                        })
-                          .catch((error) => {
-                            console.log(error)
-                            alert("we couldn't log you in, please try again later")
-                          })
-
+                        await Update({ children: response.data, 'navigation': navigation, status: '3', profile: pro, notifications: response2.data })
+                        CodePush.restartApp()
                       }
                       else {
                         await AsyncStorage.setItem('status', '2')
                         navigation.navigate('Child')
                       }
                       // console.log(response.data, "abcd")
+                    }).catch((error) => {
+                      CodePush.restartApp()
+                      console.log(error)
                     })
                   // navigation.navigate('Child');
                 } catch (e) {
