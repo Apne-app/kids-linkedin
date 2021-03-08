@@ -54,6 +54,10 @@ const FeedComponent = ({ props, status, children, navigation, route, place, setp
                     var user = client.feed('user', children['0']['id'] + 'id');
                     user.removeActivity(id1).then(() => {
                         alert('Successfully deleted your post!')
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Home' }],
+                        })
                     }).catch(() => {
                         alert(
                             "There was an error deleting your post, please try again later."

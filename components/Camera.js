@@ -327,9 +327,15 @@ export default class ExampleApp extends PureComponent {
           mediaType: 'video',
 
         }).then(video => {
-          this.props.navigation.navigate('VideoPreview', { 'video': video.path })
+          if (video.path) {
+            this.props.navigation.navigate('VideoPreview', { 'video': video.path })
+          }
+          else{
+            alert("Error selecting the image, please try again :)")
+          }
           this.setState({ isOn: false })
           this.setState({ imagetaken: false })
+
         })
           .catch(video => {
             // navigation.pop()
