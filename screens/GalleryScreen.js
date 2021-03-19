@@ -46,7 +46,7 @@ const GalleryScreen = ({ navigation, route }) => {
             }}
         >
             <CompHeader goback={() => navigation.pop()} screen={'Gallery'} />
-            <Gallery images={route.params.images} navigation={navigation} />
+            <Gallery  images={route.params.images} navigation={navigation} />
         </View>
     )
 }

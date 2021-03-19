@@ -130,7 +130,6 @@ const Searching = ({ route, navigation }) => {
                             source={{
                                 uri: item['data']['image'],
                                 priority: FastImage.priority.high,
-                                cache: FastImage.cacheControl.web
                             }}
                             style={{ width: 60, height: 60, borderRadius: 306, }}
                         />

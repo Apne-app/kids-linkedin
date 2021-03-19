@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { PureComponent } from 'react'; 
-import { AppRegistry, ScrollView, Alert, TextInput, Platform, Dimensions, BackHandler, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View } from 'react-native';
+import React, { PureComponent } from 'react';
+import { AppRegistry, ScrollView, Alert, TextInput, Platform, Dimensions, BackHandler, StyleSheet, Text, FlatList, TouchableOpacity, Image, PermissionsAndroid, View, Switch } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Container, Header, Content, Spinner, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import CameraRoll from "@react-native-community/cameraroll";
@@ -17,7 +17,9 @@ import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader';
-
+import ToggleSwitch from 'toggle-switch-react-native';
+import ImagePicker from 'react-native-image-crop-picker';
+import { setMinimumFetchIntervalInSeconds } from 'clevertap-react-native';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -28,7 +30,7 @@ export default class ExampleApp extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = { denied: false, storagePerm: false, cameraPerm: false, audioPerm: false, zoom: 0.0, gallery: new Array(), imagetaken: false, side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false };
+    this.state = { denied: false, storagePerm: false, cameraPerm: false, audioPerm: false, zoom: 0.0, gallery: new Array(), imagetaken: false, side: RNCamera.Constants.Type.back, isGalleryOpen: false, flash: RNCamera.Constants.FlashMode.off, visible: false, isOn: false };
   }
   _onPinchStart = () => {
     this._prevPinch = 1
@@ -91,7 +93,6 @@ export default class ExampleApp extends PureComponent {
             'buttonPositive': 'Ok'
           }
         )
-        console.log(granted);
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           // console.log("You can use read from the storage 2");
           // requestCameraPermission();
@@ -319,6 +320,34 @@ export default class ExampleApp extends PureComponent {
         })
       }
     }
+    const pickVideo = async () => {
+      var x = await AsyncStorage.getItem('children');
+      if (x) {
+        ImagePicker.openPicker({
+          mediaType: 'video',
+
+        }).then(video => {
+          if (video.path) {
+            this.props.navigation.navigate('VideoPreview', { 'video': video.path })
+          }
+          else{
+            alert("Error selecting the image, please try again :)")
+          }
+          this.setState({ isOn: false })
+          this.setState({ imagetaken: false })
+
+        })
+          .catch(video => {
+            // navigation.pop()
+            this.setState({ isOn: false })
+            this.setState({ imagetaken: false })
+          })
+      }
+      else {
+        this.props.navigation.navigate('Login', { screen: 'Camera', 'type': 'feed_video' })
+      }
+
+    }
     if (this.state.cameraPerm && this.state.audioPerm && this.state.storagePerm) {
 
       return (
@@ -367,7 +396,27 @@ export default class ExampleApp extends PureComponent {
                 <TouchableOpacity onPress={this.changeSide.bind(this)} style={styles.capture, { flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 10, left: 10 }}>
                   <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginLeft: 10, marginBottom: 10 }} source={require('../Icons/flip_camera.png')} />
                 </TouchableOpacity>
-
+                <View style={{ flex: 1, alignSelf: 'center', position: 'absolute', bottom: 10, flexDirection: 'row' }}>
+                  <Text style={{ color: "white", fontWeight: "900", fontFamily: 'NuntitoSans-Bold', bottom: 10 }}>Camera</Text>
+                  {/* <ToggleSwitch
+                    isOn={}
+                    offColor="lightgrey"
+                    animationSpeed={200}
+                    label=""
+                    size="medium"
+                    onColor={'#327FEB'}
+                    onToggle={isOn => { this.setState({ isOn: true }); pickVideo() }}
+                    style={{ marginHorizontal: 10, bottom: 8 }}
+                  /> */}
+                  <Switch
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={this.state.isOn ? "#327feb" : "lightblue"}
+                    onValueChange={isOn => { this.setState({ isOn: true }); this.setState({ imagetaken: true }); pickVideo() }}
+                    value={this.state.isOn}
+                    style={{ marginHorizontal: 10, bottom: 10, alignSelf: 'center' }}
+                  />
+                  <Text style={{ color: "white", fontWeight: "900", fontFamily: 'NuntitoSans-Bold', bottom: 10 }}>Video</Text>
+                </View>
                 <TouchableOpacity onPress={this.changeFlash.bind(this)} style={styles.capture, { flex: 1, alignItems: 'flex-end', position: 'absolute', bottom: 15, right: 10 }}>
                   {this.state.flash == RNCamera.Constants.FlashMode.off ? <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginLeft: 10 }} source={require('../Icons/flash_on.png')} /> : <Image style={{ height: 40, width: 40, backgroundColor: "transparent", marginRight: 10 }} source={require('../Icons/flash_off.png')} />}
                 </TouchableOpacity>
@@ -415,7 +464,7 @@ export default class ExampleApp extends PureComponent {
               this.props.navigation.navigate('GalleryScreen', { 'images': this.props.route.params ? this.props.route.params.images : [] })
             }} style={styles.capture, { flex: 1, alignItems: 'flex-start', marginTop: 5, width: width / 3, marginLeft: width / 8, alignItems: 'center' }}>
               <View>
-                <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginLeft: 10, marginBottom: 6 }} source={require('../Icons/gallery.png')} />
+                <Icon style={{ color: 'black', fontSize: 43, alignSelf: 'center' }} type="EvilIcons" name='image' />
                 <Text style={{ fontFamily: 'NunitoSans-Regular' }}>Gallery</Text>
               </View>
             </TouchableOpacity>
@@ -482,7 +531,7 @@ export default class ExampleApp extends PureComponent {
       var tm = new Date();
       tm = tm.getTime();
       // console.log(tm);
-      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params.images ? this.props.route.params.images : [], 'time': this.props.route.params.time ? this.props.route.params.time : tm, "tag": this.props.route.params.tag ? this.props.route.params.tag : 'Genio'  });
+      this.props.navigation.navigate('Preview', { 'img': data.uri, 'height': data.height, 'width': data.width, 'images': this.props.route.params.images ? this.props.route.params.images : [], 'time': this.props.route.params.time ? this.props.route.params.time : tm, "tag": this.props.route.params.tag ? this.props.route.params.tag : 'Genio' });
       // console.log(data);
 
     }

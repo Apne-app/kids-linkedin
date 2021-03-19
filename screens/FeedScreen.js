@@ -31,6 +31,7 @@ import FeedComponent from '../Modules/FeedComponent'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
+import CodePush from 'react-native-code-push'
 import { Video } from 'expo-av';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -98,7 +99,6 @@ const FeedScreen = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            console.log('sadsadasd: ', route.params.goTo)
             if (route.params.goTo) {
                 if (route.params.goTo == 'quiz') {
                     setFeedState(1)
@@ -475,7 +475,7 @@ const FeedScreen = ({ navigation, route }) => {
         return (
             <View style={{ backgroundColor: "#f9f9f9", margin: 'auto', justifyContent: 'center', zIndex: 1000, height: 60 }}>
                 <FlatList
-                    data={[["Feed", "dynamic-feed", "MaterialIcons"], ["Quiz", "clipboard-pencil", "Foundation"], ["News", "newspaper-outline", "Ionicons"]]}
+                    data={[["Feed", "dynamic-feed", "MaterialIcons"], ["Quiz", "clipboard-pencil", "Foundation"], ["Inspire", "newspaper-outline", "Ionicons"]]}
                     scrollEnabled={true}
                     contentContainerStyle={{
                         flexGrow: 1,
@@ -608,7 +608,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                             <FastImage
                                                                 source={{ uri: item.avatar,
                                                                     priority: FastImage.priority.high,
-                                                                    cache: FastImage.cacheControl.web
+                                                                    
                                                                 }}
                                                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                                                             />
@@ -629,7 +629,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                     <FastImage
                                                         source={{ uri: item.image,
                                                             priority: FastImage.priority.high,
-                                                            cache: FastImage.cacheControl.web
+                                                            
                                                         }}
                                                         style={{ width: width, height: 300, }}
                                                     />
@@ -846,7 +846,7 @@ const FeedScreen = ({ navigation, route }) => {
                                                             <FastImage
                                                                 source={{ uri: item.avatar,
                                                                     priority: FastImage.priority.high,
-                                                                    cache: FastImage.cacheControl.web
+                                                                   
                                                                 }}
                                                                 style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                                                             />
@@ -1130,7 +1130,7 @@ const FeedScreen = ({ navigation, route }) => {
             </View>*/}
                 <Features style={{ backgroundColor: '#f9f9f9' }} />
                 {/*children == 'notyet' ? loading() : Object.keys(children).length > 0 && status == '3' ? feedstate === 0 ? there() : feedstate === 1 ? Quiz() : News() : feedstate === 0 ? notthere() : feedstate === 1 ? Quiz() : News() */}
-                {status == '3' ? there() : notthere()}
+                {status == '3' ? children?there():CodePush.restartApp() : notthere()}
                 {feedstate == 1 ? Quiz() : feedstate == 0 ? null : News()}
             </SafeAreaView>
             {/* <Fab

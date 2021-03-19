@@ -16,12 +16,14 @@ import SearchScreen from './screens/SearchScreen'
 import FeedScreen from './screens/FeedScreen'
 import VideoFullScreen from './screens/VideoFullScreen'
 import IntroScreen from './screens/IntroScreen'
-import IntroSlider from './screens/IntroSlider'
+import IntroSlider from './screens/IntroSlider';
+import OTPScreen from './screens/OTPScreen';
 import { TransitionPresets } from '@react-navigation/stack';
 import PostScreen from './screens/PostScreen'
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
+import VideoPreview from './screens/VideoPreview'
 import Camera from './components/Camera'
 import ChildScreen from './screens/ChildScreen'
 import Browser from './screens/Browser'
@@ -44,6 +46,7 @@ import messaging from '@react-native-firebase/messaging';
 import IndProfile from './screens/IndProfile';
 import Includes from './Modules/Includes';
 import GalleryScreen from './screens/GalleryScreen';
+import VideoScreen from './screens/VideoScreen';
 import KidUser from './screens/KidUser';
 import KidsAge from './screens/KidsAge';
 import SplashScreen from 'react-native-splash-screen';
@@ -131,7 +134,7 @@ const App = (props) => {
       >
         <BottomNav.Screen initialParams={data} name="Feed" component={FeedScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon name="home" style={{ color: "#327feb", fontSize: 24 }} type="Feather" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Home</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: "grey", fontSize: 24 }} type="Feather" name="home" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Home</Text></View> }} />
         <BottomNav.Screen initialParams={data} name="Search" component={SearchScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Search</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24, marginRight: 2 }} type="Feather" name="search" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Search</Text></View> }} />
-        <BottomNav.Screen initialParams={data} name="Post" style={{ backgroundColor: 'transparent', zIndex: 10000, position:'absolute', marginBottom: 30}} component={PostScreenNavig} options={{ tabBarLabel: '', tabBarButton: props => <TouchableOpacity {...props} hitSlop={{top: 80, bottom: 20}} style={{ bottom: 20, elevation: 10,backgroundColor: '#327FEB', borderRadius: 10000,  width: 65, height: 65,}} ><Icon name={'camera'} type="Entypo" style={{  fontSize: 25, padding: 20.5, color: 'white', }} /></TouchableOpacity> }} />
+        <BottomNav.Screen initialParams={data} name="Post" style={{ backgroundColor: 'transparent', zIndex: 10000, position: 'absolute', marginBottom: 30 }} component={PostScreenNavig} options={{ tabBarLabel: '', tabBarButton: props => <TouchableOpacity {...props} hitSlop={{ top: 80, bottom: 20 }} style={{ bottom: 20, elevation: 10, backgroundColor: '#327FEB', borderRadius: 10000, width: 65, height: 65, }} ><Icon name={'camera'} type="Entypo" style={{ fontSize: 25, padding: 20.5, color: 'white', }} /></TouchableOpacity> }} />
         <BottomNav.Screen initialParams={data} name="Files" component={FileScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Collections</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24 }} type="Feather" name="film" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Collections</Text></View> }} />
         <BottomNav.Screen initialParams={data} name="Profile" component={ProfileScreen} options={{ tabBarLabel: '', tabBarIcon: ({ focused }) => focused ? <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: '#327FEB', fontSize: 24 }} type="Feather" name="user" /><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 13, color: "#327FEB", }}>Profile</Text></View> : <View style={{ flexDirection: 'column', alignItems: 'center', marginBottom: -14 }}><Icon style={{ color: 'grey', fontSize: 24 }} type="Feather" name="user" /><Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 13, color: "grey", }}>Profile</Text></View> }} />
       </BottomNav.Navigator>
@@ -418,12 +421,13 @@ const App = (props) => {
   })
   useEffect(() => {
     const check = async () => {
+      await AsyncStorage.clear();
       var st = await AsyncStorage.getItem('status')
       if (st == '3') {
         var pro = await AsyncStorage.getItem('profile')
         var ch = await AsyncStorage.getItem('children');
         var cmr = await AsyncStorage.getItem('camerastatus');
-        if(cmr) {
+        if (cmr) {
           setCameraStatus(cmr);
         }
         if (ch) {
@@ -477,7 +481,7 @@ const App = (props) => {
   }, [])
   const authContext = React.useMemo(
     () => ({
-      Update: async data => {
+      Update: (data) => {
         if (data.logout) {
           setstatus('0')
           setchildren(null)
@@ -503,7 +507,7 @@ const App = (props) => {
         if (data.joined) {
           setjoined(data.joined)
         }
-        if(data.camerastatus) {
+        if (data.camerastatus) {
           setCameraStatus(data.camerastatus)
         }
       },
@@ -521,6 +525,7 @@ const App = (props) => {
           <Stack.Navigator initialRouteName={!status ? 'IntroSlider' : status === '2' ? 'Child' : 'Home'}>
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Child" component={ChildScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoScreen" component={VideoScreen} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="IndProf" component={IndProfile} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Searching" component={Searching} />
             <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 600 } }, close: { animation: 'timing', config: { duration: 600 } } } }} name="Login" component={LoginScreen} />
@@ -528,6 +533,7 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Unverified" component={Unverified} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Home" component={Bottom} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Preview" component={ImagePreview} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="VideoPreview" component={VideoPreview} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="SinglePost" component={SinglePostScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Intro" component={IntroScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Camera" component={Camera} />
@@ -536,6 +542,7 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="AddText" component={AddText} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="PostScreen" component={Upload} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Browser" component={Browser} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="OTP" component={OTPScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
@@ -555,6 +562,8 @@ const App = (props) => {
 
 codePush.sync({
   updateDialog: false,
-  installMode: codePush.InstallMode.ON_NEXT_RESUME
+  installMode: codePush.InstallMode.ON_NEXT_SUSPEND,
+  minimumBackgroundDuration: 15
+
 });
 export default codePush(App);
