@@ -22,6 +22,7 @@ import {
 } from '../Modules/CommonImports.js';
 import AuthContext from '../Context/Data';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
+import CodePush from "react-native-code-push";
 import { TextInput } from 'react-native';
 const ChildScreen = ({ route, navigation }) => {
     const scrollcheck = useRef(null)
@@ -179,8 +180,10 @@ const ChildScreen = ({ route, navigation }) => {
                                         })
                                     })
                                     await AsyncStorage.setItem('children', JSON.stringify(response1.data))
+                                    console.log("as");
                                     Update({ children: response1.data, status: '3', profile: pro, notifications: {} })
-                                    navigation.navigate('ChildSuccess')
+                                    // CodePush.restartApp()
+                                    //navigation.navigate('ChildSuccess')
                                 }
                                 else {
                                     alert('There was some error, please try again later')

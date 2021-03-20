@@ -2,7 +2,7 @@
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image, TouchableOpacity, FlatList } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Spinner, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
@@ -178,6 +178,12 @@ const Searching = ({ route, navigation }) => {
                 style={{ alignSelf: 'center', marginTop: 10 }}
             />
             </View>)}
+            {
+                searchQuery != "" && result.length == 0 ?
+                <Spinner color='blue' />
+                :
+                null
+            }
         </ScrollView>
     );
 }

@@ -89,6 +89,7 @@ const OTPScreen = ({ navigation, route }) => {
       axios(config)
         .then(function (response) {
           token = response.data.token;
+          console.log(token);
           var t = `https://api.genio.app/get-out/loginphone/?token=${response.data.token}`;
           axios({
             method: 'post',
@@ -102,8 +103,6 @@ const OTPScreen = ({ navigation, route }) => {
               console.log(response.data)
               const storeProfile = async () => {
                 try {
-                  console.log(response.data);
-                  return;
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data))
                   //0 means no login
                   //1 means email sent
@@ -127,6 +126,7 @@ const OTPScreen = ({ navigation, route }) => {
                   })
                       .then(async (response) => {
                           await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                          console.log("successful",response.data);
                           if (Object.keys(response.data).length) {
                               await AsyncStorage.setItem('status', '3')
                               navigation.reset({
@@ -136,10 +136,11 @@ const OTPScreen = ({ navigation, route }) => {
                               
                           }
                           else {
+                            console.log("unsuccessful",response.data);
                               await AsyncStorage.setItem('status', '2')
                               navigation.navigate('Child', { screen: route.params ? Object.keys(route.params).includes('screen') ? route.params.screen : 'Home' : 'Home' })
                           }
-                          console.log(response.data)
+                          console.log("test" ,response.data)
                       })
                 } catch (e) {
                   setLoading(false);
@@ -173,7 +174,7 @@ const OTPScreen = ({ navigation, route }) => {
           setValue(otp);
           RNOtpVerify.removeListener();
           Keyboard.dismiss();
-          // api();
+          api();
         } catch(err) {
           console.log(err);
         }

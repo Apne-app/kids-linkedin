@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react'
-import { StyleSheet, View, Text, Alert, BackHandler, Dimensions, Image, TouchableOpacity, AppState } from 'react-native'
+import { StyleSheet, View, Text, Alert, BackHandler, Dimensions, Image, TouchableOpacity } from 'react-native'
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer } from 'native-base';
 import axios from 'axios';
@@ -12,15 +12,15 @@ import { Snackbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import CountDown from 'react-native-countdown-component';
 import AuthContext from '../Context/Data';
+import CodePush from 'react-native-code-push';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
 const Unverified = ({ navigation, route }) => {
     const [logging, setlogging] = useState(false)
-    const appState = useRef(AppState.currentState);
-    const [appStateVisible, setAppStateVisible] = useState(appState.current);
     const { Update } = React.useContext(AuthContext);
-    const login = async () => {
+    const login = () => {
         var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
         var token = '';
         var config = {
@@ -47,6 +47,7 @@ const Unverified = ({ navigation, route }) => {
                     })
                 })
                     .then(async (response) => {
+                        console.log(response.data)
                         if (Object.keys(response.data).length) {
                             await AsyncStorage.setItem('children', JSON.stringify(response.data))
                             var response2 = await axios.get('https://api.genio.app/magnolia/' + response.data[0]['id'])
@@ -69,33 +70,58 @@ const Unverified = ({ navigation, route }) => {
             });
 
     }
-    useEffect(() => {
-        const getData = async () => {
+    // useEffect(() => {
+    //     const getData = async () => {
+    //         var pro = await AsyncStorage.getItem('profile')
+    //         pro = JSON.parse(pro)
+    //         var ws = new WebSocket('ws://login.api.genio.app:8765');
+    //         ws.onopen = () => {
+    //             // connection opened
+    //             ws.send(pro.uuid); // send a message
+    //         };
+    //         ws.onmessage = (e) => {
+    //             // a message was received
+    //             console.log(e)
+    //             if (e.data === 'verified') {
+    //                 setlogging(true)
+    //                 login()
+    //             }
+    //         };
+    //         ws.onerror = (e) => {
+    //             console.log(e)
+    //         };
+    //         ws.onclose = (e) => {
+    //             // connection closed
+    //             console.log(e)
+    //         };
+    //     }
+    //     getData()
+    // },[])
+    const socketUrl = 'ws://login.api.genio.app:8765';
+    const {
+        sendMessage,
+        sendJsonMessage,
+        lastMessage,
+        lastJsonMessage,
+        readyState,
+        getWebSocket
+    } = useWebSocket(socketUrl, {
+        onOpen: async () => {
             var pro = await AsyncStorage.getItem('profile')
             pro = JSON.parse(pro)
-            var ws = new WebSocket('ws://login.api.genio.app:8765');
-            ws.onopen = () => {
-                // connection opened
-                ws.send(pro.uuid); // send a message
-            };
-            ws.onmessage = (e) => {
-                // a message was received
-                console.log(e)
-                if (e.data === 'verified') {
-                    setlogging(true)
-                    login()
-                }
-            };
-            ws.onerror = (e) => {
-                console.log(e)
-            };
-            ws.onclose = (e) => {
-                // connection closed
-                console.log(e)
-            };
-        }
-        getData()
-    })
+            console.log('opened');
+            sendMessage(pro.uuid)
+        },
+        onMessage: (message) => {
+            console.log(message);
+            if (message.data === 'verified') {
+                setlogging(true)
+                login()
+            }
+        },
+        //Will attempt to reconnect on all close events, such as server shutting down
+        shouldReconnect: (closeEvent) => true,
+    });
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -180,7 +206,7 @@ const Unverified = ({ navigation, route }) => {
                             navigation.navigate('Login')
                         }
                         else {
-                            settext('Verification Email Sent!')
+                            settext('Verification email sent!')
                             setVisible(true)
                             setTimeout(() => {
                                 setVisible(false)
@@ -254,7 +280,7 @@ const Unverified = ({ navigation, route }) => {
             </View>
             <View style={{ position: logging ? 'absolute' : 'relative', bottom: '6%', zIndex: 1000, backgroundColor: '#327FEB', alignSelf: 'center', height: 70, width: width - 50, borderRadius: 25, padding: 20, flexDirection: 'row', alignContent: 'center', display: logging ? 'flex' : 'none' }}>
                 <Image source={require('../assets/log_loader.gif')} style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: (width - 50) / 10 }} />
-                <Text style={{ textAlign: 'right', fontFamily: 'NunitoSans-Bold', fontSize: 18, color: 'white', marginLeft: 20 }}>Logging you in</Text>
+                <Text style={{ textAlign: 'right', fontFamily: 'NunitoSans-Bold', fontSize: 18, color: 'white', marginLeft: 20 }}>Logging In...</Text>
             </View>
         </Container>
     );

@@ -246,97 +246,106 @@ const FeedScreen = ({ navigation, route }) => {
             console.log(message);
             if (Object.keys(message).includes('data')) {
                 if (!message.data.includes('opened')) {
-                    axios({
-                        method: 'get',
-                        url: 'https://api.genio.app/magnolia/' + String(children[0]['id']),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        // data: JSON.stringify({
-                        //   "email": pro.email,
-                        // })
-                    }).then(async (data) => {
-                        var noti = notifications
-                        var arr = []
-                        if (noti) {
-                            var data1 = Object.keys(noti).reverse()
-                            var data2 = Object.keys(data.data).reverse()
-                            for (var i = 0; i < data2.length; i++) {
-                                if (!data1.includes(data2[i])) {
-                                    arr.push(data2[i])
-                                }
-                                else {
-                                    break;
-                                }
-                            }
-                            if (arr.length) {
-                                Update({ notifications: data.data, newnoti: arr })
-                                setnewnoti(true)
-                            }
-                            else {
-                                Update({ notifications: data.data })
-                            }
-                        }
-                        else {
-                            var arr = Object.keys(data.data)
-                            Update({ notifications: data.data, newnoti: arr })
-                            setnewnoti(true)
-                        }
-                    })
+                    // axios({
+                    //     method: 'get',
+                    //     url: 'https://api.genio.app/magnolia/' + String(children[0]['id']),
+                    //     headers: {
+                    //         'Content-Type': 'application/json'
+                    //     },
+                    //     // data: JSON.stringify({
+                    //     //   "email": pro.email,
+                    //     // })
+                    // }).then(async (data) => {
+                    //     var noti = notifications
+                    //     var arr = []
+                    //     if (noti) {
+                    //         var data1 = Object.keys(noti).reverse()
+                    //         var data2 = Object.keys(data.data).reverse()
+                    //         for (var i = 0; i < data2.length; i++) {
+                    //             if (!data1.includes(data2[i])) {
+                    //                 arr.push(data2[i])
+                    //             }
+                    //             else {
+                    //                 break;
+                    //             }
+                    //         }
+                    //         if (arr.length) {
+                    //             Update({ notifications: data.data, newnoti: arr })
+                    //             setnewnoti(true)
+                    //         }
+                    //         else {
+                    //             Update({ notifications: data.data })
+                    //         }
+                    //     }
+                    //     else {
+                    //         var arr = Object.keys(data.data)
+                    //         Update({ notifications: data.data, newnoti: arr })
+                    //         setnewnoti(true)
+                    //     }
+                    // })
                 }
             }
         },
         //Will attempt to reconnect on all close events, such as server shutting down
         shouldReconnect: (closeEvent) => false,
     });
-    // useEffect(() => {
-    //     const check = async () => {
-    //         var child = children
-    //         if (child != null) {
-    //             sendMessage(String(child['0']['id']))
-    //             axios({
-    //                 method: 'get',
-    //                 url: 'https://api.genio.app/magnolia/' + String(child[0]['id']),
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 },
-    //                 // data: JSON.stringify({
-    //                 //   "email": pro.email,
-    //                 // })
-    //             }).then(async (data) => {
-    //                 var noti = notifications
-    //                 var arr = []
-    //                 if (noti) {
-    //                     var data1 = Object.keys(noti).reverse()
-    //                     var data2 = Object.keys(data.data).reverse()
-    //                     for (var i = 0; i < data2.length; i++) {
-    //                         if (!data1.includes(data2[i])) {
-    //                             arr.push(data2[i])
-    //                         }
-    //                         else {
-    //                             break;
-    //                         }
-    //                     }
-    //                     if (arr.length) {
-    //                         Update({ notifications: data.data, newnoti: arr })
-    //                         setnewnoti(true)
-    //                     }
-    //                     else {
-    //                         Update({ notifications: data.data })
-    //                     }
-    //                 }
-    //                 else {
-    //                     var arr = Object.keys(data.data)
-    //                     Update({ notifications: data.data, newnoti: arr })
-    //                     setnewnoti(true)
-    //                 }
-    //             })
-    //         }
-    //         else {
-    //         }
-    //     }
-    //     check()
-    // }, [])
+    useEffect(() => {
+        const check = async () => {
+            var child = children
+            if (child != null) {
+                sendMessage(String(child['0']['id']))
+                axios({
+                    method: 'get',
+                    url: 'https://api.genio.app/magnolia/' + String(child[0]['id']),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // data: JSON.stringify({
+                    //   "email": pro.email,
+                    // })
+                }).then(async (data) => {
+                    var noti = await AsyncStorage.getItem('notifications');
+                    console.log(noti)
+                    var arr = []
+                    if (noti) {
+                        var data1 = Object.keys(noti).reverse()
+                        var data2 = Object.keys(data.data).reverse()
+                        for (var i = 0; i < data2.length; i++) {
+                            if (!data1.includes(data2[i])) {
+                                arr.push(data2[i])
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        if (arr.length) {
+                            AsyncStorage.setItem('notifications', JSON.stringify(data.data));
+                            // console.log("sadasd", data.data);
+                            // Update({ notifications: data.data, newnoti: arr })
+                            if(data1.length < data2.length) {
+                                setnewnoti(true)
+                            }
+                        }
+                        else {
+                            AsyncStorage.setItem('notifications', JSON.stringify(data.data));
+                            // Update({ notifications: data.data })
+                        }
+                    }
+                    else {
+                        noti = {}
+                        // Update({ notifications: data.data, newnoti: arr })
+                        AsyncStorage.setItem('notifications', JSON.stringify(data.data));
+                        if(Object.keys(noti).length < Object.keys(data.data).length) {
+                        setnewnoti(true)
+                        }
+                    }
+                })
+            }
+            else {
+            }
+        }
+        check()
+    }, [])
 
     // const Video = ({ url }) => {
     //     return (
@@ -1051,7 +1060,7 @@ const FeedScreen = ({ navigation, route }) => {
 
     return (
         <>
-            <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
+            <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={async () => { var notification = await AsyncStorage.getItem("notifications"); navigation.navigate('Notifications', { "notifications": notifications }); setnewnoti(false) }} />
             <SafeAreaView style={{ flex: 1 }}
                 onScroll={({ nativeEvent }) => {
                     console.log('isclose')

@@ -421,7 +421,6 @@ const App = (props) => {
   })
   useEffect(() => {
     const check = async () => {
-      await AsyncStorage.clear();
       var st = await AsyncStorage.getItem('status')
       if (st == '3') {
         var pro = await AsyncStorage.getItem('profile')
@@ -562,8 +561,6 @@ const App = (props) => {
 
 codePush.sync({
   updateDialog: false,
-  installMode: codePush.InstallMode.ON_NEXT_SUSPEND,
-  minimumBackgroundDuration: 15
-
+  installMode: codePush.InstallMode.ON_NEXT_RESTART
 });
 export default codePush(App);

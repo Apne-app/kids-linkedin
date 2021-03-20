@@ -2,7 +2,7 @@
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, FlatList, Keyboard } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
+import { Container, Header, Content, Form, Spinner, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
@@ -112,6 +112,10 @@ const SearchScreen = ({ route, navigation }) => {
             {/* <Text style={{ color: "#327FEB", textAlign: 'right', fontSize: 13, marginLeft: 8, fontFamily: 'NunitoSans-Bold', marginTop:8, }}>See All</Text> */}
             {/* <Icon type={'Feather'} name={'arrow-right'} style={{fontSize: 13,color: "#327FEB", marginTop:13, marginLeft:2 }} /> */}
           </View>
+          {
+            Object.keys(joined).length == 0 ?
+            <Spinner color='blue' /> : null
+          }
           <FlatList
             data={Object.keys(joined)}
             renderItem={({ item }) => {
@@ -139,7 +143,7 @@ const SearchScreen = ({ route, navigation }) => {
                     >
                     </FastImage>
                     <View>
-                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)}</Text>
+                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{}{(joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)).length > 8 ? (((joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)).substring)(0, 11 - 3)) + "..." : joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)}</Text>
                     </View>
                   </View>
                   {/* <View

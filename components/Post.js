@@ -59,7 +59,7 @@ var width = Dimensions.get('screen').width;
 
 
 const Upload = ({ route, navigation }) => {
-  console.log(route.params)
+  // console.log(route.params)
   const [activefab, setActiveFab] = React.useState(false);
 
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -577,7 +577,18 @@ const Upload = ({ route, navigation }) => {
   // }
 
   const deleteSingleImage = async (item) => {
-    RNFS.unlink(item)
+    var img = item;
+    if(item.includes('http')) {
+      var tme = item.split('.png')[0].split(selectedTag+"_")[1].split('-')[0];
+      tme = parseInt(tme);
+      tme = tme.toString();
+      console.log(typeof tme);
+      tme = tme.replace(/:/g, "-");
+      const albumPath = `${pathDir}/Images/${tme}`;
+      img = albumPath
+    }
+    console.log(img, "messiag")
+    RNFS.unlink(img)
       .then(() => {
         console.log('FILE DELETED');
       })
@@ -587,14 +598,15 @@ const Upload = ({ route, navigation }) => {
       });
     var x = await AsyncStorage.getItem('children')
     x = JSON.parse(x)["0"]["data"]["gsToken"];
+    console.log(item)
     var config = {
       method: 'get',
-      url: `https://gvsa1w2ib3.execute-api.ap-south-1.amazonaws.com/default/deleteFromS3?token=${x}&time=${time}&filename=${item.split('_')[1]}`,
+      url: `https://gvsa1w2ib3.execute-api.ap-south-1.amazonaws.com/default/deleteFromS3?token=${x}&time=${time}&filename=${item.split('.png')[0].split(selectedTag)[1]}`,
       headers: {
         'Content-Type': 'application/json'
       }
     };
-    // console.log(config);
+    // console.log(config, "asdsad", selectedTag);
     axios(config)
       .then(res => {
         console.log(res.data);
@@ -714,7 +726,7 @@ const Upload = ({ route, navigation }) => {
       setSelecting(false);
       if(array.length == 1)
       {
-        console.log("s", array.length)
+        // console.log("s", array.length)
         const onBackPress = () => {
           const onBackNew = () => {
               navigation.navigate('Home')
@@ -801,7 +813,7 @@ const Upload = ({ route, navigation }) => {
       <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 100 }}>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <TouchableOpacity
-            style={{ height: 50 }}
+            style={{ height: 45 }}
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Did not save collection', {
@@ -824,7 +836,7 @@ const Upload = ({ route, navigation }) => {
             style={{ height: 50 }}
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
-              console.log(x)
+              // console.log(x)
               analytics.track('Collection Saved', {
                 userID: x ? JSON.parse(x)["0"]["id"] : null,
                 deviceID: getUniqueId()
@@ -1100,16 +1112,7 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50, position: 'absolute', bottom: 15, alignSelf: 'center' }}
             onPress={() => {
-              var array = [...explore];
-              for (var i = 1; i < array.length; i++) {
-                if (array[i]['selected']) {
-                  array.splice(i, 1);
-                  i--;
-                }
-              }
-              setDeleteCount(0);
-              setExplore([...array]);
-              setSelecting(false);
+              deletes();
             }}
           >
             <View style={styles.Next}>
@@ -1447,7 +1450,7 @@ const styles = StyleSheet.create({
   Cancel: {
     alignSelf: 'center',
     flexDirection: 'row',
-    padding: 8,
+    padding: 10,
     // marginBottom: 4,
     backgroundColor: '#fff',
     borderRadius: 30,

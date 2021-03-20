@@ -27,7 +27,7 @@ const CompHeader = (props) => {
                 onPress={() => props.fun()}
             >
                 <Icon name={props.icon} style={{ color: 'white', alignSelf: 'center' }} type="Feather" />
-                {props.new && <View style={{ borderRadius: 10000, backgroundColor: 'red', width: 8, height: 8, marginLeft: -11 }} />}
+                {props.new && <View style={{ borderRadius: 10000, backgroundColor: 'red', width: 11, height: 11, marginLeft: 13 , bottom: 30}} />}
             </TouchableOpacity>
         </Right>
     </Appbar.Header>

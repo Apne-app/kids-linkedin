@@ -40,7 +40,7 @@ const CompHeader = (props) => {
     <Body>
     </Body>
     {props.right ? <Right>
-      <TouchableOpacity style={{  borderColor: "#fff", alignSelf: 'center', marginRight: -25, width: 80,  height: 50, justifyContent: 'center', alignItems: 'center' }}
+      <TouchableOpacity style={{  borderColor: "#fff", alignSelf: 'center', marginRight: -45, width: 80,  height: 50, justifyContent: 'center', alignItems: 'center'}}
         onPress={() => props.delete()}
       >
         <Icon name="trash" type="Feather" style={{ color: props.selecting ? "red" : 'white' }} />
