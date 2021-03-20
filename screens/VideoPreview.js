@@ -1,9 +1,9 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react'
-import { Video } from 'expo-av';
-import VideoPlayer from 'expo-video-player'
-import { Dimensions, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler } from 'react-native'
+import { Video } from 'expo-av'
+import VideoPlayer from '../Modules/expo-video-player'
+import { Dimensions, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler, Alert } from 'react-native'
 import CompHeader from '../Modules/CompHeader'
 import FastImage from 'react-native-fast-image';
 import { RNS3 } from 'react-native-aws3';
@@ -11,6 +11,7 @@ import { SECRET_KEY, ACCESS_KEY } from '@env'
 import { Snackbar } from 'react-native-paper';
 import { connect } from 'getstream';
 import ImagePicker from 'react-native-image-crop-picker';
+import axios from 'axios'
 import { useFocusEffect } from "@react-navigation/native";
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
@@ -23,7 +24,15 @@ const VideoPreview = ({ navigation, route }) => {
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                navigation.pop()
+                Alert.alert("Hold on!", "Are you sure you want to discard the post?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => navigation.pop() }
+                ]);
+                return true;
             };
             BackHandler.addEventListener("hardwareBackPress", onBackPress);
             return () =>
@@ -35,7 +44,7 @@ const VideoPreview = ({ navigation, route }) => {
         var name = String(Math.floor(Date.now() / 1000)) + '.mp4'
         var file = {
             // `uri` can also be a file system path (i.e. file://)
-            uri: route.params.video,
+            uri: 'file://' + route.params.video,
             name: name,
             type: "video/mp4"
         }
@@ -54,26 +63,54 @@ const VideoPreview = ({ navigation, route }) => {
                 return
             }
             name = "https://d2k1j93fju3qxb.cloudfront.net/" + children['id'] + "/videos/" + name
-            var activity = { "video": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": '' }
-            const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-            var user = client.feed('user', String(String(children['id']) + String("id")));
-            var dat = await user.addActivity(activity);
-            setShowToast(true)
-            setloading(false)
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Home' }],
+            axios.post('https://d84e482e5424.ngrok.io/post', {
+                user_id: children['id'],
+                acc_type: children['data']['type'],
+                user_image: children['data']['image'],
+                images: '',
+                videos: name,
+                youtube: '',
+                caption: caption == '' ? 'default123' : caption,
+                tags: '',
+                user_name: children['data']['name'],
+                user_year: parseInt(children['data']['year'])
+            }).then((response) => {
+                if (response.data) {
+                    setShowToast(true)
+                    setloading(false)
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Home' }],
+                    })
+                }
+                else {
+                    alert('There was an error posting your post, please try again later')
+                    navigation.pop();
+                }
+            }).catch(() => {
+                alert('There was an error posting your post, please try again later')
+                navigation.pop();
             })
-            console.log(response.body);
+
         }).catch(err => {
             console.log(err);
         })
         return
     }
+    const backalert = () => {
+        Alert.alert("Hold on!", "Are you sure you want to discard the post?", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            { text: "YES", onPress: () => navigation.pop() }
+        ]);
+    }
     return (
         <>
             <View style={{ flex: 1, opacity: loading ? 0.5 : 1 }}>
-                <CompHeader screen={'Create post'} icon={'back'} goback={() => navigation.pop()} />
+                <CompHeader screen={'Create post'} icon={'back'} goback={() => backalert()} />
                 <View style={{ flexDirection: 'row', margin: 10 }}>
                     <FastImage style={{ width: 60, height: 60, borderRadius: 10000, margin: 10 }} source={{ uri: children['data']['image'] }} />
                     <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Regular' }}>{children['data']['name'][0].toUpperCase() + children['data']['name'].slice(1)}</Text>
@@ -133,8 +170,9 @@ const VideoPreview = ({ navigation, route }) => {
                     Posted Successfully!
             </Snackbar>
             </View>
-            <View style={{ backgroundColor: '#327FEB', height: 70, borderTopLeftRadius: 10, borderTopRightRadius: 10, display: loading ? 'flex' : 'none' }}>
-                <Image style={{ width: 60, height: 60, alignSelf: 'center', marginTop: 10 }} source={require('../assets/log_loader.gif')} />
+            <View style={{ backgroundColor: '#327FEB', height: 310, borderTopLeftRadius: 20, borderTopRightRadius: 20, display: loading ? 'flex' : 'none' }}>
+                <Image style={{ width: 100, height: 100, alignSelf: 'center', marginTop: '20%' }} source={require('../assets/log_loader.gif')} />
+                <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 20, color: 'white' }}>Posting...</Text>
             </View>
         </>
     )

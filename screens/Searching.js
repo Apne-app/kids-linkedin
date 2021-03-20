@@ -5,7 +5,6 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
-import { StreamApp, FlatFeed, Activity, LikeButton, CommentBox, CommentItem, updateStyle, ReactionIcon, ReplyIcon, Avatar } from 'react-native-activity-feed';
 import axios from 'axios';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import analytics from '@segment/analytics-react-native';
@@ -106,42 +105,36 @@ const Searching = ({ route, navigation }) => {
     const renderItem = ({ item }) => {
         return (
             <View key={item.id} style={{ alignSelf: 'center', margin: 1 }}>
-                <StreamApp
-                    apiKey={'9ecz2uw6ezt9'}
-                    appId={'96078'}
-                    token={item['data']['gsToken']}
-                >
-                    <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
-                        navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
-                        var x = await AsyncStorage.getItem('children');
-                        if (x) {
-                            x = JSON.parse(x)
-                            if (Object.keys(x).length == 0) {
-                                await AsyncStorage.removeItem('children');
-                                x = null
-                            }
+                <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
+                    navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
+                    var x = await AsyncStorage.getItem('children');
+                    if (x) {
+                        x = JSON.parse(x)
+                        if (Object.keys(x).length == 0) {
+                            await AsyncStorage.removeItem('children');
+                            x = null
                         }
-                        analytics.track('SearchedKidOpened', {
-                            userID: x ? JSON.parse(x)["0"]["id"] : null,
-                            deviceID: getUniqueId()
-                        })
-                    }}>
-                        <FastImage
-                            source={{
-                                uri: item['data']['image'],
-                                priority: FastImage.priority.high,
-                            }}
-                            style={{ width: 60, height: 60, borderRadius: 306, }}
-                        />
-                        <View style={{ marginLeft: 20, flexDirection: 'column' }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop: 9 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
-                            {/* <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  </Text> */}
-                        </View>
-                        {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
+                    }
+                    analytics.track('SearchedKidOpened', {
+                        userID: x ? JSON.parse(x)["0"]["id"] : null,
+                        deviceID: getUniqueId()
+                    })
+                }}>
+                    <FastImage
+                        source={{
+                            uri: item['data']['image'],
+                            priority: FastImage.priority.high,
+                        }}
+                        style={{ width: 60, height: 60, borderRadius: 306, }}
+                    />
+                    <View style={{ marginLeft: 20, flexDirection: 'column' }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop: 9 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
+                        {/* <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  </Text> */}
+                    </View>
+                    {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>
                             <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, marginTop: 2 }}>{follows && follows.includes(String(item['id'])) ? 'Following' : 'Follow'}</Text>
                         </TouchableOpacity>*/}
-                    </TouchableWithoutFeedback>
-                </StreamApp>
+                </TouchableWithoutFeedback>
             </View>
 
 

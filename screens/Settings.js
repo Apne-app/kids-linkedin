@@ -254,7 +254,7 @@ const Settings = ({ navigation, route }) => {
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text>
                         </Button>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
-                        <TextInput editable={false} placeholder={status === '3' ? children['0']['data']['year'] : 'Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
+                        <TextInput editable={false} placeholder={status === '3' ? String(children['0']['data']['year']) : 'Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
                         {/*<View style={{ backgroundColor: 'white', marginTop: 35, borderRadius: 10, height: 56, flexDirection: 'row' }}>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-Bold", marginVertical: 15, marginLeft: 23 }}>Push Notifications</Text>
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
@@ -324,7 +324,7 @@ const Settings = ({ navigation, route }) => {
             />
             <View style={{ position: logging ? 'absolute' : 'relative', bottom: '10%', zIndex: 1000, backgroundColor: '#327FEB', alignSelf: 'center', height: 70, width: width - 50, borderRadius: 25, padding: 20, flexDirection: 'row', alignContent: 'center', display: logging ? 'flex' : 'none' }}>
                 <Image source={require('../assets/log_loader.gif')} style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: (width - 50) / 10 }} />
-                <Text style={{ textAlign: 'right', fontFamily: 'NunitoSans-Bold', fontSize: 18, color: 'white', marginLeft: 20 }}>Logging you out</Text>
+                <Text style={{ textAlign: 'right', fontFamily: 'NunitoSans-Bold', fontSize: 18, color: 'white', marginLeft: 20 }}>Logging Out...</Text>
             </View>
             <Snackbar
                 visible={showToast}

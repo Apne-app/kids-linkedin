@@ -19,7 +19,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'getstream';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
-import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import LikeButton from '../components/LikeButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
@@ -27,28 +26,14 @@ import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import ImagePicker from 'react-native-image-crop-picker';
-var height = Dimensions.get('screen').height;
-var width = Dimensions.get('screen').width;
+import PostLoader from '../Modules/PostLoader'
+const height = Dimensions.get('screen').height;
+const width = Dimensions.get('screen').width;
 const IndProfile = ({ navigation, route }) => {
-    const [searchQuery, setSearchQuery] = React.useState('');
-    const [result, setresult] = React.useState([]);
-    const [follows, setfollows] = React.useState([]);
-    const [followPerson, setFollowPerson] = React.useState('Follow')
-    const [currentid, setcurrentid] = React.useState('');
-    const [certi, setCerti] = useState([]);
-    const [courses, setCourses] = useState([])
+    const [loading, setloading] = React.useState(true);
     var children = route.params.children
-    if (children) {
-        //do nothing
-    }
-    else {
-        children = ([{ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } }])
-    }
-    const [profile, setProfile] = useState({});
-    const [data, setdata] = useState({ 'followers': [], 'following': [] })
     const status = route.params.status
-    const optionsRef = React.useRef(null);
-    console.log(route['params']['id'])
+    const [posts, setposts] = useState([])
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -62,85 +47,8 @@ const IndProfile = ({ navigation, route }) => {
                 BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
         }, []));
-    // useEffect(() => {
-    //     const addfollows = async () => {
-    //         const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
-    //         var user = client.feed('user', route['params']['id'] + 'id');
-    //         setProfile(user.client);
-    //         var follows = await user.followers()
-    //         var user = client.feed('timeline', route['params']['id'] + 'id');
-    //         var following = await user.following()
-    //         setdata({ 'followers': follows['results'], 'following': following['results'] })
-    //     }
-    //     addfollows()
-    // }, [])
-    // useEffect(() => {
-    //     // console.log(route.params)
-    //     const addfollows = async () => {
-    //         var children = await AsyncStorage.getItem('children')
-    //         if (children) {
-    //             children = JSON.parse(children)['0']
-    //         }
-    //         else {
-    //             children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
-    //         }
-    //         const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-    //         var user = client.feed('timeline', route['params']['data']['id'] + 'id');
-    //         var follows = await user.following()
-    //         // var profile = client.feed('user', route['params']['id']+'id');
-    //         // var profFollow = await profile.followers();
-    //         // var profFollowing = await profile.followers();
-    //         // console.log("asdaaaa",profile)
-    //         // setdata({ 'followers': profFollow['results'], 'following': profFollowing['results'] });
-    //         var data = []
-    //         follows['results'].map(item => {
-    //             data.push(item['target_id'].replace('user:', '').replace('id', ''))
-    //         })
-    //         setfollows(data)
-    //         data.includes(String(route.params.id)) ? setFollowPerson('Following') : null;
-    //     }
-    //     addfollows()
-    // }, [])
 
     useEffect(() => {
-        const addCerti = async () => {
-            var children = await AsyncStorage.getItem('children')
-            children = JSON.parse(children)['0']
-            var config = {
-                method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcerti/${route['params']['data']['gsToken']}`,
-                headers: {}
-            };
-            axios(config)
-                .then(function (response) {
-                    // console.log((response.data));
-                    var arr = [];
-                    Object.keys(response.data).forEach(e => arr.push(response.data[e]["data"]["path"]));
-                    setCerti([...arr])
-                    // console.log(arr);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
-            config = {
-                method: 'get',
-                url: `https://barry-2z27nzutoq-as.a.run.app/getcourse/${route['params']['data']['gsToken']}`,
-                headers: {}
-            };
-
-            axios(config)
-                .then(function (response) {
-                    var arr = [];
-                    Object.keys(response.data).forEach(e => arr.push({ "name": response.data[e]["data"]["name"], "url": response.data[e]["data"]["url"], "org": response.data[e]["data"]["org"] }));
-                    setCourses([...arr])
-                    console.log(arr)
-                })
-                .catch(function (error) {
-                    // console.log(error);
-                });
-
-        }
         const analyse = async () => {
             var x = route.params.children;
             if (x) {
@@ -162,107 +70,19 @@ const IndProfile = ({ navigation, route }) => {
 
         }
         analyse();
-        // addCerti();
     }, [])
-
-    // useEffect(() => {
-    //     const addfollows = async () => {
-    //         var children = await AsyncStorage.getItem('children')
-    //         if (children) {
-    //             children = JSON.parse(children)['0']
-    //         }
-    //         else {
-    //             children = ({ 'data': { 'gsToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM' } })
-    //         }
-    //         setcurrentid(children['id'])
-    //     }
-    //     addfollows()
-    // }, [])
-    const followid = (id) => {
-        // console.log("asd");
-        if (followPerson == 'Follow') {
-            // console.log('https://api.genio.app/matrix/follow/' + currentid + '/' + id)
-            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-
-            var config = {
-                method: 'post',
-                url: 'https://api.genio.app/dark-knight/getToken',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: data
-            };
-            axios(config)
-                .then(function (response) {
-                    // console.log(JSON.stringify(response.data.token));
-                    axios({
-                        method: 'post',
-                        url: 'https://api.genio.app/matrix/follow/' + `?token=${response.data.token}`,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: JSON.stringify({
-                            "id1": currentid,
-                            "id2": id
-                        })
-                    })
-                        .then(async (res) => {
-                            if (res.data == 'success') {
-                                var place = follows;
-                                place.push(String(id));
-                                setfollows(place)
-                                setFollowPerson('Following');
-                            }
-                        })
-                })
-                .catch(function (error) {
-                });
-
-
+    useEffect(() => {
+        if (children) {
+            axios.post('https://4561d0a210d4.ngrok.io/profile', {
+                'user_id': route.params.id
+            }).then((response) => {
+                setposts(response['data']['data'])
+                setloading(false)
+            }).catch((error) => {
+                console.log(error)
+            })
         }
-        else {
-            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-
-            var config = {
-                method: 'post',
-                url: 'https://api.genio.app/dark-knight/getToken',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: data
-            };
-            axios(config)
-                .then(function (response) {
-                    // console.log(JSON.stringify(response.data.token));
-                    axios({
-                        method: 'post',
-                        url: 'https://api.genio.app/matrix/unfollow/' + currentid + '/' + id + `?token=${response.data.token}`,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: JSON.stringify({
-                            "id1": currentid,
-                            "id2": id
-                        })
-                    })
-                        .then(async (res) => {
-                            if (res.data == 'success') {
-                                var place = follows;
-                                const index = place.indexOf(id);
-                                if (index > -1) {
-                                    place.splice(index, 1);
-                                }
-                                setfollows(place)
-                                setFollowPerson('Follow');
-                            }
-                        })
-                })
-                .catch(function (error) {
-                });
-
-        }
-
-    }
+    }, [])
     const refProfileSheet = useRef(null);
     const showProfileSheet = () => {
         refProfileSheet.current.show()
@@ -372,12 +192,12 @@ const IndProfile = ({ navigation, route }) => {
     }
     var d = new Date();
     var year = parseInt(d.getFullYear());
-    const Empty = ({name}) => {
+    const Empty = () => {
         return (<View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
-                <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
-                    <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
-                </View>
-                <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{name+" hasn't posted anything yet. Check back later!"}</Text>
+            <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
+                <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+            </View>
+            <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{route.params.data.name + " hasn't posted anything yet. Check back later!"}</Text>
         </View>)
     }
     return (
@@ -392,61 +212,52 @@ const IndProfile = ({ navigation, route }) => {
                     onPress={(index) => { index == 0 ? reportProfile() : null; }}
                 />
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login', { type: 'indprofile_settings' })} />
-                <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                    <StreamApp
-                        apiKey={'9ecz2uw6ezt9'}
-                        appId={'96078'}
-                        token={children['0']['data']['gsToken']}
-                    >
-                        <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
-                            <Image
-                                source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
-                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
-                            />
-                            <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap', backgroundColor: "#f9f9f9" }}>
-                                <View style={{ flexDirection: 'row', backgroundColor: '#f9f9f9' }}>
-                                    <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
-                                </View>
-                                {/* <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius: 10, marginLeft: -20 }}>
+                <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
+                    <Image
+                        source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
+                        style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
+                    />
+                    <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap', backgroundColor: "#f9f9f9" }}>
+                        <View style={{ flexDirection: 'row', backgroundColor: '#f9f9f9' }}>
+                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
+                        </View>
+                        {/* <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius: 10, marginLeft: -20 }}>
                                 <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
                             </TouchableOpacity> */}
-                            </View>
+                    </View>
+                </View>
+                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{posts.length}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                         </View>
-                        {/* <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}> */}
-                        {/* <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                                <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>3</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                            </View>
-                                <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
-                                    <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
-                                </View>
-                                <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
-                                    <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
-                                </View>
-                            </View> */}
-                        {/*<View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                            <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{certi.length}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Certifications</Text>
-                            </View>
-                            <TouchableOpacity onPress={() => { optionsRef.current.snapTo(0); setBottomType('courses') }} style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 40, marginRight: 10 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{courses.length}</Text>
-                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Courses</Text>
-                            </TouchableOpacity>
-
-                        </View>*/}
-                        {/* </View> */}
-                        <View style={{marginBottom:200}}>
-                        <FlatFeed flatListProps={{ ListEmptyComponent: <Empty name={route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)} /> }} userId={route['params']['id'] + 'id'} feedGroup="user" Activity={(data) => { return <FeedComponent props={data} status={status} children={children} navigation={navigation} route={route} /> }} options={{ withOwnReactions: true }} />
+                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
                         </View>
-                    </StreamApp>
-                </ScrollView>
+                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={{ marginBottom: 200 }}>
+                    {loading ? <PostLoader /> : <FlatList
+                        data={posts}
+                        renderItem={(item) => { return (<FeedComponent item={item} />) }}
+                        keyExtractor={item => item['data'][1]}
+                        ListEmptyComponent={() => {
+                            return (
+                                <Empty />
+                            )
+                        }
+                        }
+                    />}
+                </View>
             </View> : <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />

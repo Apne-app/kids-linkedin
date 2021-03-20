@@ -6,8 +6,6 @@ import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, Spinner, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
-import LoginForm from '../components/Login';
-import SignUpForm from '../components/SignUp';
 import axios from 'axios';
 import LinkedIn from '../components/LinkedIn'
 import { useFocusEffect } from "@react-navigation/native";

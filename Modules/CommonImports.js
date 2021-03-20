@@ -25,7 +25,6 @@ import { sha256 } from 'react-native-sha256';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Container, Fab, Content, Header, Tab, Left, Body, Right, Title, Tabs, ScrollableTab, Card, CardItem, Footer, FooterTab, Button, Icon, Form, Item, Input, Label, H1, H2, H3, Segment, Thumbnail, Toast, Textarea } from 'native-base';
 import axios from 'axios';
-import { StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList } from 'react-native-activity-feed';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import CameraRoll from "@react-native-community/cameraroll";
@@ -80,5 +79,4 @@ export {
     ImagePicker, CropView, BottomSheet, ViewShot, Draggable,
     SimpleAnimation,
     SafeAreaProvider,
-    StreamApp, FlatFeed, Activity, CommentBox, CommentItem, updateStyle, ReactionIcon, NewActivitiesNotification, FollowButton, CommentList, ReactionToggleIcon, UserBar, Avatar, LikeList
 }; 

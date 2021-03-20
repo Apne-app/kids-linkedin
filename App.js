@@ -36,6 +36,7 @@ import FileScreen from './screens/FileScreen'
 import Settings from './screens/Settings'
 import Upload from './components/Post';
 import Verified from './screens/Verified'
+import SharedPost from './screens/SharedPost'
 import PostScreenNavig from './screens/PostScreenNavig'
 import PostFolder from './components/PostFolder'
 import Comments from './screens/CommentScreen'
@@ -57,8 +58,7 @@ import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
 import firebase from '@react-native-firebase/app';
 import OneSignal from 'react-native-onesignal';
 import { PersistGate } from 'redux-persist/es/integration/react'
-import { Provider } from 'react-redux';
-import { store, persistor } from './Store/store';
+import { Provider } from 'react-redux'
 const CleverTap = require('clevertap-react-native');
 const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
@@ -231,64 +231,12 @@ const App = (props) => {
           containerRef.current?.navigate('Unverified')
         }
         if (link.url.includes('post')) {
-          var child = await AsyncStorage.getItem('children')
-          if (child) {
-            var children = JSON.parse(child)
-            child = JSON.parse(child)
-            var status = await AsyncStorage.getItem('status');
-            const client = connect('9ecz2uw6ezt9', child['0']['data']['gsToken'], '96078');
-            var user = client.feed('timeline', child['0']['id'] + 'id', child['0']['data']['gsToken']);
-            var id = link.url
-            const addreaction = (kind, activity, data, options) => {
-              client.reactions.add(
-                kind,
-                activity,
-                data,
-                options,
-              )
-            }
-            id = id.replace('https://link.genio.app/post?id=', '')
-            user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
-              .then((data) => {
-                console.log(data)
-                containerRef.current?.navigate('SinglePost', {
-                  id: children['0']['id'], name: children['0']['data']['name'], image: children['0']['data']['image'], activity: {
-                    activity: data['results'][0], onAddReaction: addreaction
-                  }, token: children['0']['data']['gsToken']
-                })
-              })
-              .catch((data) => {
-                console.log(data)
-                containerRef.current?.navigate('Home')
-              })
-          }
-          else {
-            const client = connect('9ecz2uw6ezt9', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', '96078');
-            var user = client.feed('timeline', 'admin', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM');
-            var id = link.url
-            const addreaction = (kind, activity, data, options) => {
-              client.reactions.add(
-                kind,
-                activity,
-                data,
-                options,
-              )
-            }
-            id = id.replace('https://link.genio.app/post?id=', '')
-            user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
-              .then((data) => {
-                console.log(data)
-                containerRef.current?.navigate('SinglePost', {
-                  id: 'admin', name: 'npne', image: 'none', activity: {
-                    activity: data['results'][0], onAddReaction: addreaction
-                  }, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'
-                })
-              })
-              .catch((data) => {
-                console.log(data)
-                containerRef.current?.navigate('Home')
-              })
-          }
+          var id = link.url
+          id = id.replace('https://link.genio.app/post?id=', '')
+          containerRef.current?.navigate('SharedPost', {
+            id: id
+          })
+
         }
         if (link.url.includes('quiz')) {
           containerRef.current?.navigate('Post')
@@ -304,7 +252,6 @@ const App = (props) => {
   }, []);
   // setInitialNavigationState(await getInitialState());
   const handleDynamicLink = async (link) => {
-    console.log(link)
     var pro = await AsyncStorage.getItem('profile')
     if (pro) {
       pro = JSON.parse(pro)
@@ -317,77 +264,19 @@ const App = (props) => {
       containerRef.current?.navigate('Unverified')
     }
     if (link.url.includes('post')) {
-      var child = await AsyncStorage.getItem('children')
-      if (child) {
-        try {
-          var children = JSON.parse(child)
-          child = JSON.parse(child)
-          var status = await AsyncStorage.getItem('status');
-          const client = connect('9ecz2uw6ezt9', child['0']['data']['gsToken'], '96078');
-          var user = client.feed('timeline', child['0']['id'] + 'id', child['0']['data']['gsToken']);
-          var id = link.url
-          const addreaction = (kind, activity, data, options) => {
-            client.reactions.add(
-              kind,
-              activity,
-              data,
-              options,
-            )
-          }
-          id = id.replace('https://link.genio.app/post?id=', '')
-          user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
-            .then((data) => {
-              console.log(data)
-              containerRef.current?.navigate('SinglePost', {
-                id: children['0']['id'], name: children['0']['data']['name'], image: children['0']['data']['image'], activity: {
-                  activity: data['results'][0], onAddReaction: addreaction
-                }, token: children['0']['data']['gsToken']
-              })
-            })
-            .catch((data) => {
-              console.log(data)
-              containerRef.current?.navigate('Home')
-            })
-        }
-        catch (error) {
-          console.log(error)
-        }
+      var id = link.url
+      id = id.replace('https://link.genio.app/post?id=', '')
+      containerRef.current?.navigate('SharedPost', {
+        id: id,
+      })
+      if (link.url.includes('quiz')) {
+        containerRef.current?.navigate('Home', { goTo: 'quiz' })
       }
-      else {
-        const client = connect('9ecz2uw6ezt9', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', '96078');
-        var user = client.feed('timeline', 'admin', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM');
-        var id = link.url
-        const addreaction = (kind, activity, data, options) => {
-          client.reactions.add(
-            kind,
-            activity,
-            data,
-            options,
-          )
-        }
-        id = id.replace('https://link.genio.app/post?id=', '')
-        user.get({ id_gte: id, limit: 1, enrich: true, reactions: { own: true, counts: true, recent: true }, })
-          .then((data) => {
-            console.log(data)
-            containerRef.current?.navigate('SinglePost', {
-              id: 'admin', name: 'npne', image: 'none', activity: {
-                activity: data['results'][0], onAddReaction: addreaction
-              }, token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM'
-            })
-          })
-          .catch((data) => {
-            console.log(data)
-            containerRef.current?.navigate('Home')
-          })
+      if (link.url.includes('news')) {
+        containerRef.current?.navigate('Home', { 'goTo': 'news' })
       }
-    }
-    if (link.url.includes('quiz')) {
-      containerRef.current?.navigate('Home', { goTo: 'quiz' })
-    }
-    if (link.url.includes('news')) {
-      containerRef.current?.navigate('Home', { 'goTo': 'news' })
-    }
-  };
+    };
+  }
   StatusBar.setBackgroundColor('#1A71EB')
   useEffect(() => {
     const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
@@ -543,12 +432,12 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
-            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Comments" component={Comments} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Notifications" component={NotificationScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidUser" component={KidUser} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Includes" component={Includes} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="SharedPost" component={SharedPost} />
           </Stack.Navigator>
           <NotifierRoot ref={notifierRef} />
         </NavigationContainer>
@@ -559,8 +448,7 @@ const App = (props) => {
 
 codePush.sync({
   updateDialog: false,
-  installMode: codePush.InstallMode.ON_NEXT_SUSPEND,
-  minimumBackgroundDuration: 15
+  installMode: codePush.InstallMode.ON_NEXT_RESTART,
 
 });
 export default codePush(App);

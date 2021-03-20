@@ -18,7 +18,8 @@ import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader';
 import ToggleSwitch from 'toggle-switch-react-native';
-import ImagePicker from 'react-native-image-crop-picker';
+// import ImagePicker from 'react-native-image-crop-picker';
+import ImagePicker from 'react-native-image-picker'
 import { setMinimumFetchIntervalInSeconds } from 'clevertap-react-native';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -323,25 +324,43 @@ export default class ExampleApp extends PureComponent {
     const pickVideo = async () => {
       var x = await AsyncStorage.getItem('children');
       if (x) {
-        ImagePicker.openPicker({
-          mediaType: 'video',
-
-        }).then(video => {
-          if (video.path) {
-            this.props.navigation.navigate('VideoPreview', { 'video': video.path })
-          }
-          else{
-            alert("Error selecting the image, please try again :)")
+        ImagePicker.launchImageLibrary({ mediaType: 'video' }, (response) => {
+          if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+          } else if (response.customButton) {
+            console.log('User tapped custom button: ', response.customButton);
+          } else {
+            if (response.uri) {
+              this.props.navigation.navigate('VideoPreview', { 'video': response.path })
+            }
+            else {
+              alert("Error selecting the video, please try again :)")
+            }
           }
           this.setState({ isOn: false })
           this.setState({ imagetaken: false })
+        });
+        // ImagePicker.openPicker({
+        //   mediaType: 'video',
 
-        })
-          .catch(video => {
-            // navigation.pop()
-            this.setState({ isOn: false })
-            this.setState({ imagetaken: false })
-          })
+        // }).then(video => {
+        //   if (video.path) {
+        //     this.props.navigation.navigate('VideoPreview', { 'video': video.path })
+        //   }
+        //   else{
+        //     alert("Error selecting the video, please try again :)")
+        //   }
+        //   this.setState({ isOn: false })
+        //   this.setState({ imagetaken: false })
+
+        // })
+        //   .catch(video => {
+        //     // navigation.pop()
+        //     this.setState({ isOn: false })
+        //     this.setState({ imagetaken: false })
+        //   })
       }
       else {
         this.props.navigation.navigate('Login', { screen: 'Camera', 'type': 'feed_video' })
