@@ -29,9 +29,10 @@ import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
 import FastImage from 'react-native-fast-image';
-import { Video } from 'expo-av';
-import VideoPlayer from './expo-video-player'
 import InViewPort from "@coffeebeanslabs/react-native-inviewport";
+import Video from 'react-native-video';
+import PostLoader from '../Modules/PostLoader';
+import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const FeedComponent = ({ props, status, children, navigation, item }) => {
@@ -42,6 +43,53 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
+    const videoPlayer = useRef(null);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [paused, setPaused] = useState(true);
+    const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
+
+    const onSeek = (seek) => {
+        videoPlayer?.current.seek(seek);
+    };
+
+    const onPaused = (playerState) => {
+        setPaused(!paused);
+        setPlayerState(playerState);
+    };
+
+    const onReplay = () => {
+        setPlayerState(PLAYER_STATES.PLAYING);
+        videoPlayer?.current.seek(0);
+    };
+
+    const onProgress = (data) => {
+        // Video Player will continue progress even if the video already ended
+        if (!isLoading) {
+            setCurrentTime(data.currentTime);
+        }
+    };
+
+    const onLoad = (data) => {
+        setDuration(data.duration);
+        setIsLoading(false);
+    };
+
+    const onLoadStart = () => setIsLoading(true);
+
+    const onEnd = () => {
+        // Uncomment this line if you choose repeat=false in the video player
+        // setPlayerState(PLAYER_STATES.ENDED);
+    };
+
+    const onSeeking = (currentTime) => setCurrentTime(currentTime);
+    const noop = (video) => {
+        setPaused(true);
+        setPlayerState(PLAYER_STATES.PAUSED)
+        navigation.navigate('VideoFull', { duration: duration, video: video, time: currentTime })
+    };
     const deletepost = (id1) => {
         Alert.alert("Alert", "Are you sure you want to delete the post? The action cannot be reversed", [
             {
@@ -51,14 +99,21 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             },
             {
                 text: "YES", onPress: () => {
-                    const client = connect('9ecz2uw6ezt9', children['0']['data']['gsToken'], '96078');
-                    var user = client.feed('user', children['0']['id'] + 'id');
-                    user.removeActivity(id1).then(() => {
-                        alert('Successfully deleted your post!')
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Home' }],
-                        })
+                    axios.post('https://4561d0a210d4.ngrok.io/delpost', {
+                        post_id: activity['post_id'],
+                    }).then(() => {
+                        if (response == 'true') {
+                            alert('Successfully deleted your post!')
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Home' }],
+                            })
+                        }
+                        else {
+                            alert(
+                                "There was an error deleting your post, please try again later."
+                            )
+                        }
                     }).catch(() => {
                         alert(
                             "There was an error deleting your post, please try again later."
@@ -70,7 +125,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     }
     const report = async (x) => {
         if (children) {
-            if (props.activity.actor.id == children['0']['id'] + 'id') {
+            if (props.activity.actor.id == children['0']['id']) {
                 deletepost(props.activity.id)
             }
             else {
@@ -202,7 +257,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
     var options = [<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>]
     if (children) {
-        if (activity['user_id'] == children['0']['id'] + 'id') {
+        if (activity['user_id'] == children['0']['id']) {
             options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Delete Post</Text>)
         }
         else {
@@ -214,40 +269,52 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     }
     options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
     const addorunlike = () => {
-        var data = activity
-        if (data['likes_user_id'] == children[0]['id']) {
-            data['likes_user_id'] = null
-            data['likes_count'] = data['likes_count'] - 1
-            setactivity(data)
-            setkey(String(parseInt(key) + 1))
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
-                post_id: data['post_id'],
-                user_id: children[0]['id'],
-                user_name: children[0]['data']['name'],
-                user_image: children[0]['data']['image'],
-                response: 'unlike',
-            }).then((response) => {
+        if (status === '3') {
+            var data = activity
+            if (data['likes_user_id'] == children[0]['id']) {
+                data['likes_user_id'] = null
+                data['likes_count'] = data['likes_count'] - 1
+                setactivity(data)
+                setkey(String(parseInt(key) + 1))
+                axios.post('https://4561d0a210d4.ngrok.io/like', {
+                    post_id: data['post_id'],
+                    user_id: children[0]['id'],
+                    user_name: children[0]['data']['name'],
+                    user_image: children[0]['data']['image'],
+                    response: 'unlike',
+                }).then((response) => {
 
-            }).catch((error) => {
+                }).catch((error) => {
 
-            })
-        }
-        else {
-            data['likes_user_id'] = children[0]['id']
-            data['likes_count'] = data['likes_count'] + 1
-            setactivity(data)
-            setkey(String(parseInt(key) + 1))
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
-                post_id: data['post_id'],
-                user_id: children[0]['id'],
-                user_name: children[0]['data']['name'],
-                user_image: children[0]['data']['image'],
-                response: 'like',
-            }).then((response) => {
+                })
+            }
+            else {
+                data['likes_user_id'] = children[0]['id']
+                data['likes_count'] = data['likes_count'] + 1
+                setactivity(data)
+                setkey(String(parseInt(key) + 1))
+                axios.post('https://4561d0a210d4.ngrok.io/like', {
+                    post_id: data['post_id'],
+                    user_id: children[0]['id'],
+                    user_name: children[0]['data']['name'],
+                    user_image: children[0]['data']['image'],
+                    response: 'like',
+                }).then((response) => {
+                    analytics.track('Like', {
+                        userID: children["0"]["id"],
+                        deviceID: getUniqueId(),
+                        by: children["0"]["id"],
+                        byname: children["0"]['data']["name"],
+                        byimage: children["0"]['data']["image"],
+                        to: activity['user_id'],
+                        actid: activity['post_id']
+                    })
+                }).catch((error) => {
 
-            }).catch((error) => {
-
-            })
+                })
+            }
+        } else {
+            navigation.navigate('Login', { 'screen': 'Feed', 'type': 'feed_like' })
         }
     }
     const setparentkey = () => {
@@ -278,7 +345,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         styles={{ borderRadius: 0, margin: 10 }}
                         options={options}
                         cancelButtonIndex={2}
-                        onPress={(index) => { index == 1 ? report(activit) : index == 0 ? onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']) : null }}
+                        onPress={(index) => { index == 1 ? report(activity) : index == 0 ? onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']) : null }}
                     />
                     <Right><TouchableOpacity style={{ width: 70, alignItems: 'center', padding: 12 }} onPress={() => { showActionSheet(); }}><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 20, marginRight: -10, color: '#383838' }} /></TouchableOpacity></Right>
                 </View>
@@ -310,40 +377,50 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 : null}
             {activity['videos'] ?
                 <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <InViewPort onChange={(value) => value ? null : videoRef.pauseAsync()}>
-                        <VideoPlayer
-                            videoProps={{
-                                source: { uri: activity['videos'] },
-                                rate: 1.0,
-                                volume: 1.0,
-                                isMuted: false,
-                                videoRef: v => videoRef = v,
-                                resizeMode: Video.RESIZE_MODE_CONTAIN,
-                                // shouldPlay
-                                // usePoster={activity.poster?true:false}
-                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                                playInBackground: false,
-                                playWhenInactive: false,
-                                width: width,
-                                height: 340,
-
-                            }}
-                            width={width}
-                            height={340}
-                            hideControlsTimerDuration={1000}
-                            showControlsOnLoad={true}
-                            switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                            sliderColor={'#327FEB'}
-                            inFullscreen={false}
-                        />
+                    <InViewPort onChange={(value) => value ? null : (setPaused(true), setPlayerState(PLAYER_STATES.PAUSED))}>
+                        <View>
+                            <Video
+                                onEnd={onEnd}
+                                onLoad={onLoad}
+                                onLoadStart={onLoadStart}
+                                onProgress={onProgress}
+                                paused={paused}
+                                ref={(ref) => (videoPlayer.current = ref)}
+                                resizeMode="cover"
+                                source={{
+                                    uri: activity['videos'],
+                                }}
+                                style={styles.mediaPlayer}
+                                playInBackground={false}
+                                playWhenInactive={false}
+                            />
+                            <MediaControls
+                                duration={duration}
+                                isLoading={isLoading}
+                                mainColor="#327FEB"
+                                onFullScreen={() => noop(activity['videos'])}
+                                onPaused={onPaused}
+                                onReplay={onReplay}
+                                onSeek={onSeek}
+                                onSeeking={onSeeking}
+                                playerState={playerState}
+                                progress={currentTime}
+                            >
+                                <MediaControls.Toolbar>
+                                </MediaControls.Toolbar>
+                            </MediaControls>
+                        </View>
                     </InViewPort>
-                </View> : null}
-            {activity['youtube'] ?
-                <Thumbnail onPress={() => { navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: activity }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + activity['youtube']} />
-                : null}
+                </View> : null
+            }
+            {
+                activity['youtube'] ?
+                    <Thumbnail onPress={() => { navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: activity }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + activity['youtube']} />
+                    : null
+            }
             <View style={{ marginTop: 10 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPressIn={() => { addorunlike() }}>
+                    <TouchableWithoutFeedback style={{ width: 40, height: 40, }} onPress={() => { addorunlike() }}>
                         <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: -1 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
                     </TouchableWithoutFeedback>
                     <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 5, fontSize: 16, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']}</Text>
@@ -367,7 +444,14 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 </View>
                 {activity['tags'] === 'Genio' || activity['tags'] === 'Other' || activity['tags'] === '' ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{activity['tags']}</Text></View>}
             </View>
-        </View>
+        </View >
     )
 };
+const styles = StyleSheet.create({
+    mediaPlayer: {
+        height: 340,
+        width: width,
+        backgroundColor: "black",
+    },
+});
 export default FeedComponent;

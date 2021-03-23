@@ -21,8 +21,8 @@ import { getUniqueId } from 'react-native-device-info';
 import analytics from '@segment/analytics-react-native';
 import FeedComponent from '../Modules/FeedComponent'
 import FastImage from 'react-native-fast-image'
-import { Video } from 'expo-av';
-import VideoPlayer from '../Modules/expo-video-player'
+//import {Video} from "expo-av";
+//import VideoPlayer from '../Modules/expo-video-player'
 import axios from 'axios';
 import PostLoader from '../Modules/PostLoader';
 

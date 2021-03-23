@@ -212,52 +212,54 @@ const IndProfile = ({ navigation, route }) => {
                     onPress={(index) => { index == 0 ? reportProfile() : null; }}
                 />
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login', { type: 'indprofile_settings' })} />
-                <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
-                    <Image
-                        source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
-                        style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
-                    />
-                    <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap', backgroundColor: "#f9f9f9" }}>
-                        <View style={{ flexDirection: 'row', backgroundColor: '#f9f9f9' }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
-                        </View>
-                        {/* <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius: 10, marginLeft: -20 }}>
+                <ScrollView>
+                    <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
+                        <Image
+                            source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
+                            style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
+                        />
+                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap', backgroundColor: "#f9f9f9" }}>
+                            <View style={{ flexDirection: 'row', backgroundColor: '#f9f9f9' }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
+                            </View>
+                            {/* <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius: 10, marginLeft: -20 }}>
                                 <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
                             </TouchableOpacity> */}
-                    </View>
-                </View>
-                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                        <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{posts.length}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                         </View>
                     </View>
-                </View>
-                <View style={{ marginBottom: 200 }}>
-                    {loading ? <PostLoader /> : <FlatList
-                        data={posts}
-                        renderItem={(item) => { return (<FeedComponent item={item} />) }}
-                        keyExtractor={item => item['data'][1]}
-                        ListEmptyComponent={() => {
-                            return (
-                                <Empty />
-                            )
-                        }
-                        }
-                    />}
-                </View>
+                    <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                            <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{posts.length}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ marginBottom: 100 }}>
+                        {loading ? <PostLoader /> : <FlatList
+                            data={posts}
+                            renderItem={(item) => { return (<FeedComponent item={item} />) }}
+                            keyExtractor={item => item['data'][1]}
+                            ListEmptyComponent={() => {
+                                return (
+                                    <Empty />
+                                )
+                            }
+                            }
+                        />}
+                    </View>
+                </ScrollView>
             </View> : <View style={{ backgroundColor: 'white', height: height, width: width }}>
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? navigation.navigate('Settings') : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <Image source={require('../assets/loading.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: width / 2 }} />
