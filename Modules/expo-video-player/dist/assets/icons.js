@@ -1,5 +1,5 @@
 import { ActivityIndicator, StyleSheet } from 'react-native';
-import { MaterialIcons } from '../../../vector-icons';
+import { MaterialIcons } from 'react-native-vector-icons';
 import React from 'react';
 const ICON_COLOR = '#FFF';
 const CENTER_ICON_SIZE = 36;

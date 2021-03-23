@@ -82,7 +82,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     var year = parseInt(d.getFullYear());
     useEffect(() => {
         const data = async () => {
-            axios.post('https://4561d0a210d4.ngrok.io/getcomments', {
+            axios.post('https://14aa1a9a3997.ngrok.io/getcomments', {
                 post_id: activity['post_id']
             }).then((response) => {
                 setcomments(response['data']['data'])
@@ -101,7 +101,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey()
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
+            axios.post('https://14aa1a9a3997.ngrok.io/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -119,7 +119,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey()
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
+            axios.post('https://14aa1a9a3997.ngrok.io/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -296,7 +296,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setcomments([...comments, { 'data': { 'comments_user_image': children[0]['data']['image'], comment: comment }, 'id': key }])
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey()
-            axios.post('https://4561d0a210d4.ngrok.io/comment', {
+            axios.post('https://14aa1a9a3997.ngrok.io/comment', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],

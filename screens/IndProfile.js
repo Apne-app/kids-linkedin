@@ -73,7 +73,7 @@ const IndProfile = ({ navigation, route }) => {
     }, [])
     useEffect(() => {
         if (children) {
-            axios.post('https://4561d0a210d4.ngrok.io/profile', {
+            axios.post('https://14aa1a9a3997.ngrok.io/profile', {
                 'user_id': route.params.id
             }).then((response) => {
                 setposts(response['data']['data'])

@@ -51,7 +51,7 @@ const FeedScreen = ({ navigation, route }) => {
     var d = new Date();
     var year = parseInt(d.getFullYear());
     useEffect(() => {
-        axios.post('https://4561d0a210d4.ngrok.io/feed', {
+        axios.post('https://14aa1a9a3997.ngrok.io/feed', {
             'user_id': children[0]['id']
         }).then((response) => {
             setdata(response.data.data)

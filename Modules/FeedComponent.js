@@ -15,6 +15,7 @@ import axios from 'axios';
 import { connect } from 'getstream';
 import * as rssParser from 'react-native-rss-parser';
 import { useFocusEffect } from "@react-navigation/native";
+import SmartImage from './SmartImage';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
 import { Snackbar } from 'react-native-paper';
@@ -220,7 +221,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             data['likes_count'] = data['likes_count'] - 1
             setactivity(data)
             setkey(String(parseInt(key) + 1))
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
+            axios.post('https://14aa1a9a3997.ngrok.io/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -237,7 +238,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             data['likes_count'] = data['likes_count'] + 1
             setactivity(data)
             setkey(String(parseInt(key) + 1))
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
+            axios.post('https://14aa1a9a3997.ngrok.io/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -289,7 +290,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage
                         source={{
-                            uri: activity['images'].split(", ")[0],
+                            uri: activity['images'].split(", ")[0] + "---feed-card.png",
                             priority: FastImage.priority.high
                         }}
                         style={{ width: width, height: 340, borderRadius: 0 }}

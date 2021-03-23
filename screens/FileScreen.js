@@ -31,6 +31,7 @@ const FileScreen = (props) => {
 
 
     const [files, setFiles] = React.useState([]);
+    const [permfiles, setPermFiles] = React.useState([]);
     const [pdfs, setPDFS] = React.useState([]);
     const [selecting, setSelecting] = React.useState(false);
     const [selected, setSelected] = React.useState([]);
@@ -44,6 +45,196 @@ const FileScreen = (props) => {
     const status = props.route.params.status
 
     const [refreshing, setRefreshing] = React.useState(false);
+    const createDate = (x) => {
+        x = x.replace(/-/g, ":");
+        var a = Date.parse(x);
+        var b = new Date();
+        // console.log(a)
+        var da = x.split('GMT')[0].split(' ')
+        da = da[0] + ', ' + da[1] + ' ' + da[2] + ' ' + da[3]
+        return b - a < 86400000 ? ['Today'] : b - a < 2 * 86400000 ? ['Yesterday'] : da;
+    }
+    const createDate2 = (x) => {
+        x = x.replace(/-/g, ":");
+        var a = Date.parse(x);
+        return a;
+    }
+
+    const showAll = async () => {
+        var fls = [];
+        var s = "";
+        var x = props.route.params.children
+        // console.log(x)
+        try{
+            x = x["0"]["data"]["gsToken"];
+        }
+        catch(err){
+            
+        }
+
+        if(status == 3)
+        {
+
+            try {
+                
+            // console.log(data)
+            var config = {
+                method: 'get',
+                url: `https://w9od15z398.execute-api.ap-south-1.amazonaws.com/default/getCollections?token=${x}`,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            axios(config)
+                .then(function (response) {
+                    var arry = [];
+                    var ar1 = [...fls]
+                    // s = stringImages;
+                    for (var i = 0; i < response.data["0"].length;) {
+                        // console.log(response.data["0"].length)
+                        var m = response.data["0"][i].split(x + '/')[1].split('/')[0];
+                        // console.log(m, response.data["0"], "mmm");
+                        // console.log(stringImages.includes(m), m, stringImages, s.includes(m), response.data["0"][i]);
+                        // if(s.includes(m+response.data.length))
+                        // {
+                        //     // console.log(m, 'asdas');
+                        //     i++;
+                        //     continue;
+                        // }
+                        // s += m + ', ';
+                        var n = JSON.parse(m);
+                        var tme = new Date(n);
+                        tme = tme.toString();
+                        setSynced(true);
+                        // console.log(tme)
+                        var ar = [];
+                        var c = 0;
+                        // console.log(response.data["0"][i]);
+                        while (i < response.data["0"].length && response.data["0"][i].split(x + '/')[1].split('/')[0] == m) {
+                            ar.push({ 'name': response.data["0"][i].split(x + '/')[1].split('/')[1], 'path': response.data["0"][i], 'time': tme })
+                            i++;
+                            c++;
+                        }
+                        s = s + m+'-'+c + ', ';
+                        if (/*!s.includes(m)*/1) {
+                            arry.push({ 'cloud': 1, 'images': ar, 'timestamp': tme });
+                        }
+                    }
+                    // console.log(s, "adasaa");
+                    var amp = [...arry, ...fls]
+                    // console.log(amp[0]);
+                    amp.sort(function (a, b) {
+                        var keyA = a.timestamp,
+                            keyB = b.timestamp;
+                        // Compare the 2 dates
+                        if (keyA < keyB) return 1;
+                        if (keyA > keyB) return -1;
+                        return 0;
+                    });
+                    // setStringImages(s);
+                    // amp = reverse(amp)
+                    // setFiles([...amp])
+                    return amp
+                    
+                })
+                .then(async (amp) => {
+                    try {
+
+                        var result = await RNFS.readDir(`${dir_path}/Images`);
+                        for (var i = 0; i < result.length; i++) {
+                            var res = await RNFS.readDir(result[i]['path']);
+                            // console.log(s, "asdsd", res[0]['name'].split('_')[1].split('-')[0]+'-'+res.length)
+                            if(s.includes(res[0]['name'].split('_')[1].split('-')[0]+'-'+res.length))
+                            {
+                                // console.log('asdm');
+                                i++;
+                                continue;
+                            }
+                            fls.push({ 'images': res, 'cloud': 0, "timestamp": result[i]['name'] });
+                            // console.log(res.length);
+                            
+                        }
+                        setStringImages(s);
+                        fls.sort();
+                        var finalArr = [...amp, ...fls];
+                        function compare( a, b ) {
+                            // console.log(createDate2(a.timestamp), createDate2(b.timestamp));
+                            if ( createDate2(a.timestamp) < createDate2(b.timestamp) ){
+                                return 1;
+                            }
+                            if ( createDate2(a.timestamp) > createDate2(b.timestamp) ){
+                                return -1;
+                            }
+                            return 0;
+                        }
+                        
+                        finalArr.sort(compare);
+                        setFiles([...finalArr]);
+                        setPermFiles([...finalArr]);
+                        // console.log("buaa", finalArr);
+                        setSynced(true)
+                    }
+                    catch (err) {
+                        console.log(err);
+                        var finalArr = [...amp];
+                        function compare( a, b ) {
+                            // console.log(createDate2(a.timestamp), createDate2(b.timestamp));
+                            if ( createDate2(a.timestamp) < createDate2(b.timestamp) ){
+                                return 1;
+                            }
+                            if ( createDate2(a.timestamp) > createDate2(b.timestamp) ){
+                                return -1;
+                            }
+                            return 0;
+                        }
+                        
+                        finalArr.sort(compare);
+                        setFiles([...finalArr]);
+                        setSynced(true)
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error, "asdas");
+                    setSynced(true);
+                });
+            }
+            catch (error) {
+                setSynced(true);
+            }
+        }
+        else
+        {
+            try {
+
+                var result = await RNFS.readDir(`${dir_path}/Images`);
+                for (var i = 0; i < result.length; i++) {
+                    var res = await RNFS.readDir(result[i]['path']);
+                    fls.push({ 'images': res, 'cloud': 0, "timestamp": result[i]['name'] });
+                    // console.log(res.length);
+                    
+                }
+                setStringImages(s);
+                fls.sort();
+                // console.log(fls);
+                fls = reverse(fls)
+                setFiles([...fls]);
+                setSynced(true)
+            }
+            catch (err) {
+                console.log(err);
+                setSynced(true)
+            }
+            setSynced(true);
+        }
+
+
+
+        
+        // setTimeout(() => {
+            
+        // }, 1000);
+        
+    }
 
 
     useFocusEffect(
@@ -108,155 +299,11 @@ const FileScreen = (props) => {
 
     }
 
-    const showAll = async () => {
-        var fls = [];
-        var s = "";
-        var x = props.route.params.children
-        // console.log(x)
-        try{
-            x = x["0"]["data"]["gsToken"];
-        }
-        catch(err){
-            
-        }
-
-        if(status == 3)
-        {
-
-            try {
-                
-            // console.log(data)
-            var config = {
-                method: 'get',
-                url: `https://w9od15z398.execute-api.ap-south-1.amazonaws.com/default/getCollections?token=${x}`,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-            axios(config)
-                .then(function (response) {
-                    var arry = [];
-                    var ar1 = [...fls]
-                    // console.log(response.data)
-                    // var s = stringImages;
-                    for (var i = 0; i < response.data["0"].length;) {
-                        // console.log(response.data["0"].length)
-                        var m = response.data["0"][i].split(x + '/')[1].split('/')[0];
-                        s = s + m+'-'+response.data["0"].length + ', ';
-                        // console.log(stringImages.includes(m), m, stringImages, s.includes(m), response.data["0"][i]);
-                        // if(s.includes(m+response.data.length))
-                        // {
-                        //     // console.log(m, 'asdas');
-                        //     i++;
-                        //     continue;
-                        // }
-                        // s += m + ', ';
-                        var n = JSON.parse(m);
-                        var tme = new Date(n);
-                        tme = tme.toString();
-                        setSynced(true);
-                        // console.log(tme)
-                        var ar = [];
-                        while (i < response.data["0"].length && response.data["0"][i].split(x + '/')[1].split('/')[0] == m) {
-                            ar.push({ 'name': response.data["0"][i].split(x + '/')[1].split('/')[1], 'path': response.data["0"][i], 'time': tme })
-                            i++;
-                        }
-                        if (/*!s.includes(m)*/1) {
-                            arry.push({ 'cloud': 1, 'images': ar, 'timestamp': tme });
-                        }
-                    }
-                    // console.log(s, "adasaa");
-                    var amp = [...arry, ...fls]
-                    // console.log(amp[0]);
-                    amp.sort(function (a, b) {
-                        var keyA = a.timestamp,
-                            keyB = b.timestamp;
-                        // Compare the 2 dates
-                        if (keyA < keyB) return 1;
-                        if (keyA > keyB) return -1;
-                        return 0;
-                    });
-                    // setStringImages(s);
-                    amp = reverse(amp)
-                    // setFiles([...amp])
-                    return amp
-                    
-                })
-                .then(async (amp) => {
-                    try {
-
-                        var result = await RNFS.readDir(`${dir_path}/Images`);
-                        for (var i = 0; i < result.length; i++) {
-                            var res = await RNFS.readDir(result[i]['path']);
-                            console.log(res[0]['name'].split('_')[1].split('-')[0], s)
-                            if(s.includes(res[0]['name'].split('_')[1].split('-')[0]+'-'+res.length))
-                            {
-                                // console.log('asdas');
-                                i++;
-                                continue;
-                            }
-                            fls.push({ 'images': res, 'cloud': 0, "timestamp": result[i]['name'] });
-                            // console.log(res.length);
-                            
-                        }
-                        setStringImages(s);
-                        fls.sort();
-                        console.log(fls);
-                        fls = reverse(fls)
-                        setFiles([...amp, ...fls]);
-                        setSynced(true)
-                    }
-                    catch (err) {
-                        console.log(err);
-                        setSynced(true)
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error, "asdas");
-                    setSynced(true);
-                });
-            }
-            catch (error) {
-                setSynced(true);
-            }
-        }
-        else
-        {
-            try {
-
-                var result = await RNFS.readDir(`${dir_path}/Images`);
-                for (var i = 0; i < result.length; i++) {
-                    var res = await RNFS.readDir(result[i]['path']);
-                    fls.push({ 'images': res, 'cloud': 0, "timestamp": result[i]['name'] });
-                    // console.log(res.length);
-                    
-                }
-                setStringImages(s);
-                fls.sort();
-                console.log(fls);
-                fls = reverse(fls)
-                setFiles([...fls]);
-                setSynced(true)
-            }
-            catch (err) {
-                console.log(err);
-                setSynced(true)
-            }
-            setSynced(true);
-        }
-
-
-
-        
-        // setTimeout(() => {
-            
-        // }, 1000);
-        
-    }
+    
 
     if(props.route.params.reload)
     {
-        console.log('noonasd')
+        // console.log('noonasd')
         showAll();
         props.route.params.reload = 0;
     }
@@ -364,7 +411,7 @@ const FileScreen = (props) => {
 
     const convertDate = (tm) => {
         var d = new Date(JSON.parse(tm));
-        console.log(tm)
+        // console.log(tm)
 
         return d.toLocaleString();
         //  return d;
@@ -384,27 +431,17 @@ const FileScreen = (props) => {
             return;
         }
 
-        for (var i = 0; i < files.length; i++) {
+        for (var i = 0; i < permfiles.length; i++) {
             // console.log(files[i]['images'][0]['name'].split('_')[0]);
-            if (files[i]['images'][0]['name'].split('_')[0] == tag) {
+            if (permfiles[i]['images'][0]['name'].split('_')[0] == tag) {
                 // { 'time': m.split('_')[1].split('-')[0], 'images': tmp, tag: m.split('_')[0].split('Images/')[1] }
-                z.push(files[i]);
+                z.push(permfiles[i]);
             }
         }
         z = reverse(z)
         setFiles([...z]);
 
 
-    }
-
-    const createDate = (x) => {
-        x = x.replace(/-/g, ":");
-        var a = Date.parse(x);
-        var b = new Date();
-        // console.log(a)
-        var da = x.split('GMT')[0].split(' ')
-        da = da[0] + ', ' + da[1] + ' ' + da[2] + ' ' + da[3]
-        return b - a < 86400000 ? ['Today'] : b - a < 2 * 86400000 ? ['Yesterday'] : da;
     }
 
 
@@ -448,7 +485,7 @@ const FileScreen = (props) => {
                         }}
                         // style={{marginTop: 5}}
                         renderItem={({ item, i }) => (
-                            <Chip key={i} style={{ backgroundColor: tag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#327FEB" }} textStyle={{ color: tag == item ? "#fff" : "#327FEB" }} onPress={async () => {
+                            <Chip key={i} style={{ backgroundColor: tag == item ? '#327FEB' : '#fff', margin: 4, paddingLeft: 10, paddingRight: 10, borderWidth: tag != item ? 1 : 0, borderColor: "#327FEB", marginRight: item == 'Other' ? 40 : 4 }} textStyle={{ color: tag == item ? "#fff" : "#327FEB" }} onPress={async () => {
                                 var x = props.route.params.children;
                                 if (x) {
                                     if (Object.keys(x).length == 0) {
@@ -511,7 +548,7 @@ const FileScreen = (props) => {
                                                             // console.log(item)
                                                             item['images'].map((it, ind) => {
                                                                 if (ind < 2 || item['images'].length == 3) {
-                                                                    console.log( it['path'])
+                                                                    // console.log( it['path'])
                                                                     return <FastImage style={{ height: width * 0.24, width: width * 0.24, marginHorizontal: width * 0.01, borderRadius: 20 }} source={{ uri: item['cloud'] ? it['path'] : it['path'].includes('file:') ? it['path'] : "file://" + it['path'] }} />;
                                                                 }
                                                             })

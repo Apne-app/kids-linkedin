@@ -130,7 +130,7 @@ const ChildScreen = ({ route, navigation }) => {
             }
             else {
                 setactive(false)
-                setLoading(true)
+                setLoading(true) 
                 Keyboard.dismiss()
                 var pro = await AsyncStorage.getItem('profile');
                 pro = JSON.parse(pro);
@@ -148,14 +148,20 @@ const ChildScreen = ({ route, navigation }) => {
 
                 axios(config)
                     .then(function (response) {
-                        // console.log(JSON.stringify(response.data.token));
-                        axios({
-                            method: 'post',
-                            url: 'https://api.genio.app/matrix/child/' + `?token=${response.data.token}`,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            data: JSON.stringify({
+                        const url = route.params.fromOtp ? 'https://api.genio.app/matrix/childphone/' : 'https://api.genio.app/matrix/child/';
+                        let data = ''; 
+                        if(route.params.fromOtp) {
+                            data = JSON.stringify({
+                                "name": name.toLowerCase(),
+                                "year": year,
+                                "school": "none",
+                                "grade": "none",
+                                "phone": pro.phone,
+                                "acctype": "Kid"
+                            }) 
+                        } else {
+
+                            data = JSON.stringify({
                                 "name": name.toLowerCase(),
                                 "year": year,
                                 "school": "none",
@@ -163,21 +169,39 @@ const ChildScreen = ({ route, navigation }) => {
                                 "email": pro.email,
                                 "acctype": "Kid"
                             })
+                        }
+                        axios({
+                            method: 'post',
+                            url: url + `?token=${response.data.token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: data
                         })
                             .then(async (response2) => {
+                                    console.log("Child added:", response2.data)
                                 if (response2.data.split(', ').length == 2) {
                                     await AsyncStorage.setItem('status', '3')
-                                    // console.log(response.data)
+                                    const url2 = route.params.fromOtp ? 'https://api.genio.app/matrix/getchildphone/' : 'https://api.genio.app/matrix/getchild/';
+                                    let data2 = ''; 
+                                    if(route.params.fromOtp) {
+                                        data2 = JSON.stringify({
+                                            "phone": pro.phone,
+                                        })
+                                    } else {
+                                        JSON.stringify({
+                                            "email": pro.email,
+                                        })
+                                    }
                                     var response1 = await axios({
                                         method: 'post',
-                                        url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                                        url: url2 + `?token=${response.data.token}`,
                                         headers: {
                                             'Content-Type': 'application/json'
                                         },
-                                        data: JSON.stringify({
-                                            "email": pro.email,
-                                        })
+                                        data: data2
                                     })
+                                    console.log("Added Child: ", response1.data);
                                     await AsyncStorage.setItem('children', JSON.stringify(response1.data))
                                     Update({ children: response1.data, status: '3', profile: pro, notifications: {} })
                                     navigation.navigate('ChildSuccess')
@@ -269,7 +293,7 @@ const ChildScreen = ({ route, navigation }) => {
                                     setcurrent(current - 1);
                                     setactive(false)
                                 }}
-                                indicatorCount={10}
+                                indicatorCount={5 }
                             >
                                 <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Back</Text>
                                 {/* <Text style={styles.buttonText}>Next</Text> */}
@@ -287,7 +311,7 @@ const ChildScreen = ({ route, navigation }) => {
                                 onPress={() => {
                                     api()
                                 }}
-                                indicatorCount={10}
+                                indicatorCount={5}
                             >
                                 <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
                                 {/* <Text style={styles.buttonText}>Next</Text> */}

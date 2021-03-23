@@ -38,11 +38,11 @@ const SinglePostScreen = ({ navigation, route }) => {
     var videoRef = React.createRef();
     var [activity, setactivity] = useState([]);
     useEffect(() => {
-        axios.post('https://4561d0a210d4.ngrok.io/getpost', {
+        axios.post('https://14aa1a9a3997.ngrok.io/getpost', {
             post_id: route.params.id
         }).then((response) => {
             setactivity(response.data.data[0]['data'])
-            axios.post('https://4561d0a210d4.ngrok.io/getcomments', {
+            axios.post('https://14aa1a9a3997.ngrok.io/getcomments', {
                 post_id: response.data.data[0]['data'][1]
             }).then((response) => {
                 setcomments(response['data']['data'])
