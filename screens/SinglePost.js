@@ -209,7 +209,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             });
-                            Linking.openURL('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']).then((data) => {
+                            Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']).then((data) => {
                             }).catch(() => {
                                 alert('Please make sure Whatsapp is installed on your device');
                             });

@@ -72,7 +72,12 @@ const SearchScreen = ({ route, navigation }) => {
     data()
   }, [])
   useEffect(() => {
-    axios.get('https://4561d0a210d4.ngrok.io/influencer').then((response) => {
+    axios.get('https://4561d0a210d4.ngrok.io/influencer', {
+      headers: {
+        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+        'Content-Type': 'application/json'
+      },
+    }).then((response) => {
       setinfluencer(response['data']['data'])
     }).catch((error) => {
       console.log(error)

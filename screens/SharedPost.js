@@ -115,7 +115,6 @@ const SinglePostScreen = ({ navigation, route }) => {
     };
 
     const onLoad = (data) => {
-        setDuration(data.duration);
         setIsLoading(false);
     };
 
@@ -219,8 +218,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             });
-                            Linking.openURL('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']).then((data) => {
-                            }).catch(() => {
+                            Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']).then((data) => {
+                            }).catch((error) => {
                                 alert('Please make sure Whatsapp is installed on your device');
                             });
                         }}
@@ -230,7 +229,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 9, }} />
                 <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
+                    <Text onPress={() => navigation.navigate('LikesList', {'post_id':''})} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 7, fontSize: 14, marginBottom: 2 }}>{activity['comments_count']} comments</Text>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />

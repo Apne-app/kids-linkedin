@@ -64,6 +64,7 @@ const Stack = createStackNavigator();
 const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 import RectMoE from 'react-native-moengage'
+import LikesList from './screens/LikesList';
 
 console.ignoredYellowBox = ['Warning: Failed propType: SceneView'];
 
@@ -438,6 +439,7 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Includes" component={Includes} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="SharedPost" component={SharedPost} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="LikesList" component={LikesList} />
           </Stack.Navigator>
           <NotifierRoot ref={notifierRef} />
         </NavigationContainer>
