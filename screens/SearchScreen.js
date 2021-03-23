@@ -1,7 +1,7 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, FlatList, Keyboard } from 'react-native'
+import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, FlatList, Keyboard, ScrollView } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -49,6 +49,7 @@ const theme = {
 const SearchScreen = ({ route, navigation }) => {
   const { Update } = React.useContext(AuthContext);
   const [joined, setjoined] = useState({})
+  const [influencer, setinfluencer] = useState([])
   const [place, setplace] = useState('1')
   const children = route.params.children
   const status = route.params.status
@@ -69,6 +70,13 @@ const SearchScreen = ({ route, navigation }) => {
       setjoined(response1.data)
     }
     data()
+  }, [])
+  useEffect(() => {
+    axios.get('https://4561d0a210d4.ngrok.io/influencer').then((response) => {
+      setinfluencer(response['data']['data'])
+    }).catch((error) => {
+      console.log(error)
+    })
   }, [])
   useEffect(() => {
     const check = async () => {
@@ -105,69 +113,80 @@ const SearchScreen = ({ route, navigation }) => {
     }, []));
   const there = () => {
     return (
-      <Container key={place}>
-        <Content style={styles.container}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
-            {/* <Text style={{ color: "#327FEB", textAlign: 'right', fontSize: 13, marginLeft: 8, fontFamily: 'NunitoSans-Bold', marginTop:8, }}>See All</Text> */}
-            {/* <Icon type={'Feather'} name={'arrow-right'} style={{fontSize: 13,color: "#327FEB", marginTop:13, marginLeft:2 }} /> */}
-          </View>
-          <FlatList
-            data={Object.keys(joined)}
-            renderItem={({ item }) => {
-              // console.log(joined[item]['id'])
-              return (
-                <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1 }} onPress={async () => {
-                  var x = await AsyncStorage.getItem('children');
-                  analytics.track('ProfileOpenedFromRecentlyJoined', {
-                      userID: x ? JSON.parse(x)["0"]["id"] : null,
-                      deviceID: getUniqueId()
-                  });
-                  navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })}
-                }
-                >
-                  <View
-                    key={item.id}
-                    style={{ flex: 1, }}>
-                    <FastImage
-                      style={styles.image}
-                      imageStyle={{ borderRadius: 100000 }}
-                      source={{
-                        uri: joined[item]['data']['image'],
-                        priority: FastImage.priority.high
-                      }}
-                    >
-                    </FastImage>
-                    <View>
-                      <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)}</Text>
-                    </View>
+      <ScrollView style={{ marginHorizontal: 10 }} key={place}>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
+        </View>
+        <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+          {Object.keys(joined).map((item) => {
+            return (
+              <TouchableOpacity key={joined[item]['id']} style={{ flex: 1, flexDirection: 'column', margin: 1, width: width / 4.5, height: 110 }} onPress={async () => {
+                var x = await AsyncStorage.getItem('children');
+                analytics.track('ProfileOpenedFromRecentlyJoined', {
+                  userID: x ? JSON.parse(x)["0"]["id"] : null,
+                  deviceID: getUniqueId()
+                });
+                navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })
+              }
+              }
+              >
+                <View
+                  key={item.id}
+                  style={{ flex: 1, }}>
+                  <FastImage
+                    style={styles.image}
+                    imageStyle={{ borderRadius: 100000 }}
+                    source={{
+                      uri: joined[item]['data']['image'],
+                      priority: FastImage.priority.high
+                    }}
+                  />
+                  <View>
+                    <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)}</Text>
                   </View>
-                  {/* <View
-                        style={styles.image}
-                      imageStyle={{ borderRadius: width*0.2 }}
-                      source={{
-                        uri: item.image,
-                      }}
-                      >
-                        <View style={styles.personDetails}>
-                          <View >
-                            <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>Show </Text>
-                            <Text style={{ fontWeight: 'bold', color: "#fff", textAlign: 'center' }}>All</Text>
-                          </View>
-                        </View>
-                       </View> */}
-                </TouchableOpacity>
-              )
-            }}
-            //Setting the number of column
-            numColumns={parseInt(width / 100)}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <View >
-            {/* <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Services</Text> */}
-          </View>
-        </Content>
-      </Container>
+                </View>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Genio's Influencers</Text>
+        </View>
+        <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+          {influencer.map((item) => {
+            item = item['data']
+            return (
+              <TouchableOpacity style={{ flex: 1, flexDirection: 'column', margin: 1, width: width / 4.5, height: 110 }} onPress={async () => {
+                var x = await AsyncStorage.getItem('children');
+                analytics.track('ProfileOpenedFromRecentlyJoined', {
+                  userID: x ? JSON.parse(x)["0"]["id"] : null,
+                  deviceID: getUniqueId()
+                });
+                navigation.navigate('IndProf', { 'id': item['user_id'], 'data': { 'name': item['user_name'], 'image': item['user_image'], 'year': item['user_year'] } })
+              }
+              }
+              >
+                <View
+                  key={item['user_id']}
+                  style={{ flex: 1, }}>
+                  <FastImage
+                    style={styles.image}
+                    imageStyle={{ borderRadius: 100000 }}
+                    source={{
+                      uri: item['user_image'],
+                      priority: FastImage.priority.high
+                    }}
+                  />
+                  <View>
+                    <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{item['user_name'][0].toUpperCase() + item['user_name'].substring(1)}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+        <View style={{ marginBottom: 20 }} />
+      </ScrollView>
     );
   }
   const notthere = () => {

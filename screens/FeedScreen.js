@@ -3,22 +3,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import FastImage from 'react-native-fast-image';
-import { SafeAreaView, FlatList, View, Text, Dimensions, TouchableOpacity, useWindowDimensions } from 'react-native';
-import VideoPlayer from 'expo-video-player';
+import { SafeAreaView, FlatList, View, Text, Dimensions, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea, Tab, Tabs } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
-import LikeButton from '../components/LikeButton';
-import { Viewport } from '@skele/components'
-import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
-import { connect } from 'getstream';
-import * as rssParser from 'react-native-rss-parser';
 import { useFocusEffect } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Snackbar } from 'react-native-paper';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId } from 'react-native-device-info';
@@ -27,73 +22,230 @@ import ImagePicker from 'react-native-image-picker'
 import YoutubePlayer from "react-native-youtube-iframe";
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
+import FeedView from './FeedView'
 import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
 import FeedComponent from '../Modules/FeedComponent';
-import { Video } from 'expo-av';
+import Video from 'react-native-video';
 import InViewPort from "@coffeebeanslabs/react-native-inviewport";
+import VideoPlayer from 'react-native-video-player'
 import PostLoader from '../Modules/PostLoader';
+import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
-
 const FeedScreen = ({ navigation, route }) => {
-    const [data, setdata] = useState([])
+    const [following, setfollowing] = useState([])
+    const [routes, setroutes] = React.useState([]);
+    const [quiz, setquiz] = useState([])
+    const [inspire, setinspire] = useState([])
+    const [year, setyear] = useState([])
+    const [trending, settrending] = useState([])
     const [feedstate, setFeedState] = useState(0);
+    const [index, setIndex] = useState(0);
+    const [onEndReachedCalledDuringMomentum, setonEndReachedCalledDuringMomentum] = useState(true)
     var status = route.params.status
     var children = route.params.children
     const [newnoti, setnewnoti] = useState(false);
     const refActionSheet = useRef(null);
+    const [refreshing, setrefreshing] = useState({ 'following': false, 'inspire': false, 'year': false, 'quiz': false, 'trending': false })
+    var mintimestamp = Math.round(new Date().getTime() / 1000)
+    const [min_time, setmin_time] = useState({ 'following': mintimestamp, 'inspire': mintimestamp, 'year': mintimestamp, 'quiz': mintimestamp, 'trending': mintimestamp })
     var videoRef = React.createRef();
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
     var d = new Date();
-    var year = parseInt(d.getFullYear());
+    var currentyear = parseInt(d.getFullYear());
     useEffect(() => {
+        var data = async () => {
+            var headers = JSON.parse(await AsyncStorage.getItem('loginheaders'));
+            var route = status === '3' ? headers['feed_headers_login'] : headers['feed_headers_non_login']
+            status === '3' ? route[2]['title'] = route[2]['title'].replace('deafult', String(currentyear - parseInt(children[0]['data']['year']))) : null
+            setroutes(route)
+        }
+        data()
+    }, [])
+    useEffect(() => {
+<<<<<<< HEAD
         axios.post('https://14aa1a9a3997.ngrok.io/feed', {
             'user_id': children[0]['id']
         }).then((response) => {
             setdata(response.data.data)
+=======
+        const data = async () => {
+            var timestamp = await AsyncStorage.getItem('timestamp')
+            timestamp = timestamp ? parseInt(timestamp) : 0;
+            var user_id = status == '3' ? children[0]['id'] : '123qwe'
+            var year = status === '3' ? parseInt(children[0]['data']['year']) : null
+            status == '3' ? axios.post('https://4561d0a210d4.ngrok.io/feed', {
+                'user_id': user_id,
+                'feed_type': 'following',
+                'year': year,
+                'timestamp': timestamp,
+                'min_timestamp': Math.round(new Date().getTime() / 1000),
+                'randomize': true,
+            }).then((response) => {
+                setfollowing(response.data.data)
+                var min_following = min_time['following']
+                response.data.data.map((item) => {
+                    if (min_following > item['data']['timestamp']) {
+                        min_following = item['data']['timestamp']
+                    }
+                })
+                n_time({ ...min_time, 'following': min_following })
+            }).catch((response) => {
+                console.log(response)
+            }) : null
+            axios.post('https://4561d0a210d4.ngrok.io/feed', {
+                'user_id': user_id,
+                'feed_type': 'following',
+                'year': year,
+                'timestamp': timestamp,
+                'min_timestamp': Math.round(new Date().getTime() / 1000),
+                'randomize': false,
+            }).then((response) => {
+                settrending(response.data.data)
+                var min_trending = min_time['trending']
+                response.data.data.map((item) => {
+                    if (min_trending > item['data']['timestamp']) {
+                        min_trending = item['data']['timestamp']
+                    }
+                })
+                setmin_time({ ...min_time, 'trending': min_trending })
+            }).catch((response) => {
+                console.log(response)
+            })
+            axios.post('https://4561d0a210d4.ngrok.io/feed', {
+                'user_id': user_id,
+                'feed_type': 'quiz',
+                'year': year,
+                'timestamp': timestamp,
+                'min_timestamp': Math.round(new Date().getTime() / 1000),
+                'randomize': false,
+            }).then((response) => {
+                setquiz(response.data.data)
+                var min_quiz = min_time['quiz']
+                response.data.data.map((item) => {
+                    if (min_quiz > item['data']['timestamp']) {
+                        min_quiz = item['data']['timestamp']
+                    }
+                })
+                setmin_time({ ...min_time, 'quiz': min_quiz })
+            }).catch((response) => {
+                console.log(response)
+            })
+            axios.post('https://4561d0a210d4.ngrok.io/feed', {
+                'user_id': user_id,
+                'feed_type': 'inspire',
+                'year': year,
+                'timestamp': 0,
+                'min_timestamp': Math.round(new Date().getTime() / 1000),
+                'randomize': false,
+            }).then((response) => {
+                setinspire(response.data.data)
+                var min_inspire = min_time['inspire']
+                response.data.data.map((item) => {
+                    if (min_inspire > item['data']['timestamp']) {
+                        min_inspire = item['data']['timestamp']
+                    }
+                })
+                setmin_time({ ...min_time, 'inspire': min_inspire })
+            }).catch((response) => {
+                console.log(response)
+            })
+            status === '3' ? axios.post('https://4561d0a210d4.ngrok.io/feed', {
+                'user_id': user_id,
+                'feed_type': 'year',
+                'year': year,
+                'timestamp': timestamp,
+                'min_timestamp': Math.round(new Date().getTime() / 1000),
+                'randomize': true,
+            }).then((response) => {
+                setyear(response.data.data)
+                var min_year = min_time['year']
+                response.data.data.map((item) => {
+                    if (min_year > item['data']['timestamp']) {
+                        min_year = item['data']['timestamp']
+                    }
+                })
+                setmin_time({ ...min_time, 'year': min_year })
+            }).catch((response) => {
+                console.log(response)
+            }) : null
+            AsyncStorage.setItem('timestamp', String(Math.round(new Date().getTime() / 1000)))
+        }
+        data()
+    }, [])
+    const onRefresh = async (feed_type, load_more) => {
+        await setrefreshing({ ...refreshing, [feed_type]: true });
+        console.log(refreshing)
+        var user_id = status == '3' ? children[0]['id'] : '123qwe'
+        var year1 = status === '3' ? parseInt(children[0]['data']['year']) : null
+        var timestamp = await AsyncStorage.getItem('timestamp')
+        timestamp = timestamp ? parseInt(timestamp) : 0;
+        axios.post('https://4561d0a210d4.ngrok.io/feed', {
+            'user_id': user_id,
+            'feed_type': feed_type,
+            'year': year1,
+            'timestamp': timestamp,
+            'min_timestamp': min_time[feed_type],
+            'randomize': true,
+        }).then(async (response) => {
+            switch (feed_type) {
+                case 'trending':
+                    load_more ? settrending([...trending, ...response.data.data]) : await settrending(response.data.data)
+                    setrefreshing({ ...refreshing, [feed_type]: false });
+                    break;
+                case 'following':
+                    load_more ? setfollowing([...following, ...response.data.data]) : await setfollowing(response.data.data)
+                    setrefreshing({ ...refreshing, [feed_type]: false });
+                    break;
+                case 'quiz':
+                    load_more ? setquiz([...quiz, ...response.data.data]) : await setquiz(response.data.data)
+                    setrefreshing({ ...refreshing, [feed_type]: false });
+                    break;
+
+                case 'inspire':
+                    load_more ? setinspire([...inspire, ...response.data.data]) : await setinspire(response.data.data)
+                    setrefreshing({ ...refreshing, [feed_type]: false });
+                    break;
+
+                case 'year':
+                    load_more ? setyear([...year, ...response.data.data]) : await setyear(response.data.data)
+                    setrefreshing({ ...refreshing, [feed_type]: false });
+                    break;
+                default:
+                    break;
+            }
+>>>>>>> f537a9f0ec6307409646a9c46a9d8d358668c0a3
         }).catch((response) => {
             console.log(response)
+            setrefreshing({ ...refreshing, [feed_type]: false });
         })
-    }, [])
-    const FeedView = () => {
-        return (
-            <FlatList
-                data={data}
-                ListEmptyComponent={() => {
-                    return (
-                        <PostLoader />
-                    )
-                }
-                }
-                renderItem={(item) => { return (<FeedComponent children={children} item={item} navigation={navigation} />) }}
-                keyExtractor={item => item['data'][1]}
-            />
-        )
     }
-    const Test = () => {
-        return (<View />)
-    }
-    const layout = useWindowDimensions();
-    const [index, setIndex] = React.useState(0);
-    const [routes, setroutes] = React.useState([
-        { key: 'follow', title: 'Following' },
-        { key: 'trending', title: 'Trending' },
-        { key: 'years', title: String(year - parseInt(route.params.children[0]['data']['year'])) + ' year olds' },
-        { key: 'quiz', title: 'Quiz' },
-        { key: 'inspire', title: 'Inspire' }
-    ]);
+    // const renderScene = SceneMap({
+    //     follow: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['following']} />,
+    //     trending: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['trending']} />,
+    //     years: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['years']} />,
+    //     quiz: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['quiz']} />,
+    //     inspire: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['inspire']} />,
+    // });
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'follow':
+                return <FeedView status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} />;
+            case 'trending':
+                return <FeedView status={status} navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['trending']} feed_type={'trending'} />;
+            case 'years':
+                return <FeedView status={status} navigation={navigation} children={children} data={year} onRefresh={onRefresh} refreshing={refreshing['year']} feed_type={'year'} />;
+            case 'quiz':
+                return <FeedView status={status} navigation={navigation} children={children} data={quiz} onRefresh={onRefresh} refreshing={refreshing['quiz']} feed_type={'quiz'} />;
+            case 'inspire':
+                return <FeedView status={status} navigation={navigation} children={children} data={inspire} onRefresh={onRefresh} refreshing={refreshing['inspire']} feed_type={'inspire'} />;
 
-    const renderScene = SceneMap({
-        follow: FeedView,
-        trending: Test,
-        years: Test,
-        quiz: Test,
-        inspire: Test,
-    });
+        }
+    };
     const renderTabBar = (props) => {
         return (
             <TabBar
@@ -106,6 +258,7 @@ const FeedScreen = ({ navigation, route }) => {
                 tabStyle={{ width: width / 3 }}
                 labelStyle={{ fontFamily: 'NunitoSans-Bold' }}
                 scrollEnabled={true}
+                bounces={true}
                 indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
             />
         )
@@ -123,4 +276,11 @@ const FeedScreen = ({ navigation, route }) => {
         </>
     )
 }
+const styles = StyleSheet.create({
+    mediaPlayer: {
+        height: 340,
+        width: width,
+        backgroundColor: "black",
+    },
+});
 export default FeedScreen

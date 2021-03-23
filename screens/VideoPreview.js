@@ -1,8 +1,8 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react'
-import { Video } from 'expo-av'
-import VideoPlayer from '../Modules/expo-video-player'
+// import { Video } from 'expo-av'
+//import VideoPlayer from '../Modules/expo-video-player'
 import { Dimensions, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler, Alert } from 'react-native'
 import CompHeader from '../Modules/CompHeader'
 import FastImage from 'react-native-fast-image';
