@@ -15,6 +15,7 @@ import axios from 'axios';
 import { connect } from 'getstream';
 import * as rssParser from 'react-native-rss-parser';
 import { useFocusEffect } from "@react-navigation/native";
+import SmartImage from './SmartImage';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { SliderBox } from "react-native-image-slider-box";
 import { Snackbar } from 'react-native-paper';
@@ -49,6 +50,10 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [paused, setPaused] = useState(true);
+    const [optimages, setOptImages] = useState({
+        'profile': item['item']['data']['user_image'],
+        'feedcard': item['item']['data']['images'].split(", ")[0]
+    })
     const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
 
     const onSeek = (seek) => {
@@ -99,7 +104,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             },
             {
                 text: "YES", onPress: () => {
-                    axios.post('https://4561d0a210d4.ngrok.io/delpost', {
+                    axios.post('https://dcdb593e8b89.ngrok.io/delpost', {
                         post_id: activity['post_id'],
                     }).then(() => {
                         if (response == 'true') {
@@ -276,7 +281,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 data['likes_count'] = data['likes_count'] - 1
                 setactivity(data)
                 setkey(String(parseInt(key) + 1))
-                axios.post('https://4561d0a210d4.ngrok.io/like', {
+                axios.post('https://dcdb593e8b89.ngrok.io/like', {
                     post_id: data['post_id'],
                     user_id: children[0]['id'],
                     user_name: children[0]['data']['name'],
@@ -293,7 +298,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 data['likes_count'] = data['likes_count'] + 1
                 setactivity(data)
                 setkey(String(parseInt(key) + 1))
-                axios.post('https://4561d0a210d4.ngrok.io/like', {
+                axios.post('https://dcdb593e8b89.ngrok.io/like', {
                     post_id: data['post_id'],
                     user_id: children[0]['id'],
                     user_name: children[0]['data']['name'],
@@ -327,10 +332,11 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': activity['user_id'].replace('id', '') })}>
                         <FastImage
                             source={{
-                                uri: activity['user_image'],
+                                uri: optimages['profile'],
                                 priority: FastImage.priority.high,
                             }}
                             style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
+                            // onError = {() => setOptImages({ ...optimages, 'profile': item['item']['data']['user_image'] })}
                         />
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': activity['user_id'].replace('id', '') })}>
@@ -356,10 +362,11 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage
                         source={{
-                            uri: activity['images'].split(", ")[0],
+                            uri: optimages['feedcard'],
                             priority: FastImage.priority.high
                         }}
                         style={{ width: width, height: 340, borderRadius: 0 }}
+                        // onError = {() => setOptImages({ ...optimages, 'feedcard': item['item']['data']['images'].split(", ")[0] })}
                     /> : <View style={{ height: 340 }}><SliderBox
                         images={activity['images'].split(", ").filter(n => n)}
                         dotColor="#FFEE58"

@@ -11,6 +11,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import LoginScreen from './screens/LoginScreen'
+import OTPScreen from './screens/OTPScreen';
 import NotificationScreen from './screens/NotificationScreen'
 import SearchScreen from './screens/SearchScreen'
 import FeedScreen from './screens/FeedScreen'
@@ -428,6 +429,7 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="CreatePost" component={PostScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Gallery" component={Gallery} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="AddText" component={AddText} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="OTP" component={OTPScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="PostScreen" component={Upload} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Browser" component={Browser} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="ChildSuccess" component={ChildSuccess} />

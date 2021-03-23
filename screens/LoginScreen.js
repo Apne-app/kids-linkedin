@@ -6,10 +6,12 @@ import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, Spinner, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 import SpinnerButton from 'react-native-spinner-button';
+import LoginForm from '../components/Login';
 import axios from 'axios';
 import LinkedIn from '../components/LinkedIn'
 import { useFocusEffect } from "@react-navigation/native";
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
+import PhoneInput from "react-native-phone-number-input";
 import { sha256 } from 'react-native-sha256';
 import { SimpleAnimation } from 'react-native-simple-animations';
 import analytics from '@segment/analytics-react-native';
@@ -19,6 +21,18 @@ import { Snackbar } from 'react-native-paper';
 import CompHeader from '../Modules/CompHeader'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
+
+function generateOTP() { 
+          
+  var digits = '0123456789'; 
+  let OTP = ''; 
+  for (let i = 0; i < 4; i++ ) { 
+      OTP += digits[Math.floor(Math.random() * 10)]; 
+  } 
+  return OTP; 
+} 
+
+
 const LoginScreen = ({ route, navigation }) => {
   const handleDynamicLink = link => {
     // Handle dynamic link inside your own application
@@ -90,6 +104,10 @@ const LoginScreen = ({ route, navigation }) => {
   const [token, setToken] = useState('');
   const scrollcheck = useRef(null)
   const [loader, setLoader] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [active, setActive] = useState("phone");
+  const [phoneValid, setPhoneValid] = useState(true);
+  const phoneInput = useRef(null);
   const input = useRef(null)
   useEffect(() => {
 
@@ -263,21 +281,50 @@ const LoginScreen = ({ route, navigation }) => {
           </View>
           <Text style={{ fontFamily: 'FingerPaint-Regular', color: "#327FEB", fontSize: 60, marginTop: -20, marginBottom: -50, textAlign: 'center' }}>Genio</Text>
           <View>
-            <LinkedIn navigation={navigation} authtoken={token} loaderHandler={() => setLoader(true)} />
+            <View style={{flexDirection: 'row', marginBottom: 20}}>
+            <TouchableOpacity style={{alignItems: 'center'}} onPress={() => setActive('phone')}>
+            <Text style={{ color: active == 'phone' ? "#000" : "grey", fontFamily: 'NunitoSans-SemiBold', fontSize: 22, paddingLeft: 30, marginBottom: 2, marginTop: 50 }}>Phone</Text>
+            {active == 'phone' ? <View style={{height: 10, width: 10, borderRadius: 5, marginLeft: 30, backgroundColor: '#327feb'}} /> : null}
+            </TouchableOpacity>
+            <TouchableOpacity style={{alignItems: 'center'}} onPress={() => setActive('email')}>
+            <Text style={{ color: active != 'phone' ? "#000" : "grey", fontFamily: 'NunitoSans-SemiBold', fontSize: 22, paddingLeft: 30, marginBottom: 2, marginTop: 50 }}>Email</Text>
+            {active == 'email' ? <View style={{height: 10, width: 10, borderRadius: 5, marginLeft: 30, backgroundColor: '#327feb'}} /> : null}
+            </TouchableOpacity>
+            </View>
+            {active == 'phone' ? <KeyboardAvoidingView behavior={'padding'}>
+            <PhoneInput
+                ref={phoneInput}
+                containerStyle={{display: 'flex', width: width - 40, borderRadius: 35, backgroundColor: 'white', fontSize: 16, paddingLeft: 10, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 75, elevation: 1, marginTop: 30}}
+                textContainerStyle={{display: 'flex', width: width - 40, borderTopRightRadius: 35, borderBottomRightRadius: 35, backgroundColor: 'white', fontSize: 16,  shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 75, elevation: 1}}
+                defaultValue={phone}
+                onFocus = {() => {
+                  alert(phone.length);
+                }}
+                defaultCode="IN"
+                onChangeFormattedText={(text) => {
+                  setPhone(text);
+                }}
+                withShadow
+                />
+                <Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 30, color: 'red', marginTop: 10, display: !phoneValid ? 'flex' : 'none' }}>*Please enter a valid phone number</Text>
+            </KeyboardAvoidingView> : null}
+           {active == 'email' ? <View><LinkedIn navigation={navigation} authtoken={token} loaderHandler={() => setLoader(true)} />
             <View style={{ flexDirection: 'row', alignItems: 'center', margin: 30 }}>
               <View style={{ borderWidth: 1, height: 1, flex: 1, borderColor: "lightgrey", width: width / 3 }} />
               <Text style={{ flex: 1, textAlign: 'center', fontFamily: 'NunitoSans-Bold', color: 'black' }} >Or</Text>
               <View style={{ borderWidth: 1, flex: 1, height: 1, borderColor: "lightgrey", width: width / 3 }} />
             </View>
             <Text style={{ color: "#3E3E3E", fontFamily: 'NunitoSans-SemiBold', fontSize: 16, paddingLeft: 20, marginBottom: 20, }}>Enter Email</Text>
+            </View>: null}
             <KeyboardAvoidingView behavior={'padding'}>
-              <TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
-              <Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 30, color: 'red', marginTop: 10, display: visible ? 'flex' : 'none' }}>*Please enter a valid email ID</Text>
+              {active == 'email' ? <View><TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
+              <Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 30, color: 'red', marginTop: 10, display: visible ? 'flex' : 'none' }}>*Please enter a valid email ID</Text></View>: null}
               <View style={{ alignSelf: 'center', }}>
                 <SpinnerButton
                   buttonStyle={{
                     borderRadius: 28.5,
                     margin: 20,
+                    marginTop: 70,
                     width: 200,
                     alignSelf: 'center',
                     backgroundColor: '#327FEB',
@@ -286,9 +333,43 @@ const LoginScreen = ({ route, navigation }) => {
                   isLoading={Loading}
                   spinnerType='BarIndicator'
                   onPress={() => {
-                    everified ? api() : setvisible(true)
+                    if(active == 'email') {
+                      everified ? api() : setvisible(true)
+                    }
+                    else {
+                      const checkValid = phoneInput.current?.isValidNumber(phone);
+
+                      if(checkValid) {
+                        Keyboard.dismiss();
+                        setPhoneValid(true);
+                        setLoading(true);
+                        let otp = generateOTP();
+                        // console.log(otp);
+                        var config = {
+                          method: 'get',
+                          url: `https://fphzj2hy13.execute-api.ap-south-1.amazonaws.com/default/otpSender?phone=${phone.replace("+","")}&otp=${otp}`,
+                          headers: { }
+                        };
+                        // console.log(config)
+                        
+                        axios(config)
+                        .then(function (response) {
+                          setLoading(false);
+                          navigation.navigate('OTP', { otp: otp, phone: phone });
+                        })
+                        .catch(function (error) {
+                          console.log(error);
+                          setLoading(false);
+                          alert("OTP couldn't be sent, please try again.");
+                        });
+                      } 
+                      else {
+                        setPhoneValid(false);
+                      }
+                      
+                    }
                   }}
-                  indicatorCount={10}
+                  indicatorCount={5}
                 >
                   <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
                 </SpinnerButton>

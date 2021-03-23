@@ -120,7 +120,17 @@ const PostScreen = ({ navigation, route }) => {
       console.log("dassd")
       if (response.status !== 201)
         throw new Error("Failed to upload image to S3");
-      console.log(response.body, "asdas");
+      var data = JSON.stringify({"url":"https://d2k1j93fju3qxb.cloudfront.net/" + response.body.postResponse.key});
+      var config = {
+        method: 'post',
+        url: 'http://13.127.233.22/postimageoptimize',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        data : data
+      };
+      axios(config)
+
 
       // var obj = { ...uploading };
       // var a = 0;
@@ -162,6 +172,7 @@ const PostScreen = ({ navigation, route }) => {
     // }
     var children = await AsyncStorage.getItem('children')
     children = JSON.parse(children)['0']
+    var allimages = [];
     var name = ''
     if (route.params.video) {
       var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged);
@@ -172,7 +183,7 @@ const PostScreen = ({ navigation, route }) => {
       for (i = 0; i < images.length; i++) {
         var x = "https://d2k1j93fju3qxb.cloudfront.net/" + children['data']['gsToken'] + "/" + tagged + "/" + uploadToS3(i, children['data']['gsToken'], tagged) + ', ';
         name = name + x;
-
+        allimages.push(x.replace(", ", ""));
         //   if(tag == 'Certificate')
         //   {
         //     var data = JSON.stringify({"gstoken":children['data']['gsToken'],"certi_url":certi.certi_url,"certi_org":certi.certi_org,"certi_path":x});
@@ -199,17 +210,18 @@ const PostScreen = ({ navigation, route }) => {
     }
     // setModalVisible4(false);
 
-    const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
-    if (route.params.video) {
-      var activity = { "video": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
-    }
-    else {
-      var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
-    }
-    // var user = client.feed('timeline', '103id');
-    // user.follow('user', '49id');
-    var user = client.feed('user', String(String(children['id']) + String("id")));
-    axios.post('https://d84e482e5424.ngrok.io/post', {
+    // const client = connect('9ecz2uw6ezt9', children['data']['gsToken'], '96078');
+    // if (route.params.video) {
+    //   var activity = { "video": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
+    // }
+    // else {
+    //   var activity = { "image": name, "object": caption == '' ? 'default123' : caption, "verb": "post", "tag": tagged }
+    // }
+    // // var user = client.feed('timeline', '103id');
+    // // user.follow('user', '49id');
+    // var user = client.feed('user', String(String(children['id']) + String("id")));
+
+    axios.post('https://dcdb593e8b89.ngrok.io/post', {
       user_id: children['id'],
       acc_type: children['data']['type'],
       user_image: children['data']['image'],

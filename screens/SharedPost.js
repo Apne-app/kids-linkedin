@@ -72,7 +72,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
     console.log(route.params.id)
     useEffect(() => {
-        axios.post('https://4561d0a210d4.ngrok.io/getpost', {
+        axios.post('https://dcdb593e8b89.ngrok.io/getpost', {
             post_id: route.params.id,
             user_id: status === '3' ? children[0]['id'] : null
         }).then((response) => {
@@ -84,7 +84,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         })
     }, [])
     useEffect(() => {
-        axios.post('https://4561d0a210d4.ngrok.io/getcomments', {
+        axios.post('https://dcdb593e8b89.ngrok.io/getcomments', {
             post_id: route.params.id
         }).then((response) => {
             setcomments(response['data']['data'])
@@ -159,7 +159,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey ? route.params.setparentkey() : null
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
+            axios.post('https://dcdb593e8b89.ngrok.io/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -177,7 +177,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey ? route.params.setparentkey() : null
-            axios.post('https://4561d0a210d4.ngrok.io/like', {
+            axios.post('https://dcdb593e8b89.ngrok.io/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -373,7 +373,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setcomments([...comments, { 'data': { 'comments_user_image': children[0]['data']['image'], comment: comm }, 'id': key }])
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey ? route.params.setparentkey() : null
-            axios.post('https://4561d0a210d4.ngrok.io/comment', {
+            axios.post('https://dcdb593e8b89.ngrok.io/comment', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],

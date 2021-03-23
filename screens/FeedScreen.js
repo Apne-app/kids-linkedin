@@ -72,7 +72,7 @@ const FeedScreen = ({ navigation, route }) => {
             timestamp = timestamp ? parseInt(timestamp) : 0;
             var user_id = status == '3' ? children[0]['id'] : '123qwe'
             var year = status === '3' ? parseInt(children[0]['data']['year']) : null
-            status == '3' ? axios.post('https://4561d0a210d4.ngrok.io/feed', {
+            status == '3' ? axios.post('https://dcdb593e8b89.ngrok.io/feed', {
                 'user_id': user_id,
                 'feed_type': 'following',
                 'year': year,
@@ -91,7 +91,7 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             }) : null
-            axios.post('https://4561d0a210d4.ngrok.io/feed', {
+            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
                 'user_id': user_id,
                 'feed_type': 'following',
                 'year': year,
@@ -110,7 +110,7 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            axios.post('https://4561d0a210d4.ngrok.io/feed', {
+            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
                 'user_id': user_id,
                 'feed_type': 'quiz',
                 'year': year,
@@ -129,7 +129,7 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            axios.post('https://4561d0a210d4.ngrok.io/feed', {
+            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
                 'user_id': user_id,
                 'feed_type': 'inspire',
                 'year': year,
@@ -148,7 +148,7 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            status === '3' ? axios.post('https://4561d0a210d4.ngrok.io/feed', {
+            status === '3' ? axios.post('https://dcdb593e8b89.ngrok.io/feed', {
                 'user_id': user_id,
                 'feed_type': 'year',
                 'year': year,
@@ -178,7 +178,7 @@ const FeedScreen = ({ navigation, route }) => {
         var year1 = status === '3' ? parseInt(children[0]['data']['year']) : null
         var timestamp = await AsyncStorage.getItem('timestamp')
         timestamp = timestamp ? parseInt(timestamp) : 0;
-        axios.post('https://4561d0a210d4.ngrok.io/feed', {
+        axios.post('https://dcdb593e8b89.ngrok.io/feed', {
             'user_id': user_id,
             'feed_type': feed_type,
             'year': year1,
@@ -259,13 +259,13 @@ const FeedScreen = ({ navigation, route }) => {
     return (
         <>
             <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
-            {/* <TabView
+            <TabView
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
-            /> */}
+            />
         </>
     )
 }
