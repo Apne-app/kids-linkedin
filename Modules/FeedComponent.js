@@ -421,7 +421,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             <View style={{ marginTop: 10 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableWithoutFeedback style={{ width: 40, height: 40, }} onPress={() => { addorunlike() }}>
-                        <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: -1 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
+                        <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: 2 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
                     </TouchableWithoutFeedback>
                     <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 5, fontSize: 16, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']}</Text>
                     <Icon onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: activity, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', type: 'comment' })} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: -10 }} />

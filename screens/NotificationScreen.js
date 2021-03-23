@@ -1,6 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
-import React, { Component, useState, useEffect } from 'react'; 
+import React, { Component, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, TouchableOpacity, View, ImageBackground, Image, BackHandler, TextInput, RefreshControl } from 'react-native'
 import { Icon } from 'native-base';
 import axios from 'axios';
@@ -70,7 +70,7 @@ const NotificationScreen = ({ route, navigation }) => {
           //   "email": pro.email,
           // })
         })
-        var noti = notifications?notifications:{}
+        var noti = notifications ? notifications : {}
         var arr = []
         var data1 = Object.keys(noti).reverse()
         var data2 = Object.keys(data.data).reverse()
@@ -103,7 +103,7 @@ const NotificationScreen = ({ route, navigation }) => {
         'Content-Type': 'application/json'
       },
     })
-    var noti = notifications?notifications:{}
+    var noti = notifications ? notifications : {}
     var arr = []
     var data1 = Object.keys(noti).reverse()
     var data2 = Object.keys(data.data).reverse()
@@ -125,24 +125,25 @@ const NotificationScreen = ({ route, navigation }) => {
   const data = () => {
     var arr = []
     keys.map((item) => {
+      console.log(notifications[item]['actid'])
       arr.push(
         notifications[item]['name'] == 'admin' ?
-          <View key={item}>
+          <TouchableOpacity  key={item}>
             <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft: 10 }}>
               {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 0, marginTop: 16, marginRight: 5 }} />}
               <Image style={{ width: 40, height: 40, borderRadius: 1000, }} source={{ uri: notifications[item]['image'] }} />
               <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight: 40 }}>{notifications[item]['type']}</Text>
             </View>
             <View style={{ width: width - 80, alignSelf: 'center', height: 0.5, backgroundColor: 'lightgrey', marginVertical: 5 }}></View>
-          </View> :
-          <View key={item}>
+          </TouchableOpacity> :
+          <TouchableOpacity onPress={() => { notifications[item]['actid'] ? navigation.navigate('SharedPost', { 'id': notifications[item]['actid'] }) : null }} key={item}>
             <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft: 10, }}>
               {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 2, marginTop: 16, marginRight: 10 }} />}
               <Image style={{ width: 40, height: 40, borderRadius: 1000 }} source={{ uri: notifications[item]['image'] }} />
               <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight: 40 }}>{notifications[item]['name'][0].toUpperCase() + notifications[item]['name'].substring(1) + ' ' + notifications[item]['type'] + ' your post'}</Text>
             </View>
             <View style={{ width: width - 80, alignSelf: 'center', height: 0.5, backgroundColor: 'lightgrey', marginVertical: 5 }}></View>
-          </View>
+          </TouchableOpacity>
       )
     })
     return arr
