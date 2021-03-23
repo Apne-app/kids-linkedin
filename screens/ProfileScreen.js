@@ -99,7 +99,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (children) {
-            axios.post('https://14aa1a9a3997.ngrok.io/profile', {
+            axios.post('https://dcdb593e8b89.ngrok.io/profile', {
                 'user_id': children[0]['id']
             }).then((response) => {
                 setposts(response['data']['data'])

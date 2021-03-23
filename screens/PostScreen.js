@@ -221,7 +221,7 @@ const PostScreen = ({ navigation, route }) => {
     // // user.follow('user', '49id');
     // var user = client.feed('user', String(String(children['id']) + String("id")));
 
-    axios.post('https://14aa1a9a3997.ngrok.io/post', {
+    axios.post('https://dcdb593e8b89.ngrok.io/post', {
       user_id: children['id'],
       acc_type: children['data']['type'],
       user_image: children['data']['image'],

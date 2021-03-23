@@ -63,7 +63,7 @@ const VideoPreview = ({ navigation, route }) => {
                 return
             }
             name = "https://d2k1j93fju3qxb.cloudfront.net/" + children['id'] + "/videos/" + name
-            axios.post('https://14aa1a9a3997.ngrok.io/post', {
+            axios.post('https://dcdb593e8b89.ngrok.io/post', {
                 user_id: children['id'],
                 acc_type: children['data']['type'],
                 user_image: children['data']['image'],
