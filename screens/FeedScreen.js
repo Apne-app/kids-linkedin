@@ -266,13 +266,13 @@ const FeedScreen = ({ navigation, route }) => {
     return (
         <>
             <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
-            <TabView
+            {/* <TabView
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
-            />
+            /> */}
         </>
     )
 }

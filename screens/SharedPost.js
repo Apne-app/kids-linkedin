@@ -1,8 +1,8 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from 'react-native'
-import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard, TextInput, Button } from 'react-native'
+import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ActionSheet from 'react-native-actionsheet'
@@ -21,11 +21,12 @@ import { getUniqueId } from 'react-native-device-info';
 import analytics from '@segment/analytics-react-native';
 import FeedComponent from '../Modules/FeedComponent'
 import FastImage from 'react-native-fast-image'
-//import {Video} from "expo-av";
-//import VideoPlayer from '../Modules/expo-video-player'
 import axios from 'axios';
+import KeyboardStickyView from 'rn-keyboard-sticky-view';
+import Video from 'react-native-video';
+import InViewPort from "@coffeebeanslabs/react-native-inviewport";
 import PostLoader from '../Modules/PostLoader';
-
+import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -36,27 +37,12 @@ function urlify(text) {
 
 const SinglePostScreen = ({ navigation, route }) => {
     var videoRef = React.createRef();
-    var [activity, setactivity] = useState([]);
-    useEffect(() => {
-        axios.post('https://14aa1a9a3997.ngrok.io/getpost', {
-            post_id: route.params.id
-        }).then((response) => {
-            setactivity(response.data.data[0]['data'])
-            axios.post('https://14aa1a9a3997.ngrok.io/getcomments', {
-                post_id: response.data.data[0]['data'][1]
-            }).then((response) => {
-                setcomments(response['data']['data'])
-            }).catch((error) => {
-                console.log(error)
-            })
-        }).catch((response) => {
-            console.log(response)
-        })
-    }, [])
+    const [activity, setactivity] = useState()
+    const [key, setkey] = useState('0')
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
-                navigation.navigate('Home')
+                navigation.pop()
                 return true;
             };
 
@@ -70,10 +56,82 @@ const SinglePostScreen = ({ navigation, route }) => {
     const scrollref = React.useRef();
     const keyboardDidHideListener = React.useRef();
     const [comments, setcomments] = useState([])
+    const [loader, setloader] = useState(true)
+    const [comment, setcomment] = useState('')
+    const [loading, setloading] = useState(1)
     const [place, setplace] = useState('1')
     const status = route.params.status
     const children = route.params.children
     var d = new Date();
+    const videoPlayer = useRef(null);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [paused, setPaused] = useState(true);
+    const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
+    console.log(route.params.id)
+    useEffect(() => {
+        axios.post('https://4561d0a210d4.ngrok.io/getpost', {
+            post_id: route.params.id,
+            user_id: status === '3' ? children[0]['id'] : null
+        }).then((response) => {
+            setactivity(response.data.data[0]['data'])
+            setloading(response.data.data[0]['data']['comments_count'])
+            setloader(false)
+        }).catch((response) => {
+            console.log(response)
+        })
+    }, [])
+    useEffect(() => {
+        axios.post('https://4561d0a210d4.ngrok.io/getcomments', {
+            post_id: route.params.id
+        }).then((response) => {
+            setcomments(response['data']['data'])
+            setloading(0)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [])
+    const onSeek = (seek) => {
+        videoPlayer?.current.seek(seek);
+    };
+
+    const onPaused = (playerState) => {
+        setPaused(!paused);
+        setPlayerState(playerState);
+    };
+
+    const onReplay = () => {
+        setPlayerState(PLAYER_STATES.PLAYING);
+        videoPlayer?.current.seek(0);
+    };
+
+    const onProgress = (data) => {
+        // Video Player will continue progress even if the video already ended
+        if (!isLoading) {
+            setCurrentTime(data.currentTime);
+        }
+    };
+
+    const onLoad = (data) => {
+        setDuration(data.duration);
+        setIsLoading(false);
+    };
+
+    const onLoadStart = () => setIsLoading(true);
+
+    const onEnd = () => {
+        // Uncomment this line if you choose repeat=false in the video player
+        // setPlayerState(PLAYER_STATES.ENDED);
+    };
+
+    const onSeeking = (currentTime) => setCurrentTime(currentTime);
+    const noop = (video) => {
+        setPaused(true);
+        setPlayerState(PLAYER_STATES.PAUSED)
+        navigation.navigate('VideoFull', { duration: duration, video: video, time: currentTime })
+    };
     const onShare = async (message) => {
         try {
             const result = await Share.share({
@@ -94,6 +152,53 @@ const SinglePostScreen = ({ navigation, route }) => {
         }
     };
     var year = parseInt(d.getFullYear());
+    const addorunlike = () => {
+        var data = activity
+        if (data['likes_user_id'] == children[0]['id']) {
+            data['likes_user_id'] = null
+            data['likes_count'] = data['likes_count'] - 1
+            setactivity(data)
+            setkey(String(parseInt(key) + 1))
+            route.params.setparentkey ? route.params.setparentkey() : null
+            axios.post('https://4561d0a210d4.ngrok.io/like', {
+                post_id: data['post_id'],
+                user_id: children[0]['id'],
+                user_name: children[0]['data']['name'],
+                user_image: children[0]['data']['image'],
+                response: 'unlike',
+            }).then((response) => {
+
+            }).catch((error) => {
+
+            })
+        }
+        else {
+            data['likes_user_id'] = children[0]['id']
+            data['likes_count'] = data['likes_count'] + 1
+            setactivity(data)
+            setkey(String(parseInt(key) + 1))
+            route.params.setparentkey ? route.params.setparentkey() : null
+            axios.post('https://4561d0a210d4.ngrok.io/like', {
+                post_id: data['post_id'],
+                user_id: children[0]['id'],
+                user_name: children[0]['data']['name'],
+                user_image: children[0]['data']['image'],
+                response: 'like',
+            }).then((response) => {
+                analytics.track('Like', {
+                    userID: children["0"]["id"],
+                    deviceID: getUniqueId(),
+                    by: children["0"]["id"],
+                    byname: children["0"]['data']["name"],
+                    byimage: children["0"]['data']["image"],
+                    to: activity['user_id'],
+                    actid: activity['post_id']
+                })
+            }).catch((error) => {
+
+            })
+        }
+    }
     const CustomActivity = ({ props }) => {
         const refActionSheet = useRef(null);
         const showActionSheet = () => {
@@ -102,9 +207,11 @@ const SinglePostScreen = ({ navigation, route }) => {
         const Footer = (id, data) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -12 }}>
-                    <Icon name="star" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
+                    <TouchableWithoutFeedback onPressIn={() => { addorunlike() }}>
+                        <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: -1 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
+                    </TouchableWithoutFeedback>
                     <Icon name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
-                    <Icon name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
+                    <Icon onPress={() => onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id'])} name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
                     <TouchableOpacity style={{ width: 50, marginLeft: '58%', alignItems: 'center' }}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
@@ -112,7 +219,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             });
-                            Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + data.activity.actor.data.name.charAt(0).toUpperCase() + data.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + data.activity.id).then((data) => {
+                            Linking.openURL('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']).then((data) => {
                             }).catch(() => {
                                 alert('Please make sure Whatsapp is installed on your device');
                             });
@@ -127,16 +234,18 @@ const SinglePostScreen = ({ navigation, route }) => {
                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 7, fontSize: 14, marginBottom: 2 }}>{activity['comments_count']} comments</Text>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
-                <FlatList data={comments} renderItem={({ item }) => {
-                    return (
-                        <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <FastImage source={{ uri: item['data'][5] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
-                            <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
-                                {item['data'][6]}
-                            </Text>
-                        </View>
-                    )
-                }} />
+
+                {loading ? <Image source={require('../assets/loading.gif')} style={{ width: 40, height: 40, marginLeft: 10 }} />
+                    : comments.map((item) => {
+                        return (
+                            <View key={item['id']} style={{ flexDirection: 'row', padding: 10 }}>
+                                <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                                    {item['data']['comment']}
+                                </Text>
+                            </View>
+                        )
+                    })}
             </View>)
         }
         const [visible, setIsVisible] = React.useState(false);
@@ -178,29 +287,38 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
                 <View style={{ marginTop: 13 }}>
                     {activity['videos'] ?
-                        <VideoPlayer
-                            videoProps={{
-                                source: { uri: activity['videos'] },
-                                rate: 1.0,
-                                volume: 1.0,
-                                isMuted: false,
-                                videoRef: v => videoRef = v,
-                                resizeMode: Video.RESIZE_MODE_CONTAIN,
-                                // shouldPlay
-                                // usePoster={props.activity.poster?true:false}
-                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                                playInBackground: false,
-                                playWhenInactive: false,
-                                width: width,
-                                height: 340,
-
-                            }}
-                            width={width}
-                            height={340}
-                            switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                            sliderColor={'#327FEB'}
-                            inFullscreen={false}
-                        /> : null}
+                        <View>
+                            <Video
+                                onEnd={onEnd}
+                                onLoad={onLoad}
+                                onLoadStart={onLoadStart}
+                                onProgress={onProgress}
+                                paused={paused}
+                                ref={(ref) => (videoPlayer.current = ref)}
+                                resizeMode="cover"
+                                source={{
+                                    uri: activity['videos'],
+                                }}
+                                style={styles.mediaPlayer}
+                                playInBackground={false}
+                                playWhenInactive={false}
+                            />
+                            <MediaControls
+                                duration={duration}
+                                isLoading={isLoading}
+                                mainColor="#327FEB"
+                                onFullScreen={() => noop(activity['videos'])}
+                                onPaused={onPaused}
+                                onReplay={onReplay}
+                                onSeek={onSeek}
+                                onSeeking={onSeeking}
+                                playerState={playerState}
+                                progress={currentTime}
+                            >
+                                <MediaControls.Toolbar>
+                                </MediaControls.Toolbar>
+                            </MediaControls>
+                        </View> : null}
                     {activity['youtube'] ?
                         <YoutubePlayer
                             videoId={activity['youtube']} // The YouTube video ID
@@ -216,7 +334,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         var images = []
         activity['images'] ? activity['images'].split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         return (
-            <ScrollView style={{ marginTop: 20 }} ref={scrollref}>
+            <View style={{ marginTop: 20, marginBottom: 100 }} ref={scrollref}>
                 <View style={{ flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <FastImage
@@ -236,54 +354,87 @@ const SinglePostScreen = ({ navigation, route }) => {
                             styles={{ borderRadius: 0, margin: 10 }}
                             options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
                             cancelButtonIndex={2}
-                            onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + props.activity.actor.data.name.charAt(0).toUpperCase() + props.activity.actor.data.name.slice(1) + ' on the new Genio app: https://genio.app/post/' + props.activity.id) : null }}
+                            onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']) : null }}
                         />
                         <Right><TouchableOpacity style={{ width: 60, alignItems: 'center', padding: 12 }} onPress={() => { showActionSheet(); }} ><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, color: '#383838' }} /></TouchableOpacity></Right>
                     </View>
                 </View>
                 <Content />
                 <Footer />
-            </ScrollView>
+            </View>
         );
     };
-    return (
-        <View key={place} style={styles.container}>
-            {activity.length ? <><CompHeader style={{ position: 'absolute' }} screen={activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
+    const addcomment = () => {
+        if (comment) {
+            var data = activity
+            var comm = comment
+            setcomment('')
+            data['comments_count'] = data['comments_count'] + 1
+            setactivity(data)
+            setcomments([...comments, { 'data': { 'comments_user_image': children[0]['data']['image'], comment: comm }, 'id': key }])
+            setkey(String(parseInt(key) + 1))
+            route.params.setparentkey ? route.params.setparentkey() : null
+            axios.post('https://4561d0a210d4.ngrok.io/comment', {
+                post_id: data['post_id'],
+                user_id: children[0]['id'],
+                user_name: children[0]['data']['name'],
+                user_image: children[0]['data']['image'],
+                comment: comm,
+            }).then((response) => {
+                console.log(response)
+                analytics.track('Comment', {
+                    userID: children[0]['id'],
+                    deviceID: getUniqueId(),
+                    by: children[0]['id'],
+                    byname: children[0]['data']['name'],
+                    byimage: children[0]['data']['image'],
+                    to: activity['user_id'],
+                    actid: activity['post_id'],
+                    comment: comm
+                })
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
+    }
+    const there = () => {
+        return (<View key={key} style={styles.container}>
+            <CompHeader style={{ position: 'absolute' }} screen={activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.pop()} />
+            <ScrollView>
                 <CustomActivity />
-                {status === '3' ? 0 ? <CompButton message={'You have been temporarily banned from commenting'} back={'Home'} /> :
-                    //  <CommentBox
-                    //     key={'1'}
-                    //     type={route.params.type}
-                    //     textInputProps={{ fontFamily: 'NunitoSans-Regular', placeholder: 'Add a comment' }}
-                    //     activity={route.params.activity.activity}
-                    //     onSubmit={(text) => {
-                    //         route.params.activity.onAddReaction('comment', route.params.activity.activity, {
-                    //             'text': text,
-                    //         });
-                    //         setcomments([{ 'data': { 'text': text }, 'user': { 'data': { 'profileImage': route.params.image } } }, ...comments])
-                    //         analytics.track('Comment', {
-                    //             userID: route.params.token,
-                    //             deviceID: getUniqueId(),
-                    //             by: route.params.id,
-                    //             byname: route.params.name,
-                    //             byimage: route.params.image,
-                    //             to: (route.params.activity.activity.actor.id.replace('id', '')),
-                    //             actid: route.params.activity.activity.id,
-                    //             comment: text
-                    //         })
-                    //     }}
-                    //     avatarProps={{
-                    //         source: route.params.image,
-                    //     }}
-                    // />
-                    <View /> :
-                    <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_comment' })}><CompButton message={'Signup/Login to add comments for this post'} back={'Home'} /></TouchableWithoutFeedback>}
-            </> :
-                <>
-                    <CompHeader style={{ position: 'absolute' }} screen={'Loading'} icon={'back'} goback={() => navigation.navigate('Home')} />
-                    <PostLoader />
-                </>}
-        </View>
+            </ScrollView>
+            {status === '3' ? 0 ? <CompButton message={'You have been temporarily banned from commenting'} back={'Home'} /> :
+                <KeyboardStickyView style={styles.textInputView}>
+                    <FastImage
+                        source={{
+                            uri: children[0]['data']['image'],
+                            cache: FastImage.cacheControl.web
+                        }}
+                        style={{ width: 40, height: 40, borderRadius: 306, marginLeft: 2, }}
+                    />
+                    <TextInput
+                        value={comment}
+                        onChangeText={setcomment}
+                        onSubmitEditing={() => addcomment()}
+                        placeholder="Add a comment..."
+                        style={styles.textInput}
+                        enablesReturnKeyAutomatically={true}
+                    />
+                    {comment ? <Text onPress={() => addcomment()} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>Post</Text> : null}
+                </KeyboardStickyView> :
+                <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_comment' })}><CompButton message={'Signup/Login to add comments for this post'} back={'Home'} /></TouchableWithoutFeedback>}
+        </View>)
+    }
+    const notthere = () => {
+        return (
+            <View key={key} style={styles.container}>
+                <CompHeader style={{ position: 'absolute' }} screen={'Loading...'} icon={'back'} goback={() => navigation.pop()} />
+                <PostLoader />
+            </View>
+        )
+    }
+    return (
+        loader ? notthere() : there()
     );
 }
 
@@ -291,6 +442,31 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
+    },
+    textInputView: {
+        padding: 8,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: 'white',
+        elevation: 20
+    },
+    textInput: {
+        flexGrow: 1,
+        padding: 10,
+        width: width - 200,
+        fontSize: 16,
+        marginRight: 20,
+        textAlignVertical: "top",
+        fontFamily: 'NunitoSans-Regular'
+    },
+    textInputButton: {
+        flexShrink: 1,
+    },
+    mediaPlayer: {
+        height: 340,
+        width: width,
+        backgroundColor: "black",
     },
 });
 export default SinglePostScreen

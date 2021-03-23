@@ -154,7 +154,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 <View style={{ marginBottom: 200, backgroundColor: "#f9f9f9", marginTop: 20 }}>
                     {loading ? <PostLoader /> : <FlatList
                         data={posts}
-                        renderItem={(item) => { return (<FeedComponent item={item} />) }}
+                        renderItem={(item) => { return (<FeedComponent status={status} children={children} navigation={navigation} item={item} />) }}
                         keyExtractor={item => item['data'][1]}
                         ListEmptyComponent={() => {
                             return (
