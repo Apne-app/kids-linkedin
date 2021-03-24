@@ -100,7 +100,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             },
             {
                 text: "YES", onPress: () => {
-                    axios.post('https://dcdb593e8b89.ngrok.io/delpost', {
+                    axios.post('http://mr_robot.api.genio.app/delpost', {
                         post_id: activity['post_id'],
                     }).then(() => {
                         if (response == 'true') {
@@ -277,7 +277,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 data['likes_count'] = data['likes_count'] - 1
                 setactivity(data)
                 setkey(String(parseInt(key) + 1))
-                axios.post('https://dcdb593e8b89.ngrok.io/like', {
+                axios.post('http://mr_robot.api.genio.app/like', {
                     post_id: data['post_id'],
                     user_id: children[0]['id'],
                     user_name: children[0]['data']['name'],
@@ -294,7 +294,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 data['likes_count'] = data['likes_count'] + 1
                 setactivity(data)
                 setkey(String(parseInt(key) + 1))
-                axios.post('https://dcdb593e8b89.ngrok.io/like', {
+                axios.post('http://mr_robot.api.genio.app/like', {
                     post_id: data['post_id'],
                     user_id: children[0]['id'],
                     user_name: children[0]['data']['name'],
@@ -325,7 +325,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': activity['user_id'].replace('id', '') })}>
+                    <TouchableWithoutFeedback onPress={() => console.log(item['item']['data']['user_image'] + item['item']['data']['suff_profile_feed'])}>
                         <FastImage
                             source={{
                                 uri: item['item']['data']['user_image'] + item['item']['data']['suff_profile_feed'],
@@ -335,9 +335,9 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         />
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': activity['user_id'].replace('id', '') })}>
-                        <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{activity['acc_type'] == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
                         </View>
                     </TouchableWithoutFeedback>
                     <ActionSheet
@@ -352,8 +352,15 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 </View>
                 {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
             </View>
+            {activity['caption'] === 'default123' ?
+                <View style={{ margin: 5 }}></View> :
+                <View style={{ paddingHorizontal: 10, marginLeft: 13, marginVertical: 15 }}>
+                    <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                        {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...' ) : activity['caption']}
+                    </Text>
+                </View>}
+            {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: activity })}>
-                {activity['caption'] === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, marginVertical: 15 }}>{activity['caption'] === 'default123' ? '' : activity['caption']}</Text>}
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage
                         source={{
@@ -373,9 +380,10 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     /></View> : <View></View>}
                 </View>
             </TouchableWithoutFeedback>
-            {activity['caption'].includes('http') ?
-                <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(activity['caption'])[0] }) } }} text={activity['caption']} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
-                : null}
+            {activity['caption'] ?
+                (activity['caption'].includes('http') ?
+                    <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(activity['caption'])[0] }) } }} text={activity['caption']} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
+                    : null) : null}
             {activity['videos'] ?
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                     <InViewPort onChange={(value) => value ? null : (setPaused(true), setPlayerState(PLAYER_STATES.PAUSED))}>

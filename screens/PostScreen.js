@@ -209,7 +209,7 @@ const PostScreen = ({ navigation, route }) => {
     // // user.follow('user', '49id');
     // var user = client.feed('user', String(String(children['id']) + String("id")));
 
-    axios.post('https://dcdb593e8b89.ngrok.io/post', {
+    axios.post('http://mr_robot.api.genio.app/post', {
       user_id: children['id'],
       acc_type: children['data']['type'],
       user_image: children['data']['image'],
@@ -229,10 +229,12 @@ const PostScreen = ({ navigation, route }) => {
         }, 1000)
       }
       else {
+        console.log("error1: ", response)
         alert('There was an error posting your post, please try again later')
         navigation.pop();
       }
-    }).catch(() => {
+    }).catch((err) => {
+      console.log("error1: ", err)
       alert('There was an error posting your post, please try again later')
       navigation.pop();
     })

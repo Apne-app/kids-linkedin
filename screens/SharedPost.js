@@ -27,6 +27,7 @@ import Video from 'react-native-video';
 import InViewPort from "@coffeebeanslabs/react-native-inviewport";
 import PostLoader from '../Modules/PostLoader';
 import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
+import ReadMore from 'react-native-read-more-text';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -72,7 +73,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
     console.log(route.params.id)
     useEffect(() => {
-        axios.post('https://dcdb593e8b89.ngrok.io/getpost', {
+        axios.post('http://mr_robot.api.genio.app/getpost', {
             post_id: route.params.id,
             user_id: status === '3' ? children[0]['id'] : null
         }).then((response) => {
@@ -84,7 +85,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         })
     }, [])
     useEffect(() => {
-        axios.post('https://dcdb593e8b89.ngrok.io/getcomments', {
+        axios.post('http://mr_robot.api.genio.app/getcomments', {
             post_id: route.params.id
         }).then((response) => {
             setcomments(response['data']['data'])
@@ -115,7 +116,6 @@ const SinglePostScreen = ({ navigation, route }) => {
     };
 
     const onLoad = (data) => {
-        setDuration(data.duration);
         setIsLoading(false);
     };
 
@@ -160,7 +160,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey ? route.params.setparentkey() : null
-            axios.post('https://dcdb593e8b89.ngrok.io/like', {
+            axios.post('http://mr_robot.api.genio.app/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -178,7 +178,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey ? route.params.setparentkey() : null
-            axios.post('https://dcdb593e8b89.ngrok.io/like', {
+            axios.post('http://mr_robot.api.genio.app/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -219,8 +219,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             });
-                            Linking.openURL('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']).then((data) => {
-                            }).catch(() => {
+                            Linking.openURL('whatsapp://send?text=Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']).then((data) => {
+                            }).catch((error) => {
                                 alert('Please make sure Whatsapp is installed on your device');
                             });
                         }}
@@ -229,8 +229,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 9, }} />
-                <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
+                <View style={{ flexDirection: 'row', marginTop: 8}}>
+                    <Text onPress={() => navigation.navigate('LikesList', {'post_id':''})} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 7, fontSize: 14, marginBottom: 2 }}>{activity['comments_count']} comments</Text>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
@@ -251,7 +251,16 @@ const SinglePostScreen = ({ navigation, route }) => {
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
-                {activity['caption'] === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, }}>{activity['caption'] === 'default123' ? '' : activity['caption']}</Text>}
+                 {activity['caption'] === 'default123' ?
+                    <View style={{ margin: 5 }}></View> :
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom:10 }}>
+                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See More</Text>) }} numberOfLines={3}>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                                {activity['caption'] === 'default123' ? '' : activity['caption']}
+                            </Text>
+                        </ReadMore>
+                    </View>}
+                    {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['images'] ?
                     <ImageView
                         key={'2'}
@@ -344,7 +353,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                             }}
                             style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                         />
-                        <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150  }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
                         </View>
@@ -374,7 +383,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setcomments([...comments, { 'data': { 'comments_user_image': children[0]['data']['image'], comment: comm }, 'id': key }])
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey ? route.params.setparentkey() : null
-            axios.post('https://dcdb593e8b89.ngrok.io/comment', {
+            axios.post('http://mr_robot.api.genio.app/comment', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],

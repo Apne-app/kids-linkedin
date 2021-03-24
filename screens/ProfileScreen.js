@@ -99,8 +99,13 @@ const ProfileScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (children) {
-            axios.post('https://dcdb593e8b89.ngrok.io/profile', {
+            axios.post('http://mr_robot.api.genio.app/profile', {
                 'user_id': children[0]['id']
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setposts(response['data']['data'])
                 setloading(false)

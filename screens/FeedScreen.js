@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import FastImage from 'react-native-fast-image';
-import { SafeAreaView, FlatList, View, Text, Dimensions, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, FlatList, View, BackHandler, Alert, Text, Dimensions, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea, Tab, Tabs } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -35,6 +35,37 @@ import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const FeedScreen = ({ navigation, route }) => {
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (route.params.goTo) {
+                if (route.params.goTo == 'quiz') {
+                    setFeedState(1)
+                }
+                if (route.params.goTo == 'news') {
+                    setFeedState(2)
+                }
+                route.params.goTo = false
+            }
+            const onBackPress = () => {
+                Alert.alert("Hold on!", "Are you sure you want to Exit?", [
+                    {
+                        text: "Cancel",
+                        onPress: () => null,
+                        style: "cancel"
+                    },
+                    { text: "YES", onPress: () => BackHandler.exitApp() }
+                ]);
+                return true;
+            };
+
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+
+    }, []));
+
     const [following, setfollowing] = useState([])
     const [routes, setroutes] = React.useState([]);
     const [quiz, setquiz] = useState([])
@@ -72,13 +103,18 @@ const FeedScreen = ({ navigation, route }) => {
             timestamp = timestamp ? parseInt(timestamp) : 0;
             var user_id = status == '3' ? children[0]['id'] : '123qwe'
             var year = status === '3' ? parseInt(children[0]['data']['year']) : null
-            status == '3' ? axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            status == '3' ? axios.post('http://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'following',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': true,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setfollowing(response.data.data)
                 var min_following = min_time['following']
@@ -87,17 +123,22 @@ const FeedScreen = ({ navigation, route }) => {
                         min_following = item['data']['timestamp']
                     }
                 })
-                n_time({ ...min_time, 'following': min_following })
+                setmin_time({ ...min_time, 'following': min_following })
             }).catch((response) => {
                 console.log(response)
             }) : null
-            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            axios.post('http://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'following',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': false,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 settrending(response.data.data)
                 var min_trending = min_time['trending']
@@ -110,13 +151,18 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            axios.post('http://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'quiz',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': false,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setquiz(response.data.data)
                 var min_quiz = min_time['quiz']
@@ -129,13 +175,18 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            axios.post('http://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'inspire',
                 'year': year,
                 'timestamp': 0,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': false,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setinspire(response.data.data)
                 var min_inspire = min_time['inspire']
@@ -148,13 +199,18 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            status === '3' ? axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            status === '3' ? axios.post('http://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'year',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': true,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setyear(response.data.data)
                 var min_year = min_time['year']
@@ -173,18 +229,23 @@ const FeedScreen = ({ navigation, route }) => {
     }, [])
     const onRefresh = async (feed_type, load_more) => {
         await setrefreshing({ ...refreshing, [feed_type]: true });
-        console.log(refreshing)
+        // console.log(refreshing)
         var user_id = status == '3' ? children[0]['id'] : '123qwe'
         var year1 = status === '3' ? parseInt(children[0]['data']['year']) : null
         var timestamp = await AsyncStorage.getItem('timestamp')
         timestamp = timestamp ? parseInt(timestamp) : 0;
-        axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+        axios.post('http://mr_robot.api.genio.app/feed', {
             'user_id': user_id,
             'feed_type': feed_type,
             'year': year1,
             'timestamp': timestamp,
             'min_timestamp': min_time[feed_type],
             'randomize': true,
+        }, {
+            headers: {
+                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                'Content-Type': 'application/json'
+            }
         }).then(async (response) => {
             switch (feed_type) {
                 case 'trending':
@@ -212,8 +273,8 @@ const FeedScreen = ({ navigation, route }) => {
                 default:
                     break;
             }
-        }).catch((response) => {
-            console.log(response)
+        }).catch((err) => {
+            console.log(err)
             setrefreshing({ ...refreshing, [feed_type]: false });
         })
     }
