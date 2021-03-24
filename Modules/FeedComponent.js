@@ -50,10 +50,6 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [paused, setPaused] = useState(true);
-    const [optimages, setOptImages] = useState({
-        'profile': item['item']['data']['user_image'],
-        'feedcard': item['item']['data']['images'].split(", ")[0]
-    })
     const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
 
     const onSeek = (seek) => {
@@ -332,11 +328,10 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': activity['user_id'].replace('id', '') })}>
                         <FastImage
                             source={{
-                                uri: optimages['profile'],
+                                uri: item['item']['data']['user_image'] + item['item']['data']['suff_profile_feed'],
                                 priority: FastImage.priority.high,
                             }}
                             style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
-                            // onError = {() => setOptImages({ ...optimages, 'profile': item['item']['data']['user_image'] })}
                         />
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': activity['user_id'].replace('id', '') })}>
@@ -362,11 +357,10 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage
                         source={{
-                            uri: optimages['feedcard'],
+                            uri: item['item']['data']['images'].split(", ")[0] + item['item']['data']['suff_feed_feed'],
                             priority: FastImage.priority.high
                         }}
                         style={{ width: width, height: 340, borderRadius: 0 }}
-                        // onError = {() => setOptImages({ ...optimages, 'feedcard': item['item']['data']['images'].split(", ")[0] })}
                     /> : <View style={{ height: 340 }}><SliderBox
                         images={activity['images'].split(", ").filter(n => n)}
                         dotColor="#FFEE58"

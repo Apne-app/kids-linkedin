@@ -120,18 +120,6 @@ const PostScreen = ({ navigation, route }) => {
       console.log("dassd")
       if (response.status !== 201)
         throw new Error("Failed to upload image to S3");
-      var data = JSON.stringify({"url":"https://d2k1j93fju3qxb.cloudfront.net/" + response.body.postResponse.key});
-      var config = {
-        method: 'post',
-        url: 'http://13.127.233.22/postimageoptimize',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        data : data
-      };
-      axios(config)
-
-
       // var obj = { ...uploading };
       // var a = 0;
       // if (!a) {
