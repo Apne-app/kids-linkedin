@@ -27,6 +27,7 @@ import Video from 'react-native-video';
 import InViewPort from "@coffeebeanslabs/react-native-inviewport";
 import PostLoader from '../Modules/PostLoader';
 import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
+import ReadMore from 'react-native-read-more-text';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -131,7 +132,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     var year = parseInt(d.getFullYear());
     useEffect(() => {
         const data = async () => {
-            axios.post('https://dcdb593e8b89.ngrok.io/getcomments', {
+            axios.post('https://mr_robot.api.genio.app/getcomments', {
                 post_id: activity['post_id']
             }).then((response) => {
                 setcomments(response['data']['data'])
@@ -150,7 +151,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey()
-            axios.post('https://dcdb593e8b89.ngrok.io/like', {
+            axios.post('https://mr_robot.api.genio.app/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -168,7 +169,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setactivity(data)
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey()
-            axios.post('https://dcdb593e8b89.ngrok.io/like', {
+            axios.post('https://mr_robot.api.genio.app/like', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -201,7 +202,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: -1 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
                     </TouchableWithoutFeedback>
                     <Icon name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
-                    <Icon onPress={()=>onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id'])} name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
+                    <Icon onPress={() => onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id'])} name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
                     <TouchableOpacity style={{ width: 50, marginLeft: '58%', alignItems: 'center' }}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
@@ -241,7 +242,16 @@ const SinglePostScreen = ({ navigation, route }) => {
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
-                {activity['caption'] === 'default123' ? <View style={{ margin: 5 }}></View> : <Text style={{ fontFamily: 'NunitoSans-Regular', paddingHorizontal: 10, marginLeft: 14, }}>{activity['caption'] === 'default123' ? '' : activity['caption']}</Text>}
+                {activity['caption'] === 'default123' ?
+                    <View style={{ margin: 5 }}></View> :
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom:10 }}>
+                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See More</Text>) }} numberOfLines={3}>
+                            <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                                {activity['caption'] === 'default123' ? '' : activity['caption']}
+                            </Text>
+                        </ReadMore>
+                    </View>}
+                    {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['images'] ?
                     <ImageView
                         key={'2'}
@@ -334,9 +344,9 @@ const SinglePostScreen = ({ navigation, route }) => {
                             }}
                             style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                         />
-                        <View style={{ flexDirection: 'column', marginLeft: 5 }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
                         </View>
                         <ActionSheet
                             useNativeDriver={true}
@@ -364,7 +374,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setcomments([...comments, { 'data': { 'comments_user_image': children[0]['data']['image'], comment: comm }, 'id': key }])
             setkey(String(parseInt(key) + 1))
             route.params.setparentkey()
-            axios.post('https://dcdb593e8b89.ngrok.io/comment', {
+            axios.post('https://mr_robot.api.genio.app/comment', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
                 user_name: children[0]['data']['name'],
@@ -389,7 +399,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     }
     return (
         <View key={key} style={styles.container}>
-            <CompHeader style={{ position: 'absolute' }} screen={activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + '\'s Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
+            <CompHeader style={{ position: 'absolute' }} screen={'Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
             <ScrollView>
                 <CustomActivity />
             </ScrollView>

@@ -72,13 +72,18 @@ const FeedScreen = ({ navigation, route }) => {
             timestamp = timestamp ? parseInt(timestamp) : 0;
             var user_id = status == '3' ? children[0]['id'] : '123qwe'
             var year = status === '3' ? parseInt(children[0]['data']['year']) : null
-            status == '3' ? axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            status == '3' ? axios.post('https://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'following',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': true,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setfollowing(response.data.data)
                 var min_following = min_time['following']
@@ -87,17 +92,22 @@ const FeedScreen = ({ navigation, route }) => {
                         min_following = item['data']['timestamp']
                     }
                 })
-                n_time({ ...min_time, 'following': min_following })
+                setmin_time({ ...min_time, 'following': min_following })
             }).catch((response) => {
                 console.log(response)
             }) : null
-            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            axios.post('https://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'following',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': false,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 settrending(response.data.data)
                 var min_trending = min_time['trending']
@@ -110,13 +120,18 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            axios.post('https://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'quiz',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': false,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setquiz(response.data.data)
                 var min_quiz = min_time['quiz']
@@ -129,13 +144,18 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            axios.post('https://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'inspire',
                 'year': year,
                 'timestamp': 0,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': false,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setinspire(response.data.data)
                 var min_inspire = min_time['inspire']
@@ -148,13 +168,18 @@ const FeedScreen = ({ navigation, route }) => {
             }).catch((response) => {
                 console.log(response)
             })
-            status === '3' ? axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+            status === '3' ? axios.post('https://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
                 'feed_type': 'year',
                 'year': year,
                 'timestamp': timestamp,
                 'min_timestamp': Math.round(new Date().getTime() / 1000),
                 'randomize': true,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setyear(response.data.data)
                 var min_year = min_time['year']
@@ -178,13 +203,18 @@ const FeedScreen = ({ navigation, route }) => {
         var year1 = status === '3' ? parseInt(children[0]['data']['year']) : null
         var timestamp = await AsyncStorage.getItem('timestamp')
         timestamp = timestamp ? parseInt(timestamp) : 0;
-        axios.post('https://dcdb593e8b89.ngrok.io/feed', {
+        axios.post('https://mr_robot.api.genio.app/feed', {
             'user_id': user_id,
             'feed_type': feed_type,
             'year': year1,
             'timestamp': timestamp,
             'min_timestamp': min_time[feed_type],
             'randomize': true,
+        }, {
+            headers: {
+                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                'Content-Type': 'application/json'
+            }
         }).then(async (response) => {
             switch (feed_type) {
                 case 'trending':
@@ -213,7 +243,7 @@ const FeedScreen = ({ navigation, route }) => {
                     break;
             }
         }).catch((response) => {
-            console.log(response)
+            console.log(Object.keys(response))
             setrefreshing({ ...refreshing, [feed_type]: false });
         })
     }

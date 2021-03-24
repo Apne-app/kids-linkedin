@@ -9,7 +9,7 @@ import CompHeader from '../Modules/CompHeader'
 const LikesList = ({ navigation, route }) => {
     const [likes, setlikes] = useState([])
     useEffect(() => {
-        axios.post('https://4561d0a210d4.ngrok.io/getlikes', {
+        axios.post('https://mr_robot.api.genio.app/getlikes', {
             post_id: route.params.post_id
         }).then((response) => {
             setlikes(response.data.data)

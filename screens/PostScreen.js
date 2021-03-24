@@ -221,7 +221,7 @@ const PostScreen = ({ navigation, route }) => {
     // // user.follow('user', '49id');
     // var user = client.feed('user', String(String(children['id']) + String("id")));
 
-    axios.post('https://dcdb593e8b89.ngrok.io/post', {
+    axios.post('https://mr_robot.api.genio.app/post', {
       user_id: children['id'],
       acc_type: children['data']['type'],
       user_image: children['data']['image'],
