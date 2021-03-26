@@ -1,8 +1,6 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react'
-// import { Video } from 'expo-av'
-//import VideoPlayer from '../Modules/expo-video-player'
 import { Dimensions, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler, Alert } from 'react-native'
 import CompHeader from '../Modules/CompHeader'
 import FastImage from 'react-native-fast-image';
@@ -13,6 +11,8 @@ import { connect } from 'getstream';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios'
 import { useFocusEffect } from "@react-navigation/native";
+import Video from 'react-native-video';
+import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 const VideoPreview = ({ navigation, route }) => {
@@ -20,6 +20,52 @@ const VideoPreview = ({ navigation, route }) => {
     const [ShowToast, setShowToast] = useState(false)
     const [loading, setloading] = useState(false)
     const [caption, setcaption] = useState('')
+    const videoPlayer = useRef(null);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [paused, setPaused] = useState(true);
+    const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
+    const onSeek = (seek) => {
+        videoPlayer?.current.seek(seek);
+    };
+
+    const onPaused = (playerState) => {
+        setPaused(!paused);
+        setPlayerState(playerState);
+    };
+
+    const onReplay = () => {
+        setPlayerState(PLAYER_STATES.PLAYING);
+        videoPlayer?.current.seek(0);
+    };
+
+    const onProgress = (data) => {
+        // Video Player will continue progress even if the video already ended
+        if (!isLoading) {
+            setCurrentTime(data.currentTime);
+        }
+    };
+
+    const onLoad = (data) => {
+        setDuration(data.duration);
+        setIsLoading(false);
+    };
+
+    const onLoadStart = () => setIsLoading(true);
+
+    const onEnd = () => {
+        // Uncomment this line if you choose repeat=false in the video player
+        setPlayerState(PLAYER_STATES.ENDED);
+    };
+
+    const onSeeking = (currentTime) => setCurrentTime(currentTime);
+    const noop = (video) => {
+        setPaused(true);
+        setPlayerState(PLAYER_STATES.PAUSED)
+        navigation.navigate('VideoFull', { duration: duration, video: video, time: currentTime })
+    };
     var children = route.params.children['0']
     useFocusEffect(
         React.useCallback(() => {
@@ -44,7 +90,7 @@ const VideoPreview = ({ navigation, route }) => {
         var name = String(Math.floor(Date.now() / 1000)) + '.mp4'
         var file = {
             // `uri` can also be a file system path (i.e. file://)
-            uri: 'file://' + route.params.video,
+            uri: route.params.video,
             name: name,
             type: "video/mp4"
         }
@@ -63,6 +109,7 @@ const VideoPreview = ({ navigation, route }) => {
                 return
             }
             name = "https://d2k1j93fju3qxb.cloudfront.net/" + children['id'] + "/videos/" + name
+            console.log(name)
             axios.post('http://mr_robot.api.genio.app/post', {
                 user_id: children['id'],
                 acc_type: children['data']['type'],
@@ -74,6 +121,11 @@ const VideoPreview = ({ navigation, route }) => {
                 tags: '',
                 user_name: children['data']['name'],
                 user_year: parseInt(children['data']['year'])
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 if (response.data) {
                     setShowToast(true)
@@ -94,6 +146,8 @@ const VideoPreview = ({ navigation, route }) => {
 
         }).catch(err => {
             console.log(err);
+            alert('There was an error posting your post, please try again later')
+            navigation.pop();
         })
         return
     }
@@ -118,31 +172,39 @@ const VideoPreview = ({ navigation, route }) => {
                 <View>
                     <TextInput autoFocus={true} value={caption} onChangeText={(value) => setcaption(value)} numberOfLines={4} multiline={true} placeholder={'What awesome thing did your kid do today?'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, padding: 10, textAlignVertical: 'top' }} />
                 </View>
-                <VideoPlayer
-                    videoProps={{
-                        source: { uri: route.params.video },
-                        rate: 1.0,
-                        volume: 1.0,
-                        isMuted: false,
-                        videoRef: v => videoRef = v,
-                        resizeMode: Video.RESIZE_MODE_CONTAIN,
-                        // shouldPlay
-                        // usePoster={props.activity.poster?true:false}
-                        // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                        playInBackground: false,
-                        playWhenInactive: false,
-                        width: width,
-                        height: 340,
-
-                    }}
-                    width={width}
-                    height={340}
-                    hideControlsTimerDuration={1000}
-                    showControlsOnLoad={true}
-                    switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                    sliderColor={'#327FEB'}
-                    inFullscreen={false}
-                />
+                <View>
+                    <Video
+                        onEnd={onEnd}
+                        onLoad={onLoad}
+                        onLoadStart={onLoadStart}
+                        onProgress={onProgress}
+                        paused={paused}
+                        ref={(ref) => (videoPlayer.current = ref)}
+                        resizeMode="cover"
+                        source={{
+                            uri: route.params.video,
+                        }}
+                        style={styles.mediaPlayer}
+                        playInBackground={false}
+                        playWhenInactive={false}
+                        repeat={false}
+                    />
+                    <MediaControls
+                        duration={duration}
+                        isLoading={isLoading}
+                        mainColor="#327FEB"
+                        onFullScreen={() => noop(route.params.video)}
+                        onPaused={onPaused}
+                        onReplay={onReplay}
+                        onSeek={onSeek}
+                        onSeeking={onSeeking}
+                        playerState={playerState}
+                        progress={currentTime}
+                    >
+                        <MediaControls.Toolbar>
+                        </MediaControls.Toolbar>
+                    </MediaControls>
+                </View>
                 <TouchableOpacity
                     style={{ height: 60, display: loading ? 'none' : 'flex', marginTop: 50 }}
                     onPress={() => {
@@ -152,7 +214,7 @@ const VideoPreview = ({ navigation, route }) => {
                     <View style={styles.Next}>
                         <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold' }}>
                             Post
-                    </Text>
+                        </Text>
                     </View>
                 </TouchableOpacity>
                 <Snackbar
@@ -168,7 +230,7 @@ const VideoPreview = ({ navigation, route }) => {
                         },
                     }}>
                     Posted Successfully!
-            </Snackbar>
+                </Snackbar>
             </View>
             <View style={{ backgroundColor: '#327FEB', height: 310, borderTopLeftRadius: 20, borderTopRightRadius: 20, display: loading ? 'flex' : 'none' }}>
                 <Image style={{ width: 100, height: 100, alignSelf: 'center', marginTop: '20%' }} source={require('../assets/log_loader.gif')} />
@@ -190,6 +252,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         flex: 1,
         marginHorizontal: 20
+    },
+    mediaPlayer: {
+        height: 340,
+        width: width,
+        backgroundColor: "black",
     },
 })
 export default VideoPreview

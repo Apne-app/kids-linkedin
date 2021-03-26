@@ -134,6 +134,11 @@ const SinglePostScreen = ({ navigation, route }) => {
         const data = async () => {
             axios.post('http://mr_robot.api.genio.app/getcomments', {
                 post_id: activity['post_id']
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setcomments(response['data']['data'])
                 setloading(false)
@@ -157,6 +162,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                 user_name: children[0]['data']['name'],
                 user_image: children[0]['data']['image'],
                 response: 'unlike',
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
 
             }).catch((error) => {
@@ -175,6 +185,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                 user_name: children[0]['data']['name'],
                 user_image: children[0]['data']['image'],
                 response: 'like',
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 analytics.track('Like', {
                     userID: children["0"]["id"],
@@ -221,7 +236,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 9, }} />
                 <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                    <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
+                    <Text onPress={()=>navigation.navigate('LikesList', { 'post_id': '' })} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 7, fontSize: 14, marginBottom: 2 }}>{activity['comments_count']} comments</Text>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
@@ -380,6 +395,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                 user_name: children[0]['data']['name'],
                 user_image: children[0]['data']['image'],
                 comment: comm,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 console.log(response)
                 analytics.track('Comment', {

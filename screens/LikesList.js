@@ -11,6 +11,11 @@ const LikesList = ({ navigation, route }) => {
     useEffect(() => {
         axios.post('http://mr_robot.api.genio.app/getlikes', {
             post_id: route.params.post_id
+        }, {
+            headers: {
+                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                'Content-Type': 'application/json'
+            }
         }).then((response) => {
             setlikes(response.data.data)
         }).catch((error) => {

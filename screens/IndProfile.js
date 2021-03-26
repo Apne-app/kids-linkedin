@@ -75,6 +75,11 @@ const IndProfile = ({ navigation, route }) => {
         if (children) {
             axios.post('http://mr_robot.api.genio.app/profile', {
                 'user_id': route.params.id
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 setposts(response['data']['data'])
                 setloading(false)

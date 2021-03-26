@@ -220,7 +220,12 @@ const PostScreen = ({ navigation, route }) => {
       tags: tagged,
       user_name: children['data']['name'],
       user_year: parseInt(children['data']['year'])
-    }).then((response) => {
+    }, {
+      headers: {
+          'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+          'Content-Type': 'application/json'
+      }
+  }).then((response) => {
       if (response.data) {
         setLoading(false);
         setShowToast(true);

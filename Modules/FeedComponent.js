@@ -102,6 +102,11 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 text: "YES", onPress: () => {
                     axios.post('http://mr_robot.api.genio.app/delpost', {
                         post_id: activity['post_id'],
+                    }, {
+                        headers: {
+                            'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                            'Content-Type': 'application/json'
+                        }
                     }).then(() => {
                         if (response == 'true') {
                             alert('Successfully deleted your post!')
@@ -283,6 +288,11 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     user_name: children[0]['data']['name'],
                     user_image: children[0]['data']['image'],
                     response: 'unlike',
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
                 }).then((response) => {
 
                 }).catch((error) => {
@@ -300,6 +310,11 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     user_name: children[0]['data']['name'],
                     user_image: children[0]['data']['image'],
                     response: 'like',
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
                 }).then((response) => {
                     analytics.track('Like', {
                         userID: children["0"]["id"],
@@ -356,7 +371,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 <View style={{ margin: 5 }}></View> :
                 <View style={{ paddingHorizontal: 10, marginLeft: 13, marginVertical: 15 }}>
                     <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
-                        {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...' ) : activity['caption']}
+                        {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...') : activity['caption']}
                     </Text>
                 </View>}
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}

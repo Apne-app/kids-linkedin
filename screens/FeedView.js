@@ -14,7 +14,12 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
             {status === '3' || feed_type != 'following' ? <FlatList
                 data={data.map((item) => item)}
                 refreshing={refreshing}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={5}
+                updateCellsBatchingPeriod={60}
+                initialNumToRender={5}
                 onRefresh={() => onRefresh(feed_type)}
+                windowSize={10}
                 ListEmptyComponent={() => {
                     return (
                         <PostLoader />
@@ -23,7 +28,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                 extraData={refreshing}
                 renderItem={(item) => (<FeedComponent status={status} children={children} item={item} navigation={navigation} />)}
-                keyExtractor={item => item['data']['post_id'] + String(Math.random())}
+                keyExtractor={item => item['data']['post_id']}
             /> : <View>
                 <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}><CompButton message={'Signup/Login to explore what other kids are learning'} /></TouchableOpacity>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}>

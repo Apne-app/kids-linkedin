@@ -73,20 +73,35 @@ const SinglePostScreen = ({ navigation, route }) => {
     const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
     console.log(route.params.id)
     useEffect(() => {
-        axios.post('http://mr_robot.api.genio.app/getpost', {
+        var data = JSON.stringify({
             post_id: route.params.id,
             user_id: status === '3' ? children[0]['id'] : null
-        }).then((response) => {
+        })
+        var config = {
+            method: 'post',
+            url: 'http://mr_robot.api.genio.app/getpost',
+            headers: {
+                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+        axios(config).then((response) => {
             setactivity(response.data.data[0]['data'])
             setloading(response.data.data[0]['data']['comments_count'])
             setloader(false)
         }).catch((response) => {
-            console.log(response)
+            console.log((response.toJSON()))
         })
     }, [])
     useEffect(() => {
         axios.post('http://mr_robot.api.genio.app/getcomments', {
             post_id: route.params.id
+        }, {
+            headers: {
+                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                'Content-Type': 'application/json'
+            }
         }).then((response) => {
             setcomments(response['data']['data'])
             setloading(0)
@@ -166,6 +181,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                 user_name: children[0]['data']['name'],
                 user_image: children[0]['data']['image'],
                 response: 'unlike',
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
 
             }).catch((error) => {
@@ -184,6 +204,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                 user_name: children[0]['data']['name'],
                 user_image: children[0]['data']['image'],
                 response: 'like',
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 analytics.track('Like', {
                     userID: children["0"]["id"],
@@ -229,8 +254,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 9, }} />
-                <View style={{ flexDirection: 'row', marginTop: 8}}>
-                    <Text onPress={() => navigation.navigate('LikesList', {'post_id':''})} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
+                <View style={{ flexDirection: 'row', marginTop: 8 }}>
+                    <Text onPress={() => navigation.navigate('LikesList', { 'post_id': '' })} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 7, fontSize: 14, marginBottom: 2 }}>{activity['comments_count']} comments</Text>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
@@ -251,16 +276,16 @@ const SinglePostScreen = ({ navigation, route }) => {
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
-                 {activity['caption'] === 'default123' ?
+                {activity['caption'] === 'default123' ?
                     <View style={{ margin: 5 }}></View> :
-                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom:10 }}>
-                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See More</Text>) }} numberOfLines={3}>
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See More</Text>) }} numberOfLines={3}>
                             <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
                                 {activity['caption'] === 'default123' ? '' : activity['caption']}
                             </Text>
                         </ReadMore>
                     </View>}
-                    {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
+                {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['images'] ?
                     <ImageView
                         key={'2'}
@@ -353,7 +378,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                             }}
                             style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                         />
-                        <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150  }}>
+                        <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
                         </View>
@@ -389,6 +414,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                 user_name: children[0]['data']['name'],
                 user_image: children[0]['data']['image'],
                 comment: comm,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
             }).then((response) => {
                 console.log(response)
                 analytics.track('Comment', {

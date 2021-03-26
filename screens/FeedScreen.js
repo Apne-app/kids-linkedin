@@ -64,7 +64,7 @@ const FeedScreen = ({ navigation, route }) => {
             return () =>
                 BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
-    }, []));
+        }, []));
 
     const [following, setfollowing] = useState([])
     const [routes, setroutes] = React.useState([]);
@@ -125,7 +125,7 @@ const FeedScreen = ({ navigation, route }) => {
                 })
                 setmin_time({ ...min_time, 'following': min_following })
             }).catch((response) => {
-                console.log(response)
+                console.log(Object.keys(response))
             }) : null
             axios.post('http://mr_robot.api.genio.app/feed', {
                 'user_id': user_id,
@@ -309,10 +309,14 @@ const FeedScreen = ({ navigation, route }) => {
                 pressColor={'lightblue'}
                 indicatorStyle={{ backgroundColor: 'white' }}
                 style={{ backgroundColor: 'white' }}
-                tabStyle={{ width: width / 3 }}
-                labelStyle={{ fontFamily: 'NunitoSans-Bold' }}
+                tabStyle={{ width: width / 3.5 }}
                 scrollEnabled={true}
                 bounces={true}
+                renderLabel={({ route, focused, color }) => (
+                    <Text style={{ color, margin: 8, fontFamily:'NunitoSans-SemiBold' }}>
+                        {route.title}
+                    </Text>
+                )}
                 indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
             />
         )
