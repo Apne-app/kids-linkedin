@@ -8,6 +8,15 @@ import FeedComponent from '../Modules/FeedComponent'
 import PostLoader from '../Modules/PostLoader'
 import CompButton from '../Modules/CompButton'
 
+function randomStr(len, arr) {
+    var ans = '';
+    for (var i = len; i > 0; i--) {
+        ans +=
+        arr[Math.floor(Math.random() * arr.length)];
+    }
+    return ans;
+}
+
 const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status }) => {
     return (
         <React.Fragment>
@@ -28,7 +37,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                 extraData={refreshing}
                 renderItem={(item) => (<FeedComponent status={status} children={children} item={item} navigation={navigation} />)}
-                keyExtractor={item => item['data']['post_id']}
+                keyExtractor={item => item['data']['post_id']+randomStr(20, '123456789')}
             /> : <View>
                 <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}><CompButton message={'Signup/Login to explore what other kids are learning'} /></TouchableOpacity>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}>

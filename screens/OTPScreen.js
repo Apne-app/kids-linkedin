@@ -34,6 +34,16 @@ import {
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
+function generateOTP() { 
+          
+  var digits = '0123456789'; 
+  let OTP = ''; 
+  for (let i = 0; i < 4; i++ ) { 
+      OTP += digits[Math.floor(Math.random() * 10)]; 
+  } 
+  return OTP; 
+} 
+
   const {Value, Text: AnimatedText} = Animated;
   
   const CELL_COUNT = 4;
@@ -73,6 +83,29 @@ const OTPScreen = ({ navigation, route }) => {
       value,
       setValue,
     });
+    const { Update } = React.useContext(AuthContext);
+
+    const sendOTP = () => {
+      setLoading(true);
+      let otp = generateOTP();
+      // console.log(otp);
+      var config = {
+        method: 'get',
+        url: `https://fphzj2hy13.execute-api.ap-south-1.amazonaws.com/default/otpSender?phone=${route.params.phone.replace("+","")}&otp=${otp}`,
+        headers: { }
+      };
+      // console.log(config)
+      
+      axios(config)
+      .then(function (response) {
+        setLoading(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+        alert("OTP couldn't be sent, please try again.");
+      });
+    }
 
     const api = async () => {
       setLoading(true);
@@ -116,18 +149,19 @@ const OTPScreen = ({ navigation, route }) => {
                   var pro = response.data;
                   axios({
                       method: 'post',
-                      url: 'https://api.genio.app/matrix/getchild/' + `?token=${token}`,
+                      url: 'https://api.genio.app/matrix/getchildphone/' + `?token=${token}`,
                       headers: {
                           'Content-Type': 'application/json'
                       },
                       data: JSON.stringify({
-                          "email": pro.email,
+                          "phone": response.data.phone,
                       })
                   })
                       .then(async (response) => {
                           console.log("children: ", response.data)
                           await AsyncStorage.setItem('children', JSON.stringify(response.data))
                           if (Object.keys(response.data).length) {
+                              Update({ children: response.data, status: '3', profile: pro, notifications: {} })
                               await AsyncStorage.setItem('status', '3')
                               navigation.reset({
                                   index: 0,
@@ -232,24 +266,26 @@ const OTPScreen = ({ navigation, route }) => {
       };
 
     return (
-        <ScrollView ref={scrollcheck} keyboardShouldPersistTaps='handled' style={{ backgroundColor: 'white', width: width, minHeight: height }}>
+      <View  style={{ backgroundColor: 'white', width: width, minHeight: height }}>
+      <CompHeader screen={'OTP'}
+      goback={() => {
+        if (navigation.canGoBack()) {
+          navigation.pop()
+        }
+        else {
+          navigation.navigate('Home')
+        }
+      }} />
+      <ScrollView ref={scrollcheck} keyboardShouldPersistTaps='handled'>
+        <Content >
         {loading ? <Spinner color='blue' style={styleLoader.loading} /> : null}
-        <CompHeader screen={'OTP'}
-          goback={() => {
-            if (navigation.canGoBack()) {
-              navigation.pop()
-            }
-            else {
-              navigation.navigate('Home')
-            }
-        }} />
-            <View style={{ opacity: logging ? 0.3 : 1, }}>
-                <Image source={require('../assets/otp.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 10 }} />
-                <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>We've sent an OTP to your phone{"\n"}<Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{route.params.phone}{'\n'}</Text><TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>(</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB', textDecorationColor: '#327FEB', textDecorationLine: 'underline' }}>Change</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>)</Text></TouchableOpacity></Text>
-                <KeyboardAvoidingView behavior={'padding'}>
+        <View style={{ opacity: logging ? 0.3 : 1, }}>
+        <Image source={require('../assets/otp.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 10 }} />
+        <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>We've sent an OTP to your phone{"\n"}<Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{route.params.phone}{'\n'}</Text><TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>(</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB', textDecorationColor: '#327FEB', textDecorationLine: 'underline' }}>Change</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>)</Text></TouchableOpacity></Text>
+        <KeyboardAvoidingView behavior={'padding'} >
                 <CodeField
-                    ref={ref}
-                    {...props}
+                ref={ref}
+                {...props}
                     value={value}
                     autoFocus={true}
                     onChangeText={(text) => {
@@ -264,8 +300,9 @@ const OTPScreen = ({ navigation, route }) => {
                     textContentType="oneTimeCode"
                     renderCell={renderCell}
                 />
-                <View>
-                    <Button disabled={logging} block style={{ marginTop: 20, borderColor: active ? '#327FEB' : 'grey', backgroundColor: active ? '#327FEB' : 'grey', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={() => { send(); settime(45) }}>
+        </KeyboardAvoidingView>
+        <KeyboardAvoidingView behavior={'padding'} >
+                    <Button disabled={logging} block style={{ marginTop: 20, borderColor: active ? '#327FEB' : 'grey', backgroundColor: active ? '#327FEB' : 'grey', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={() => { sendOTP(); settime(45) }}>
                         <View style={{ flexDirection: 'row' }}><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Send again (</Text><View style={{ marginTop: 0, marginHorizontal: -2 }}>
                             <CountDown
                                 id={String(change)}
@@ -282,16 +319,23 @@ const OTPScreen = ({ navigation, route }) => {
                     <Button disabled={logging} block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} >
                         <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>Continue as a guest*</Text>
                     </Button>
-                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20, marginBottom: 100 }}>*You wont be able to use the social network</Text>
+                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20, marginBottom: 80 }}>*You wont be able to use the social network</Text>
+        </KeyboardAvoidingView>
                 </View>
-                </KeyboardAvoidingView>
-            </View>
-        </ScrollView>
+            </Content>
+            </ScrollView>
+        </View>
     );
 
 }
 
 const styleLoader = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    // padding: 20,
+    // marginTop: 40,
+  },
   loading: {
     position: 'absolute',
     left: 0,

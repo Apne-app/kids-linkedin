@@ -97,6 +97,38 @@ const LoginScreen = ({ route, navigation }) => {
     roundness: 28.5
   };
 
+  const sendOTP = () => {
+    const checkValid = phoneInput.current?.isValidNumber(phone);
+
+    if(checkValid) {
+      Keyboard.dismiss();
+      setPhoneValid(true);
+      setLoading(true);
+      let otp = generateOTP();
+      // console.log(otp);
+      var config = {
+        method: 'get',
+        url: `https://fphzj2hy13.execute-api.ap-south-1.amazonaws.com/default/otpSender?phone=${phone.replace("+","")}&otp=${otp}`,
+        headers: { }
+      };
+      // console.log(config)
+      
+      axios(config)
+      .then(function (response) {
+        setLoading(false);
+        navigation.navigate('OTP', { otp: otp, phone: phone });
+      })
+      .catch(function (error) {
+        console.log(error);
+        setLoading(false);
+        alert("OTP couldn't be sent, please try again.");
+      });
+    } 
+    else {
+      setPhoneValid(false);
+    }
+  }
+
   const [Loading, setLoading] = useState(false)
   const [email, setemail] = useState('');
   const [everified, seteverified] = useState(false);
@@ -337,35 +369,7 @@ const LoginScreen = ({ route, navigation }) => {
                       everified ? api() : setvisible(true)
                     }
                     else {
-                      const checkValid = phoneInput.current?.isValidNumber(phone);
-
-                      if(checkValid) {
-                        Keyboard.dismiss();
-                        setPhoneValid(true);
-                        setLoading(true);
-                        let otp = generateOTP();
-                        // console.log(otp);
-                        var config = {
-                          method: 'get',
-                          url: `https://fphzj2hy13.execute-api.ap-south-1.amazonaws.com/default/otpSender?phone=${phone.replace("+","")}&otp=${otp}`,
-                          headers: { }
-                        };
-                        // console.log(config)
-                        
-                        axios(config)
-                        .then(function (response) {
-                          setLoading(false);
-                          navigation.navigate('OTP', { otp: otp, phone: phone });
-                        })
-                        .catch(function (error) {
-                          console.log(error);
-                          setLoading(false);
-                          alert("OTP couldn't be sent, please try again.");
-                        });
-                      } 
-                      else {
-                        setPhoneValid(false);
-                      }
+                      sendOTP();
                       
                     }
                   }}
