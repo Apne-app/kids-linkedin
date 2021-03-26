@@ -38,15 +38,6 @@ const FeedScreen = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            if (route.params.goTo) {
-                if (route.params.goTo == 'quiz') {
-                    setFeedState(1)
-                }
-                if (route.params.goTo == 'news') {
-                    setFeedState(2)
-                }
-                route.params.goTo = false
-            }
             const onBackPress = () => {
                 Alert.alert("Hold on!", "Are you sure you want to Exit?", [
                     {
@@ -72,9 +63,7 @@ const FeedScreen = ({ navigation, route }) => {
     const [inspire, setinspire] = useState([])
     const [year, setyear] = useState([])
     const [trending, settrending] = useState([])
-    const [feedstate, setFeedState] = useState(0);
     const [index, setIndex] = useState(0);
-    const [onEndReachedCalledDuringMomentum, setonEndReachedCalledDuringMomentum] = useState(true)
     var status = route.params.status
     var children = route.params.children
     const [newnoti, setnewnoti] = useState(false);
@@ -309,11 +298,11 @@ const FeedScreen = ({ navigation, route }) => {
                 pressColor={'lightblue'}
                 indicatorStyle={{ backgroundColor: 'white' }}
                 style={{ backgroundColor: 'white' }}
-                tabStyle={{ width: width / 3.5 }}
+                tabStyle={{ width: width / 3.6 }}
                 scrollEnabled={true}
                 bounces={true}
                 renderLabel={({ route, focused, color }) => (
-                    <Text style={{ color, margin: 8, fontFamily:'NunitoSans-SemiBold' }}>
+                    <Text style={{ color, margin: 8, fontFamily: 'NunitoSans-SemiBold' }}>
                         {route.title}
                     </Text>
                 )}

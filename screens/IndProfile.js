@@ -228,7 +228,7 @@ const IndProfile = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{route['params']['data']['name'][0].toUpperCase() + route['params']['data']['name'].substring(1)}</Text>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
                             </View>
                             {/* <TouchableOpacity onPressIn={() => followid(route.params.id)} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 20, marginTop: 2, borderRadius: 10, marginLeft: -20 }}>
                                 <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 12, textAlign: 'center', marginTop: 2 }}>{followPerson}</Text>
@@ -254,7 +254,7 @@ const IndProfile = ({ navigation, route }) => {
                     <View style={{ marginBottom: 100 }}>
                         {loading ? <PostLoader /> : <FlatList
                             data={posts}
-                            renderItem={(item) => { return (<FeedComponent item={item} />) }}
+                            renderItem={(item) => { return (<FeedComponent status={status} children={children} navigation={navigation} item={item} />) }}
                             keyExtractor={item => item['data'][1]}
                             ListEmptyComponent={() => {
                                 return (

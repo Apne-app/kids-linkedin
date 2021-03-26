@@ -340,7 +340,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={() => console.log(item['item']['data']['user_image'] + item['item']['data']['suff_profile_feed'])}>
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })}>
                         <FastImage
                             source={{
                                 uri: item['item']['data']['user_image'] + item['item']['data']['suff_profile_feed'],
@@ -468,6 +468,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 </View>
                 {activity['tags'] === 'Genio' || activity['tags'] === 'Other' || activity['tags'] === '' ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{activity['tags']}</Text></View>}
             </View>
+            <View style={{ backgroundColor: 'lightgrey', height: 1, width: width - 30, alignSelf: 'center', opacity: 0.3, borderRadius: 4, marginTop: 10 }} />
         </View >
     )
 };
