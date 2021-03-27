@@ -61,8 +61,6 @@
     "react-native-dotenv": "^2.4.0",
     "react-native-draggable": "^3.3.0",
     "react-native-elements": "^2.3.2",
-    "react-native-email": "^1.1.0",
-    "react-native-emoji-board": "^1.2.1",
     "react-native-fast-image": "^8.3.4",
     "react-native-file-viewer": "^2.1.4",
     "react-native-fs": "^2.14.1",
@@ -121,9 +119,6 @@
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "rn-keyboard-sticky-view": "^1.0.4",
-    "socket.io-client": "^3.0.3",
-    "switch-button-react-native": "^1.0.3",
-    "toggle-switch-react-native": "^3.2.0",
     "with-default-props": "^0.2.1"
   },
   "devDependencies": {

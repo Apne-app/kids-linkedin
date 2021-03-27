@@ -295,7 +295,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     <TouchableWithoutFeedback onPress={() => { children[0]['id']===activity['user_id']?navigation.navigate('Profile'):navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <FastImage
                             source={{
-                                uri: item['item']['data']['user_image'] + item['item']['data']['suff_profile_feed'],
+                                uri: item['item']['data']['user_image'],
                                 priority: FastImage.priority.high,
                             }}
                             style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}

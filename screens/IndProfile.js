@@ -34,6 +34,7 @@ const IndProfile = ({ navigation, route }) => {
     var children = route.params.children
     const status = route.params.status
     const [posts, setposts] = useState([])
+    const [data, setdata] = useState({'followers':0, 'following':0})
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -82,6 +83,18 @@ const IndProfile = ({ navigation, route }) => {
                 }
             }).then((response) => {
                 setposts(response['data']['data'])
+            }).catch((error) => {
+                console.log(error)
+            })
+            axios.post('http://mr_robot.api.genio.app/follow_count', {
+                'user_id': children[0]['id']
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
+            }).then((response) => {
+                setdata(response['data']['data'])
                 setloading(false)
             }).catch((error) => {
                 console.log(error)
@@ -242,11 +255,11 @@ const IndProfile = ({ navigation, route }) => {
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                             </View>
                             <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
                             </View>
                             <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{0}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                             </View>
                         </View>

@@ -12,8 +12,8 @@ const PostLoader = () => {
         style={{ alignSelf: 'center', marginTop: 20 }}
         width={width - 20}
         height={height}
-        backgroundColor="#ededed"
-        foregroundColor="lightgrey"
+        backgroundColor="lightgrey"
+        foregroundColor="#bababa"
     >
         <Rect x="70" y="14" rx="3" ry="3" width="88" height="6" />
         <Rect x="70" y="34" rx="3" ry="3" width="52" height="6" />

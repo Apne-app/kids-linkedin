@@ -333,6 +333,7 @@ const FeedScreen = ({ navigation, route }) => {
                 renderTabBar={renderTabBar}
             /> */}
             {/* <FeedView status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} /> */}
+            <PostLoader />
             <Snackbar
                 visible={posted}
                 onDismiss={() => console.log('hello')}
