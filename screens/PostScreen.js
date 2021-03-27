@@ -1,8 +1,8 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, ScrollView, Keyboard, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity } from 'react-native'
-import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { StyleSheet, ScrollView, Keyboard, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity, TextInput } from 'react-native'
+import { configureFonts, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Spinner, Input, Toast, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Footer, Textarea } from 'native-base';
 import axios from 'axios';
 import { Snackbar } from 'react-native-paper';
@@ -13,11 +13,13 @@ import { SliderBox } from "react-native-image-slider-box";
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import { RNS3 } from 'react-native-aws3';
 import { connect } from 'getstream';
+import FastImage from 'react-native-fast-image'
 import CompHeader from '../Modules/CompHeader';
 
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const PostScreen = ({ navigation, route }) => {
+  const children = route.params.children[0]
   const goback = () => {
     Alert.alert("Hold on!", "Are you sure you want to discard the post?", [
       {
@@ -222,16 +224,17 @@ const PostScreen = ({ navigation, route }) => {
       user_year: parseInt(children['data']['year'])
     }, {
       headers: {
-          'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-          'Content-Type': 'application/json'
+        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+        'Content-Type': 'application/json'
       }
-  }).then((response) => {
-      if (response.data) {
-        setLoading(false);
-        setShowToast(true);
-        setTimeout(() => {
-          navigation.pop();
-        }, 1000)
+    }).then(async (response) => {
+      if (response.data.data) {
+        await AsyncStorage.setItem('postid', response.data.data)
+        await AsyncStorage.setItem('newpost', 'true')
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
       }
       else {
         console.log("error1: ", response)
@@ -272,18 +275,28 @@ const PostScreen = ({ navigation, route }) => {
   return (
     <View style={{ backgroundColor: 'white', height: height, width: width }}>
       <CompHeader screen={'Post'} goback={goback} />
-      <View style={{ height: route.params.images.length || route.params.video ? height * 0.12 : height * 0.29, marginBottom: route.params.images.length || route.params.video ? 0 : height * 0.2, borderBottomWidth: 1, borderColor: 'lightgrey' }}>
-        <Content>
-          <Item style={{ elevation: 1 }}>
-            <Image
-              source={{ uri: source }}
-              style={{ width: 45, height: 45, borderRadius: 306, marginLeft: 30, }}
-            />
-            <Textarea style={{ fontFamily: 'NunitoSans-Regular', paddingTop: route.params.images.length || route.params.video ? 30 : height * 0.1, marginLeft: 10, width: width * 0.7 }} value={caption} onChangeText={text => setCaption(text)} rowSpan={route.params.images.length || route.params.video ? 4 : 10} placeholder="Add Caption" />
-          </Item>
-        </Content>
+      <View style={{ height: height * 0.25 }}>
+        <View style={{ flexDirection: 'row', margin: 10, }}>
+          <FastImage style={{ width: 60, height: 60, borderRadius: 10000, margin: 10 }} source={{ uri: children['data']['image'] }} />
+          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Regular' }}>{children['data']['name'][0].toUpperCase() + children['data']['name'].slice(1)}</Text>
+        </View>
+        <TouchableOpacity
+          style={{ height: 36, display: loading ? 'none' : 'flex', marginTop: -67, marginRight: 20 }}
+          onPress={() => {
+            PostUpload(route.params.tag);
+          }}
+        >
+          <View style={{ alignSelf: 'flex-end', backgroundColor: '#327FEB', width: 80, borderRadius: 5, height: 36 }}>
+            <Text style={{ color: "white", alignSelf: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginTop: 3.4 }}>
+              Post
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <View>
+          <TextInput autoFocus={true} value={caption} onChangeText={text => setCaption(text)} numberOfLines={4} multiline={true} placeholder={'What awesome thing did your kid do today?'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, padding: 10, textAlignVertical: 'top', height: height * 0.1, marginTop: 40 }} />
+        </View>
       </View>
-      <Snackbar
+      {/* <Snackbar
         visible={showToast}
         style={{ marginBottom: height * 0.1 }}
         duration={1500}
@@ -296,7 +309,7 @@ const PostScreen = ({ navigation, route }) => {
           },
         }}>
         Posted Successfully!
-            </Snackbar>
+            </Snackbar> */}
 
       {loading ? <Spinner color='blue' style={styles.loading} /> : null}
       {
@@ -398,7 +411,7 @@ const PostScreen = ({ navigation, route }) => {
           horizontal={true}
           keyExtractor={(item, index) => index.toString()}
         />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{ height: 60 }}
           onPress={() => {
             PostUpload(route.params.tag);
@@ -416,7 +429,7 @@ const PostScreen = ({ navigation, route }) => {
               Post
                         </Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </View>
   );

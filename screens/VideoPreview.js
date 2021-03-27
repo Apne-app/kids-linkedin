@@ -11,8 +11,8 @@ import { connect } from 'getstream';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios'
 import { useFocusEffect } from "@react-navigation/native";
-import Video from 'react-native-video';
-import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
+import VideoPlayer from '../Modules/Video';
+import AsyncStorage from '@react-native-community/async-storage';
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 const VideoPreview = ({ navigation, route }) => {
@@ -20,52 +20,6 @@ const VideoPreview = ({ navigation, route }) => {
     const [ShowToast, setShowToast] = useState(false)
     const [loading, setloading] = useState(false)
     const [caption, setcaption] = useState('')
-    const videoPlayer = useRef(null);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [isFullScreen, setIsFullScreen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [paused, setPaused] = useState(true);
-    const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
-    const onSeek = (seek) => {
-        videoPlayer?.current.seek(seek);
-    };
-
-    const onPaused = (playerState) => {
-        setPaused(!paused);
-        setPlayerState(playerState);
-    };
-
-    const onReplay = () => {
-        setPlayerState(PLAYER_STATES.PLAYING);
-        videoPlayer?.current.seek(0);
-    };
-
-    const onProgress = (data) => {
-        // Video Player will continue progress even if the video already ended
-        if (!isLoading) {
-            setCurrentTime(data.currentTime);
-        }
-    };
-
-    const onLoad = (data) => {
-        setDuration(data.duration);
-        setIsLoading(false);
-    };
-
-    const onLoadStart = () => setIsLoading(true);
-
-    const onEnd = () => {
-        // Uncomment this line if you choose repeat=false in the video player
-        setPlayerState(PLAYER_STATES.ENDED);
-    };
-
-    const onSeeking = (currentTime) => setCurrentTime(currentTime);
-    const noop = (video) => {
-        setPaused(true);
-        setPlayerState(PLAYER_STATES.PAUSED)
-        navigation.navigate('VideoFull', { duration: duration, video: video, time: currentTime })
-    };
     var children = route.params.children['0']
     useFocusEffect(
         React.useCallback(() => {
@@ -126,14 +80,14 @@ const VideoPreview = ({ navigation, route }) => {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                     'Content-Type': 'application/json'
                 }
-            }).then((response) => {
-                if (response.data) {
-                    setShowToast(true)
-                    setloading(false)
+            }).then(async (response) => {
+                if (response.data.data) {
+                    await AsyncStorage.setItem('postid', response.data.data)
+                    await AsyncStorage.setItem('newpost', 'true')
                     navigation.reset({
                         index: 0,
                         routes: [{ name: 'Home' }],
-                    })
+                    });
                 }
                 else {
                     alert('There was an error posting your post, please try again later')
@@ -164,73 +118,27 @@ const VideoPreview = ({ navigation, route }) => {
     return (
         <>
             <View style={{ flex: 1, opacity: loading ? 0.5 : 1 }}>
-                <CompHeader screen={'Create post'} icon={'back'} goback={() => backalert()} />
+                <CompHeader screen={'Post'} icon={'back'} goback={() => backalert()} />
                 <View style={{ flexDirection: 'row', margin: 10 }}>
                     <FastImage style={{ width: 60, height: 60, borderRadius: 10000, margin: 10 }} source={{ uri: children['data']['image'] }} />
                     <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Regular' }}>{children['data']['name'][0].toUpperCase() + children['data']['name'].slice(1)}</Text>
                 </View>
-                <View>
-                    <TextInput autoFocus={true} value={caption} onChangeText={(value) => setcaption(value)} numberOfLines={4} multiline={true} placeholder={'What awesome thing did your kid do today?'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, padding: 10, textAlignVertical: 'top' }} />
-                </View>
-                <View>
-                    <Video
-                        onEnd={onEnd}
-                        onLoad={onLoad}
-                        onLoadStart={onLoadStart}
-                        onProgress={onProgress}
-                        paused={paused}
-                        ref={(ref) => (videoPlayer.current = ref)}
-                        resizeMode="cover"
-                        source={{
-                            uri: route.params.video,
-                        }}
-                        style={styles.mediaPlayer}
-                        playInBackground={false}
-                        playWhenInactive={false}
-                        repeat={false}
-                    />
-                    <MediaControls
-                        duration={duration}
-                        isLoading={isLoading}
-                        mainColor="#327FEB"
-                        onFullScreen={() => noop(route.params.video)}
-                        onPaused={onPaused}
-                        onReplay={onReplay}
-                        onSeek={onSeek}
-                        onSeeking={onSeeking}
-                        playerState={playerState}
-                        progress={currentTime}
-                    >
-                        <MediaControls.Toolbar>
-                        </MediaControls.Toolbar>
-                    </MediaControls>
-                </View>
                 <TouchableOpacity
-                    style={{ height: 60, display: loading ? 'none' : 'flex', marginTop: 50 }}
+                    style={{ height: 36, display: loading ? 'none' : 'flex', marginTop: -67, marginRight: 20 }}
                     onPress={() => {
                         PostUpload();
                     }}
                 >
-                    <View style={styles.Next}>
-                        <Text style={{ color: "#fff", flex: 1, textAlign: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold' }}>
+                    <View style={{ alignSelf: 'flex-end', backgroundColor: '#327FEB', width: 80, borderRadius: 5, height: 36 }}>
+                        <Text style={{ color: "white", alignSelf: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginTop: 3.4 }}>
                             Post
                         </Text>
                     </View>
                 </TouchableOpacity>
-                <Snackbar
-                    visible={ShowToast}
-                    style={{ marginBottom: height * 0.1 }}
-                    duration={1500}
-                    onDismiss={() => setShowToast(false)}
-                    action={{
-                        label: 'Done',
-                        onPress: () => {
-                            // Do something
-                            // navigation.pop();
-                        },
-                    }}>
-                    Posted Successfully!
-                </Snackbar>
+                <View>
+                    <TextInput autoFocus={true} value={caption} onChangeText={(value) => setcaption(value)} numberOfLines={4} multiline={true} placeholder={'What awesome thing did your kid do today?'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, padding: 10, textAlignVertical: 'top', height: 130, marginTop: 40 }} />
+                </View>
+                <VideoPlayer navigation={navigation} video={route.params.video} />
             </View>
             <View style={{ backgroundColor: '#327FEB', height: 310, borderTopLeftRadius: 20, borderTopRightRadius: 20, display: loading ? 'flex' : 'none' }}>
                 <Image style={{ width: 100, height: 100, alignSelf: 'center', marginTop: '20%' }} source={require('../assets/log_loader.gif')} />

@@ -31,66 +31,18 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
 import FastImage from 'react-native-fast-image';
 import InViewPort from "@coffeebeanslabs/react-native-inviewport";
-import Video from 'react-native-video';
+import VideoPlayer from './Video';
 import PostLoader from '../Modules/PostLoader';
-import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const FeedComponent = ({ props, status, children, navigation, item }) => {
     const refActionSheet = useRef(null);
     const [activity, setactivity] = useState(item['item']['data'])
     const [key, setkey] = useState('0')
-    var videoRef = React.createRef();
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
-    const videoPlayer = useRef(null);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [isFullScreen, setIsFullScreen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [paused, setPaused] = useState(true);
-    const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
 
-    const onSeek = (seek) => {
-        videoPlayer?.current.seek(seek);
-    };
-
-    const onPaused = (playerState) => {
-        setPaused(!paused);
-        setPlayerState(playerState);
-    };
-
-    const onReplay = () => {
-        setPlayerState(PLAYER_STATES.PLAYING);
-        videoPlayer?.current.seek(0);
-    };
-
-    const onProgress = (data) => {
-        // Video Player will continue progress even if the video already ended
-        if (!isLoading) {
-            setCurrentTime(data.currentTime);
-        }
-    };
-
-    const onLoad = (data) => {
-        setDuration(data.duration);
-        setIsLoading(false);
-    };
-
-    const onLoadStart = () => setIsLoading(true);
-
-    const onEnd = () => {
-        // Uncomment this line if you choose repeat=false in the video player
-        // setPlayerState(PLAYER_STATES.ENDED);
-    };
-
-    const onSeeking = (currentTime) => setCurrentTime(currentTime);
-    const noop = (video) => {
-        setPaused(true);
-        setPlayerState(PLAYER_STATES.PAUSED)
-        navigation.navigate('VideoFull', { duration: duration, video: video, time: currentTime })
-    };
     const deletepost = (id1) => {
         Alert.alert("Alert", "Are you sure you want to delete the post? The action cannot be reversed", [
             {
@@ -340,7 +292,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })}>
+                    <TouchableWithoutFeedback onPress={() => { children[0]['id']===activity['user_id']?navigation.navigate('Profile'):navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <FastImage
                             source={{
                                 uri: item['item']['data']['user_image'] + item['item']['data']['suff_profile_feed'],
@@ -349,7 +301,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                             style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                         />
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => navigation.navigate('IndProf', { 'id': activity['user_id'].replace('id', '') })}>
+                    <TouchableWithoutFeedback onPress={() => { children[0]['id']===activity['user_id']?navigation.navigate('Profile'):navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
@@ -375,7 +327,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     </Text>
                 </View>}
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
-            <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: activity })}>
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage
                         source={{
@@ -391,7 +343,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         sliderBoxHeight={340}
                         disableOnPress={true}
                         ImageComponentStyle={{ borderRadius: 0, width: width, height: 340, backgroundColor: 'transparent' }}
-                        circleLoop={true}
+                        circleLoop={false}
                     /></View> : <View></View>}
                 </View>
             </TouchableWithoutFeedback>
@@ -400,46 +352,11 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(activity['caption'])[0] }) } }} text={activity['caption']} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                     : null) : null}
             {activity['videos'] ?
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <InViewPort onChange={(value) => value ? null : (setPaused(true), setPlayerState(PLAYER_STATES.PAUSED))}>
-                        <View>
-                            <Video
-                                onEnd={onEnd}
-                                onLoad={onLoad}
-                                onLoadStart={onLoadStart}
-                                onProgress={onProgress}
-                                paused={paused}
-                                ref={(ref) => (videoPlayer.current = ref)}
-                                resizeMode="cover"
-                                source={{
-                                    uri: activity['videos'],
-                                }}
-                                style={styles.mediaPlayer}
-                                playInBackground={false}
-                                playWhenInactive={false}
-                            />
-                            <MediaControls
-                                duration={duration}
-                                isLoading={isLoading}
-                                mainColor="#327FEB"
-                                onFullScreen={() => noop(activity['videos'])}
-                                onPaused={onPaused}
-                                onReplay={onReplay}
-                                onSeek={onSeek}
-                                onSeeking={onSeeking}
-                                playerState={playerState}
-                                progress={currentTime}
-                            >
-                                <MediaControls.Toolbar>
-                                </MediaControls.Toolbar>
-                            </MediaControls>
-                        </View>
-                    </InViewPort>
-                </View> : null
+                <VideoPlayer navigation={navigation} video={activity['videos']} /> : null
             }
             {
                 activity['youtube'] ?
-                    <Thumbnail onPress={() => { navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', activity: activity }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + activity['youtube']} />
+                    <Thumbnail onPress={() => { navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity }) }} imageHeight={200} imageWidth={width} showPlayIcon={true} url={"https://www.youtube.com/watch?v=" + activity['youtube']} />
                     : null
             }
             <View style={{ marginTop: 10 }}>
@@ -448,7 +365,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: 2 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
                     </TouchableWithoutFeedback>
                     <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 5, fontSize: 16, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']}</Text>
-                    <Icon onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: activity, token: status === '3' ? children['0']['data']['gsToken'] : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYWRtaW4ifQ.abIBuk2wSzfz5xFw_9q0YsAN-up4Aoq_ovDzMwx10HM', type: 'comment' })} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: -10 }} />
+                    <Icon onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, id: status === '3' ? children['0']['id'] : '', name: status === '3' ? children['0']['data']['name'] : '', image: status === '3' ? children['0']['data']['image'] : '', activity: activity, type: 'comment' })} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: -10 }} />
                     <Text style={{ fontFamily: 'NunitoSans-Bold', marginLeft: 15, fontSize: 16, marginBottom: 2 }}>{activity['comments_count']}</Text>
                     <TouchableOpacity style={{ width: 50, marginLeft: '60%', padding: 10, right: 12, alignItems: 'center' }}
                         onPress={async () => {
@@ -472,11 +389,4 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         </View >
     )
 };
-const styles = StyleSheet.create({
-    mediaPlayer: {
-        height: 340,
-        width: width,
-        backgroundColor: "black",
-    },
-});
 export default FeedComponent;

@@ -27,11 +27,7 @@ import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
 import FeedComponent from '../Modules/FeedComponent';
-import Video from 'react-native-video';
-import InViewPort from "@coffeebeanslabs/react-native-inviewport";
-import VideoPlayer from 'react-native-video-player'
 import PostLoader from '../Modules/PostLoader';
-import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const FeedScreen = ({ navigation, route }) => {
@@ -59,11 +55,13 @@ const FeedScreen = ({ navigation, route }) => {
 
     const [following, setfollowing] = useState([])
     const [routes, setroutes] = React.useState([]);
+    const [posted, setposted] = React.useState(false);
     const [quiz, setquiz] = useState([])
     const [inspire, setinspire] = useState([])
     const [year, setyear] = useState([])
     const [trending, settrending] = useState([])
     const [index, setIndex] = useState(0);
+    const [postid, setpostid] = useState('')
     var status = route.params.status
     var children = route.params.children
     const [newnoti, setnewnoti] = useState(false);
@@ -71,10 +69,24 @@ const FeedScreen = ({ navigation, route }) => {
     const [refreshing, setrefreshing] = useState({ 'following': false, 'inspire': false, 'year': false, 'quiz': false, 'trending': false })
     var mintimestamp = Math.round(new Date().getTime() / 1000)
     const [min_time, setmin_time] = useState({ 'following': mintimestamp, 'inspire': mintimestamp, 'year': mintimestamp, 'quiz': mintimestamp, 'trending': mintimestamp })
-    var videoRef = React.createRef();
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
+    useEffect(() => {
+        const data = async () => {
+            var newpost = await AsyncStorage.getItem('newpost')
+            var postid = await AsyncStorage.getItem('postid')
+            if (newpost) {
+                setposted(true);
+                setpostid(postid);
+                AsyncStorage.multiRemove(['newpost', 'postid'])
+                setTimeout(() => {
+                    setposted(false);
+                }, 10000);
+            }
+        }
+        data()
+    }, [])
     var d = new Date();
     var currentyear = parseInt(d.getFullYear());
     useEffect(() => {
@@ -313,14 +325,29 @@ const FeedScreen = ({ navigation, route }) => {
     return (
         <>
             <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
-            <TabView
+            {/* <TabView
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
-            />
+            /> */}
+            {/* <FeedView status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} /> */}
+            <Snackbar
+                visible={posted}
+                onDismiss={() => console.log('hello')}
+                action={{
+                    label: 'View Post',
+                    onPress: () => {
+                        // Do something
+                        setposted(false)
+                        navigation.navigate('SharedPost', { 'id': postid })
+                    },
+                }}>
+                <Text style={{ fontFamily: "NunitoSans-Bold" }}>Posted Successfully!</Text>
+            </Snackbar>
         </>
+
     )
 }
 const styles = StyleSheet.create({

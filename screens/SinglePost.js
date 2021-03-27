@@ -23,10 +23,7 @@ import FeedComponent from '../Modules/FeedComponent'
 import FastImage from 'react-native-fast-image'
 import axios from 'axios';
 import KeyboardStickyView from 'rn-keyboard-sticky-view';
-import Video from 'react-native-video';
-import InViewPort from "@coffeebeanslabs/react-native-inviewport";
-import PostLoader from '../Modules/PostLoader';
-import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
+import VideoPlayer from '../Modules/Video';
 import ReadMore from 'react-native-read-more-text';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
@@ -53,9 +50,25 @@ const SinglePostScreen = ({ navigation, route }) => {
                 BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
         }, []));
-    const keyboardDidShowListener = React.useRef();
-    const scrollref = React.useRef();
-    const keyboardDidHideListener = React.useRef();
+        useEffect(() => {
+            Keyboard.addListener("keyboardDidShow", _keyboardDidShow);
+            Keyboard.addListener("keyboardDidHide", _keyboardDidHide);
+        
+            // cleanup function
+            return () => {
+              Keyboard.removeListener("keyboardDidShow", _keyboardDidShow);
+              Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
+            };
+          }, []);
+        
+          const _keyboardDidShow = () => {
+            scrollref.scrollToEnd({ animated: true })
+          };
+        
+          const _keyboardDidHide = () => {
+          };
+        
+    var scrollref = React.useRef();
     const [comments, setcomments] = useState([])
     const [comment, setcomment] = useState('')
     const [loading, setloading] = useState(activity['comments_count'])
@@ -63,53 +76,6 @@ const SinglePostScreen = ({ navigation, route }) => {
     const status = route.params.status
     const children = route.params.children
     var d = new Date();
-    const videoPlayer = useRef(null);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [isFullScreen, setIsFullScreen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [paused, setPaused] = useState(true);
-    const [playerState, setPlayerState] = useState(PLAYER_STATES.PLAYING);
-
-    const onSeek = (seek) => {
-        videoPlayer?.current.seek(seek);
-    };
-
-    const onPaused = (playerState) => {
-        setPaused(!paused);
-        setPlayerState(playerState);
-    };
-
-    const onReplay = () => {
-        setPlayerState(PLAYER_STATES.PLAYING);
-        videoPlayer?.current.seek(0);
-    };
-
-    const onProgress = (data) => {
-        // Video Player will continue progress even if the video already ended
-        if (!isLoading) {
-            setCurrentTime(data.currentTime);
-        }
-    };
-
-    const onLoad = (data) => {
-        setDuration(data.duration);
-        setIsLoading(false);
-    };
-
-    const onLoadStart = () => setIsLoading(true);
-
-    const onEnd = () => {
-        // Uncomment this line if you choose repeat=false in the video player
-        // setPlayerState(PLAYER_STATES.ENDED);
-    };
-
-    const onSeeking = (currentTime) => setCurrentTime(currentTime);
-    const noop = (video) => {
-        setPaused(true);
-        setPlayerState(PLAYER_STATES.PAUSED)
-        navigation.navigate('VideoFull', { duration: duration, video: video, time: currentTime })
-    };
     const onShare = async (message) => {
         try {
             const result = await Share.share({
@@ -236,7 +202,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 9, }} />
                 <View style={{ flexDirection: 'row', marginTop: 8 }}>
-                    <Text onPress={()=>navigation.navigate('LikesList', { 'post_id': '' })} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
+                    <Text onPress={() => navigation.navigate('LikesList', { 'post_id': '' })} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 15, fontSize: 14, marginBottom: 2, marginRight: 8 }}>{activity['likes_count']} likes</Text>
                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 7, fontSize: 14, marginBottom: 2 }}>{activity['comments_count']} comments</Text>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
@@ -259,14 +225,14 @@ const SinglePostScreen = ({ navigation, route }) => {
             <View key={'content'} style={{ paddingVertical: 20 }}>
                 {activity['caption'] === 'default123' ?
                     <View style={{ margin: 5 }}></View> :
-                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom:10 }}>
-                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{fontFamily:'NunitoSans-Bold', color:'#327FEB'}}>See More</Text>) }} numberOfLines={3}>
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See More</Text>) }} numberOfLines={3}>
                             <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
                                 {activity['caption'] === 'default123' ? '' : activity['caption']}
                             </Text>
                         </ReadMore>
                     </View>}
-                    {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
+                {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['images'] ?
                     <ImageView
                         key={'2'}
@@ -302,38 +268,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
                 <View style={{ marginTop: 13 }}>
                     {activity['videos'] ?
-                        <View>
-                            <Video
-                                onEnd={onEnd}
-                                onLoad={onLoad}
-                                onLoadStart={onLoadStart}
-                                onProgress={onProgress}
-                                paused={paused}
-                                ref={(ref) => (videoPlayer.current = ref)}
-                                resizeMode="cover"
-                                source={{
-                                    uri: activity['videos'],
-                                }}
-                                style={styles.mediaPlayer}
-                                playInBackground={false}
-                                playWhenInactive={false}
-                            />
-                            <MediaControls
-                                duration={duration}
-                                isLoading={isLoading}
-                                mainColor="#327FEB"
-                                onFullScreen={() => noop(activity['videos'])}
-                                onPaused={onPaused}
-                                onReplay={onReplay}
-                                onSeek={onSeek}
-                                onSeeking={onSeeking}
-                                playerState={playerState}
-                                progress={currentTime}
-                            >
-                                <MediaControls.Toolbar>
-                                </MediaControls.Toolbar>
-                            </MediaControls>
-                        </View> : null}
+                        <VideoPlayer navigation={navigation} video={activity['videos']} /> : null}
                     {activity['youtube'] ?
                         <YoutubePlayer
                             videoId={activity['youtube']} // The YouTube video ID
@@ -420,7 +355,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     return (
         <View key={key} style={styles.container}>
             <CompHeader style={{ position: 'absolute' }} screen={'Post'} icon={'back'} goback={() => navigation.navigate('Home')} />
-            <ScrollView>
+            <ScrollView ref={ref => { scrollref = ref }}>
                 <CustomActivity />
             </ScrollView>
             {status === '3' ? 0 ? <CompButton message={'You have been temporarily banned from commenting'} back={'Home'} /> :
@@ -440,7 +375,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         style={styles.textInput}
                         enablesReturnKeyAutomatically={true}
                     />
-                    {comment ? <Text onPress={() => addcomment()} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>Post</Text> : null}
+                    {comment ? <Icon onPress={() => addcomment()} type="MaterialIcons" name="send" style={{ color: '#327FEB' }} /> : null}
                 </KeyboardStickyView> :
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_comment' })}><CompButton message={'Signup/Login to add comments for this post'} back={'Home'} /></TouchableWithoutFeedback>}
         </View>
@@ -471,11 +406,6 @@ const styles = StyleSheet.create({
     },
     textInputButton: {
         flexShrink: 1,
-    },
-    mediaPlayer: {
-        height: 340,
-        width: width,
-        backgroundColor: "black",
     },
 });
 export default SinglePostScreen

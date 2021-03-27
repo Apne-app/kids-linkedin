@@ -84,7 +84,7 @@ const VideoFullScreen = ({ route, navigation }) => {
         navigation.pop()
     };
     return (
-        <View>
+        <View style={{ backgroundColor: 'black' }}>
             <Video
                 onEnd={onEnd}
                 onLoad={onLoad}
@@ -96,8 +96,8 @@ const VideoFullScreen = ({ route, navigation }) => {
                 source={{
                     uri: route.params.video,
                 }}
-                style={{ width: width, height: height }}
-                fullscreen={true}
+                style={{ width: width, height: height, backgroundColor: 'black', marginTop: 20 }}
+                // fullscreen={true}
                 fullscreenOrientation={'potrait'}
             />
             <MediaControls
@@ -111,6 +111,7 @@ const VideoFullScreen = ({ route, navigation }) => {
                 onSeeking={onSeeking}
                 playerState={playerState}
                 progress={currentTime}
+                showOnStart={true}
             >
                 <MediaControls.Toolbar>
                 </MediaControls.Toolbar>

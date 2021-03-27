@@ -49,6 +49,7 @@ const Searching = ({ route, navigation }) => {
     const [result, setresult] = React.useState([]);
     const [token, setToken] = React.useState('');
     const status = route.params.status
+    const children = route.params.children
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -106,17 +107,9 @@ const Searching = ({ route, navigation }) => {
         return (
             <View key={item.id} style={{ alignSelf: 'center', margin: 1 }}>
                 <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
-                    navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
-                    var x = await AsyncStorage.getItem('children');
-                    if (x) {
-                        x = JSON.parse(x)
-                        if (Object.keys(x).length == 0) {
-                            await AsyncStorage.removeItem('children');
-                            x = null
-                        }
-                    }
+                    children[0]['id']===item.id?navigation.navigate('Profile'):navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
                     analytics.track('SearchedKidOpened', {
-                        userID: x ? JSON.parse(x)["0"]["id"] : null,
+                        userID: children ? children["0"]["id"] : null,
                         deviceID: getUniqueId()
                     })
                 }}>

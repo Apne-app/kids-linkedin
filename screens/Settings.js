@@ -34,7 +34,16 @@ const Settings = ({ navigation, route }) => {
     const onKeyboardShow = event => {
         setKeyboardOffset(event.endCoordinates.height + 400);
     }
-
+    useFocusEffect(
+        React.useCallback(() => {
+          const onBackPress = () => {
+            navigation.pop()
+            return true;
+          };
+          BackHandler.addEventListener("hardwareBackPress", onBackPress);
+          return () =>
+            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        }, []));
     const onKeyboardHide = () => setKeyboardOffset(400);
 
     useEffect(() => {
@@ -244,7 +253,7 @@ const Settings = ({ navigation, route }) => {
                     onPress={() => sheetRef.current.snapTo(1)}
                 />
             </Animated.View>
-            <CompHeader screen={'Settings'} goback={() => navigation.navigate('Profile')} icon={'back'} />
+            <CompHeader screen={'Settings'} goback={() => navigation.pop()} icon={'back'} />
             <ScrollView keyboardShouldPersistTaps={'handled'} style={{ opacity: logging ? 0.2 : 1 }}>
                 <View style={{ margin: 25 }}>
                     <View >

@@ -34,7 +34,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const children = route.params.children
     const status = route.params.status
     const [place, setplace] = useState(0)
-    const [data, setdata] = useState({ 'followers': [], 'following': [], type: 'loading' })
+    const [data, setdata] = useState({ 'followers': 0, 'following': 0, type: 'loading' })
     const [token, setToken] = useState('');
     const [loading, setloading] = useState(true);
     const [key, setkey] = useState('1')

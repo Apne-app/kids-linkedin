@@ -16,6 +16,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image';
 import AuthContext from '../Context/Data';
 import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -131,7 +132,7 @@ const SearchScreen = ({ route, navigation }) => {
                   userID: x ? JSON.parse(x)["0"]["id"] : null,
                   deviceID: getUniqueId()
                 });
-                navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })
+                children[0]['id'] === joined[item]['id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })
               }
               }
               >
@@ -167,7 +168,7 @@ const SearchScreen = ({ route, navigation }) => {
                   userID: x ? JSON.parse(x)["0"]["id"] : null,
                   deviceID: getUniqueId()
                 });
-                navigation.navigate('IndProf', { 'id': item['user_id'], 'data': { 'name': item['user_name'], 'image': item['user_image'], 'year': item['user_year'] } })
+                children[0]['id'] === item['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { 'id': item['user_id'], 'data': { 'name': item['user_name'], 'image': item['user_image'], 'year': item['user_year'] } })
               }
               }
               >
