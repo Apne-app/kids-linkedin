@@ -204,7 +204,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const renderScene = ({ route }) => {
         if (data[route.key]) {
-            return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+            return <FeedView scrollY={scrollY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
         }
         else {
             return <PostLoader />
