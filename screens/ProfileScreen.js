@@ -133,7 +133,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
                         <FastImage
                             source={{
-                                uri: children[0]['data']['image'],
+                                uri: children[0]['data']['image-profile'] ? children[0]['data']['image-profile'] : children[0]['data']['image'],
                             }}
                             style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
                         />
@@ -403,7 +403,8 @@ const ProfileScreen = ({ navigation, route }) => {
                                                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
                                                 resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
                                                 axios.post("http://ec2co-ecsel-1bslcbaqpti2m-1945288392.ap-south-1.elb.amazonaws.com/profileimageoptimize", {
-                                                    "url": resp[0]['data']['image']
+                                                    "url": resp[0]['data']['image'],
+                                                    "post_id": "0"
                                                 })
                                                 Update({ 'children': resp })
                                             })

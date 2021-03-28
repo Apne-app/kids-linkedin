@@ -120,7 +120,7 @@ const Upload = ({ route, navigation }) => {
   };
 
   const backButtonChange = () => {
-    // console.log('asdas')
+    console.log('asdas')
 
     const backAction = async () => {
 
@@ -575,40 +575,18 @@ const Upload = ({ route, navigation }) => {
 
   // }
 
-  const deleteSingleImage = async (item) => {
-    RNFS.unlink(item)
-      .then(() => {
-        console.log('FILE DELETED');
-      })
-      // `unlink` will throw an error, if the item to unlink does not exist
-      .catch((err) => {
-        console.log(err.message);
-      });
-    var x = await AsyncStorage.getItem('children')
-    x = JSON.parse(x)["0"]["data"]["gsToken"];
-    var config = {
-      method: 'get',
-      url: `https://gvsa1w2ib3.execute-api.ap-south-1.amazonaws.com/default/deleteFromS3?token=${x}&time=${time}&filename=${item.split('_')[1]}`,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-    // console.log(config);
-    axios(config)
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      })
-
-  }
-
   const deleteImages = async () => {
     var tme = new Date(time);
     tme = tme.toString();
     tme = tme.replace(/:/g, "-");
     var delDir = `${pathDir}/Images/`;
+
+    explore.map((item, i) => {
+      if(item.prevImg && item.uri) {
+        deleteSingleImage(item['uri'], i-1)
+      }
+    })
+    
     RNFS.exists(delDir)
       .then((result) => {
         console.log("file exists: ", result);
@@ -635,6 +613,36 @@ const Upload = ({ route, navigation }) => {
       .catch((err) => {
         console.log(err.message);
       });
+  }
+
+  const deleteSingleImage = async (item, i) => {
+    RNFS.unlink(item)
+      .then(() => {
+        console.log('FILE DELETED');
+      })
+      // `unlink` will throw an error, if the item to unlink does not exist
+      .catch((err) => {
+        console.log(err.message);
+      });
+    var x = await AsyncStorage.getItem('children')
+    x = JSON.parse(x)["0"]["data"]["gsToken"];
+    console.log('aaaaaaaaaa')
+    var config = {
+      method: 'get',
+      url: `https://gvsa1w2ib3.execute-api.ap-south-1.amazonaws.com/default/deleteFromS3?token=${x}&time=${time}&filename=${time+'-'+i+'.png'}`,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    // console.log(config);
+    axios(config)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+
   }
 
   const [caption, setcaption] = React.useState('');
@@ -704,7 +712,7 @@ const Upload = ({ route, navigation }) => {
       var array = [...explore];
       for (var i = 1; i < array.length; i++) {
         if (array[i]['selected']) {
-          deleteSingleImage(array[i]['uri'])
+          deleteSingleImage(array[i]['uri'], i-1)
           array.splice(i, 1);
           i--;
         }
@@ -800,7 +808,7 @@ const Upload = ({ route, navigation }) => {
       <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 100 }}>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <TouchableOpacity
-            style={{ height: 50 }}
+            style={{ height: 45 }}
             onPress={async () => {
               var x = await AsyncStorage.getItem('children');
               analytics.track('Did not save collection', {
@@ -982,6 +990,7 @@ const Upload = ({ route, navigation }) => {
                 {
                   item.height != 0 ?
                     <TouchableOpacity style={{ flex: 1, flexDirection: 'column', }} onPress={() => {
+                      // console.log(explore)
                       if (selecting) {
                         var array = [...explore];
                         if (array[index]['selected']) {
@@ -1099,16 +1108,17 @@ const Upload = ({ route, navigation }) => {
           <TouchableOpacity
             style={{ height: 50, position: 'absolute', bottom: 15, alignSelf: 'center' }}
             onPress={() => {
-              var array = [...explore];
-              for (var i = 1; i < array.length; i++) {
-                if (array[i]['selected']) {
-                  array.splice(i, 1);
-                  i--;
-                }
-              }
-              setDeleteCount(0);
-              setExplore([...array]);
-              setSelecting(false);
+              // var array = [...explore];
+              // for (var i = 1; i < array.length; i++) {
+              //   if (array[i]['selected']) {
+              //     array.splice(i, 1);
+              //     i--;
+              //   }
+              // }
+              // setDeleteCount(0);
+              // setExplore([...array]);
+              // setSelecting(false);
+              deletes()
             }}
           >
             <View style={styles.Next}>
@@ -1446,7 +1456,7 @@ const styles = StyleSheet.create({
   Cancel: {
     alignSelf: 'center',
     flexDirection: 'row',
-    padding: 8,
+    padding: 10,
     // marginBottom: 4,
     backgroundColor: '#fff',
     borderRadius: 30,

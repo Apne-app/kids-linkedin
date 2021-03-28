@@ -176,20 +176,6 @@ const FileScreen = (props) => {
                     }
                     catch (err) {
                         console.log(err);
-                        var finalArr = [...amp];
-                        function compare( a, b ) {
-                            // console.log(createDate2(a.timestamp), createDate2(b.timestamp));
-                            if ( createDate2(a.timestamp) < createDate2(b.timestamp) ){
-                                return 1;
-                            }
-                            if ( createDate2(a.timestamp) > createDate2(b.timestamp) ){
-                                return -1;
-                            }
-                            return 0;
-                        }
-                        
-                        finalArr.sort(compare);
-                        setFiles([...finalArr]);
                         setSynced(true)
                     }
                 })

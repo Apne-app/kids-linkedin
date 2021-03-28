@@ -31,7 +31,7 @@ import PostLoader from '../Modules/PostLoader';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
-const TestList = ({scrollY, setTabBarTop}) => {
+const TestList = ({scrollY}) => {
     return (
         <FlatList
                 data={['aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc']}
@@ -83,10 +83,10 @@ const FeedScreen = ({ navigation, route }) => {
         }, []));
 
     const scrollY = new Animated.Value(0);
-    const diffClamp = Animated.diffClamp(scrollY, 0, 19);
+    const diffClamp = Animated.diffClamp(scrollY, 0, 80);
     const translateY = diffClamp.interpolate({
-        inputRange : [0, 10],
-        outputRange : [0, -10]
+        inputRange : [0, 80],
+        outputRange : [0, -80]
     })
     const [routes, setroutes] = React.useState([]);
     const [posted, setposted] = React.useState(false);
@@ -227,7 +227,7 @@ const FeedScreen = ({ navigation, route }) => {
                 inactiveColor={'black'}
                 pressColor={'lightblue'}
                 indicatorStyle={{ backgroundColor: 'white' }}
-                style={{ backgroundColor: 'white' }}
+                style={{ backgroundColor: 'white', marginTop: 80 }}
                 tabStyle={{ width: width / 3.6 }}
                 scrollEnabled={true}
                 bounces={true}
@@ -254,7 +254,6 @@ const FeedScreen = ({ navigation, route }) => {
             <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
             </Animated.View>
             <TabView
-            style={{top: tabBarTop, left: 0, right: 0}}
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
