@@ -17,7 +17,7 @@ function randomStr(len, arr) {
     return ans;
 }
 
-const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status }) => {
+const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY }) => {
     return (
         <React.Fragment>
             {status === '3' || feed_type != 'following' ? <FlatList
@@ -33,6 +33,9 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     return (
                         <PostLoader />
                     )
+                }}
+                onScroll={(e) => {
+                    scrollY.setValue(e.nativeEvent.contentOffset.y)
                 }}
                 onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                 extraData={refreshing}

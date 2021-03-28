@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import FastImage from 'react-native-fast-image';
-import { SafeAreaView, FlatList, View, BackHandler, Alert, Text, Dimensions, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, FlatList, View, BackHandler, Animated, Alert, Text, Dimensions, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea, Tab, Tabs } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -30,6 +30,35 @@ import FeedComponent from '../Modules/FeedComponent';
 import PostLoader from '../Modules/PostLoader';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
+
+const TestList = ({scrollY, setTabBarTop}) => {
+    return (
+        <FlatList
+                data={['aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc']}
+                // refreshing={refreshing}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={5}
+                updateCellsBatchingPeriod={60}
+                initialNumToRender={5}
+                // onRefresh={() => onRefresh(feed_type)}
+                windowSize={10}
+                // ListEmptyComponent={() => {
+                //     return (
+                //         <PostLoader />
+                //     )
+                // }}
+                onScroll={(e) => {
+                    scrollY.setValue(e.nativeEvent.contentOffset.y)
+                }}
+                // onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
+                // extraData={refreshing}
+                renderItem={(item) => (<Text style={{height: 300}}>asdasdsa</Text>)}
+                // keyExtractor={item => randomStr(20, '123456789')}
+            /> 
+    )
+}
+
+
 const FeedScreen = ({ navigation, route }) => {
 
     useFocusEffect(
@@ -53,11 +82,19 @@ const FeedScreen = ({ navigation, route }) => {
 
         }, []));
 
+    const scrollY = new Animated.Value(0);
+    const diffClamp = Animated.diffClamp(scrollY, 0, 19);
+    const translateY = diffClamp.interpolate({
+        inputRange : [0, 10],
+        outputRange : [0, -10]
+    })
+
     const [following, setfollowing] = useState([])
     const [routes, setroutes] = React.useState([]);
     const [posted, setposted] = React.useState(false);
     const [quiz, setquiz] = useState([])
     const [inspire, setinspire] = useState([])
+    const [tabBarTop, setTabBarTop] = useState(80)
     const [year, setyear] = useState([])
     const [trending, settrending] = useState([])
     const [index, setIndex] = useState(0);
@@ -289,20 +326,29 @@ const FeedScreen = ({ navigation, route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'follow':
-                return <FeedView status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} />;
+                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} />;
             case 'trending':
-                return <FeedView status={status} navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['trending']} feed_type={'trending'} />;
+                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['trending']} feed_type={'trending'} />;
             case 'years':
-                return <FeedView status={status} navigation={navigation} children={children} data={year} onRefresh={onRefresh} refreshing={refreshing['year']} feed_type={'year'} />;
+                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={year} onRefresh={onRefresh} refreshing={refreshing['year']} feed_type={'year'} />;
             case 'quiz':
-                return <FeedView status={status} navigation={navigation} children={children} data={quiz} onRefresh={onRefresh} refreshing={refreshing['quiz']} feed_type={'quiz'} />;
+                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={quiz} onRefresh={onRefresh} refreshing={refreshing['quiz']} feed_type={'quiz'} />;
             case 'inspire':
-                return <FeedView status={status} navigation={navigation} children={children} data={inspire} onRefresh={onRefresh} refreshing={refreshing['inspire']} feed_type={'inspire'} />;
+                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={inspire} onRefresh={onRefresh} refreshing={refreshing['inspire']} feed_type={'inspire'} />;
 
         }
     };
     const renderTabBar = (props) => {
         return (
+            <Animated.View
+                style={{
+                    transform: [
+                        {translateY: translateY}
+                    ],
+                    zIndex: 5,
+                    position: 'absolute'
+                }}
+            >
             <TabBar
                 {...props}
                 activeColor={'#327FEB'}
@@ -320,19 +366,31 @@ const FeedScreen = ({ navigation, route }) => {
                 )}
                 indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
             />
+            </Animated.View>
         )
     }
     return (
         <>
+            <Animated.View
+                style={{
+                    transform: [
+                        {translateY: translateY}
+                    ],
+                    zIndex: 5
+                }}
+            >
             <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
-            {/* <TabView
-                navigationState={{ index, routes }}
-                renderScene={renderScene}
-                onIndexChange={setIndex}
-                scrollEnabled={true}
-                renderTabBar={renderTabBar}
-            /> */}
+            </Animated.View>
+            <TabView
+            style={{top: tabBarTop, left: 0, right: 0}}
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            scrollEnabled={true}
+            renderTabBar={renderTabBar}
+            />
             {/* <FeedView status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} /> */}
+            
             <Snackbar
                 visible={posted}
                 onDismiss={() => console.log('hello')}
