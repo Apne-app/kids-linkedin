@@ -404,7 +404,8 @@ const ProfileScreen = ({ navigation, route }) => {
                                                 resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
                                                 axios.post("http://ec2co-ecsel-1bslcbaqpti2m-1945288392.ap-south-1.elb.amazonaws.com/profileimageoptimize", {
                                                     "url": resp[0]['data']['image'],
-                                                    "post_id": "0"
+                                                    "post_id": "0",
+                                                    "id": children[0]['id']
                                                 })
                                                 Update({ 'children': resp })
                                             })
