@@ -137,7 +137,7 @@ const NotificationScreen = ({ route, navigation }) => {
             </View>
             <View style={{ width: width - 80, alignSelf: 'center', height: 0.5, backgroundColor: 'lightgrey', marginVertical: 5 }}></View>
           </TouchableOpacity> :
-          <TouchableOpacity onPress={() => { notifications[item]['actid'] ? navigation.navigate('SinglePost', { 'id': notifications[item]['actid'] }) : null }} key={item}>
+          <TouchableOpacity onPress={() => { notifications[item]['actid'] ? navigation.navigate('SharedPost', { 'id': notifications[item]['actid'] }) : null }} key={item}>
             <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft: 10, }}>
               {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 2, marginTop: 16, marginRight: 10 }} />}
               <Image style={{ width: 40, height: 40, borderRadius: 1000 }} source={{ uri: notifications[item]['image'] }} />

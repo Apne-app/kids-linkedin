@@ -17,7 +17,6 @@ import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import { useFocusEffect } from "@react-navigation/native";
 import CompHeader from '../Modules/CompHeader';
-import ToggleSwitch from 'toggle-switch-react-native';
 // import ImagePicker from 'react-native-image-crop-picker';
 import { launchImageLibrary } from 'react-native-image-picker'
 import { setMinimumFetchIntervalInSeconds } from 'clevertap-react-native';
@@ -418,16 +417,6 @@ export default class ExampleApp extends PureComponent {
                 </TouchableOpacity>
                 <View style={{ flex: 1, alignSelf: 'center', position: 'absolute', bottom: 10, flexDirection: 'row' }}>
                   <Text style={{ color: "white", fontWeight: "900", fontFamily: 'NuntitoSans-Bold', bottom: 10 }}>Camera</Text>
-                  {/* <ToggleSwitch
-                    isOn={}
-                    offColor="lightgrey"
-                    animationSpeed={200}
-                    label=""
-                    size="medium"
-                    onColor={'#327FEB'}
-                    onToggle={isOn => { this.setState({ isOn: true }); pickVideo() }}
-                    style={{ marginHorizontal: 10, bottom: 8 }}
-                  /> */}
                   <Switch
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
                     thumbColor={this.state.isOn ? "#327feb" : "lightblue"}

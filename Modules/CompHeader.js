@@ -6,7 +6,6 @@ import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
 import { Appbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
-import Constants from "expo-constants";
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const CompHeader = (props) => {
@@ -28,7 +27,6 @@ const CompHeader = (props) => {
     getHeader();
   })
 
-  // statusBarHeight={Constants.statusBarHeight}
   return (<Appbar.Header style={{ backgroundColor: '#327FEB' }}>
     <View style={{ flexDirection: 'row', flex: 1, marginLeft: 10 }}>
       <TouchableOpacity onPress={() => props.goback()}>

@@ -12,7 +12,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { SliderBox } from "react-native-image-slider-box";
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import { RNS3 } from 'react-native-aws3';
-import { connect } from 'getstream';
 import FastImage from 'react-native-fast-image'
 import CompHeader from '../Modules/CompHeader';
 

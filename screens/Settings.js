@@ -7,7 +7,6 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
-import email from 'react-native-email'
 import analytics from '@segment/analytics-react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { StackActions } from '@react-navigation/native';
@@ -24,6 +23,7 @@ const Settings = ({ navigation, route }) => {
     const children = route.params.children
     const [bottomSheetOpen, setBottomSheetOpen] = React.useState(false);
     const [logging, setlogging] = React.useState(false);
+    const [loading, setloading] = React.useState(false);
     const [newname, setnewname] = React.useState('default123');
     const status = route.params.status
     const [key, setkey] = useState('2')
@@ -36,13 +36,13 @@ const Settings = ({ navigation, route }) => {
     }
     useFocusEffect(
         React.useCallback(() => {
-          const onBackPress = () => {
-            navigation.pop()
-            return true;
-          };
-          BackHandler.addEventListener("hardwareBackPress", onBackPress);
-          return () =>
-            BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+            const onBackPress = () => {
+                navigation.pop()
+                return true;
+            };
+            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            return () =>
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
         }, []));
     const onKeyboardHide = () => setKeyboardOffset(400);
 
@@ -97,7 +97,7 @@ const Settings = ({ navigation, route }) => {
             var arr = await AsyncStorage.getAllKeys()
             var index = arr.indexOf("camerastatus");
             if (index > -1) {
-              arr.splice(index, 1);
+                arr.splice(index, 1);
             }
             // console.log(arr)
             await AsyncStorage.multiRemove(arr)
@@ -183,11 +183,12 @@ const Settings = ({ navigation, route }) => {
         analyse();
     })
     const save = async () => {
+        setloading(true)
         var child = await AsyncStorage.getItem('children')
         var pro = await AsyncStorage.getItem('profile')
         pro = JSON.parse(pro)
         child = JSON.parse(child)[0]
-        var data = JSON.stringify({ "cid": child.id, "change": "name", "name": newname.toLowerCase(), "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
+        var data = JSON.stringify({ "user_id": child.id, "change": "name", "name": newname.toLowerCase(), "image":'' });
         var data1 = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
         var token = '';
         var config1 = {
@@ -202,8 +203,9 @@ const Settings = ({ navigation, route }) => {
             .then(async function (response) {
                 var config = {
                     method: 'post',
-                    url: `https://api.genio.app/matrix/update_child/?token=${response.data.token}`,
+                    url: `http://mr_robot.api.genio.app/update_child`,
                     headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                         'Content-Type': 'application/json'
                     },
                     data: data
@@ -259,8 +261,8 @@ const Settings = ({ navigation, route }) => {
                     <View >
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
                         <TextInput editable={status === '3' ? true : false} keyboardType={'name-phone-pad'} value={status === '3' ? newname == 'default123' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : newname : 'Login to edit Kid\'s Name'} onChangeText={(text) => { setnewname(text); setchange(false) }} editable={status === '3' ? true : false} placeholder={status === '3' ? '' : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, display: newname === 'default123' || change ? 'none' : 'flex' }} onPress={() => save()} >
-                            <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text>
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, display: newname === 'default123' || change ? 'none' : 'flex' }} onPress={() => !loading?save():null} >
+                            {!loading?<Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text>:<Image style={{width:40, height:40}} source={require('../assets/log_loader.gif')} />}
                         </Button>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
                         <TextInput editable={false} placeholder={status === '3' ? String(children['0']['data']['year']) : 'Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
@@ -293,24 +295,24 @@ const Settings = ({ navigation, route }) => {
                         }} >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>Give Feedback</Text>
                         </Button>
-                        <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={async () =>{
+                        <Button block rounded style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57 }} onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('ContactUs', {
                                 userID: x ? JSON.parse(x)["0"]["id"] : null,
                                 deviceID: getUniqueId()
                             })
                             axios.get('https://api.genio.app/get-out/whatsappcontact/')
-                            .then(whatsappcontact => {
-                                whatsappcontact = whatsappcontact.data;
-                                Linking.openURL('whatsapp://send?text=&phone='+whatsappcontact)
-                            })
-                        } 
-                        } 
+                                .then(whatsappcontact => {
+                                    whatsappcontact = whatsappcontact.data;
+                                    Linking.openURL('whatsapp://send?text=&phone=' + whatsappcontact)
+                                })
+                        }
+                        }
                         >
                             <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17, alignSelf: 'center', marginLeft: 40 }}>Contact Us</Text>
                             <Icon name="whatsapp" type="Fontisto" style={{ fontSize: 20, color: '#4FCE5D' }} />
                         </Button>
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status === '3' ? logout() : navigation.navigate('Login', { type:'settings_login' })} >
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => status === '3' ? logout() : navigation.navigate('Login', { type: 'settings_login' })} >
                             <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{status === '3' ? 'Logout' : 'Login'}</Text>
                         </Button>
                         <Text style={{ color: "grey", fontFamily: 'NunitoSans-Bold', fontSize: 13, textAlign: 'center', marginTop: 2 }}>v{getVersion()}</Text>

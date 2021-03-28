@@ -6,7 +6,6 @@ import { Text, StyleSheet, Dimensions, View, ImageBackground, Image, KeyboardAvo
 import { configureFonts, DefaultTheme, Provider as PaperProvider, } from 'react-native-paper';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
 import { Appbar } from 'react-native-paper';
-import Constants from "expo-constants";
 const CompHeader = (props) => {
     const images = {
         close: require('../Icons/close.png'),

@@ -8,12 +8,9 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea, Tab, Tabs } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import LikeButton from '../components/LikeButton';
-import { Viewport } from '@skele/components'
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
-import { connect } from 'getstream';
-import * as rssParser from 'react-native-rss-parser';
 import { useFocusEffect } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -33,7 +30,6 @@ import * as Animatable from 'react-native-animatable';
 import FeedComponent from '../Modules/FeedComponent';
 import Video from 'react-native-video';
 import InViewPort from "@coffeebeanslabs/react-native-inviewport";
-import VideoPlayer from 'react-native-video-player'
 import PostLoader from '../Modules/PostLoader';
 import MediaControls, { PLAYER_STATES } from 'react-native-media-controls';
 import { height, width } from '../Modules/CommonImports';

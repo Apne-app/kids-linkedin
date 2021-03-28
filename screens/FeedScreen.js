@@ -88,24 +88,17 @@ const FeedScreen = ({ navigation, route }) => {
         inputRange : [0, 10],
         outputRange : [0, -10]
     })
-
-    const [following, setfollowing] = useState([])
     const [routes, setroutes] = React.useState([]);
     const [posted, setposted] = React.useState(false);
-    const [quiz, setquiz] = useState([])
-    const [inspire, setinspire] = useState([])
-    const [tabBarTop, setTabBarTop] = useState(80)
-    const [year, setyear] = useState([])
-    const [trending, settrending] = useState([])
     const [index, setIndex] = useState(0);
     const [postid, setpostid] = useState('')
+    const [data, setdata] = useState({})
     var status = route.params.status
     var children = route.params.children
     const [newnoti, setnewnoti] = useState(false);
     const refActionSheet = useRef(null);
-    const [refreshing, setrefreshing] = useState({ 'following': false, 'inspire': false, 'year': false, 'quiz': false, 'trending': false })
-    var mintimestamp = Math.round(new Date().getTime() / 1000)
-    const [min_time, setmin_time] = useState({ 'following': mintimestamp, 'inspire': mintimestamp, 'year': mintimestamp, 'quiz': mintimestamp, 'trending': mintimestamp })
+    const [refreshing, setrefreshing] = useState({})
+    const [min_time, setmin_time] = useState({})
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
@@ -127,151 +120,66 @@ const FeedScreen = ({ navigation, route }) => {
     var d = new Date();
     var currentyear = parseInt(d.getFullYear());
     useEffect(() => {
-        var data = async () => {
+        var fetchdata = async () => {
             var headers = JSON.parse(await AsyncStorage.getItem('loginheaders'));
             var route = status === '3' ? headers['feed_headers_login'] : headers['feed_headers_non_login']
+            var refresh = status === '3' ? headers['feed_login'] : headers['feed_non_login']
+            console.log(refresh)
+            var refreshi = {}
+            refresh.map((item => {
+                refreshi[item] = false
+            }))
+            setrefreshing(refreshi)
             status === '3' ? route[2]['title'] = route[2]['title'].replace('deafult', String(currentyear - parseInt(children[0]['data']['year']))) : null
-            setroutes(route)
-        }
-        data()
-    }, [])
-    useEffect(() => {
-        const data = async () => {
             var timestamp = await AsyncStorage.getItem('timestamp')
             timestamp = timestamp ? parseInt(timestamp) : 0;
+            var mintimestamp = Math.round(new Date().getTime() / 1000)
             var user_id = status == '3' ? children[0]['id'] : '123qwe'
             var year = status === '3' ? parseInt(children[0]['data']['year']) : null
-            status == '3' ? axios.post('http://mr_robot.api.genio.app/feed', {
-                'user_id': user_id,
-                'feed_type': 'following',
-                'year': year,
-                'timestamp': timestamp,
-                'min_timestamp': Math.round(new Date().getTime() / 1000),
-                'randomize': true,
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
+            await refresh.map((item) => {
+                if (status == '3' || item != 'following') {
+                    axios.post('http://mr_robot.api.genio.app/feed', {
+                        'user_id': user_id,
+                        'feed_type': item,
+                        'year': year,
+                        'timestamp': timestamp,
+                        'min_timestamp': Math.round(new Date().getTime() / 1000),
+                        'randomize': false,
+                    }, {
+                        headers: {
+                            'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(async (response) => {
+                        var place = data
+                        place[item] = response.data.data
+                        setdata(place)
+                        var min_following = mintimestamp
+                        response.data.data.map((item) => {
+                            if (min_following > item['data']['timestamp']) {
+                                min_following = item['data']['timestamp']
+                            }
+                        })
+                        place = min_time
+                        place[item] = min_following
+                        setmin_time(place)
+                    }).catch((response) => {
+                        console.log(Object.keys(response))
+                    })
                 }
-            }).then((response) => {
-                setfollowing(response.data.data)
-                var min_following = min_time['following']
-                response.data.data.map((item) => {
-                    if (min_following > item['data']['timestamp']) {
-                        min_following = item['data']['timestamp']
-                    }
-                })
-                setmin_time({ ...min_time, 'following': min_following })
-            }).catch((response) => {
-                console.log(Object.keys(response))
-            }) : null
-            axios.post('http://mr_robot.api.genio.app/feed', {
-                'user_id': user_id,
-                'feed_type': 'following',
-                'year': year,
-                'timestamp': timestamp,
-                'min_timestamp': Math.round(new Date().getTime() / 1000),
-                'randomize': false,
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then((response) => {
-                settrending(response.data.data)
-                var min_trending = min_time['trending']
-                response.data.data.map((item) => {
-                    if (min_trending > item['data']['timestamp']) {
-                        min_trending = item['data']['timestamp']
-                    }
-                })
-                setmin_time({ ...min_time, 'trending': min_trending })
-            }).catch((response) => {
-                console.log(response)
             })
-            axios.post('http://mr_robot.api.genio.app/feed', {
-                'user_id': user_id,
-                'feed_type': 'quiz',
-                'year': year,
-                'timestamp': timestamp,
-                'min_timestamp': Math.round(new Date().getTime() / 1000),
-                'randomize': false,
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then((response) => {
-                setquiz(response.data.data)
-                var min_quiz = min_time['quiz']
-                response.data.data.map((item) => {
-                    if (min_quiz > item['data']['timestamp']) {
-                        min_quiz = item['data']['timestamp']
-                    }
-                })
-                setmin_time({ ...min_time, 'quiz': min_quiz })
-            }).catch((response) => {
-                console.log(response)
-            })
-            axios.post('http://mr_robot.api.genio.app/feed', {
-                'user_id': user_id,
-                'feed_type': 'inspire',
-                'year': year,
-                'timestamp': 0,
-                'min_timestamp': Math.round(new Date().getTime() / 1000),
-                'randomize': false,
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then((response) => {
-                setinspire(response.data.data)
-                var min_inspire = min_time['inspire']
-                response.data.data.map((item) => {
-                    if (min_inspire > item['data']['timestamp']) {
-                        min_inspire = item['data']['timestamp']
-                    }
-                })
-                setmin_time({ ...min_time, 'inspire': min_inspire })
-            }).catch((response) => {
-                console.log(response)
-            })
-            status === '3' ? axios.post('http://mr_robot.api.genio.app/feed', {
-                'user_id': user_id,
-                'feed_type': 'year',
-                'year': year,
-                'timestamp': timestamp,
-                'min_timestamp': Math.round(new Date().getTime() / 1000),
-                'randomize': true,
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then((response) => {
-                setyear(response.data.data)
-                var min_year = min_time['year']
-                response.data.data.map((item) => {
-                    if (min_year > item['data']['timestamp']) {
-                        min_year = item['data']['timestamp']
-                    }
-                })
-                setmin_time({ ...min_time, 'year': min_year })
-            }).catch((response) => {
-                console.log(response)
-            }) : null
             AsyncStorage.setItem('timestamp', String(Math.round(new Date().getTime() / 1000)))
+            setroutes(route)
         }
-        data()
+        fetchdata()
     }, [])
     const onRefresh = async (feed_type, load_more) => {
         await setrefreshing({ ...refreshing, [feed_type]: true });
-        // console.log(refreshing)
         var user_id = status == '3' ? children[0]['id'] : '123qwe'
         var year1 = status === '3' ? parseInt(children[0]['data']['year']) : null
         var timestamp = await AsyncStorage.getItem('timestamp')
         timestamp = timestamp ? parseInt(timestamp) : 0;
+        console.log(min_time[feed_type])
         axios.post('http://mr_robot.api.genio.app/feed', {
             'user_id': user_id,
             'feed_type': feed_type,
@@ -285,59 +193,23 @@ const FeedScreen = ({ navigation, route }) => {
                 'Content-Type': 'application/json'
             }
         }).then(async (response) => {
-            switch (feed_type) {
-                case 'trending':
-                    load_more ? settrending([...trending, ...response.data.data]) : await settrending(response.data.data)
-                    setrefreshing({ ...refreshing, [feed_type]: false });
-                    break;
-                case 'following':
-                    load_more ? setfollowing([...following, ...response.data.data]) : await setfollowing(response.data.data)
-                    setrefreshing({ ...refreshing, [feed_type]: false });
-                    break;
-                case 'quiz':
-                    load_more ? setquiz([...quiz, ...response.data.data]) : await setquiz(response.data.data)
-                    setrefreshing({ ...refreshing, [feed_type]: false });
-                    break;
-
-                case 'inspire':
-                    load_more ? setinspire([...inspire, ...response.data.data]) : await setinspire(response.data.data)
-                    setrefreshing({ ...refreshing, [feed_type]: false });
-                    break;
-
-                case 'year':
-                    load_more ? setyear([...year, ...response.data.data]) : await setyear(response.data.data)
-                    setrefreshing({ ...refreshing, [feed_type]: false });
-                    break;
-                default:
-                    break;
-            }
+            var place = data
+            load_more ? place[feed_type] = place[feed_type].concat(response.data.data) : place[feed_type] = response.data.data
+            setdata(place)
+            setrefreshing({ ...refreshing, [feed_type]: false });
         }).catch((err) => {
             console.log(err)
             setrefreshing({ ...refreshing, [feed_type]: false });
         })
     }
-    // const renderScene = SceneMap({
-    //     follow: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['following']} />,
-    //     trending: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['trending']} />,
-    //     years: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['years']} />,
-    //     quiz: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['quiz']} />,
-    //     inspire: <FeedView navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['inspire']} />,
-    // });
     const renderScene = ({ route }) => {
-        switch (route.key) {
-            case 'follow':
-                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} />;
-            case 'trending':
-                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={trending} onRefresh={onRefresh} refreshing={refreshing['trending']} feed_type={'trending'} />;
-            case 'years':
-                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={year} onRefresh={onRefresh} refreshing={refreshing['year']} feed_type={'year'} />;
-            case 'quiz':
-                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={quiz} onRefresh={onRefresh} refreshing={refreshing['quiz']} feed_type={'quiz'} />;
-            case 'inspire':
-                return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={inspire} onRefresh={onRefresh} refreshing={refreshing['inspire']} feed_type={'inspire'} />;
-
+        if (data[route.key]) {
+            return <TestList scrollY={scrollY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
         }
-    };
+        else {
+            return <PostLoader />
+        }
+    }
     const renderTabBar = (props) => {
         return (
             <Animated.View
@@ -389,8 +261,6 @@ const FeedScreen = ({ navigation, route }) => {
             scrollEnabled={true}
             renderTabBar={renderTabBar}
             />
-            {/* <FeedView status={status} navigation={navigation} children={children} data={following} onRefresh={onRefresh} refreshing={refreshing['following']} feed_type={'following'} /> */}
-            
             <Snackbar
                 visible={posted}
                 onDismiss={() => console.log('hello')}

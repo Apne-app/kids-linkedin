@@ -34,7 +34,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const children = route.params.children
     const status = route.params.status
     const [place, setplace] = useState(0)
-    const [data, setdata] = useState({ 'followers': 0, 'following': 0, type: 'loading' })
+    const [data, setdata] = useState({ 'followers': 0, 'following': 0 })
     const [token, setToken] = useState('');
     const [loading, setloading] = useState(true);
     const [key, setkey] = useState('1')
@@ -108,7 +108,19 @@ const ProfileScreen = ({ navigation, route }) => {
                 }
             }).then((response) => {
                 setposts(response['data']['data'])
-                setloading(false)
+                axios.post('http://mr_robot.api.genio.app/follow_count', {
+                    'user_id': children[0]['id']
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
+                }).then((response) => {
+                    setdata(response['data']['data'])
+                    setloading(false)
+                }).catch((error) => {
+                    console.log(error)
+                })
             }).catch((error) => {
                 console.log(error)
             })
@@ -122,7 +134,6 @@ const ProfileScreen = ({ navigation, route }) => {
                         <FastImage
                             source={{
                                 uri: children[0]['data']['image'],
-                                cache: FastImage.cacheControl.web
                             }}
                             style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
                         />
@@ -147,11 +158,11 @@ const ProfileScreen = ({ navigation, route }) => {
                             <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers.length}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
                         </View>
                         <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following.length}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
                         </View>
                     </View>
@@ -160,7 +171,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     {loading ? <PostLoader /> : <FlatList
                         data={posts}
                         renderItem={(item) => { return (<FeedComponent status={status} children={children} navigation={navigation} item={item} />) }}
-                        keyExtractor={item => item['data'][1]}
+                        keyExtractor={item => item['data']['post_id']}
                         ListEmptyComponent={() => {
                             return (
                                 <View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
@@ -221,12 +232,21 @@ const ProfileScreen = ({ navigation, route }) => {
                 cropping: true,
                 cropperCircleOverlay: true
             }).then(image => {
+                function makeid(length) {
+                    var result           = '';
+                    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    var charactersLength = characters.length;
+                    for ( var i = 0; i < length; i++ ) {
+                       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                    }
+                    return result;
+                 }
+                 var name = children['0']['id']+'/' + makeid(6) + '.jpg'
                 const file = {
                     uri: image.path,
-                    name: children['0']['id'] + '.png',
+                    name: name,
                     type: "image/png",
                 }
-
                 const options = {
                     keyPrefix: '',
                     bucket: "kids-linkedin-avatars",
@@ -243,13 +263,13 @@ const ProfileScreen = ({ navigation, route }) => {
                     else {
 
                         var child = children['0']
-                        var axios = require('axios');
-                        var data = JSON.stringify({ "cid": child.id, "change": "image", "name": child.data.name, "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
+                        var data = JSON.stringify({ "user_id": child.id, "change": "image", "name": '', "image":'https://d5c8j8afeo6fv.cloudfront.net/'+name });
 
                         var config = {
                             method: 'post',
-                            url: `https://api.genio.app/matrix/update_child/?token=${token}`,
+                            url: `http://mr_robot.api.genio.app/update_child`,
                             headers: {
+                                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                                 'Content-Type': 'application/json'
                             },
                             data: data
@@ -290,9 +310,9 @@ const ProfileScreen = ({ navigation, route }) => {
                                                     });
                                                 }
                                                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
+                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/'+name
                                                 Update({ 'children': resp })
-                                                setplacefun(String(parseInt(place) + 1))
+                                                setplace(String(parseInt(place) + 1))
                                             })
                                             .catch((error) => {
                                             })
@@ -382,6 +402,9 @@ const ProfileScreen = ({ navigation, route }) => {
                                                 var resp = response.data
                                                 await AsyncStorage.setItem('children', JSON.stringify(response.data))
                                                 resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
+                                                axios.post("http://ec2co-ecsel-1bslcbaqpti2m-1945288392.ap-south-1.elb.amazonaws.com/profileimageoptimize", {
+                                                    "url": 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
+                                                })
                                                 Update({ 'children': resp })
                                             })
                                             .catch((error) => {
