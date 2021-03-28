@@ -24,7 +24,6 @@ import Gallery from './Gallery';
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import ImageView from "react-native-image-viewing";
-import { connect } from 'getstream';
 import axios from 'axios'
 import CompHeader from '../Modules/CompHeader';
 

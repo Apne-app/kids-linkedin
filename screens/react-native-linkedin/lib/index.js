@@ -6,7 +6,6 @@ import { Appbar } from 'react-native-paper';
 import { pipe, evolve, propSatisfies, applySpec, propOr, add } from 'ramda';
 import { v4 } from 'uuid';
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Segment, Thumbnail, Title, Left, Body, Right } from 'native-base';
-import Constants from "expo-constants";
 import querystring from 'query-string';
 const AUTHORIZATION_URL = 'https://www.linkedin.com/oauth/v2/authorization';
 const ACCESS_TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';

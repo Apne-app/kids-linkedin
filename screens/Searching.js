@@ -9,7 +9,6 @@ import axios from 'axios';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
-import { connect } from 'getstream';
 import { useFocusEffect } from "@react-navigation/native";
 import CompButton from '../Modules/CompButton';
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';

@@ -54,7 +54,6 @@ import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
 import codePush from "react-native-code-push";
-import { connect } from 'getstream';
 import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
 import firebase from '@react-native-firebase/app';
 import OneSignal from 'react-native-onesignal';
@@ -222,7 +221,6 @@ const App = (props) => {
       .then(async (link) => {
         var pro = await AsyncStorage.getItem('profile')
         if (pro) {
-          console.log("dlink: ", link)
           pro = JSON.parse(pro)
           if (link.url.includes(pro.uuid)) {
             containerRef.current?.navigate('Verified')

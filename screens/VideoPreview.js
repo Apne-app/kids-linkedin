@@ -7,7 +7,6 @@ import FastImage from 'react-native-fast-image';
 import { RNS3 } from 'react-native-aws3';
 import { SECRET_KEY, ACCESS_KEY } from '@env'
 import { Snackbar } from 'react-native-paper';
-import { connect } from 'getstream';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios'
 import { useFocusEffect } from "@react-navigation/native";

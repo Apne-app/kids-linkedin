@@ -6,14 +6,11 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LikeButton from '../components/LikeButton';
-import { Viewport } from '@skele/components'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from './react-native-thumbnail-video';
 import axios from 'axios';
-import { connect } from 'getstream';
-import * as rssParser from 'react-native-rss-parser';
 import { useFocusEffect } from "@react-navigation/native";
 import SmartImage from './SmartImage';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -81,10 +78,12 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             }
         ]);
     }
-    const report = async (x) => {
+    const report = async () => {
         if (children) {
-            if (props.activity.actor.id == children['0']['id']) {
+            console.log(activity['user_id'] == children['0']['id'])
+            if (activity['user_id'] == children['0']['id']) {
                 deletepost(props.activity.id)
+                return
             }
             else {
                 var y = await AsyncStorage.getItem('children');
@@ -213,19 +212,6 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>)
     }
     options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
-    var options = [<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>]
-    if (children) {
-        if (activity['user_id'] == children['0']['id']) {
-            options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Delete Post</Text>)
-        }
-        else {
-            options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>)
-        }
-    }
-    else {
-        options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>)
-    }
-    options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
     const addorunlike = () => {
         if (status === '3') {
             var data = activity
@@ -292,7 +278,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={() => { children[0]['id']===activity['user_id']?navigation.navigate('Profile'):navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                    <TouchableWithoutFeedback onPress={() => { children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <FastImage
                             source={{
                                 uri: item['item']['data']['user_image'],
@@ -301,7 +287,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                             style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                         />
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => { children[0]['id']===activity['user_id']?navigation.navigate('Profile'):navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                    <TouchableWithoutFeedback onPress={() => { children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>

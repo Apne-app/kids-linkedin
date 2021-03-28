@@ -16,7 +16,6 @@ import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import BottomSheet from 'reanimated-bottom-sheet';
 import FeedComponent from '../Modules/FeedComponent'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { connect } from 'getstream';
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import LikeButton from '../components/LikeButton'
