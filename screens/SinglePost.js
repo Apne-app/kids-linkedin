@@ -220,6 +220,137 @@ const SinglePostScreen = ({ navigation, route }) => {
                     })}
             </View>)
         }
+        const deletepost = () => {
+            Alert.alert("Alert", "Are you sure you want to delete the post? The action cannot be reversed", [
+                {
+                    text: "Cancel",
+                    onPress: () => null,
+                    style: "cancel"
+                },
+                {
+                    text: "YES", onPress: () => {
+                        axios.post('http://mr_robot.api.genio.app/delpost', {
+                            post_id: activity['post_id'],
+                        }, {
+                            headers: {
+                                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                                'Content-Type': 'application/json'
+                            }
+                        }).then((response) => {
+                            if (response.data) {
+                                alert('Successfully deleted your post!')
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Home' }],
+                                })
+                            }
+                            else {
+                                alert(
+                                    "There was an error deleting your post, please try again later."
+                                )
+                            }
+                        }).catch(() => {
+                            alert(
+                                "There was an error deleting your post, please try again later."
+                            )
+                        })
+                    }
+                }
+            ]);
+        }
+        const report = async () => {
+            if (children) {
+                console.log(activity['user_id'] == children['0']['id'])
+                if (activity['user_id'] == children['0']['id']) {
+                    deletepost()
+                }
+                else {
+                    var y = await AsyncStorage.getItem('children');
+                    var q = await AsyncStorage.getItem('profile');
+                    if (q) {
+                        q = JSON.parse(q)
+                    }
+                    analytics.track('Post Reported', {
+                        userID: y ? JSON.parse(y)["0"]["id"] : null,
+                        deviceID: getUniqueId()
+                    })
+                    var now = new Date();
+                    var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+                    datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+                    var body = {
+                        "created_by": q ? q['id'] : 'nonloggedin',
+                        "created_by_name": q ? q['email'] : 'nonloggedin',
+                        "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
+                        "post_data": JSON.stringify(x),
+                        "reported_time": datetime,
+                    }
+                    var config = {
+                        method: 'post',
+                        url: 'https://api.genio.app/the-office/report',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        data: body
+                    };
+                    axios(config)
+                        .then(function (response) {
+                            // console.log(JSON.stringify(response.data));
+                            // setLoading(false);
+                            if (response.data == "success") {
+                                alert('Succesfully reported post');
+                            }
+                            console.log(response.data)
+                        })
+                        .catch(function (error) {
+                            alert(error);
+                            // setLoading(false)
+                        });
+                }
+            }
+            else {
+                var y = await AsyncStorage.getItem('children');
+                var q = await AsyncStorage.getItem('profile');
+                if (q) {
+                    q = JSON.parse(q)
+                }
+                analytics.track('Post Reported', {
+                    userID: y ? JSON.parse(y)["0"]["id"] : null,
+                    deviceID: getUniqueId()
+                })
+                var now = new Date();
+                var datetime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+                datetime += ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+                var body = {
+                    "created_by": q ? q['id'] : 'nonloggedin',
+                    "created_by_name": q ? q['email'] : 'nonloggedin',
+                    "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
+                    "post_data": JSON.stringify(x),
+                    "reported_time": datetime,
+                }
+                var config = {
+                    method: 'post',
+                    url: 'https://api.genio.app/the-office/report',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: body
+                };
+                axios(config)
+                    .then(function (response) {
+                        // console.log(JSON.stringify(response.data));
+                        // setLoading(false);
+                        if (response.data == "success") {
+                            alert('Succesfully reported post');
+                        }
+                        console.log(response.data)
+                    })
+                    .catch(function (error) {
+                        alert(error);
+                        // setLoading(false)
+                    });
+            }
+    
+        }
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
@@ -282,6 +413,19 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {activity['tags'] === 'Genio' || activity['tags'] === 'Other' || activity['tags'] === '' ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{activity['tags']}</Text></View>}
             </View>))
         var images = []
+        var options = [<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>]
+        if (children) {
+            if (activity['user_id'] == children['0']['id']) {
+                options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Delete Post</Text>)
+            }
+            else {
+                options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>)
+            }
+        }
+        else {
+            options.push(<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>)
+        }
+        options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
         activity['images'] ? activity['images'].split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         return (
             <View style={{ marginTop: 20, marginBottom: 100 }} ref={scrollref}>
@@ -302,9 +446,9 @@ const SinglePostScreen = ({ navigation, route }) => {
                             useNativeDriver={true}
                             ref={refActionSheet}
                             styles={{ borderRadius: 0, margin: 10 }}
-                            options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Share</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+                            options={options}
                             cancelButtonIndex={2}
-                            onPress={(index) => { index == 1 ? report(props.activity) : index == 0 ? onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']) : null }}
+                            onPress={(index) => { index == 1 ? report(activity) : index == 0 ? onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id']) : null }}
                         />
                         <Right><TouchableOpacity style={{ width: 60, alignItems: 'center', padding: 12 }} onPress={() => { showActionSheet(); }} ><Icon name="options-vertical" type="SimpleLineIcons" style={{ fontSize: 16, color: '#383838' }} /></TouchableOpacity></Right>
                     </View>

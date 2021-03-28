@@ -56,8 +56,8 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                             'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                             'Content-Type': 'application/json'
                         }
-                    }).then(() => {
-                        if (response == 'true') {
+                    }).then((response) => {
+                        if (response.data) {
                             alert('Successfully deleted your post!')
                             navigation.reset({
                                 index: 0,
@@ -82,8 +82,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         if (children) {
             console.log(activity['user_id'] == children['0']['id'])
             if (activity['user_id'] == children['0']['id']) {
-                deletepost(props.activity.id)
-                return
+                deletepost()
             }
             else {
                 var y = await AsyncStorage.getItem('children');

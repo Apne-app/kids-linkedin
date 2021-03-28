@@ -120,42 +120,7 @@ const SearchScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <ScrollView style={{ marginHorizontal: 10 }} key={place}>
-        <View style={{ flexDirection: 'row', marginTop: 20 }}>
-          <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
-        </View>
-        <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
-          {Object.keys(joined).map((item) => {
-            return (
-              <TouchableOpacity key={joined[item]['id']} style={{ flex: 1, flexDirection: 'column', margin: 1, width: width / 4.5, height: 110 }} onPress={async () => {
-                var x = await AsyncStorage.getItem('children');
-                analytics.track('ProfileOpenedFromRecentlyJoined', {
-                  userID: x ? JSON.parse(x)["0"]["id"] : null,
-                  deviceID: getUniqueId()
-                });
-                children[0]['id'] === joined[item]['id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })
-              }
-              }
-              >
-                <View
-                  key={item.id}
-                  style={{ flex: 1, }}>
-                  <FastImage
-                    style={styles.image}
-                    imageStyle={{ borderRadius: 100000 }}
-                    source={{
-                      uri: joined[item]['data']['image'],
-                      priority: FastImage.priority.high
-                    }}
-                  />
-                  <View>
-                    <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)}</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )
-          })}
-        </View>
-        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+           <View style={{ flexDirection: 'row', marginTop: 20 }}>
           <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Genio's Influencers</Text>
         </View>
         <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
@@ -185,6 +150,41 @@ const SearchScreen = ({ route, navigation }) => {
                   />
                   <View>
                     <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{item['user_name'][0].toUpperCase() + item['user_name'].substring(1)}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )
+          })}
+        </View>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Recently Joined</Text>
+        </View>
+        <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
+          {Object.keys(joined).map((item) => {
+            return (
+              <TouchableOpacity key={joined[item]['id']} style={{ flex: 1, flexDirection: 'column', margin: 1, width: width / 4.5, height: 110 }} onPress={async () => {
+                var x = await AsyncStorage.getItem('children');
+                analytics.track('ProfileOpenedFromRecentlyJoined', {
+                  userID: x ? JSON.parse(x)["0"]["id"] : null,
+                  deviceID: getUniqueId()
+                });
+                children[0]['id'] === joined[item]['id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { 'id': joined[item]['id'], 'data': joined[item]['data'] })
+              }
+              }
+              >
+                <View
+                  key={item.id}
+                  style={{ flex: 1, }}>
+                  <FastImage
+                    style={styles.image}
+                    imageStyle={{ borderRadius: 100000 }}
+                    source={{
+                      uri: joined[item]['data']['image'],
+                      priority: FastImage.priority.high
+                    }}
+                  />
+                  <View>
+                    <Text style={{ color: "black", textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Bold', marginTop: -4 }}>{joined[item]['data']['name'][0].toUpperCase() + joined[item]['data']['name'].substring(1)}</Text>
                   </View>
                 </View>
               </TouchableOpacity>

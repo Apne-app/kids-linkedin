@@ -34,6 +34,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const children = route.params.children
     const status = route.params.status
     const [place, setplace] = useState(0)
+    const [source, setsource] = useState('')
     const [data, setdata] = useState({ 'followers': 0, 'following': 0 })
     const [token, setToken] = useState('');
     const [loading, setloading] = useState(true);
@@ -41,6 +42,215 @@ const ProfileScreen = ({ navigation, route }) => {
     const [posts, setposts] = useState([])
     const { Update } = React.useContext(AuthContext);
     const refActionSheet = useRef(null);
+    function makeid(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
+    const pickImage = (type) => {
+        if (type === 'gallery') {
+            ImagePicker.openPicker({
+                width: 300,
+                height: 300,
+                cropping: true,
+                cropperCircleOverlay: true
+            }).then(image => {
+
+                var name = children['0']['id'] + '/' + makeid(6) + '.jpg'
+                const file = {
+                    uri: image.path,
+                    name: name,
+                    type: "image/png",
+                }
+                const options = {
+                    keyPrefix: '',
+                    bucket: "kids-linkedin-avatars",
+                    region: "ap-south-1",
+                    accessKey: ACCESS_KEY,
+                    secretKey: SECRET_KEY,
+                    successActionStatus: 201
+                }
+                RNS3.put(file, options).then(response => {
+                    if (response.status !== 201) {
+                        console.log(response, "aa")
+                        alert('Could not update Profile Picture, please try again later')
+                    }
+                    else {
+
+                        var child = children['0']
+                        var data = JSON.stringify({ "user_id": child.id, "change": "image", "name": '', "image": 'https://d5c8j8afeo6fv.cloudfront.net/' + name });
+
+                        var config = {
+                            method: 'post',
+                            url: `http://mr_robot.api.genio.app/update_child`,
+                            headers: {
+                                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                                'Content-Type': 'application/json'
+                            },
+                            data: data
+                        };
+
+                        axios(config)
+                            .then(async (response) => {
+                                var pro = route.params.profile
+                                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+                                var config = {
+                                    method: 'post',
+                                    url: 'https://api.genio.app/get-out/getToken',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    data: data
+                                };
+
+                                axios(config)
+                                    .then(function (response) {
+                                        // console.log(JSON.stringify(response.data.token));
+                                        axios({
+                                            method: 'post',
+                                            url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            data: JSON.stringify({
+                                                "email": pro.email,
+                                            })
+                                        })
+                                            .then(async (response) => {
+                                                var resp = response.data
+                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + name
+                                                await AsyncStorage.setItem('children', JSON.stringify(resp))
+                                                setsource(resp[0]['data']['image'])
+                                                setplace(String(parseInt(place) + 1))
+                                                navigation.setParams({
+                                                    children: resp,
+                                                })
+                                                Update({ 'children': resp })
+                                                axios.post("http://ec2co-ecsel-1bslcbaqpti2m-1945288392.ap-south-1.elb.amazonaws.com/profileimageoptimize", {
+                                                    "url": resp[0]['data']['image'],
+                                                    "post_id": "0",
+                                                    "id": children[0]['id']
+                                                })
+                                            })
+                                            .catch((error) => {
+                                                console.log(error)
+                                            })
+                                    })
+                                    .catch(function (error) {
+                                        console.log(error)
+                                    });
+                            }).catch((error) => {
+                                console.log(error, "asd")
+                                alert('Could not update Profile Picture, please try again later')
+                            })
+
+
+                    }
+                })
+            });
+        }
+        if (type === 'camera') {
+            ImagePicker.openCamera({
+                width: 300,
+                height: 300,
+                cropping: true,
+                cropperCircleOverlay: true
+            }).then(image => {
+                var name = children['0']['id'] + '/' + makeid(6) + '.jpg'
+                const file = {
+                    uri: image.path,
+                    name: name,
+                    type: "image/png",
+                }
+
+                const options = {
+                    keyPrefix: '',
+                    bucket: "kids-linkedin-avatars",
+                    region: "ap-south-1",
+                    accessKey: ACCESS_KEY,
+                    secretKey: SECRET_KEY,
+                    successActionStatus: 201
+                }
+                RNS3.put(file, options).then(response => {
+                    if (response.status !== 201) {
+                        console.log(response, "aa")
+                        alert('Could not update Profile Picture, please try again later')
+                    }
+                    else {
+                        var child = children['0']
+                        var data = JSON.stringify({ "user_id": child.id, "change": "image", "name": '', "image": 'https://d5c8j8afeo6fv.cloudfront.net/' + name });
+
+                        var config = {
+                            method: 'post',
+                            url: `http://mr_robot.api.genio.app/update_child`,
+                            headers: {
+                                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                                'Content-Type': 'application/json'
+                            },
+                            data: data
+                        };
+
+                        axios(config)
+                            .then(async (response) => {
+                                var pro = route.params.profile
+                                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+                                var config = {
+                                    method: 'post',
+                                    url: 'https://api.genio.app/get-out/getToken',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    data: data
+                                };
+
+                                axios(config)
+                                    .then(function (response) {
+                                        // console.log(JSON.stringify(response.data.token));
+                                        axios({
+                                            method: 'post',
+                                            url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            data: JSON.stringify({
+                                                "email": pro.email,
+                                            })
+                                        })
+                                            .then(async (response) => {
+                                                if (!source.includes(response.data[0]['id'])) {
+                                                    navigation.reset({
+                                                        index: 0,
+                                                        routes: [{ name: 'Home' }],
+                                                    });
+                                                }
+                                                var resp = response.data
+                                                await AsyncStorage.setItem('children', JSON.stringify(response.data))
+                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + name
+                                                axios.post("http://ec2co-ecsel-1bslcbaqpti2m-1945288392.ap-south-1.elb.amazonaws.com/profileimageoptimize", {
+                                                    "url": resp[0]['data']['image'],
+                                                    "post_id": "0",
+                                                    "id": children[0]['id']
+                                                })
+                                                Update({ 'children': resp })
+                                            })
+                                            .catch((error) => {
+                                            })
+                                    })
+                                    .catch(function (error) {
+                                    });
+                            }).catch((error) => {
+                                console.log(error, "asd")
+                                alert('Could not update Profile Picture, please try again later')
+                            })
+                    }
+                })
+            });
+        }
+    }
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -131,9 +341,10 @@ const ProfileScreen = ({ navigation, route }) => {
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                 <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
                     <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
+                        {console.log(children[0]['data']['image'])}
                         <FastImage
                             source={{
-                                uri: children[0]['data']['image-profile'] ? children[0]['data']['image-profile'] : children[0]['data']['image'],
+                                uri: source ? source : children[0]['data']['image'],
                             }}
                             style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
                         />
@@ -203,9 +414,9 @@ const ProfileScreen = ({ navigation, route }) => {
                 useNativeDriver={true}
                 ref={refActionSheet}
                 styles={{ borderRadius: 10, margin: 10 }}
-                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Open Camera</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Cancel</Text>]}
-                cancelButtonIndex={2}
-                onPress={(index) => { index == 0 ? pickImage('gallery') : index == 1 ? pickImage('camera') : null }}
+                options={[<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Choose from Gallery</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Cancel</Text>]}
+                cancelButtonIndex={1}
+                onPress={(index) => { index == 0 ? pickImage('gallery') : null }}
             />
         </View>)
     }
@@ -224,207 +435,8 @@ const ProfileScreen = ({ navigation, route }) => {
             </View>
         )
     }
-    const pickImage = (type) => {
-        if (type === 'gallery') {
-            ImagePicker.openPicker({
-                width: 300,
-                height: 300,
-                cropping: true,
-                cropperCircleOverlay: true
-            }).then(image => {
-                function makeid(length) {
-                    var result           = '';
-                    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                    var charactersLength = characters.length;
-                    for ( var i = 0; i < length; i++ ) {
-                       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-                    }
-                    return result;
-                 }
-                 var name = children['0']['id']+'/' + makeid(6) + '.jpg'
-                const file = {
-                    uri: image.path,
-                    name: name,
-                    type: "image/png",
-                }
-                const options = {
-                    keyPrefix: '',
-                    bucket: "kids-linkedin-avatars",
-                    region: "ap-south-1",
-                    accessKey: ACCESS_KEY,
-                    secretKey: SECRET_KEY,
-                    successActionStatus: 201
-                }
-                RNS3.put(file, options).then(response => {
-                    if (response.status !== 201) {
-                        console.log(response, "aa")
-                        alert('Could not update Profile Picture, please try again later')
-                    }
-                    else {
-
-                        var child = children['0']
-                        var data = JSON.stringify({ "user_id": child.id, "change": "image", "name": '', "image":'https://d5c8j8afeo6fv.cloudfront.net/'+name });
-
-                        var config = {
-                            method: 'post',
-                            url: `http://mr_robot.api.genio.app/update_child`,
-                            headers: {
-                                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                                'Content-Type': 'application/json'
-                            },
-                            data: data
-                        };
-
-                        axios(config)
-                            .then(async (response) => {
-                                var pro = route.params.profile
-                                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-                                var config = {
-                                    method: 'post',
-                                    url: 'https://api.genio.app/get-out/getToken',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    data: data
-                                };
-
-                                axios(config)
-                                    .then(function (response) {
-                                        // console.log(JSON.stringify(response.data.token));
-                                        axios({
-                                            method: 'post',
-                                            url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            data: JSON.stringify({
-                                                "email": pro.email,
-                                            })
-                                        })
-                                            .then(async (response) => {
-                                                var resp = response.data
-                                                if (!source.includes(response.data[0]['id'])) {
-                                                    navigation.reset({
-                                                        index: 0,
-                                                        routes: [{ name: 'Home' }],
-                                                    });
-                                                }
-                                                await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/'+name
-                                                Update({ 'children': resp })
-                                                setplace(String(parseInt(place) + 1))
-                                            })
-                                            .catch((error) => {
-                                            })
-                                    })
-                                    .catch(function (error) {
-                                    });
-                            }).catch((error) => {
-                                console.log(error, "asd")
-                                alert('Could not update Profile Picture, please try again later')
-                            })
-
-
-                    }
-                })
-            });
-        }
-        if (type === 'camera') {
-            ImagePicker.openCamera({
-                width: 300,
-                height: 300,
-                cropping: true,
-                cropperCircleOverlay: true
-            }).then(image => {
-                const file = {
-                    uri: image.path,
-                    name: children['0']['id'] + '.png',
-                    type: "image/png",
-                }
-
-                const options = {
-                    keyPrefix: '',
-                    bucket: "kids-linkedin-avatars",
-                    region: "ap-south-1",
-                    accessKey: ACCESS_KEY,
-                    secretKey: SECRET_KEY,
-                    successActionStatus: 201
-                }
-                RNS3.put(file, options).then(response => {
-                    if (response.status !== 201) {
-                        console.log(response, "aa")
-                        alert('Could not update Profile Picture, please try again later')
-                    }
-                    else {
-                        var child = children['0']
-                        var data = JSON.stringify({ "cid": child.id, "change": "image", "name": child.data.name, "school": child.data.school, "year": child.data.year, "grade": child.data.grade, "acctype": child.data.type, "gsToken": child.data.gsToken });
-                        var config = {
-                            method: 'post',
-                            url: `https://api.genio.app/matrix/update_child/?token=${token}`,
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            data: data
-                        };
-                        axios(config)
-                            .then(async (response) => {
-                                var pro = route.params.profile
-                                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-                                var config = {
-                                    method: 'post',
-                                    url: 'https://api.genio.app/get-out/getToken',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    data: data
-                                };
-
-                                axios(config)
-                                    .then(function (response) {
-                                        // console.log(JSON.stringify(response.data.token));
-                                        axios({
-                                            method: 'post',
-                                            url: 'https://api.genio.app/matrix/getchild/' + `?token=${response.data.token}`,
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            data: JSON.stringify({
-                                                "email": pro.email,
-                                            })
-                                        })
-                                            .then(async (response) => {
-                                                if (!source.includes(response.data[0]['id'])) {
-                                                    navigation.reset({
-                                                        index: 0,
-                                                        routes: [{ name: 'Home' }],
-                                                    });
-                                                }
-                                                var resp = response.data
-                                                await AsyncStorage.setItem('children', JSON.stringify(response.data))
-                                                resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + response.data[0]['id'] + '.png'
-                                                axios.post("http://ec2co-ecsel-1bslcbaqpti2m-1945288392.ap-south-1.elb.amazonaws.com/profileimageoptimize", {
-                                                    "url": resp[0]['data']['image'],
-                                                    "post_id": "0",
-                                                    "id": children[0]['id']
-                                                })
-                                                Update({ 'children': resp })
-                                            })
-                                            .catch((error) => {
-                                            })
-                                    })
-                                    .catch(function (error) {
-                                    });
-                            }).catch((error) => {
-                                console.log(error, "asd")
-                                alert('Could not update Profile Picture, please try again later')
-                            })
-                    }
-                })
-            });
-        }
-    }
     return (
-        <View key={key}>
+        <View key={place}>
             <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
             {status == '3' ? there() : notthere()}
         </View>
