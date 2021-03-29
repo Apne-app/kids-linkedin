@@ -3,13 +3,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import FastImage from 'react-native-fast-image';
-import { SafeAreaView, FlatList, View, Text, Dimensions, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native'
+import { SafeAreaView, FlatList, View, Text, Dimensions, Animated, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native'
 import FeedComponent from '../Modules/FeedComponent'
 import PostLoader from '../Modules/PostLoader'
 import CompButton from '../Modules/CompButton'
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 const width = Dimensions.get('window').width;
 const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY }) => {
+    const scroll = useRef(new Animated.Value(0)).current;
     // function randomStr(len, arr) {
     //     var ans = '';
     //     for (var i = len; i > 0; i--) {

@@ -9,7 +9,7 @@ const width = Dimensions.get('screen').width;
 const PostLoader = () => {
     return (<ContentLoader
         speed={4}
-        style={{ alignSelf: 'center', marginTop: 20 }}
+        style={{ alignSelf: 'center', marginTop: 140 }}
         width={width - 20}
         height={height}
         backgroundColor="lightgrey"

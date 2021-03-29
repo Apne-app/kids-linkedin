@@ -341,7 +341,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
                 <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
                     <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
-                        {console.log(children[0]['data']['image'])}
+                        {console.log(children[0]['data']['imageprofile'])}
                         <FastImage
                             source={{
                                 uri: source ? source : children[0]['data']['image'],
