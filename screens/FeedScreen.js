@@ -31,34 +31,6 @@ import PostLoader from '../Modules/PostLoader';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
-const TestList = ({scrollY}) => {
-    return (
-        <FlatList
-                data={['aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc', 'aaa', 'bbb', 'ccc']}
-                // refreshing={refreshing}
-                removeClippedSubviews={true}
-                maxToRenderPerBatch={5}
-                updateCellsBatchingPeriod={60}
-                initialNumToRender={5}
-                // onRefresh={() => onRefresh(feed_type)}
-                windowSize={10}
-                // ListEmptyComponent={() => {
-                //     return (
-                //         <PostLoader />
-                //     )
-                // }}
-                onScroll={(e) => {
-                    scrollY.setValue(e.nativeEvent.contentOffset.y)
-                }}
-                // onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
-                // extraData={refreshing}
-                renderItem={(item) => (<Text style={{height: 300}}>asdasdsa</Text>)}
-                // keyExtractor={item => randomStr(20, '123456789')}
-            /> 
-    )
-}
-
-
 const FeedScreen = ({ navigation, route }) => {
 
     useFocusEffect(
@@ -85,10 +57,11 @@ const FeedScreen = ({ navigation, route }) => {
     const scrollY = new Animated.Value(0);
     const diffClamp = Animated.diffClamp(scrollY, 0, 80);
     const translateY = diffClamp.interpolate({
-        inputRange : [0, 80],
-        outputRange : [0, -80]
+        inputRange: [0, 80],
+        outputRange: [0, -80]
     })
     const [routes, setroutes] = React.useState([]);
+    const [key, setkey] = React.useState('1');
     const [posted, setposted] = React.useState(false);
     const [index, setIndex] = useState(0);
     const [postid, setpostid] = useState('')
@@ -153,7 +126,8 @@ const FeedScreen = ({ navigation, route }) => {
                     }).then(async (response) => {
                         var place = data
                         place[item] = response.data.data
-                        setdata(place)
+                        await setdata(place)
+                        await setkey(String(parseInt(key) + 1))
                         var min_following = mintimestamp
                         response.data.data.map((item) => {
                             if (min_following > item['data']['timestamp']) {
@@ -207,6 +181,19 @@ const FeedScreen = ({ navigation, route }) => {
             return <FeedView scrollY={scrollY} translateY={translateY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
         }
         else {
+            if (route.key === 'following') {
+                return (<View>
+                    <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}><CompButton message={'Signup/Login to explore what other kids are learning'} /></TouchableOpacity>
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}>
+                        <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: 60, flexDirection: 'column' }}>
+                            <FastImage source={require('../assets/feed.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed' })}>
+                        <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Explore what other kids are learning and working on</Text>
+                    </TouchableWithoutFeedback>
+                </View>)
+            }
             return <PostLoader />
         }
     }
@@ -215,29 +202,29 @@ const FeedScreen = ({ navigation, route }) => {
             <Animated.View
                 style={{
                     transform: [
-                        {translateY: translateY}
+                        { translateY: translateY }
                     ],
                     zIndex: 5,
                     position: 'absolute'
                 }}
             >
-            <TabBar
-                {...props}
-                activeColor={'#327FEB'}
-                inactiveColor={'black'}
-                pressColor={'lightblue'}
-                indicatorStyle={{ backgroundColor: 'white' }}
-                style={{ backgroundColor: 'white', marginTop: 80 }}
-                tabStyle={{ width: width / 3.6 }}
-                scrollEnabled={true}
-                bounces={true}
-                renderLabel={({ route, focused, color }) => (
-                    <Text style={{ color, margin: 8, fontFamily: 'NunitoSans-SemiBold' }}>
-                        {route.title}
-                    </Text>
-                )}
-                indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
-            />
+                <TabBar
+                    {...props}
+                    activeColor={'#327FEB'}
+                    inactiveColor={'black'}
+                    pressColor={'lightblue'}
+                    indicatorStyle={{ backgroundColor: 'white' }}
+                    style={{ backgroundColor: 'white', marginTop: 80 }}
+                    tabStyle={{ width: width / 3.6 }}
+                    scrollEnabled={true}
+                    bounces={true}
+                    renderLabel={({ route, focused, color }) => (
+                        <Text style={{ color, margin: 8, fontFamily: 'NunitoSans-SemiBold' }}>
+                            {route.title}
+                        </Text>
+                    )}
+                    indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
+                />
             </Animated.View>
         )
     }
@@ -246,19 +233,20 @@ const FeedScreen = ({ navigation, route }) => {
             <Animated.View
                 style={{
                     transform: [
-                        {translateY: translateY}
+                        { translateY: translateY }
                     ],
                     zIndex: 5
                 }}
             >
-            <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
+                <ScreenHeader new={newnoti} screen={'Genio'} icon={'bell'} navigation={navigation} fun={() => { navigation.navigate('Notifications'); setnewnoti(false) }} />
             </Animated.View>
             <TabView
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            scrollEnabled={true}
-            renderTabBar={renderTabBar}
+                key={key}
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                scrollEnabled={true}
+                renderTabBar={renderTabBar}
             />
             <Snackbar
                 visible={posted}
