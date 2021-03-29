@@ -319,7 +319,8 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                             uri: item['item']['data']['images'].split(", ")[0] + item['item']['data']['suff_feed_feed'],
                             priority: FastImage.priority.high
                         }}
-                        style={{ width: width, height: 340, borderRadius: 0 }}
+                        style={{ width: width, minHeight: 340, borderRadius: 0, backgroundColor: "#000" }}
+                        resizeMode={FastImage.resizeMode.contain}
                     /> : <View style={{ height: 340 }}><SliderBox
                         images={activity['images'].split(", ").filter(n => n)}
                         dotColor="#FFEE58"
@@ -371,7 +372,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 {activity['tags'] === 'Genio' || activity['tags'] === 'Other' || activity['tags'] === '' ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{activity['tags']}</Text></View>}
             </View>
             <View style={{ backgroundColor: 'lightgrey', height: 1, width: width - 30, alignSelf: 'center', opacity: 0.3, borderRadius: 4, marginTop: 10 }} />
-        </View >
+        </View>
     )
 };
 export default FeedComponent;

@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import FastImage from 'react-native-fast-image';
-import { SafeAreaView, FlatList, View, Text, Dimensions, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native'
+import { SafeAreaView, FlatList, View, Text, Dimensions, Animated, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native'
 import FeedComponent from '../Modules/FeedComponent'
 import PostLoader from '../Modules/PostLoader'
 import CompButton from '../Modules/CompButton'
@@ -17,16 +17,18 @@ function randomStr(len, arr) {
     return ans;
 }
 
-const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY }) => {
+const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY, translateY }) => {
+    const scroll = useRef(new Animated.Value(0)).current;
     return (
         <React.Fragment>
-            {status === '3' || feed_type != 'following' ? <FlatList
+            {status === '3' || feed_type != 'following' ? <Animated.FlatList
                 data={data.map((item) => item)}
                 refreshing={refreshing}
                 removeClippedSubviews={true}
                 maxToRenderPerBatch={5}
                 updateCellsBatchingPeriod={60}
                 initialNumToRender={5}
+                style={{paddingTop: 140}}
                 onRefresh={() => onRefresh(feed_type)}
                 windowSize={10}
                 ListEmptyComponent={() => {
@@ -35,7 +37,11 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     )
                 }}
                 onScroll={(e) => {
-                    scrollY.setValue(e.nativeEvent.contentOffset.y)
+                    scrollY.setValue(e.nativeEvent.contentOffset.y);
+                    Animated.event(          
+                        [{nativeEvent: {contentOffset: {y: scroll}}}],  
+                        {useNativeDriver: true},
+                    )
                 }}
                 onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                 extraData={refreshing}
