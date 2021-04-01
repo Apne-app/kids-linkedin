@@ -19,6 +19,8 @@ import analytics from '@segment/analytics-react-native';
 import { getUniqueId } from 'react-native-device-info';
 import { Chip } from 'react-native-paper';
 import ImagePicker from 'react-native-image-picker'
+import VideoPlayer from '../Modules/Video'
+import { Video } from 'expo-av'
 import YoutubePlayer from "react-native-youtube-iframe";
 import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'

@@ -46,15 +46,15 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
         switch (type) {
             case ViewTypes.FULL:
                 return (
-                    <FeedComponent status={status} children={children} item={{item:data}} navigation={navigation} />
+                    <FeedComponent key={data['data']['post_id']} status={status} children={children} item={{ item: data }} navigation={navigation} />
                 );
             default:
                 return null;
         }
     }
-    
+
     let dataProvider = new DataProvider((r1, r2) => {
-        return r1 !== r2;
+        return r1.data.post_id != r2.data.post_id;
     }).cloneWithRows(data)
     return (
         <React.Fragment>
@@ -81,7 +81,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 //     renderItem={(item) => (<FeedComponent status={status} children={children} item={item} navigation={navigation} />)}
                 //     keyExtractor={item => item['data']['post_id']+randomStr(20, '123456789')}
                 // /> 
-                <RecyclerListView onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }} layoutProvider={_layoutProvider} dataProvider={dataProvider} rowRenderer={_rowRenderer} />
+                <RecyclerListView  onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }} layoutProvider={_layoutProvider} dataProvider={dataProvider} rowRenderer={_rowRenderer} />
                 : <View>
                     <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}><CompButton message={'Signup/Login to explore what other kids are learning'} /></TouchableOpacity>
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}>
