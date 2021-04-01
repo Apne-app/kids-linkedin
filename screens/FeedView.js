@@ -52,6 +52,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 return null;
         }
     }
+    
 
     let dataProvider = new DataProvider((r1, r2) => {
         return r1.data.post_id != r2.data.post_id;

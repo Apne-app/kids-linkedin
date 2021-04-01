@@ -91,7 +91,9 @@ const TagScreen = ({ route, navigation }) => {
                     setresult([])
                     var keys = Object.keys(response.data)
                     var data = keys.map((key) => response['data'][key])
-                    setresult(data)
+                    var teachers = data.filter((item) => item.data.type == "Teacher")
+                    // console.log(teachers[0]['data']['category'][0][0].toUpperCase()+)
+                    setresult(teachers)
                     setdoing(false)
                 })
                 .catch((error) => {
@@ -118,11 +120,14 @@ const TagScreen = ({ route, navigation }) => {
                             uri: item['data']['image'],
                             priority: FastImage.priority.high,
                         }}
-                        style={{ width: 60, height: 60, borderRadius: 306, }}
+                        style={{ width: 60, height: 60, borderRadius: 306, flex: 2}}
                     />
-                    <View style={{ marginLeft: 20, flexDirection: 'column' }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop: 9 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
-                        {/* <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  </Text> */}
+                    <View style={{ marginLeft: 20, flexDirection: 'column', flex: 5 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
+                        {<Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '700', color: "#327feb", fontSize: 14, lineHeight: 24 }}>{(item['data']['category'][0] ? item['data']['category'][0] : "").toUpperCase()}</Text>}
+                    </View>
+                    <View style={{height: 50, width: 30, backgroundColor: '#327feb', padding: 10, flex: 2, borderRadius: 15, justifyContent: 'center'}}>
+                        <Text style={{color: "#fff", alignSelf: 'center'}}>Select</Text>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
