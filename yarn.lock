@@ -1067,7 +1067,7 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
-"@expo/config-plugins@1.0.23":
+"@expo/config-plugins@1.0.23", "@expo/config-plugins@~1.0.13":
   version "1.0.23"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-1.0.23.tgz#a05ec1b935c4b3a7e35826c891ce852dde0e99d7"
   integrity sha512-LjglO6CHC69qYjOynRsDBKuVbL2W3UPJs6nghgJR5aNhQCZtQsc74p4NWbQEkbPEasNtGCb355PlsV2fQskFaQ==
@@ -4200,6 +4200,15 @@ expo-asset@^8.2.2, expo-asset@~8.2.1:
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
 
+expo-av@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-9.0.0.tgz#76b5dbb006bfddf5b6ce43151d8f3a9eb66c7fa5"
+  integrity sha512-VAMt/iPNeG33G1ycf2zhlZ+I7Ymuh3FYk9XL85jMrGOn6prW4C1tRp5YczZqgunLd5dzeBhunHCTlZn7WODP6g==
+  dependencies:
+    "@expo/config-plugins" "~1.0.13"
+    lodash "^4.17.15"
+    nullthrows "^1.1.0"
+
 expo-constants@^10.0.1:
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-10.0.1.tgz#a6cf6998c70ef6e1772a7c4096723482194c5828"
@@ -7004,7 +7013,7 @@ nth-check@^1.0.2:
   dependencies:
     boolbase "~1.0.0"
 
-nullthrows@^1.1.1:
+nullthrows@^1.1.0, nullthrows@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/nullthrows/-/nullthrows-1.1.1.tgz#7818258843856ae971eae4208ad7d7eb19a431b1"
   integrity sha512-2vPPEi+Z7WqML2jZYddDIfy5Dqb0r2fze2zTxNNknZaFpVHU3mFB3R+DWeJWGVx0ecvttSGlJTI+WG+8Z4cDWw==
@@ -9986,6 +9995,11 @@ which@^2.0.1, which@^2.0.2:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+with-default-props@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/with-default-props/-/with-default-props-0.2.1.tgz#41470545d2fa945308993c86a81c7481c298cb95"
+  integrity sha512-yTrBg7EGzFwpZLCN5M4ropSbZ/V+scx5DXBE6HZhKCevsRaYCRBBf/69UvfaWxu/zRaWX5j9Y/F4YFs1Q1yg4w==
 
 word-wrap@~1.2.3:
   version "1.2.3"

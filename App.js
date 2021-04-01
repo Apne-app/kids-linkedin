@@ -32,6 +32,7 @@ import SinglePostScreen from './screens/SinglePost'
 import Searching from './screens/Searching'
 import AddText from './screens/AddText'
 import Unverified from './screens/Unverified'
+import TagScreen from './screens/TagScreen'
 import ChildSuccess from './screens/ChildSuccess'
 import FileScreen from './screens/FileScreen'
 import Settings from './screens/Settings'
@@ -440,6 +441,7 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="SharedPost" component={SharedPost} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="LikesList" component={LikesList} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 400 } }, close: { animation: 'timing', config: { duration: 400 } } }  }} name="TagScreen" component={TagScreen} />
           </Stack.Navigator>
           <NotifierRoot ref={notifierRef} />
         </NavigationContainer>

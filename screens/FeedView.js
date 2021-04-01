@@ -46,15 +46,15 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
         switch (type) {
             case ViewTypes.FULL:
                 return (
-                    <FeedComponent status={status} children={children} item={{item:data}} navigation={navigation} />
+                    <FeedComponent key={data['data']['post_id']} status={status} children={children} item={{ item: data }} navigation={navigation} />
                 );
             default:
                 return null;
         }
     }
-    
+
     let dataProvider = new DataProvider((r1, r2) => {
-        return r1 !== r2;
+        return r1.data.post_id != r2.data.post_id;
     }).cloneWithRows(data)
     return (
         <React.Fragment>
