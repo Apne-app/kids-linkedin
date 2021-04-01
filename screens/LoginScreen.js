@@ -219,28 +219,30 @@ const LoginScreen = ({ route, navigation }) => {
         })
           .then(async (response) => {
             console.log(response.data)
-            const storeProfile = async () => {
-              try {
-                await AsyncStorage.setItem('profile', JSON.stringify(response.data))
-                //0 means no login
-                //1 means email sent
-                //2  means verified+no  child
-                /// 3 means child+verified
-                await AsyncStorage.setItem('status', '1')
+            if((response.data.status && response.data.status != 'inactive') || ! response.data.status) {
 
-                analytics.identify(String(response.data.id), {
-                  email: response.data.email
-                })
-
-
-              } catch (e) {
-                setLoading(false);
-                alert('There was an error, please try again')
-                console.log(e)
+              const storeProfile = async () => {
+                try {
+                  await AsyncStorage.setItem('profile', JSON.stringify(response.data))
+                  //0 means no login
+                  //1 means email sent
+                  //2  means verified+no  child
+                  /// 3 means child+verified
+                  await AsyncStorage.setItem('status', '1')
+                  
+                  analytics.identify(String(response.data.id), {
+                    email: response.data.email
+                  })
+                  
+                  
+                } catch (e) {
+                  setLoading(false);
+                  alert('There was an error, please try again')
+                  console.log(e)
+                }
               }
-            }
-            storeProfile()
-            axios.get('https://api.genio.app/shining/send2/' + response.data.uuid + '/' + response.data.email + '/')
+              storeProfile()
+              axios.get('https://api.genio.app/shining/send2/' + response.data.uuid + '/' + response.data.email + '/')
               .then((response) => {
                 console.log(response.data)
                 if (response.data == 'wrong id!') {
@@ -257,6 +259,11 @@ const LoginScreen = ({ route, navigation }) => {
                 setLoading(false);
                 alert('There was an error, please try again')
               })
+            }
+            else {
+              setLoading(false);
+              alert('Your account is not verified yet. Kindly wait for the confirmation from our side.')
+            }
 
           })
           .catch((error) => {
@@ -291,7 +298,7 @@ const LoginScreen = ({ route, navigation }) => {
     }
   }
   return (
-    <View style={styles.container}>
+    <ScrollView style={{minHeight: height, flex: 1}} ref={scrollcheck} keyboardShouldPersistTaps='handled' style={styles.container}>
       <CompHeader screen={'Login'}
        headerType={route.params.type}
        goback={() => {
@@ -302,7 +309,6 @@ const LoginScreen = ({ route, navigation }) => {
           navigation.navigate('Home')
         }
       }} />
-      <ScrollView ref={scrollcheck} keyboardShouldPersistTaps='handled'>
         {loader ? <Spinner color='blue' style={styles.loading} /> : null}
         <Content >
           <View style={{ flex: 1, marginTop: 30, }}>
@@ -351,12 +357,12 @@ const LoginScreen = ({ route, navigation }) => {
             <KeyboardAvoidingView behavior={'padding'}>
               {active == 'email' ? <View><TextInput underlineColor='transparent' theme={theme} label={''} mode={'outlined'} autoCompleteType={'email'} blurOnSubmit={true} keyboardType={'email-address'} ref={input} value={email} placeholderTextColor={'lightgrey'} textContentType={'emailAddress'} autoCompleteType={'email'} autoCapitalize={'none'} placeholder={'manoj@google.com'} onChangeText={(text) => { setemail(text); checkemail(text); }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
               <Text style={{ fontFamily: 'NunitoSans-Regular', paddingLeft: 30, color: 'red', marginTop: 10, display: visible ? 'flex' : 'none' }}>*Please enter a valid email ID</Text></View>: null}
-              <View style={{ alignSelf: 'center', }}>
+              <View>
                 <SpinnerButton
                   buttonStyle={{
                     borderRadius: 28.5,
                     margin: 20,
-                    marginTop: 70,
+                    marginTop: 50,
                     width: 200,
                     alignSelf: 'center',
                     backgroundColor: '#327FEB',
@@ -373,26 +379,29 @@ const LoginScreen = ({ route, navigation }) => {
                       
                     }
                   }}
-                  indicatorCount={5}
+                  indicatorCount={10}
                 >
                   <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
                 </SpinnerButton>
+                <TouchableOpacity onPress={() => navigation.navigate('Browser', { 'url': "https://genio.app/teacher" })}>
+                <Text style={{alignSelf: 'center', textDecorationLine: 'underline', marginTop: 10}}>Looking to create a teacher account? Click here!</Text>
+                </TouchableOpacity>
               </View>
             </KeyboardAvoidingView>
           </View>
         </Content>
       </ScrollView>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   flexDirection: 'column',
-  //   // padding: 20,
-  //   // marginTop: 40,
-  // },
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    minHeight: height
+    // padding: 20,
+    // marginTop: 40,
+  },
   form: {
     marginTop: 40,
     flex: 1
@@ -415,7 +424,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     backgroundColor: '#efefef',
-    height: height
+    // height: height
   },
   buttonText: {
     fontSize: 20,

@@ -134,6 +134,7 @@ const OTPScreen = ({ navigation, route }) => {
           })
             .then(async (response) => {
               console.log("parent profile: ", response.data)
+              
               const storeProfile = async () => {
                 try {
                   await AsyncStorage.setItem('profile', JSON.stringify(response.data))
@@ -181,7 +182,12 @@ const OTPScreen = ({ navigation, route }) => {
                   console.log(e)
                 }
               }
-              storeProfile()
+              if((response.data.status && response.data.status != 'inactive') || ! response.data.status) {
+                storeProfile()
+              } else {
+                setLoading(false);
+                alert('Your account is not verified yet. Kindly wait for the confirmation from our side.')
+              }
             })
             .catch((error) => {
               console.log(error)

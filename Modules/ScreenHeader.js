@@ -12,7 +12,7 @@ const CompHeader = (props) => {
         back: require('../Icons/back.png'),
     };
     // statusBarHeight={Constants.statusBarHeight + 10}
-    return (<Appbar.Header style={{ backgroundColor: '#327FEB', marginBottom: 10, marginTop: 0, elevation: 10, position: props.screen == 'Genio' ? 'absolute' : 'relative', top: 0, left: 0, right: 0, height: 80, }} statusBarHeight={10}>
+    return (<Appbar.Header style={{ backgroundColor: '#327FEB', marginBottom: 10, marginTop: 0, elevation: 10, position: props.screen == 'Genio' ? 'absolute' : 'relative', top: 0, left: 0, right: 0, height: 80 }} statusBarHeight={10}>
         <View style={{ flexDirection: 'row', marginTop: props.screen == 'Genio' ? 0 : 6, flex: 1, marginBottom: 10, marginLeft: 10, width: 100 }}>
             {props.left && <TouchableOpacity onPress={() => props.goback()}>
                 <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginTop: 8 }} source={(images.back)} />

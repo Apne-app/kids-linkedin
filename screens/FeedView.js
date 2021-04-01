@@ -81,7 +81,16 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 //     renderItem={(item) => (<FeedComponent status={status} children={children} item={item} navigation={navigation} />)}
                 //     keyExtractor={item => item['data']['post_id']+randomStr(20, '123456789')}
                 // /> 
-                <RecyclerListView onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }} layoutProvider={_layoutProvider} dataProvider={dataProvider} rowRenderer={_rowRenderer} />
+                <RecyclerListView 
+                    onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }} 
+                    layoutProvider={_layoutProvider} 
+                    dataProvider={dataProvider} 
+                    style={{paddingTop:140}}
+                    rowRenderer={_rowRenderer} 
+                    onScroll={(e) => {
+                        scrollY.setValue(e.nativeEvent.contentOffset.y)
+                    }}
+                />
                 : <View>
                     <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}><CompButton message={'Signup/Login to explore what other kids are learning'} /></TouchableOpacity>
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}>
