@@ -6,6 +6,7 @@ import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon,
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import { Appbar } from 'react-native-paper';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import analytics from '@segment/analytics-react-native';
 import { getUniqueId, getManufacturer } from 'react-native-device-info';
@@ -82,6 +83,16 @@ const TagScreen = ({ route, navigation }) => {
             });
 
     }, [])
+    function titleCase(str) {
+       var splitStr = str.toLowerCase().split(' ');
+       for (var i = 0; i < splitStr.length; i++) {
+           // You do not need to check if i is larger than splitStr length, as your for does that for you
+           // Assign it back to the array
+           splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+       }
+       // Directly return the joined string
+       return splitStr.join(' '); 
+    }
     const [doing, setdoing] = useState(false)
     const onChangeSearch = query => {
         setdoing(true)
@@ -108,7 +119,7 @@ const TagScreen = ({ route, navigation }) => {
         return (
             <View key={item.id} style={{ alignSelf: 'center', margin: 1 }}>
                 <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
-                    console.log(item['data'])
+                    // console.log(item['data'])
                     navigation.navigate(route.params.screen, { 'data': { image: item['data']['image'], name: item['data']['name'], id: item['data']['unique_id'], type:item['data']['type'], year:item['data']['year'] } })
                     analytics.track('TeacherTagClick', {
                         userID: children ? children["0"]["id"] : null,
@@ -120,14 +131,16 @@ const TagScreen = ({ route, navigation }) => {
                             uri: item['data']['image'],
                             priority: FastImage.priority.high,
                         }}
-                        style={{ width: 60, height: 60, borderRadius: 306, flex: 2 }}
+                        style={{ width: 60, height: 60, borderRadius: 306}}
                     />
                     <View style={{ marginLeft: 20, flexDirection: 'column', flex: 5 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{titleCase(item['data']['name'])}</Text>
                         {<Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '700', color: "#327feb", fontSize: 14, lineHeight: 24 }}>{(item['data']['category'][0] ? item['data']['category'][0] : "").toUpperCase()}</Text>}
                     </View>
-                    <View style={{ height: 50, width: 30, backgroundColor: '#327feb', padding: 10, flex: 2, borderRadius: 15, justifyContent: 'center' }}>
+                    <View style={{flex: 2, alignItems: 'center'}}>
+                    <View style={{ height: 35, width: 70, backgroundColor: '#327feb', padding: 10, borderRadius: 25, justifyContent: 'center', marginTop: 10 }}>
                         <Text style={{ color: "#fff", alignSelf: 'center' }}>Select</Text>
+                    </View>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -137,26 +150,25 @@ const TagScreen = ({ route, navigation }) => {
     };
     return (
         <>
-            <CompHeader screen={'Tag'} icon={'close'} goback={() => navigation.pop()} />
             <ScrollView keyboardShouldPersistTaps='handled'>
-                <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'transparent', height: 110 }}>
-                    <Item style={{ width: width * 0.9, borderColor: "transparent", height: 45, borderRadius: 10, marginTop: 20 }}>
+                <Appbar.Header noShadow style={{backgroundColor: '#327feb', height: 80}}>
                         {/* <Input
-                            style={{ backgroundColor: 'lightgrey', height: 50, fontFamily: 'NunitoSans-Regular', textDecorationColor: '#327FEB', paddingLeft: 10 }}
+                            style={{ backgroundColor: 'lightgrey', borderRadius: 100, height: 35 }}
                             autoFocus={true}
                             onChangeText={onChangeSearch}
+
                             value={searchQuery}
                             placeholder='Search' /> */}
                         <Searchbar
                             theme={theme}
                             autoFocus={true}
-                            style={{ width: width - 100 }}
+                            style={{ width: width - 100, marginTop: 10, height: 40 }}
                             placeholder="Search Genio"
                             onChangeText={onChangeSearch}
                             value={searchQuery}
                         />
-                    </Item>
-                </Header>
+                        <Text onPress={() => navigation.pop()} style={{ fontFamily: 'NunitoSans-SemiBold', color: '#fff', marginLeft: 20, marginTop: 28, height: 40  }}>Cancel</Text>
+                </Appbar.Header>
                 {status == '3' ? null : <CompButton message={'Signup/Login to search for teachers'} />}
                 {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<View><FlatList
                     data={result}
