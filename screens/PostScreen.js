@@ -145,6 +145,17 @@ const PostScreen = ({ navigation, route }) => {
     return name;
   }
 
+  function titleCase(str) {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+        // You do not need to check if i is larger than splitStr length, as your for does that for you
+        // Assign it back to the array
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+    }
+    // Directly return the joined string
+    return splitStr.join(' '); 
+ }
+
   const PostUpload = async (tagged) => {
     setLoading(true);
     console.log(tagged)
@@ -297,15 +308,14 @@ const PostScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { 'screen': 'CreatePost' })} style={{ marginHorizontal: 22, marginBottom: 10, flexDirection: 'row' }}>
-        {route.params.data ? <>
-          <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{route.params.data.name[0].toUpperCase() + route.params.data.name.slice(1)}</Text>
-          <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
-
-        </> :
-          <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
-            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', width: width / 2 }}>Tag Teacher</Text>
-            <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right' }} /></View>}
+      <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen:'VideoPreview' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row', borderWidth: 0.2}}>
+          {route.params.data ? <>
+              <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{titleCase(route.params.data.name)}</Text>
+              <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
+          </> :
+              <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
+                  <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', width: width / 2 }}>Tag Teacher</Text>
+                  <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right' }} /></View>}
       </TouchableOpacity>
       {/* <Snackbar
         visible={showToast}

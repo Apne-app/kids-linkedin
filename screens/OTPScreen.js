@@ -272,7 +272,7 @@ const OTPScreen = ({ navigation, route }) => {
       };
 
     return (
-      <View  style={{ backgroundColor: 'white', width: width, minHeight: height }}>
+      <ScrollView ref={scrollcheck} keyboardShouldPersistTaps='handled' style={styles.container}>
       <CompHeader screen={'OTP'}
       goback={() => {
         if (navigation.canGoBack()) {
@@ -282,10 +282,9 @@ const OTPScreen = ({ navigation, route }) => {
           navigation.navigate('Home')
         }
       }} />
-      <ScrollView ref={scrollcheck} keyboardShouldPersistTaps='handled'>
-        <Content >
-        {loading ? <Spinner color='blue' style={styleLoader.loading} /> : null}
-        <View style={{ opacity: logging ? 0.3 : 1, }}>
+      {loading ? <Spinner color='blue' style={styleLoader.loading} /> : null}
+        <Content style={{backgroundColor: '#fff'}}>
+        <View style={{ opacity: logging ? 0.3 : 1, minHeight: height }}>
         <Image source={require('../assets/otp.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 10 }} />
         <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>We've sent an OTP to your phone{"\n"}<Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{route.params.phone}{'\n'}</Text><TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>(</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB', textDecorationColor: '#327FEB', textDecorationLine: 'underline' }}>Change</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>)</Text></TouchableOpacity></Text>
         <KeyboardAvoidingView behavior={'padding'} >
@@ -306,8 +305,6 @@ const OTPScreen = ({ navigation, route }) => {
                     textContentType="oneTimeCode"
                     renderCell={renderCell}
                 />
-        </KeyboardAvoidingView>
-        <KeyboardAvoidingView behavior={'padding'} >
                     <Button disabled={logging} block style={{ marginTop: 20, borderColor: active ? '#327FEB' : 'grey', backgroundColor: active ? '#327FEB' : 'grey', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={() => { sendOTP(); settime(45) }}>
                         <View style={{ flexDirection: 'row' }}><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Send again (</Text><View style={{ marginTop: 0, marginHorizontal: -2 }}>
                             <CountDown
@@ -325,12 +322,11 @@ const OTPScreen = ({ navigation, route }) => {
                     <Button disabled={logging} block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} >
                         <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>Continue as a guest*</Text>
                     </Button>
-                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20, marginBottom: 80 }}>*You wont be able to use the social network</Text>
+                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20, marginBottom: 10 }}>*You wont be able to use the social network</Text>
         </KeyboardAvoidingView>
                 </View>
-            </Content>
-            </ScrollView>
-        </View>
+        </Content>
+      </ScrollView>
     );
 
 }
@@ -339,6 +335,7 @@ const styleLoader = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: '#fff'
     // padding: 20,
     // marginTop: 40,
   },

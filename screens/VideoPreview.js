@@ -23,6 +23,16 @@ const VideoPreview = ({ navigation, route }) => {
     const [loading, setloading] = useState(false)
     const [caption, setcaption] = useState('')
     var children = route.params.children['0']
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+        }
+        // Directly return the joined string
+        return splitStr.join(' '); 
+     }
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -143,10 +153,9 @@ const VideoPreview = ({ navigation, route }) => {
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ backgroundColor: 'lightgrey', height: 0.8, width: width, marginBottom: 3.1 }}></View>
-                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen')} style={{ marginHorizontal: 22, marginBottom: 10, flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen:'VideoPreview' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row', borderWidth: 0.2}}>
                         {route.params.data ? <>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{route.params.data.name[0].toUpperCase() + route.params.data.name.slice(1)}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{titleCase(route.params.data.name)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
 
                         </> :

@@ -61,6 +61,16 @@ const ProfileScreen = ({ navigation, route }) => {
         }
         return result;
     }
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+        }
+        // Directly return the joined string
+        return splitStr.join(' '); 
+     }
     const pickImage = (type) => {
         if (type === 'gallery') {
             ImagePicker.openPicker({
@@ -434,15 +444,15 @@ const ProfileScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
                     <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(children['0']['data']['name'])}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']}</Text>
                     </View>
                 </View>
             </View>
-            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 70, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 10 }}>
                     <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data['posts'].length}</Text>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
