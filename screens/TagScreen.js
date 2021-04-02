@@ -92,7 +92,6 @@ const TagScreen = ({ route, navigation }) => {
                     var keys = Object.keys(response.data)
                     var data = keys.map((key) => response['data'][key])
                     var teachers = data.filter((item) => item.data.type == "Teacher")
-                    // console.log(teachers[0]['data']['category'][0][0].toUpperCase()+)
                     setresult(teachers)
                     setdoing(false)
                 })
@@ -109,7 +108,8 @@ const TagScreen = ({ route, navigation }) => {
         return (
             <View key={item.id} style={{ alignSelf: 'center', margin: 1 }}>
                 <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
-                    navigation.navigate('VideoPreview', { 'data': { image: item['data']['image'], name: item['data']['name'], id: item['data']['unique_id'] } })
+                    console.log(item['data'])
+                    navigation.navigate(route.params.screen, { 'data': { image: item['data']['image'], name: item['data']['name'], id: item['data']['unique_id'], type:item['data']['type'], year:item['data']['year'] } })
                     analytics.track('TeacherTagClick', {
                         userID: children ? children["0"]["id"] : null,
                         deviceID: getUniqueId()
@@ -120,14 +120,14 @@ const TagScreen = ({ route, navigation }) => {
                             uri: item['data']['image'],
                             priority: FastImage.priority.high,
                         }}
-                        style={{ width: 60, height: 60, borderRadius: 306, flex: 2}}
+                        style={{ width: 60, height: 60, borderRadius: 306, flex: 2 }}
                     />
                     <View style={{ marginLeft: 20, flexDirection: 'column', flex: 5 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
                         {<Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '700', color: "#327feb", fontSize: 14, lineHeight: 24 }}>{(item['data']['category'][0] ? item['data']['category'][0] : "").toUpperCase()}</Text>}
                     </View>
-                    <View style={{height: 50, width: 30, backgroundColor: '#327feb', padding: 10, flex: 2, borderRadius: 15, justifyContent: 'center'}}>
-                        <Text style={{color: "#fff", alignSelf: 'center'}}>Select</Text>
+                    <View style={{ height: 50, width: 30, backgroundColor: '#327feb', padding: 10, flex: 2, borderRadius: 15, justifyContent: 'center' }}>
+                        <Text style={{ color: "#fff", alignSelf: 'center' }}>Select</Text>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -141,20 +141,20 @@ const TagScreen = ({ route, navigation }) => {
             <ScrollView keyboardShouldPersistTaps='handled'>
                 <Header noShadow style={{ flexDirection: 'row', backgroundColor: 'transparent', height: 110 }}>
                     <Item style={{ width: width * 0.9, borderColor: "transparent", height: 45, borderRadius: 10, marginTop: 20 }}>
-                        <Input
+                        {/* <Input
                             style={{ backgroundColor: 'lightgrey', height: 50, fontFamily: 'NunitoSans-Regular', textDecorationColor: '#327FEB', paddingLeft: 10 }}
                             autoFocus={true}
                             onChangeText={onChangeSearch}
                             value={searchQuery}
-                            placeholder='Search' />
-                        {/* <Searchbar
-                        theme={theme}
-                        autoFocus={true}
-                        style={{ width: width - 100 }}
-                        placeholder="Search Genio"
-                        onChangeText={onChangeSearch}
-                        value={searchQuery}
-                    /> */}
+                            placeholder='Search' /> */}
+                        <Searchbar
+                            theme={theme}
+                            autoFocus={true}
+                            style={{ width: width - 100 }}
+                            placeholder="Search Genio"
+                            onChangeText={onChangeSearch}
+                            value={searchQuery}
+                        />
                     </Item>
                 </Header>
                 {status == '3' ? null : <CompButton message={'Signup/Login to search for teachers'} />}

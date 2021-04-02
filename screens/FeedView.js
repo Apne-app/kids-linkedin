@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
@@ -9,7 +8,8 @@ import PostLoader from '../Modules/PostLoader'
 import CompButton from '../Modules/CompButton'
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 const width = Dimensions.get('window').width;
-const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY }) => {
+const height = Dimensions.get('window').height;
+const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY, profile }) => {
     const scroll = useRef(new Animated.Value(0)).current;
     // function randomStr(len, arr) {
     //     var ans = '';
@@ -52,13 +52,13 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 return null;
         }
     }
-    
+
 
     let dataProvider = new DataProvider((r1, r2) => {
         return r1.data.post_id != r2.data.post_id;
     }).cloneWithRows(data)
     return (
-        <React.Fragment>
+        data.length ? <React.Fragment>
             {status === '3' || feed_type != 'following' ?
                 // <FlatList
                 //     data={data.map((item) => item)}
@@ -82,14 +82,14 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 //     renderItem={(item) => (<FeedComponent status={status} children={children} item={item} navigation={navigation} />)}
                 //     keyExtractor={item => item['data']['post_id']+randomStr(20, '123456789')}
                 // /> 
-                <RecyclerListView 
-                    onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }} 
-                    layoutProvider={_layoutProvider} 
-                    dataProvider={dataProvider} 
-                    style={{paddingTop:140}}
-                    rowRenderer={_rowRenderer} 
+                <RecyclerListView
+                    onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
+                    layoutProvider={_layoutProvider}
+                    dataProvider={dataProvider}
+                    style={{ paddingTop: profile ? 10 : 140 }}
+                    rowRenderer={_rowRenderer}
                     onScroll={(e) => {
-                        scrollY.setValue(e.nativeEvent.contentOffset.y)
+                        scrollY?scrollY.setValue(e.nativeEvent.contentOffset.y):null
                     }}
                 />
                 : <View>
@@ -103,7 +103,10 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                         <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Explore what other kids are learning and working on</Text>
                     </TouchableWithoutFeedback>
                 </View>}
-        </React.Fragment>
+        </React.Fragment> : <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: scrollY ? height / 10 : 100, flexDirection: 'column' }}>
+            <FastImage source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+            <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>No {feed_type} yet!</Text>
+        </View>
     )
 }
 export default FeedView

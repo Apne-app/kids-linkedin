@@ -20,6 +20,7 @@ import ScreenHeader from '../Modules/ScreenHeader'
 import CompButton from '../Modules/CompButton'
 import LikeButton from '../components/LikeButton'
 import FeedComponent from '../Modules/FeedComponent'
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import { SliderBox } from "react-native-image-slider-box";
@@ -28,6 +29,7 @@ import { LinkPreview } from '@flyerhq/react-native-link-preview'
 import ImagePicker from 'react-native-image-crop-picker';
 import { Thumbnail } from 'react-native-thumbnail-video';
 import PostLoader from '../Modules/PostLoader'
+import FeedView from './FeedView'
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const ProfileScreen = ({ navigation, route }) => {
@@ -35,13 +37,21 @@ const ProfileScreen = ({ navigation, route }) => {
     const status = route.params.status
     const [place, setplace] = useState(0)
     const [source, setsource] = useState('')
-    const [data, setdata] = useState({ 'followers': 0, 'following': 0 })
+    const [data, setdata] = useState({ posts: [], classes: [], mentions: [] })
+    const [follow, setfollow] = useState({ 'followers': 0, 'following': 0 })
     const [token, setToken] = useState('');
     const [loading, setloading] = useState(true);
     const [key, setkey] = useState('1')
     const [posts, setposts] = useState([])
     const { Update } = React.useContext(AuthContext);
     const refActionSheet = useRef(null);
+    const [index, setIndex] = useState(0);
+    const [refreshing, setrefreshing] = useState({ 'mentions': false, 'posts': false, 'classes': false })
+    const [routes, setRoutes] = React.useState([
+        { key: 'mentions', title: 'Mentions' },
+        { key: 'posts', title: 'Posts' },
+        { key: 'classes', title: 'Classes' },
+    ]);
     function makeid(length) {
         var result = '';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -309,6 +319,37 @@ const ProfileScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (children) {
+            axios.post('https://d6a537d093a2.ngrok.io/profile', {
+                'profile_id': children[0]['id'],
+                'user_id': children ? children[0]['id'] : null
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
+            }).then((response) => {
+                setdata({ ...data, posts: response['data']['data'] })
+                setkey(String(parseInt(key) + 1))
+            }).catch((error) => {
+                console.log(error)
+            })
+            if (children[0]['data']['type'] == 'Teacher') {
+                axios.post('https://d6a537d093a2.ngrok.io/getmentions', {
+                    'mention_id': children[0]['id'],
+                    'user_id': children ? children[0]['id'] : null
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
+                }).then((response) => {
+                    console.log(response['data']['data'])
+                    setdata({ ...data, mentions: response['data']['data'] })
+                    setkey(String(parseInt(key) + 1))
+                }).catch((error) => {
+                    console.log(error)
+                })
+            }
             axios.post('http://mr_robot.api.genio.app/profile', {
                 'user_id': children[0]['id']
             }, {
@@ -326,7 +367,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         'Content-Type': 'application/json'
                     }
                 }).then((response) => {
-                    setdata(response['data']['data'])
+                    setfollow(response['data']['data'])
                     setloading(false)
                 }).catch((error) => {
                     console.log(error)
@@ -336,80 +377,97 @@ const ProfileScreen = ({ navigation, route }) => {
             })
         }
     }, [])
-    const there = () => {
-        return (<View key={place} style={{ backgroundColor: "#f9f9f9" }}>
-            <ScrollView style={{ backgroundColor: "#f9f9f9" }} >
-                <View style={{ marginTop: 30, flexDirection: 'row', backgroundColor: "#f9f9f9" }}>
-                    <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
-                        {console.log(children[0]['data']['imageprofile'])}
-                        <FastImage
-                            source={{
-                                uri: source ? source : children[0]['data']['image'],
-                            }}
-                            style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
-                        />
-                        <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: '#f9f9f9', borderWidth: 2, marginLeft: -35 }}>
-                            <Icon name="camera" type="Feather" style={{ color: '#f9f9f9', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
-                        </View>
-                    </TouchableOpacity>
-                    <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
-                        <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{'Kid'}</Text>
-                            {/* <Icon onPress={()=>setplacefun(String(parseInt(place)+1))} name="refresh-ccw" type="Feather" style={{ color: 'black', alignSelf: 'center', fontSize: 18, marginLeft:10, marginTop:2}} /> */}
-                        </View>
-                    </View>
-                </View>
-                <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                    <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                        <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{posts.length}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.followers}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
-                        </View>
-                        <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.following}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={{ marginBottom: 200, backgroundColor: "#f9f9f9", marginTop: 20 }}>
-                    {loading ? <PostLoader /> : <FlatList
-                        data={posts}
-                        renderItem={(item) => { return (<FeedComponent status={status} children={children} navigation={navigation} item={item} />) }}
-                        keyExtractor={item => item['data']['post_id']}
-                        ListEmptyComponent={() => {
-                            return (
-                                <View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
-                                    <TouchableWithoutFeedback onPress={() => navigation.navigate('Camera')}>
-                                        <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
-                                            <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
-                                        </View>
-                                    </TouchableWithoutFeedback>
-                                    <TouchableWithoutFeedback onPress={() => navigation.navigate('Camera')}>
-                                        <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Create a post now and share your kid's talents to the community of Genio</Text>
-                                    </TouchableWithoutFeedback>
-                                </View>
-                            )
-                        }
-                        }
-                    />}
-                </View>
+    const onRefresh = () => {
 
-            </ScrollView>
-            {/* <BottomSheet
-                ref={optionsRef}
-                snapPoints={[height * 0.5, 0, -200]}
-                initialSnap={2}
-                enabledGestureInteraction={true}
-                borderRadius={25}
-                renderContent={renderOptions}
-            /> */}
+    }
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'mentions':
+                return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+            case 'posts':
+                return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+            case 'classes':
+                return (
+                    <View style={{ marginTop: 0 }}>
+                        <CompButton message={'Click to add a class'} />
+                        <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                    </View>)
+            default:
+                return null;
+        }
+    };
+    const renderTabBar = (props) => {
+        return (
+
+            <TabBar
+                {...props}
+                activeColor={'#327FEB'}
+                inactiveColor={'black'}
+                pressColor={'lightblue'}
+                indicatorStyle={{ backgroundColor: 'white' }}
+                style={{ backgroundColor: 'white' }}
+                tabStyle={{ width: width / 3 }}
+                scrollEnabled={true}
+                bounces={true}
+                renderLabel={({ route, focused, color }) => (
+                    <Text style={{ color, margin: 8, fontFamily: 'NunitoSans-SemiBold' }}>
+                        {route.title + ' (' + String(data[route.key].length) + ')'}
+                    </Text>
+                )}
+                indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
+            />
+        )
+    }
+    const there = () => {
+        return (<>
+            <View style={{ marginTop: 30, flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
+                    <FastImage
+                        source={{
+                            uri: source ? source : children[0]['data']['image'],
+                        }}
+                        style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
+                    />
+                    <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: '#f9f9f9', borderWidth: 2, marginLeft: -35 }}>
+                        <Icon name="camera" type="Feather" style={{ color: '#f9f9f9', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
+                    </View>
+                </TouchableOpacity>
+                <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
+                    <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', }}>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']}</Text>
+                    </View>
+                </View>
+            </View>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
+                    <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data['posts'].length}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                    </View>
+                    <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{follow.followers}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                    </View>
+                    <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{follow.following}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                    </View>
+                </View>
+            </View>
+            {children[0]['data']['type'] === 'Teacher' ? <TabView
+                key={key}
+                style={{ flex: 4 }}
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                scrollEnabled={true}
+                renderTabBar={renderTabBar}
+            />
+                : (loading ? <PostLoader /> : <FeedView scrollY={null} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
+            }
             <ActionSheet
                 useNativeDriver={true}
                 ref={refActionSheet}
@@ -418,7 +476,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 cancelButtonIndex={1}
                 onPress={(index) => { index == 0 ? pickImage('gallery') : null }}
             />
-        </View>)
+        </>)
     }
     const notthere = () => {
         return (
@@ -436,10 +494,10 @@ const ProfileScreen = ({ navigation, route }) => {
         )
     }
     return (
-        <View key={place}>
+        <>
             <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
             {status == '3' ? there() : notthere()}
-        </View>
+        </>
     );
 };
 

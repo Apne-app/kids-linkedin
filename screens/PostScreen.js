@@ -209,8 +209,8 @@ const PostScreen = ({ navigation, route }) => {
     // // var user = client.feed('timeline', '103id');
     // // user.follow('user', '49id');
     // var user = client.feed('user', String(String(children['id']) + String("id")));
-
-    axios.post('http://mr_robot.api.genio.app/post', {
+    var mention = route.params.data
+    axios.post('https://d6a537d093a2.ngrok.io/post', {
       user_id: children['id'],
       acc_type: children['data']['type'],
       user_image: children['data']['image'],
@@ -220,7 +220,12 @@ const PostScreen = ({ navigation, route }) => {
       caption: caption == '' ? 'default123' : caption,
       tags: tagged,
       user_name: children['data']['name'],
-      user_year: parseInt(children['data']['year'])
+      user_year: parseInt(children['data']['year']),
+      mention_id: mention ? mention['id'] : null,
+      mention_name: mention ? mention['name'] : null,
+      mention_type: mention ? mention['type'] : null,
+      mention_year: mention ? mention['year'] : null,
+      mention_image: mention ? mention['image'] : null
     }, {
       headers: {
         'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
@@ -272,29 +277,36 @@ const PostScreen = ({ navigation, route }) => {
     profileImage()
   }, [])
   return (
-    <View style={{ backgroundColor: 'white', height: height, width: width }}>
+    <ScrollView keyboardShouldPersistTaps={'always'} style={{ backgroundColor: 'white', height: height, width: width }}>
       <CompHeader screen={'Post'} goback={goback} />
-      <View style={{ height: height * 0.25 }}>
-        <View style={{ flexDirection: 'row', margin: 10, }}>
-          <FastImage style={{ width: 60, height: 60, borderRadius: 10000, margin: 10 }} source={{ uri: children['data']['image'] }} />
-          <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Regular' }}>{children['data']['name'][0].toUpperCase() + children['data']['name'].slice(1)}</Text>
-        </View>
-        <TouchableOpacity
-          style={{ height: 36, display: loading ? 'none' : 'flex', marginTop: -67, marginRight: 20 }}
-          onPress={() => {
-            PostUpload(route.params.tag);
-          }}
-        >
-          <View style={{ alignSelf: 'flex-end', backgroundColor: '#327FEB', width: 80, borderRadius: 5, height: 36 }}>
-            <Text style={{ color: "white", alignSelf: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginTop: 3.4 }}>
-              Post
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <View>
-          <TextInput autoFocus={true} value={caption} onChangeText={text => setCaption(text)} numberOfLines={4} multiline={true} placeholder={'What awesome thing did your kid do today?'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, padding: 10, textAlignVertical: 'top', height: height * 0.1, marginTop: 40 }} />
+      <View style={{ height: height * 0.20 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 20 }}>
+          <FastImage style={{ width: 40, height: 40, borderRadius: 10000 }} source={{ uri: children['data']['image'] }} />
+          <TextInput autoFocus={true} value={caption} onChangeText={text => setCaption(text)} numberOfLines={4} multiline={true} placeholder={'Write your caption..'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, textAlignVertical: 'top', width: width - 200, marginTop: -4 }} />
+          <TouchableOpacity
+            style={{ height: 36, display: loading ? 'none' : 'flex' }}
+            onPress={() => {
+              PostUpload(route.params.tag);
+            }}
+          >
+            <View style={{ alignSelf: 'flex-end', backgroundColor: '#327FEB', width: 80, borderRadius: 5, height: 36 }}>
+              <Text style={{ color: "white", alignSelf: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginTop: 3.4 }}>
+                Post
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
+      <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { 'screen': 'CreatePost' })} style={{ marginHorizontal: 22, marginBottom: 10, flexDirection: 'row' }}>
+        {route.params.data ? <>
+          <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{route.params.data.name[0].toUpperCase() + route.params.data.name.slice(1)}</Text>
+          <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
+
+        </> :
+          <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
+            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', width: width / 2 }}>Tag Teacher</Text>
+            <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right' }} /></View>}
+      </TouchableOpacity>
       {/* <Snackbar
         visible={showToast}
         style={{ marginBottom: height * 0.1 }}
@@ -310,7 +322,6 @@ const PostScreen = ({ navigation, route }) => {
         Posted Successfully!
             </Snackbar> */}
 
-      {loading ? <Spinner color='blue' style={styles.loading} /> : null}
       {
         route.params.video ?
           <VideoPlayer
@@ -430,7 +441,11 @@ const PostScreen = ({ navigation, route }) => {
           </View>
         </TouchableOpacity> */}
       </ScrollView>
-    </View>
+      {loading ? <View style={{ backgroundColor: '#327FEB', height: 310, borderTopLeftRadius: 20, borderTopRightRadius: 20, display: loading ? 'flex' : 'none', position: loading ? 'absolute' : 'relative', bottom: 0, width: width }}>
+        <Image style={{ width: 100, height: 100, alignSelf: 'center', marginTop: '20%' }} source={require('../assets/log_loader.gif')} />
+        <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 20, color: 'white' }}>Posting...</Text>
+      </View> : null}
+    </ScrollView>
   );
 
 }

@@ -22,6 +22,7 @@ import analytics from '@segment/analytics-react-native';
 import FeedComponent from '../Modules/FeedComponent'
 import FastImage from 'react-native-fast-image'
 import axios from 'axios';
+import { Video } from 'expo-av'
 import KeyboardStickyView from 'rn-keyboard-sticky-view';
 import PostLoader from '../Modules/PostLoader';
 import VideoPlayer from '../Modules/Video'
@@ -367,7 +368,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         // setLoading(false)
                     });
             }
-    
+
         }
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
@@ -417,7 +418,31 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
                 <View style={{ marginTop: 13 }}>
                     {activity['videos'] ?
-                        <VideoPlayer navigation={navigation} video={activity['videos']} /> : null}
+                        <VideoPlayer
+                            videoProps={{
+                                source: { uri: activity['videos'] },
+                                rate: 1.0,
+                                volume: 1.0,
+                                isMuted: false,
+                                videoRef: v => videoRef = v,
+                                resizeMode: Video.RESIZE_MODE_CONTAIN,
+                                // shouldPlay
+                                // usePoster={props.activity.poster?true:false}
+                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                                playInBackground: false,
+                                playWhenInactive: false,
+                                width: width,
+                                height: 340,
+
+                            }}
+                            width={width}
+                            height={340}
+                            hideControlsTimerDuration={1000}
+                            showControlsOnLoad={true}
+                            switchToLandscape={() => videoRef.presentFullscreenPlayer()}
+                            sliderColor={'#327FEB'}
+                            inFullscreen={false}
+                        /> : null}
                     {activity['youtube'] ?
                         <YoutubePlayer
                             videoId={activity['youtube']} // The YouTube video ID

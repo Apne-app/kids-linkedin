@@ -106,6 +106,9 @@ const FeedScreen = ({ navigation, route }) => {
             }))
             setrefreshing(refreshi)
             status === '3' ? route[2]['title'] = route[2]['title'].replace('deafult', String(currentyear - parseInt(children[0]['data']['year']))) : null
+            if (children[0]['type'] != 'Kid') {
+                route.splice(2, 1)
+            }
             var timestamp = await AsyncStorage.getItem('timestamp')
             timestamp = timestamp ? parseInt(timestamp) : 0;
             var mintimestamp = Math.round(new Date().getTime() / 1000)
@@ -184,7 +187,7 @@ const FeedScreen = ({ navigation, route }) => {
         }
         else {
             if (route.key === 'following') {
-                return (<View style={{paddingTop: 140}}>
+                return (<View style={{ paddingTop: 140 }}>
                     <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}><CompButton message={'Signup/Login to explore what other kids are learning'} /></TouchableOpacity>
                     <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' })}>
                         <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: 60, flexDirection: 'column' }}>

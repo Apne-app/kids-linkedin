@@ -384,7 +384,7 @@ const LoginScreen = ({ route, navigation }) => {
                   <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
                 </SpinnerButton>
                 <TouchableOpacity onPress={() => navigation.navigate('Browser', { 'url': "https://genio.app/teacher" })}>
-                <Text style={{alignSelf: 'center', textDecorationLine: 'underline', marginTop: 10}}>Looking to create a teacher account? Click here!</Text>
+                <Text style={{alignSelf: 'center', textDecorationLine: 'underline', marginTop: 10, fontFamily:'NunitoSans-SemiBold'}}>Looking to create a teacher account? Click here!</Text>
                 </TouchableOpacity>
               </View>
             </KeyboardAvoidingView>

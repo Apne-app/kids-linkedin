@@ -35,6 +35,7 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const FeedComponent = ({ props, status, children, navigation, item }) => {
     const refActionSheet = useRef(null);
+    var videoRef = useRef(null);
     const [activity, setactivity] = useState(item['item']['data'])
     const [key, setkey] = useState('0')
     const showActionSheet = () => {
@@ -313,6 +314,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     </Text>
                 </View>}
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
+            {activity['mention_id'] ? <Text onPress={()=>navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold',  paddingHorizontal: 10, marginLeft: 10, marginVertical: 4, fontSize:16, color: '#327FEB' }}>{'@' + activity['mention_name'].charAt(0).toUpperCase() + activity['mention_name'].slice(1)}</Text> : null}
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage

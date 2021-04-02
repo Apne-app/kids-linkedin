@@ -65,7 +65,8 @@ const VideoPreview = ({ navigation, route }) => {
                 return
             }
             name = "https://d2k1j93fju3qxb.cloudfront.net/" + children['id'] + "/videos/" + name
-            axios.post('http://mr_robot.api.genio.app/post', {
+            var mention = route.params.data
+            axios.post('https://d6a537d093a2.ngrok.io/post', {
                 user_id: children['id'],
                 acc_type: children['data']['type'],
                 user_image: children['data']['image'],
@@ -75,7 +76,12 @@ const VideoPreview = ({ navigation, route }) => {
                 caption: caption == '' ? 'default123' : caption,
                 tags: '',
                 user_name: children['data']['name'],
-                user_year: parseInt(children['data']['year'])
+                user_year: parseInt(children['data']['year']),
+                mention_id: mention ? mention['id'] : null,
+                mention_name: mention ? mention['name'] : null,
+                mention_type: mention ? mention['type'] : null,
+                mention_year: mention ? mention['year'] : null,
+                mention_image: mention ? mention['image'] : null
             }, {
                 headers: {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
@@ -119,27 +125,36 @@ const VideoPreview = ({ navigation, route }) => {
     return (
         <>
             <CompHeader screen={'Post'} icon={'back'} goback={() => backalert()} />
-            <ScrollView style={{backgroundColor:'#efefef'}}>
-                <View style={{ flex: 1, opacity: loading ? 0.5 : 1 }}>
-                    <View style={{ flexDirection: 'row', margin: 10 }}>
-                        <FastImage style={{ width: 60, height: 60, borderRadius: 10000, margin: 10 }} source={{ uri: children['data']['image'] }} />
-                        <Text style={{ alignSelf: 'center', textAlign: 'center', fontSize: 15, fontFamily: 'NunitoSans-Regular' }}>{children['data']['name'][0].toUpperCase() + children['data']['name'].slice(1)}</Text>
+            <ScrollView keyboardShouldPersistTaps={"always"} style={{ backgroundColor: '#efefef' }}>
+                <View style={{ flex: 1, opacity: loading ? 0.5 : 1, marginTop: 40 }}>
+                    <View style={{ flexDirection: 'row', margin: 10, justifyContent: 'space-evenly' }}>
+                        <FastImage style={{ width: 40, height: 40, borderRadius: 10000 }} source={{ uri: children['data']['image'] }} />
+                        <TextInput autoFocus={true} value={caption} onChangeText={(value) => setcaption(value)} numberOfLines={4} multiline={true} placeholder={'Write your caption..'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, textAlignVertical: 'top', width: width - 200, marginTop: -4 }} />
+                        <TouchableOpacity
+                            style={{ height: 36, display: loading ? 'none' : 'flex', marginRight: 20 }}
+                            onPress={() => {
+                                PostUpload();
+                            }}
+                        >
+                            <View style={{ alignSelf: 'flex-end', backgroundColor: '#327FEB', width: 80, borderRadius: 5, height: 36, marginTop: 1, marginLeft: 20 }}>
+                                <Text style={{ color: "white", alignSelf: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginTop: 3.6, height: 130 }}>
+                                    Post
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        style={{ height: 36, display: loading ? 'none' : 'flex', marginTop: -67, marginRight: 20 }}
-                        onPress={() => {
-                            PostUpload();
-                        }}
-                    >
-                        <View style={{ alignSelf: 'flex-end', backgroundColor: '#327FEB', width: 80, borderRadius: 5, height: 36 }}>
-                            <Text style={{ color: "white", alignSelf: 'center', fontSize: 17, fontFamily: 'NunitoSans-Bold', marginTop: 3.4 }}>
-                                Post
-                            </Text>
-                        </View>
+                    <View style={{ backgroundColor: 'lightgrey', height: 0.8, width: width, marginBottom: 3.1 }}></View>
+                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen')} style={{ marginHorizontal: 22, marginBottom: 10, flexDirection: 'row' }}>
+                        {route.params.data ? <>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{route.params.data.name[0].toUpperCase() + route.params.data.name.slice(1)}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
+
+                        </> :
+                            <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', width: width / 2 }}>Tag Teacher</Text>
+                                <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right' }} /></View>}
                     </TouchableOpacity>
-                    <View>
-                        <TextInput autoFocus={true} value={caption} onChangeText={(value) => setcaption(value)} numberOfLines={4} multiline={true} placeholder={'What awesome thing did your kid do today?'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, padding: 10, textAlignVertical: 'top', height: 130, marginTop: 40 }} />
-                    </View>
+                    <View style={{ backgroundColor: 'grey', height: 1, width: width }}></View>
                     <VideoPlayer
                         videoProps={{
                             source: { uri: route.params.video },
@@ -165,17 +180,6 @@ const VideoPreview = ({ navigation, route }) => {
                         sliderColor={'#327FEB'}
                         inFullscreen={false}
                     />
-                </View>
-                <View style={{ backgroundColor: 'white', marginTop: 30, borderTopLeftRadius: 20, borderTopRightRadius: 20, height: height * 0.2 }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen')} style={{ margin: 22, flexDirection: 'row' }}>
-                        {route.params.data ? <>
-                            <Icon name="tag" type="SimpleLineIcons" style={{ fontSize: 20,}} />
-                            <Image source={{ uri: route.params.data.image }} style={{ width: 40, height: 40, borderRadius: 500 }} />
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 20, marginTop:2 }}>{route.params.data.name[0].toUpperCase() + route.params.data.name.slice(1)}</Text>
-                        </> :
-                            <><Icon name="user-plus" type="Feather" />
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 20 }}>Tag Teacher</Text></>}
-                    </TouchableOpacity>
                 </View>
             </ScrollView>
             <View style={{ backgroundColor: '#327FEB', height: 310, borderTopLeftRadius: 20, borderTopRightRadius: 20, display: loading ? 'flex' : 'none' }}>
