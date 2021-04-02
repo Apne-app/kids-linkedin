@@ -1,4 +1,5 @@
-import React, { Component, useState, useEffect } from 'react';
+/* eslint-disable */
+import React, { Component, useState, useEffect, useRef } from 'react';
 import { Text, StyleSheet, Dimensions, Animated, Alert, View, ImageBackground, BackHandler, Image, TouchableOpacity, FlatList } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Chip, Thumbnail, Picker, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, Button, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
@@ -19,12 +20,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import VideoPlayer from '../Modules/Video';
 import { Video } from 'expo-av'
 const width = Dimensions.get('window').width;
-const ClassScreen = ({route, navigation}) => {
+const ClassScreen = ({ route, navigation }) => {
 
     const [mediatype, setmediatype] = useState('');
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
-
+    var videoRef = useRef();
     const [form, setform] = useState({
         'name': '',
         'date': new Date(),
@@ -35,32 +36,57 @@ const ClassScreen = ({route, navigation}) => {
         'media': '',
     })
 
+    const fontConfig = {
+        default: {
+            regular: {
+                fontFamily: 'NunitoSans-SemiBold',
+                fontWeight: 'normal',
+            },
+            medium: {
+                fontFamily: 'NunitoSans-SemiBold',
+                fontWeight: 'normal',
+            },
+            light: {
+                fontFamily: 'NunitoSans-SemiBold',
+                fontWeight: 'normal',
+            },
+            thin: {
+                fontFamily: 'NunitoSans-SemiBold',
+                fontWeight: 'normal',
+            },
+        },
+    };
+    const theme = {
+        ...DefaultTheme,
+        fonts: configureFonts(fontConfig),
+    };
+
     const pick = (type) => {
         launchImageLibrary({ mediaType: type }, (response) => {
             if (response.didCancel) {
-              console.log('User cancelled image picker');
+                console.log('User cancelled image picker');
             } else if (response.error) {
-              console.log('ImagePicker Error: ', response.error);
+                console.log('ImagePicker Error: ', response.error);
             } else if (response.customButton) {
-              console.log('User tapped custom button: ', response.customButton);
+                console.log('User tapped custom button: ', response.customButton);
             } else {
-              if (response.uri) {
-                  if(response.type) {
-                      setmediatype('image');
-                      setform({ ...form, 'media': response.uri })
-                  } else {
-                    setmediatype('video');
-                    setform({ ...form, 'media': response.uri })
-                  }
-                // this.props.navigation.navigate('VideoPreview', { 'video': response.uri })
-              }
-              else {
-                alert("Error selecting the video, please try again :)")
-              }
+                if (response.uri) {
+                    if (response.type) {
+                        setmediatype('image');
+                        setform({ ...form, 'media': response.uri })
+                    } else {
+                        setmediatype('video');
+                        setform({ ...form, 'media': response.uri })
+                    }
+                    // this.props.navigation.navigate('VideoPreview', { 'video': response.uri })
+                }
+                else {
+                    alert("Error selecting the video, please try again :)")
+                }
             }
             // this.setState({ isOn: false })
             // this.setState({ imagetaken: false })
-          });
+        });
     }
 
     const pickImage = () => {
@@ -72,149 +98,156 @@ const ClassScreen = ({route, navigation}) => {
             },
             {
                 text: "Video",
-                onPress: () => {pick('video'); null},
+                onPress: () => { pick('video'); null },
                 style: "cancel"
             },
-            { text: "Image", onPress: () => {pick('photo'); null} }
+            { text: "Image", onPress: () => { pick('photo'); null } }
         ]);
     }
 
     const showMode = (currentMode) => {
-      setShow(true);
-      setMode(currentMode);
+        setShow(true);
+        setMode(currentMode);
     };
 
     const showDatepicker = () => {
-      showMode('date');
+        showMode('date');
     };
 
     const showTimepicker = () => {
-      showMode('time');
+        showMode('time');
     };
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || form.date;
         setShow(Platform.OS === 'ios');
         mode == 'date' ? setform({ ...form, 'date': currentDate }) : setform({ ...form, 'time': currentDate })
-      };
+    };
 
     return (
         <View>
             <CompHeader screen={'Class'}
                 headerType={route.params.type}
+                icon={'back'}
                 goback={() => {
-                if (navigation.canGoBack()) {
-                    navigation.pop()
-                }
-                else {
-                    navigation.navigate('Home')
-                }
-            }} />
-            <ScrollView style={{margin: 20}}>
-            <TextInput
-                label="Class Name"
-                mode='outlined'
-                style={{marginVertical: 10}}
-                value={form.name}
-                onChangeText={text => setform({ ...form, 'name': text })}
-            />
-            <TouchableOpacity onPress={showDatepicker}> 
+                    if (navigation.canGoBack()) {
+                        navigation.pop()
+                    }
+                    else {
+                        navigation.navigate('Home')
+                    }
+                }} />
+            <ScrollView style={{ margin: 20 }}>
                 <TextInput
-                    label="Class Date"
+                    label="Class Name"
+                    theme={theme}
                     mode='outlined'
-                    style={{marginVertical: 10}}
-                    disabled
-                    value={JSON.stringify(form.date).split('T')[0]+"\""}
-                    // onChangeText={text => setText(text)}
+                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    value={form.name}
+                    onChangeText={text => setform({ ...form, 'name': text })}
                 />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={showTimepicker}> 
+                <TouchableOpacity onPress={showDatepicker}>
+                    <TextInput
+                        label="Class Date"
+                        mode='outlined'
+                    theme={theme}
+                        style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                        disabled
+                        value={JSON.stringify(form.date).split('T')[0] + "\""}
+                    // onChangeText={text => setText(text)}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={showTimepicker}>
+                    <TextInput
+                        label="Class Timing"
+                        mode='outlined'
+                        theme={theme}
+                        style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                        disabled
+                        value={JSON.stringify(form.time).split('T')[1].split('.')[0]}
+                    // onChangeText={text => setText(text)}
+                    />
+                </TouchableOpacity>
+                {show && (
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        value={mode == 'date' ? form.date : form.time}
+                        mode={mode}
+                        display="default"
+                        onChange={onChange}
+                    />
+                )}
                 <TextInput
-                    label="Class Timing"
+                    label="Class Subject"
                     mode='outlined'
-                    style={{marginVertical: 10}}
-                    disabled
-                    value={JSON.stringify(form.time).split('T')[1].split('.')[0]}
-                    // onChangeText={text => setText(text)}
+                    theme={theme}
+                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    value={form.subject}
+                    onChangeText={text => setform({ ...form, 'subject': text })}
                 />
-            </TouchableOpacity>
-            {show && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={mode == 'date' ? form.date : form.time}
-                  mode={mode}
-                  display="default"
-                  onChange={onChange}
+                <TextInput
+                    label="Class Link"
+                    mode='outlined'
+                    theme={theme}
+                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    value={form.link}
+                    onChangeText={text => setform({ ...form, 'link': text })}
                 />
-              )}
-            <TextInput
-                label="Class Subject"
-                mode='outlined'
-                style={{marginVertical: 10}}
-                value={form.subject}
-                onChangeText={text => setform({ ...form, 'subject': text })}
-            />
-            <TextInput
-                label="Class Link"
-                mode='outlined'
-                style={{marginVertical: 10}}
-                value={form.link}
-                onChangeText={text => setform({ ...form, 'link': text })}
-            />
-            <TextInput
-                label="Class Details"
-                mode='outlined'
-                multiline={true}
-                numberOfLines={4}
-                style={{marginVertical: 10}}
-                value={form.caption}
-                onChangeText={text => setform({ ...form, 'caption': text })}
-            />
-            <Button icon="camera" mode="contained" style={{backgroundColor: '#327feb', marginVertical: 10}} onPress={() => pickImage()}>
-                Pick Image/Video
-            </Button>
-            {
-                mediatype == 'image' ? 
-                <FastImage
-                    source={{
-                        uri: form.media,
-                        priority: FastImage.priority.high
-                    }}
-                    style={{ width: '100%', minHeight: 340, borderRadius: 0, backgroundColor: "#000", marginVertical: 10 }}
-                    resizeMode={FastImage.resizeMode.contain}
-                /> 
-                :
-                mediatype == 'video' ?
-                <VideoPlayer
-                    videoProps={{
-                        source: { uri: form.media },
-                        rate: 1.0,
-                        volume: 1.0,
-                        isMuted: false,
-                        // videoRef: v => videoRef = v,
-                        resizeMode: Video.RESIZE_MODE_CONTAIN,
-                        // shouldPlay
-                        // usePoster={props.activity.poster?true:false}
-                        // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                        playInBackground: false,
-                        playWhenInactive: false,
-                        width: width,
-                        height: 340,
-                    }}
-                    width={width}
-                    height={340}
-                    hideControlsTimerDuration={1000}
-                    showControlsOnLoad={true}
-                    // switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                    sliderColor={'#327FEB'}
-                    inFullscreen={false}
+                <TextInput
+                    label="Class Details"
+                    mode='outlined'
+                    multiline={true}
+                    theme={theme}
+                    numberOfLines={4}
+                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    value={form.caption}
+                    onChangeText={text => setform({ ...form, 'caption': text })}
                 />
-                :
-                null
-            }
-            <Button icon="send" mode="contained" style={{backgroundColor: '#327feb', marginVertical: 10, marginBottom: 60}} onPress={() => console.log(form)}>
-                Post Class
-            </Button>
+                <Button mode="contained" style={{ backgroundColor: '#327feb', marginVertical: 10, marginBottom: 10, height: 50, borderRadius: 28.5, width: 200, alignSelf: 'center', paddingTop: 4 }} onPress={() => pickImage()}>
+                    <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Pick Image/Video</Text>
+                </Button>
+                {
+                    mediatype == 'image' ?
+                        <FastImage
+                            source={{
+                                uri: form.media,
+                                priority: FastImage.priority.high
+                            }}
+                            style={{ width: '100%', minHeight: 340, borderRadius: 0, backgroundColor: "#000", marginVertical: 10 }}
+                            resizeMode={FastImage.resizeMode.contain}
+                        />
+                        :
+                        mediatype == 'video' ?
+                            <VideoPlayer
+                                videoProps={{
+                                    source: { uri: form.media },
+                                    rate: 1.0,
+                                    volume: 1.0,
+                                    isMuted: false,
+                                    videoRef: v => videoRef = v,
+                                    resizeMode: Video.RESIZE_MODE_CONTAIN,
+                                    // shouldPlay
+                                    // usePoster={props.activity.poster?true:false}
+                                    // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                                    playInBackground: false,
+                                    playWhenInactive: false,
+                                    width: width,
+                                    height: 340,
+                                }}
+                                width={width}
+                                height={340}
+                                hideControlsTimerDuration={1000}
+                                showControlsOnLoad={true}
+                                // switchToLandscape={() => videoRef.presentFullscreenPlayer()}
+                                sliderColor={'#327FEB'}
+                                inFullscreen={false}
+                            />
+                            :
+                            null
+                }
+                <Button mode="contained" style={{ backgroundColor: '#327feb', marginVertical: 10, marginBottom: 60, height: 50, borderRadius: 28.5, width: 200, alignSelf: 'center', paddingTop: 4 }} onPress={() => console.log(form)}>
+                    <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Post Class</Text>
+                </Button>
             </ScrollView>
         </View>
     )

@@ -262,7 +262,6 @@ const IndProfile = ({ navigation, route }) => {
             case 'classes':
                 return (
                     <View style={{ marginTop: 55 }}>
-                        <CompButton message={'Click to add a class'} />
                         <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </View>)
             default:

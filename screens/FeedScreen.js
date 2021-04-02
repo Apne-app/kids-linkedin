@@ -106,9 +106,7 @@ const FeedScreen = ({ navigation, route }) => {
             }))
             setrefreshing(refreshi)
             status === '3' ? route[2]['title'] = route[2]['title'].replace('deafult', String(currentyear - parseInt(children[0]['data']['year']))) : null
-            if (children[0]['type'] != 'Kid') {
-                route.splice(2, 1)
-            }
+            status === '3' ? children[0]['type'] != 'Kid' ? route.splice(2, 1) : null : null
             var timestamp = await AsyncStorage.getItem('timestamp')
             timestamp = timestamp ? parseInt(timestamp) : 0;
             var mintimestamp = Math.round(new Date().getTime() / 1000)

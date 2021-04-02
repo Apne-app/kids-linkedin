@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react';
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
@@ -389,7 +388,7 @@ const ProfileScreen = ({ navigation, route }) => {
             case 'classes':
                 return (
                     <View style={{ marginTop: 0 }}>
-                        <CompButton message={'Click to add a class'} />
+                        <TouchableOpacity onPress={() => navigation.navigate('Class')}><CompButton message={'Click to add a class'} /></TouchableOpacity>
                         <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </View>)
             default:
