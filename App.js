@@ -19,6 +19,7 @@ import VideoFullScreen from './screens/VideoFullScreen'
 import IntroScreen from './screens/IntroScreen'
 import IntroSlider from './screens/IntroSlider'
 import { TransitionPresets } from '@react-navigation/stack';
+import ClassScreen from './screens/ClassScreen'
 import PostScreen from './screens/PostScreen'
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
@@ -435,6 +436,7 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="IntroSlider" component={IntroSlider} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Settings" component={Settings} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Notifications" component={NotificationScreen} />
+            <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="Class" component={ClassScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidUser" component={KidUser} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="KidsAge" component={KidsAge} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Includes" component={Includes} />

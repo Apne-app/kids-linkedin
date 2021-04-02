@@ -3,6 +3,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactcommunity.rndatetimepicker.RNDateTimePickerPackage;
 import com.moengage.react.MoEReactPackage;
 import com.moengage.core.MoEngage;
 import com.moengage.react.MoEInitializer;

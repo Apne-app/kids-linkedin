@@ -49,6 +49,8 @@ target 'kids' do
   pod 'RNFileViewer', :path => '../node_modules/react-native-file-viewer'
 
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
   target 'kidsTests' do
     inherit! :complete
     # Pods for testing
