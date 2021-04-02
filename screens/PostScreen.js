@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, ScrollView, Keyboard, View, Text, Alert, BackHandler, Dimensions, Image, FlatList, TouchableOpacity, TextInput } from 'react-native'

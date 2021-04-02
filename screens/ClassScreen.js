@@ -19,12 +19,14 @@ import FastImage from 'react-native-fast-image'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import VideoPlayer from '../Modules/Video';
 import { Video } from 'expo-av'
+import { RNS3 } from 'react-native-aws3';
 const width = Dimensions.get('window').width;
 const ClassScreen = ({ route, navigation }) => {
-
     const [mediatype, setmediatype] = useState('');
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+    const [loading, setloading] = useState(false);
+    const children = route.params.children
     var videoRef = useRef();
     const [form, setform] = useState({
         'name': '',
@@ -39,19 +41,19 @@ const ClassScreen = ({ route, navigation }) => {
     const fontConfig = {
         default: {
             regular: {
-                fontFamily: 'NunitoSans-SemiBold',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             medium: {
-                fontFamily: 'NunitoSans-SemiBold',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             light: {
-                fontFamily: 'NunitoSans-SemiBold',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
             thin: {
-                fontFamily: 'NunitoSans-SemiBold',
+                fontFamily: 'NunitoSans-Regular',
                 fontWeight: 'normal',
             },
         },
@@ -90,7 +92,7 @@ const ClassScreen = ({ route, navigation }) => {
     }
 
     const pickImage = () => {
-        Alert.alert("Pick type!", "Image or video?", [
+        Alert.alert("Pick the type of media", "Video/Image", [
             {
                 text: "Cancel",
                 onPress: () => null,
@@ -123,7 +125,113 @@ const ClassScreen = ({ route, navigation }) => {
         setShow(Platform.OS === 'ios');
         mode == 'date' ? setform({ ...form, 'date': currentDate }) : setform({ ...form, 'time': currentDate })
     };
+    function randomStr(len, arr) {
+        var ans = '';
+        for (var i = len; i > 0; i--) {
+            ans +=
+                arr[Math.floor(Math.random() * arr.length)];
+        }
+        return ans;
+    }
+    const uploadToS3 = async () => {
+        let file = {}
+        if (mediatype == 'video') {
+            var name = randomStr(10, '12345abcdepq75xyz') + '.mp4'
+            file = {
+                uri: form.media,
+                name: name,
+                type: "video/mp4",
+            }
+        }
+        else {
+            var name = randomStr(10, '12345abcdepq75xyz') + '.png'
+            file = {
+                uri: form.media,
+                name: name,
+                type: "image/png",
+            }
+        }
 
+        const options = {
+            keyPrefix: children[0]['id'] + '/classes/',
+            bucket: "kids-linkedin",
+            region: "ap-south-1",
+            accessKey: ACCESS_KEY,
+            secretKey: SECRET_KEY,
+            successActionStatus: 201
+        }
+        var uri = ''
+        try {
+            const response = await RNS3.put(file, options)
+            if (response.status !== 201) {
+                uri = false
+            }
+            else {
+                uri = "https://d2k1j93fju3qxb.cloudfront.net/" + children[0]['id'] + '/classes/' + name
+            }
+            return uri
+        }
+        catch (error) {
+            console.log(error)
+            return false
+        }
+
+    }
+    const addclass = async () => {
+        setloading(true)
+        var uri = 'hello'
+        if (form.media) {
+            uri = await uploadToS3()
+        }
+        if (uri) {
+            uri = ''
+            axios.post('https://d6a537d093a2.ngrok.io/postclass', {
+                user_id: children[0]['id'],
+                acc_type: children[0]['data']['type'],
+                user_image: children[0]['data']['image'],
+                images: mediatype === 'image' ? uri : null,
+                videos: mediatype === 'video' ? uri : null,
+                youtube: '',
+                caption: form.caption == '' ? 'default123' : form.caption,
+                tags: '',
+                user_year: null,
+                user_name: children[0]['data']['name'],
+                category: 'class',
+                link: form.link,
+                class_category: form.subject,
+                class_time: form.time,
+                class_date: form.date,
+                class_name: form.name,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (response) => {
+                if (response.data.data) {
+                    await AsyncStorage.setItem('postid', response.data.data)
+                    await AsyncStorage.setItem('newpost', 'true')
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Home' }],
+                    });
+                }
+                else {
+                    setloading(false)
+                    alert('There was an error posting the class, please try again later')
+                    // navigation.pop();
+                }
+            }).catch((err) => {
+                setloading(false)
+                alert('There was an error posting the class, please try again later')
+                // navigation.pop();
+            })
+        }
+        else {
+            setloading(false)
+            alert('There was an error posting the class, please try again alter')
+        }
+    }
     return (
         <View>
             <CompHeader screen={'Class'}
@@ -142,7 +250,7 @@ const ClassScreen = ({ route, navigation }) => {
                     label="Class Name"
                     theme={theme}
                     mode='outlined'
-                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    style={{ marginVertical: 10 }}
                     value={form.name}
                     onChangeText={text => setform({ ...form, 'name': text })}
                 />
@@ -150,10 +258,10 @@ const ClassScreen = ({ route, navigation }) => {
                     <TextInput
                         label="Class Date"
                         mode='outlined'
-                    theme={theme}
-                        style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                        theme={theme}
+                        style={{ marginVertical: 10 }}
                         disabled
-                        value={JSON.stringify(form.date).split('T')[0] + "\""}
+                        value={JSON.stringify(form.date).split('T')[0].replace('"', '')}
                     // onChangeText={text => setText(text)}
                     />
                 </TouchableOpacity>
@@ -162,9 +270,9 @@ const ClassScreen = ({ route, navigation }) => {
                         label="Class Timing"
                         mode='outlined'
                         theme={theme}
-                        style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                        style={{ marginVertical: 10 }}
                         disabled
-                        value={JSON.stringify(form.time).split('T')[1].split('.')[0]}
+                        value={JSON.stringify(form.time).split('T')[1].split('.')[0].slice(0, 5)}
                     // onChangeText={text => setText(text)}
                     />
                 </TouchableOpacity>
@@ -181,7 +289,7 @@ const ClassScreen = ({ route, navigation }) => {
                     label="Class Subject"
                     mode='outlined'
                     theme={theme}
-                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    style={{ marginVertical: 10 }}
                     value={form.subject}
                     onChangeText={text => setform({ ...form, 'subject': text })}
                 />
@@ -189,7 +297,7 @@ const ClassScreen = ({ route, navigation }) => {
                     label="Class Link"
                     mode='outlined'
                     theme={theme}
-                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    style={{ marginVertical: 10 }}
                     value={form.link}
                     onChangeText={text => setform({ ...form, 'link': text })}
                 />
@@ -199,11 +307,11 @@ const ClassScreen = ({ route, navigation }) => {
                     multiline={true}
                     theme={theme}
                     numberOfLines={4}
-                    style={{ marginVertical: 10, fontFamily: 'NunitoSans-SemiBold' }}
+                    style={{ marginVertical: 10 }}
                     value={form.caption}
                     onChangeText={text => setform({ ...form, 'caption': text })}
                 />
-                <Button mode="contained" style={{ backgroundColor: '#327feb', marginVertical: 10, marginBottom: 10, height: 50, borderRadius: 28.5, width: 200, alignSelf: 'center', paddingTop: 4 }} onPress={() => pickImage()}>
+                <Button theme={theme} mode="contained" style={{ backgroundColor: '#327feb', marginVertical: 10, marginBottom: 10, height: 50, borderRadius: 28.5, width: 200, alignSelf: 'center', paddingTop: 4 }} onPress={() => pickImage()}>
                     <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Pick Image/Video</Text>
                 </Button>
                 {
@@ -245,10 +353,14 @@ const ClassScreen = ({ route, navigation }) => {
                             :
                             null
                 }
-                <Button mode="contained" style={{ backgroundColor: '#327feb', marginVertical: 10, marginBottom: 60, height: 50, borderRadius: 28.5, width: 200, alignSelf: 'center', paddingTop: 4 }} onPress={() => console.log(form)}>
+                <Button theme={theme} mode="contained" style={{ backgroundColor: '#327feb', marginVertical: 10, marginBottom: 60, height: 50, borderRadius: 28.5, width: 200, alignSelf: 'center', paddingTop: 4 }} onPress={() => addclass()}>
                     <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Post Class</Text>
                 </Button>
             </ScrollView>
+            {loading ? <View style={{ backgroundColor: '#327FEB', height: 310, borderTopLeftRadius: 20, borderTopRightRadius: 20, display: loading ? 'flex' : 'none', position: loading ? 'absolute' : 'relative', bottom: 0, width: width }}>
+                <FastImage style={{ width: 100, height: 100, alignSelf: 'center', marginTop: '20%' }} source={require('../assets/log_loader.gif')} />
+                <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 20, color: 'white' }}>Posting...</Text>
+            </View> : null}
         </View>
     )
 

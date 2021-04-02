@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, TouchableOpacity, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
@@ -306,6 +305,12 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 </View>
                 {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
             </View>
+            {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
+                <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                    <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                        Class on <Text style={{ color: '#327FEb', fontFamily: 'NunitoSans-Bold' }}>{activity['class_category']}</Text>
+                    </Text>
+                </View> : null}
             {activity['caption'] === 'default123' ?
                 <View style={{ margin: 5 }}></View> :
                 <View style={{ paddingHorizontal: 10, marginLeft: 13, marginVertical: 15 }}>
@@ -313,8 +318,14 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...') : activity['caption']}
                     </Text>
                 </View>}
+            {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
+                <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                    <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
+                        Timings: {activity['class_date'].split('T')[0] + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                    </Text>
+                </View> : null}
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
-            {activity['mention_id'] ? <Text onPress={()=>navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold',  paddingHorizontal: 10, marginLeft: 10, marginVertical: 4, fontSize:16, color: '#327FEB' }}>{'@' + activity['mention_name'].charAt(0).toUpperCase() + activity['mention_name'].slice(1)}</Text> : null}
+            {activity['mention_id'] ? <Text onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{'@' + activity['mention_name'].charAt(0).toUpperCase() + activity['mention_name'].slice(1)}</Text> : null}
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage

@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard, TextInput, Button } from 'react-native'
@@ -355,6 +354,12 @@ const SinglePostScreen = ({ navigation, route }) => {
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
+                {activity['class_time'] ?
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                            Class on <Text style={{ color: '#327FEb', fontFamily: 'NunitoSans-Bold' }}>{activity['class_category']}</Text>
+                        </Text>
+                    </View> : null}
                 {activity['caption'] === 'default123' ?
                     <View style={{ margin: 5 }}></View> :
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
@@ -364,6 +369,12 @@ const SinglePostScreen = ({ navigation, route }) => {
                             </Text>
                         </ReadMore>
                     </View>}
+                {activity['class_time'] ?
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
+                            Timings: {activity['class_date'].split('T')[0] + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                        </Text>
+                    </View> : null}
                 {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['images'] ?
                     <ImageView

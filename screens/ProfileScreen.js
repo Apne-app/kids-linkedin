@@ -65,11 +65,11 @@ const ProfileScreen = ({ navigation, route }) => {
         for (var i = 0; i < splitStr.length; i++) {
             // You do not need to check if i is larger than splitStr length, as your for does that for you
             // Assign it back to the array
-            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
         }
         // Directly return the joined string
-        return splitStr.join(' '); 
-     }
+        return splitStr.join(' ');
+    }
     const pickImage = (type) => {
         if (type === 'gallery') {
             ImagePicker.openPicker({
@@ -336,9 +336,11 @@ const ProfileScreen = ({ navigation, route }) => {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                     'Content-Type': 'application/json'
                 }
-            }).then((response) => {
-                setdata({ ...data, posts: response['data']['data'] })
-                setkey(String(parseInt(key) + 1))
+            }).then(async (response) => {
+                var place = data
+                place['posts'] = response.data.data
+                await setdata(place)
+                await setkey(String(parseInt(key) + 1))
             }).catch((error) => {
                 console.log(error)
             })
@@ -351,36 +353,43 @@ const ProfileScreen = ({ navigation, route }) => {
                         'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                         'Content-Type': 'application/json'
                     }
-                }).then((response) => {
-                    console.log(response['data']['data'])
-                    setdata({ ...data, mentions: response['data']['data'] })
-                    setkey(String(parseInt(key) + 1))
+                }).then(async (response) => {
+                    var place = data
+                    place['mentions'] = response.data.data
+                    await setdata(place)
+                    await setkey(String(parseInt(key) + 1))
+                }).catch((error) => {
+                    console.log(error)
+                })
+                axios.post('https://d6a537d093a2.ngrok.io/getclasses', {
+                    'poster_id': children[0]['id'],
+                    'user_id': children ? children[0]['id'] : null
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(async (response) => {
+                    var place = data
+                    place['classes'] = response.data.data
+                    await setdata(place)
+                    await setkey(String(parseInt(key) + 1))
                 }).catch((error) => {
                     console.log(error)
                 })
             }
-            axios.post('http://mr_robot.api.genio.app/profile', {
+
+            axios.post('http://mr_robot.api.genio.app/follow_count', {
                 'user_id': children[0]['id']
             }, {
                 headers: {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                     'Content-Type': 'application/json'
                 }
-            }).then((response) => {
-                setposts(response['data']['data'])
-                axios.post('http://mr_robot.api.genio.app/follow_count', {
-                    'user_id': children[0]['id']
-                }, {
-                    headers: {
-                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                        'Content-Type': 'application/json'
-                    }
-                }).then((response) => {
-                    setfollow(response['data']['data'])
-                    setloading(false)
-                }).catch((error) => {
-                    console.log(error)
-                })
+            }).then(async (response) => {
+                await setfollow(response['data']['data'])
+                await setkey(String(parseInt(key) + 1))
+                setloading(false)
             }).catch((error) => {
                 console.log(error)
             })

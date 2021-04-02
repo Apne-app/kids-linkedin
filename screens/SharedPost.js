@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard, TextInput, Button } from 'react-native'
@@ -64,13 +63,14 @@ const SinglePostScreen = ({ navigation, route }) => {
     const children = route.params.children
     var d = new Date();
     useEffect(() => {
+        console.log(route.params.id)
         var data = JSON.stringify({
             post_id: route.params.id,
             user_id: status === '3' ? children[0]['id'] : null
         })
         var config = {
             method: 'post',
-            url: 'http://mr_robot.api.genio.app/getpost',
+            url: 'https://d6a537d093a2.ngrok.io/getpost',
             headers: {
                 'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                 'Content-Type': 'application/json'
@@ -82,7 +82,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             setloading(response.data.data[0]['data']['comments_count'])
             setloader(false)
         }).catch((response) => {
-            console.log((response.toJSON()))
+            console.log(response)
         })
     }, [])
     useEffect(() => {
@@ -373,6 +373,12 @@ const SinglePostScreen = ({ navigation, route }) => {
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
+                {activity['class_time']?
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular'}}>
+                            Class on <Text style={{color:'#327FEb', fontFamily:'NunitoSans-Bold'}}>{activity['class_category']}</Text>
+                        </Text>
+                    </View> : null}
                 {activity['caption'] === 'default123' ?
                     <View style={{ margin: 5 }}></View> :
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
@@ -382,6 +388,12 @@ const SinglePostScreen = ({ navigation, route }) => {
                             </Text>
                         </ReadMore>
                     </View>}
+                {activity['class_time'] ?
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
+                            Timings: {activity['class_date'].split('T')[0]+'@'+activity['class_time'].split('T')[1].split('.')[0].slice(0, 5) }
+                        </Text>
+                    </View> : null}
                 {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['images'] ?
                     <ImageView
@@ -470,7 +482,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         />
                         <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' || 'Child' || 'child' || 'kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
                         </View>
                         <ActionSheet
                             useNativeDriver={true}
