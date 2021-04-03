@@ -54,11 +54,11 @@ const ProfileScreen = ({ navigation, route }) => {
     ]);
     const scrollY = useRef(new Animated.Value(0)).current;
     const diffClamp = Animated.diffClamp(scrollY, 0, 335);
-    const y = diffClamp.interpolate({      
+    const y = diffClamp.interpolate({
         inputRange: [0, 335],
-        outputRange: [0, -335],      
-        extrapolateRight: 'clamp',    
-      });
+        outputRange: [0, -335],
+        extrapolateRight: 'clamp',
+    });
     function makeid(length) {
         var result = '';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123356789';
@@ -426,122 +426,122 @@ const ProfileScreen = ({ navigation, route }) => {
         const tabY = scrollY.interpolate({
             inputRange: [0, 335],
             outputRange: [335, 0],
-          });
+        });
         return (
             <Animated.View
                 style={{
-                transform: [{translateY: y}],
-                position: 'absolute',
-                marginTop: 335,
-                zIndex: 5
-            }}>
-            <TabBar
-                {...props}
-                activeColor={'#327FEB'}
-                inactiveColor={'black'}
-                pressColor={'lightblue'}
-                indicatorStyle={{ backgroundColor: 'white' }}
-                style={{ backgroundColor: 'white'}}
-                tabStyle={{ width: width / 3 }}
-                scrollEnabled={true}
-                bounces={true}
-                renderLabel={({ route, focused, color }) => (
-                    <Text style={{ color, margin: 8, fontFamily: 'NunitoSans-SemiBold' }}>
-                        {route.title + ' (' + String(data[route.key].length) + ')'}
-                    </Text>
-                )}
-                indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
-            />
+                    transform: [{ translateY: y }],
+                    position: 'absolute',
+                    marginTop: 335,
+                    zIndex: 5
+                }}>
+                <TabBar
+                    {...props}
+                    activeColor={'#327FEB'}
+                    inactiveColor={'black'}
+                    pressColor={'lightblue'}
+                    indicatorStyle={{ backgroundColor: 'white' }}
+                    style={{ backgroundColor: 'white' }}
+                    tabStyle={{ width: width / 3 }}
+                    scrollEnabled={true}
+                    bounces={true}
+                    renderLabel={({ route, focused, color }) => (
+                        <Text style={{ color, margin: 8, fontFamily: 'NunitoSans-SemiBold' }}>
+                            {route.title + ' (' + String(data[route.key].length) + ')'}
+                        </Text>
+                    )}
+                    indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
+                />
             </Animated.View>
         )
     }
     const there = () => {
         return (<>
-            <Animated.View style={[styles.header, 
-                {transform: [{translateY: y}]}]}>
-            <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
-            <View style={{zIndex: 1000, backgroundColor: '#f2f2f2', position: 'absolute', marginTop: 80, width: width}}>
-            <View style={{ marginTop: 30, flexDirection: 'row', height: 80,  zIndex: 1000}}>
-                <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
-                    <FastImage
-                        source={{
-                            uri: source ? source : children[0]['data']['image'],
-                        }}
-                        style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
-                    />
-                    <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: '#f9f9f9', borderWidth: 2, marginLeft: -35 }}>
-                        <Icon name="camera" type="Feather" style={{ color: '#f9f9f9', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
+            <Animated.View style={[styles.header,
+            { transform: [{ translateY: y }] }]}>
+                <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
+                <View style={{ zIndex: 1000, backgroundColor: '#f2f2f2', position: 'absolute', marginTop: 80, width: width }}>
+                    <View style={{ marginTop: 30, flexDirection: 'row', height: 80, zIndex: 1000 }}>
+                        <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
+                            <FastImage
+                                source={{
+                                    uri: source ? source : children[0]['data']['image'],
+                                }}
+                                style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, }}
+                            />
+                            <View style={{ backgroundColor: '#327FEB', marginTop: 40, borderRadius: 1000, width: 40, height: 40, borderColor: '#f9f9f9', borderWidth: 2, marginLeft: -35 }}>
+                                <Icon name="camera" type="Feather" style={{ color: '#f9f9f9', alignSelf: 'center', fontSize: 20, marginTop: 6 }} />
+                            </View>
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
+                            <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(children['0']['data']['name'])}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']} {children[0]['data']['type'] == 'Teacher' ? "( " + titleCase(String(children[0]['data']['category'])) + " )" : ""}</Text>
+                            </View>
+                        </View>
                     </View>
-                </TouchableOpacity>
-                <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
-                    <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(children['0']['data']['name'])}</Text>
+                    <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 10, zIndex: 1000 }}>
+                        <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 6 }}>
+                            <View key={key} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.loaded ? data.posts.length : ""}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{follow.followers}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
+                            </View>
+                            <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{follow.following}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
+                            </View>
+                        </View>
                     </View>
-                    <View style={{ flexDirection: 'row', }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']} {children[0]['data']['type'] == 'Teacher' ? "( "+titleCase(String(children[0]['data']['category'])) + " )" : ""}</Text>
-                    </View>
+                    {
+                        children[0]['data']['type'] === 'Teacher' ?
+                            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10, marginBottom: 10, zIndex: 1000, flexDirection: 'row' }}>
+                                {
+                                    profile['phone'] && profile['phone'] != '' ?
+                                        <TouchableOpacity onPress={() => Linking.openURL("tel://" + profile['phone'])}>
+                                            <Icon type="Feather" style={{ marginHorizontal: 10 }} name='phone' />
+                                        </TouchableOpacity>
+                                        : null
+                                }
+                                {
+                                    children[0]['data']['fb'] && children[0]['data']['fb'] != '' && !children[0]['data']['fb'].includes('default') ?
+                                        <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['fb'])}>
+                                            <Icon type="Feather" style={{ marginHorizontal: 10 }} name='facebook' />
+                                        </TouchableOpacity>
+                                        : null
+                                }
+                                {
+                                    children[0]['data']['linkedin'] && children[0]['data']['linkedin'] != '' && !children[0]['data']['linkedin'].includes('default') ?
+                                        <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['linkedin'])}>
+                                            <Icon type="Feather" style={{ marginHorizontal: 10 }} name='linkedin' />
+                                        </TouchableOpacity>
+                                        : null
+                                }
+                                {
+                                    children[0]['data']['website'] && children[0]['data']['website'] != '' && !children[0]['data']['fb'].includes('default') ?
+                                        <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['website'])}>
+                                            <Icon type="Feather" style={{ marginHorizontal: 10 }} name='link' />
+                                        </TouchableOpacity>
+                                        : null
+                                }
+                                {
+                                    profile['email'] && profile['email'] != '' ?
+                                        <TouchableOpacity onPress={() => Linking.openURL("mailto:" + profile['email'])}>
+                                            <Icon type="Feather" style={{ marginHorizontal: 10 }} name='mail' />
+                                        </TouchableOpacity>
+                                        : null
+                                }
+                            </View>
+                            :
+                            null
+                    }
                 </View>
-            </View>
-            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 10,  zIndex: 1000  }}>
-                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 6 }}>
-                    <View key={key} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.loaded ? data.posts.length: ""}</Text>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
-                    </View>
-                    <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{follow.followers}</Text>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Followers</Text>
-                    </View>
-                    <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{follow.following}</Text>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Following</Text>
-                    </View>
-                </View>
-            </View>
-            {      
-                children[0]['data']['type'] === 'Teacher' ?      
-            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10,marginBottom: 10,  zIndex: 1000, flexDirection: 'row'  }}>
-                {
-                    profile['phone'] && profile['phone'] != '' ?
-                <TouchableOpacity onPress={() => Linking.openURL("tel://"+profile['phone']) }>
-                    <Icon type="Feather" style={{marginHorizontal: 10}} name='phone' />
-                </TouchableOpacity>
-                : null
-                }
-                {
-                    children[0]['data']['fb'] && children[0]['data']['fb'] != '' && !children[0]['data']['fb'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['fb']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='facebook' />
-                    </TouchableOpacity>
-                    : null
-                }
-                {
-                    children[0]['data']['linkedin'] && children[0]['data']['linkedin'] != '' && !children[0]['data']['linkedin'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['linkedin']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='linkedin' />
-                    </TouchableOpacity>
-                    : null
-                }
-                {
-                    children[0]['data']['website'] && children[0]['data']['website'] != '' && !children[0]['data']['fb'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['website']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='link' />
-                    </TouchableOpacity>
-                    : null
-                }
-                {
-                    profile['email'] && profile['email'] != '' ?
-                    <TouchableOpacity onPress={() => Linking.openURL("mailto:"+profile['email']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='mail' />
-                    </TouchableOpacity>
-                    : null
-                }
-            </View>
-            :
-            null
-            }
-            </View>
-            </Animated.View> 
+            </Animated.View>
             {children[0]['data']['type'] === 'Teacher' ? <TabView
                 key={key}
                 style={{ flex: 4 }}
@@ -566,7 +566,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: '#f9f9f9', height: height, width: width }}>
-            <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
+                <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
                 <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}>
                     <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>

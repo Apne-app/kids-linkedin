@@ -32,13 +32,12 @@ const width = Dimensions.get('screen').width;
 const IndProfile = ({ navigation, route }) => {
     const [loading, setloading] = React.useState(true);
     var children = route.params.children
-    const profile = route.params.profile
     const status = route.params.status
     const [key, setkey] = React.useState('1');
-    const [data, setdata] = useState({ mentions: [], classes: [], posts: [], loaded: false })
+    const [data, setdata] = useState({ mentions: [], classes: [], posts: [] })
     const [classes, setclasses] = useState([])
     const [index, setIndex] = useState(0);
-    const [follow, setfollow] = useState({ 'followers': '', 'following': '' })
+    const [follow, setfollow] = useState({ 'followers': 0, 'following': 0 })
     const [refreshing, setrefreshing] = useState({ 'mentions': false, 'posts': false, 'classes': false })
     const [routes, setRoutes] = React.useState([
         { key: 'mentions', title: 'Mentions' },
@@ -46,10 +45,10 @@ const IndProfile = ({ navigation, route }) => {
         { key: 'classes', title: 'Classes' },
     ]);
     const scrollY = useRef(new Animated.Value(0)).current;
-    const diffClamp = Animated.diffClamp(scrollY, 0, 335);
+    const diffClamp = Animated.diffClamp(scrollY, 0, 290);
     const y = diffClamp.interpolate({      
-        inputRange: [0, 335],
-        outputRange: [0, -335],      
+        inputRange: [0, 290],
+        outputRange: [0, -290],      
         extrapolateRight: 'clamp',    
       });
     function titleCase(str) {
@@ -111,9 +110,23 @@ const IndProfile = ({ navigation, route }) => {
         }).then(async (response) => {
             var place = data
             place['posts'] = response['data']['data']
-            place['loaded'] = true;
             await setdata(place)
             await setkey(String(parseInt(key) + 1))
+            axios.post('http://mr_robot.api.genio.app/follow_count', {
+                'user_id': route.params.id,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
+                }
+            }).then(async (response) => {
+                await setfollow(response['data']['data'])
+                await setkey(String(parseInt(key) + 1))
+                await setloading(false)
+    
+            }).catch((error) => {
+                console.log(error)
+            })
         }).catch((error) => {
             console.log(error)
         })
@@ -151,20 +164,7 @@ const IndProfile = ({ navigation, route }) => {
                 console.log(error)
             })
         }
-        axios.post('http://mr_robot.api.genio.app/follow_count', {
-            'user_id': route.params.id,
-        }, {
-            headers: {
-                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                'Content-Type': 'application/json'
-            }
-        }).then(async (response) => {
-            await setfollow(response['data']['data'])
-            await setloading(false)
-            await setkey(String(parseInt(key) + 1))
-        }).catch((error) => {
-            console.log(error)
-        })
+
     }, [])
     const refProfileSheet = useRef(null);
     const showProfileSheet = () => {
@@ -216,6 +216,7 @@ const IndProfile = ({ navigation, route }) => {
             });
 
     }
+    console.log(data['posts'].length)
 
     const reportProfile = async () => {
 
@@ -278,7 +279,7 @@ const IndProfile = ({ navigation, route }) => {
     const Empty = () => {
         return (<View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
             <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
-                <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45,  }} />
+                <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45, marginTop: 340 }} />
             </View>
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{route.params.data.name + " hasn't posted anything yet. Check back later!"}</Text>
         </View>)
@@ -300,15 +301,15 @@ const IndProfile = ({ navigation, route }) => {
     };
     const renderTabBar = (props) => {
         const tabY = scrollY.interpolate({
-            inputRange: [0, 335],
-            outputRange: [335, 0],
+            inputRange: [0, 290],
+            outputRange: [290, 0],
           });
         return (
             <Animated.View
                 style={{
                 transform: [{translateY: y}],
                 position: 'absolute',
-                marginTop: 345,
+                marginTop: 290,
                 zIndex: 5
             }}>
                 <TabBar
@@ -355,14 +356,14 @@ const IndProfile = ({ navigation, route }) => {
                         <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(route['params']['data']['name'])}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type == 'Teacher' ? route.params.data.type+" ( "+titleCase(String(route.params.data['category'])) + " )" : route.params.data.type : null}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
                     </View>
                 </View>
             </View>
             <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20,zIndex: 1000 }}>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 6 }}>
-                    <View key={key} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.loaded ? data.posts.length: ""}</Text>
+                    <View key={String(parseInt(key)+1)} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.posts.length}</Text>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                     </View>
                     <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
@@ -375,48 +376,6 @@ const IndProfile = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
-            {      
-                route.params.data['type'] === 'Teacher' ?      
-            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10,marginBottom: 10,  zIndex: 1000, flexDirection: 'row'  }}>
-                {
-                    route.params.data['phone'] && route.params.data['phone'] != '' ?
-                <TouchableOpacity onPress={() => Linking.openURL("tel://"+profile['phone']) }>
-                    <Icon type="Feather" style={{marginHorizontal: 10}} name='phone' />
-                </TouchableOpacity>
-                : null
-                }
-                {
-                    route.params.data['fb'] && route.params.data['fb'] != '' && !route.params.data['fb'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(route.params.data['fb']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='facebook' />
-                    </TouchableOpacity>
-                    : null
-                }
-                {
-                    route.params.data['linkedin'] && route.params.data['linkedin'] != '' && !route.params.data['linkedin'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(route.params.data['linkedin']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='linkedin' />
-                    </TouchableOpacity>
-                    : null
-                }
-                {
-                    route.params.data['website'] && route.params.data['website'] != '' && && !route.params.data['website'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(route.params.data['website']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='link' />
-                    </TouchableOpacity>
-                    : null
-                }
-                {
-                    route.params.data['email'] && route.params.data['email'] != '' ?
-                    <TouchableOpacity onPress={() => Linking.openURL("mailto:"+profile['email']) }>
-                        <Icon type="Feather" style={{marginHorizontal: 10}} name='mail' />
-                    </TouchableOpacity>
-                    : null
-                }
-            </View>
-            :
-            null
-            }
             </View>
             </Animated.View>
             {route.params.data.type === 'Teacher' ? <TabView
@@ -428,7 +387,7 @@ const IndProfile = ({ navigation, route }) => {
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
             />
-                : (loading ? <PostLoader /> : <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
+                : (loading ? <PostLoader /> : <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
             }
         </>
     );

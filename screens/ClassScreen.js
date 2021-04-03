@@ -184,7 +184,9 @@ const ClassScreen = ({ route, navigation }) => {
             uri = await uploadToS3()
         }
         if (uri) {
-            uri = ''
+            if(uri=='hello'){
+                uri = ''
+            }
             axios.post('http://mr_robot.api.genio.app/postclass', {
                 user_id: children[0]['id'],
                 acc_type: children[0]['data']['type'],
