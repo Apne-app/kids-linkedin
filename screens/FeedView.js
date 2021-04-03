@@ -85,8 +85,9 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 <RecyclerListView
                     onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                     layoutProvider={_layoutProvider}
+                    renderFooter={() => <View style={{height: profile ? 340 : 140}} />}
                     dataProvider={dataProvider}
-                    style={{ paddingTop: profile ? 70 : 140 }}
+                    style={{ paddingTop: profile ? 340 : 140, flex: 1 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
                         scrollY?scrollY.setValue(e.nativeEvent.contentOffset.y):null
@@ -103,9 +104,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                         <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Explore what other kids are learning and working on</Text>
                     </TouchableWithoutFeedback>
                 </View>}
-        </React.Fragment> : <ScrollView onScroll={(e) => {
-            scrollY?scrollY.setValue(e.nativeEvent.contentOffset.y):null
-        }}><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: scrollY ? height / 10 : 100, flexDirection: 'column',  marginBottom: 800 }}>
+        </React.Fragment> : <ScrollView ><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: scrollY ? height / 10 : 100, flexDirection: 'column',  marginBottom: 80 }}>
             <FastImage source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>No {feed_type} yet!</Text>
         </View></ScrollView>
