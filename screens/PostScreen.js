@@ -308,12 +308,12 @@ const PostScreen = ({ navigation, route }) => {
         </View>
       </View>
       <View style={{ backgroundColor: '#327FEB', height: 0.5, opacity: 0.8 }} />
-      <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen: 'CreatePost' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row', borderWidth: 0.2 }}>
+      <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen: 'CreatePost' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row',  }}>
         {route.params.data ? <>
           <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 19, color: 'black', marginLeft: 0, marginTop: 2 }}>{titleCase(route.params.data.name)}</Text>
           <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 11, color: 'black', marginLeft: 4, marginTop: 11, color: '#327FEB' }}>{route.params.data.type}</Text>
         </> :
-          <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
+          <View style={{ justifyContent: 'space-evenly', flexDirection: 'row',paddingHorizontal: 20 }}>
             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', width: width / 2 }}>Tag Teacher</Text>
             <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right', marginTop: 1 }} /></View>}
       </TouchableOpacity>
@@ -367,6 +367,7 @@ const PostScreen = ({ navigation, route }) => {
                 dotColor="#327FEB"
                 inactiveDotColor="#90A4AE"
                 paginationBoxVerticalPadding={20}
+                resizeMode={'contain'}
                 sliderBoxHeight={height * 0.5}
                 ImageComponentStyle={{ width: width, height: height * 0.47, }}
                 circleLoop={true}

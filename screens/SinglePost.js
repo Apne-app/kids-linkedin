@@ -396,7 +396,8 @@ const SinglePostScreen = ({ navigation, route }) => {
                             uri: activity['images'].split(", ")[0],
                             priority: FastImage.priority.high
                         }}
-                        style={{ width: width, height: 340, marginTop: 20 }}
+                        resizeMode={FastImage.resizeMode.contain}
+                        style={{ width: width, height: 340, marginTop: 20, backgroundColor: "#000"  }}
                     /> : <View style={{ height: 340 }}><SliderBox
                         images={activity['images'].split(", ").filter(n => n)}
                         dotColor="#FFEE58"

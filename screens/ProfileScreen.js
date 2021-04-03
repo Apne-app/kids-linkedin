@@ -33,11 +33,12 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const ProfileScreen = ({ navigation, route }) => {
     const children = route.params.children
+    const profile = route.params.profile
     const status = route.params.status
     const [place, setplace] = useState(0)
     const [source, setsource] = useState('')
-    const [data, setdata] = useState({ posts: [], classes: [], mentions: [] })
-    const [follow, setfollow] = useState({ 'followers': 0, 'following': 0 })
+    const [data, setdata] = useState({ posts: [], classes: [], mentions: [], loaded: false })
+    const [follow, setfollow] = useState({ 'followers': '', 'following': '' })
     const [token, setToken] = useState('');
     const [loading, setloading] = useState(true);
     const [key, setkey] = useState('1')
@@ -52,20 +53,30 @@ const ProfileScreen = ({ navigation, route }) => {
         { key: 'classes', title: 'Classes' },
     ]);
     const scrollY = useRef(new Animated.Value(0)).current;
-    const diffClamp = Animated.diffClamp(scrollY, 0, 290);
+    const diffClamp = Animated.diffClamp(scrollY, 0, 335);
     const y = diffClamp.interpolate({      
-        inputRange: [0, 290],
-        outputRange: [0, -290],      
+        inputRange: [0, 335],
+        outputRange: [0, -335],      
         extrapolateRight: 'clamp',    
       });
     function makeid(length) {
         var result = '';
-        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123356789';
         var charactersLength = characters.length;
         for (var i = 0; i < length; i++) {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
+    }
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
     }
     const pickImage = (type) => {
         if (type === 'gallery') {
@@ -336,6 +347,7 @@ const ProfileScreen = ({ navigation, route }) => {
             }).then(async (response) => {
                 var place = data
                 place['posts'] = response['data']['data']
+                place['loaded'] = true;
                 await setdata(place)
                 await setkey(String(parseInt(key) + 1))
             }).catch((error) => {
@@ -412,15 +424,15 @@ const ProfileScreen = ({ navigation, route }) => {
     };
     const renderTabBar = (props) => {
         const tabY = scrollY.interpolate({
-            inputRange: [0, 290],
-            outputRange: [290, 0],
+            inputRange: [0, 335],
+            outputRange: [335, 0],
           });
         return (
             <Animated.View
                 style={{
                 transform: [{translateY: y}],
                 position: 'absolute',
-                marginTop: 290,
+                marginTop: 335,
                 zIndex: 5
             }}>
             <TabBar
@@ -463,17 +475,17 @@ const ProfileScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
                     <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(children['0']['data']['name'])}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']} {children[0]['data']['type'] == 'Teacher' ? "( "+titleCase(String(children[0]['data']['category'])) + " )" : ""}</Text>
                     </View>
                 </View>
             </View>
-            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20,  zIndex: 1000  }}>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 10,  zIndex: 1000  }}>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 6 }}>
                     <View key={key} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.posts.length}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.loaded ? data.posts.length: ""}</Text>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                     </View>
                     <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>
@@ -486,6 +498,48 @@ const ProfileScreen = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
+            {      
+                children[0]['data']['type'] === 'Teacher' ?      
+            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10,marginBottom: 10,  zIndex: 1000, flexDirection: 'row'  }}>
+                {
+                    profile['phone'] && profile['phone'] != '' ?
+                <TouchableOpacity onPress={() => Linking.openURL("tel://"+profile['phone']) }>
+                    <Icon type="Feather" style={{marginHorizontal: 10}} name='phone' />
+                </TouchableOpacity>
+                : null
+                }
+                {
+                    children[0]['data']['fb'] && children[0]['data']['fb'] != '' ?
+                    <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['fb']) }>
+                        <Icon type="Feather" style={{marginHorizontal: 10}} name='facebook' />
+                    </TouchableOpacity>
+                    : null
+                }
+                {
+                    children[0]['data']['linkedin'] && children[0]['data']['linkedin'] != '' ?
+                    <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['linkedin']) }>
+                        <Icon type="Feather" style={{marginHorizontal: 10}} name='linkedin' />
+                    </TouchableOpacity>
+                    : null
+                }
+                {
+                    children[0]['data']['website'] && children[0]['data']['website'] != '' ?
+                    <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['website']) }>
+                        <Icon type="Feather" style={{marginHorizontal: 10}} name='link' />
+                    </TouchableOpacity>
+                    : null
+                }
+                {
+                    profile['email'] && profile['email'] != '' ?
+                    <TouchableOpacity onPress={() => Linking.openURL("mailto:"+profile['email']) }>
+                        <Icon type="Feather" style={{marginHorizontal: 10}} name='mail' />
+                    </TouchableOpacity>
+                    : null
+                }
+            </View>
+            :
+            null
+            }
             </View>
             </Animated.View> 
             {children[0]['data']['type'] === 'Teacher' ? <TabView

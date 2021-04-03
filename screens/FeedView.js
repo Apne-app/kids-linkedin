@@ -87,7 +87,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     layoutProvider={_layoutProvider}
                     renderFooter={() => <View style={{height: profile ? 340 : 140}} />}
                     dataProvider={dataProvider}
-                    style={{ paddingTop: profile ? 340 : 140, flex: 1 }}
+                    style={{ paddingTop: profile ? 400 : 140, flex: 1 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
                         scrollY?scrollY.setValue(e.nativeEvent.contentOffset.y):null
