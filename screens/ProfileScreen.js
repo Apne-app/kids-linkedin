@@ -414,10 +414,10 @@ const ProfileScreen = ({ navigation, route }) => {
                 return <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'classes':
                 return (
-                    <View>
-                        <CompButton message={'Click to add a class'} />
+                    <ScrollView>
+                        <CompButton message={'Click to add a class'} profile={true} />
                         <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
-                    </View>)
+                    </ScrollView>)
             default:
                 return null;
         }

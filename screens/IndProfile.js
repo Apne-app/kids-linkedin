@@ -400,7 +400,7 @@ const IndProfile = ({ navigation, route }) => {
                     : null
                 }
                 {
-                    route.params.data['website'] && route.params.data['website'] != '' && && !route.params.data['website'].includes('default') ?
+                    route.params.data['website'] && route.params.data['website'] != '' && !route.params.data['website'].includes('default') ?
                     <TouchableOpacity onPress={() => Linking.openURL(route.params.data['website']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='link' />
                     </TouchableOpacity>
