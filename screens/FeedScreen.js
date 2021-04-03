@@ -172,7 +172,19 @@ const FeedScreen = ({ navigation, route }) => {
             var place = data
             load_more ? place[feed_type] = place[feed_type].concat(response.data.data) : place[feed_type] = response.data.data
             setdata(place)
+            var min_following = min_time[feed_type]
+            response.data.data.map((item) => {
+                if (min_following > item['data']['timestamp']) {
+                    min_following = item['data']['timestamp']
+                }
+            })
+            place = min_time
+            place[feed_type] = min_following
+            setmin_time(place)
             setrefreshing({ ...refreshing, [feed_type]: false });
+            if (!load_more) {
+                AsyncStorage.setItem('timestamp', String(Math.round(new Date().getTime() / 1000)))
+            }
         }).catch((err) => {
             console.log(err)
             setrefreshing({ ...refreshing, [feed_type]: false });
@@ -180,7 +192,7 @@ const FeedScreen = ({ navigation, route }) => {
     }
     const renderScene = ({ route }) => {
         if (data[route.key]) {
-            return <FeedView scrollY={scrollY} translateY={translateY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+            return <FeedView min_time={min_time} scrollY={scrollY} translateY={translateY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
         }
         else {
             if (route.key === 'following') {

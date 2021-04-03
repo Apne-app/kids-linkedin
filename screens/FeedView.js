@@ -21,41 +21,74 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     // }
 
     const ViewTypes = {
-        FULL: 0,
-        HALF_LEFT: 1,
-        HALF_RIGHT: 2
+        IMAGE_OR_VIDEO: 0,
+        TAG: 1,
+        MENTION: 2,
+        NO_MEDIA: 3,
+        INSPIRE: 4,
+        QUIZ: 5
     };
+    console.log('hello')
     const _layoutProvider = new LayoutProvider(
         index => {
-            return ViewTypes.FULL;
+            if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0) {
+                if (data[index]['data']['mention_id']) {
+                    return ViewTypes.MENTION;
+                }
+                else if (data[index]['data']['category'] === 'inspire') {
+                    return ViewTypes.INSPIRE;
+                }
+                else if (data[index]['data']['category'] === 'quiz') {
+                    return ViewTypes.QUIZ;
+                }
+                else if (data[index]['data']['tags']) {
+                    return ViewTypes.TAG;
+                }
+                else {
+                    return ViewTypes.IMAGE_OR_VIDEO;
+                }
+            }
+            else {
+                return ViewTypes.NO_MEDIA;
+            }
         },
         (type, dim) => {
             switch (type) {
-                case ViewTypes.FULL:
+                case ViewTypes.IMAGE_OR_VIDEO:
                     dim.width = width;
-                    dim.height = 550;
+                    dim.height = 530;
                     break;
-                default:
-                    dim.width = 0;
-                    dim.height = 0;
+                case ViewTypes.IMAGE_OR_VIDEO:
+                    dim.width = width;
+                    dim.height = 560;
+                    break;
+                case ViewTypes.INSPIRE:
+                    dim.width = width;
+                    dim.height = 600;
+                    break;
+                case ViewTypes.QUIZ:
+                    dim.width = width;
+                    dim.height = 570;
+                    break;
+                case ViewTypes.MENTION:
+                    dim.width = width;
+                    dim.height = 560;
+                    break;
+                case ViewTypes.NO_MEDIA:
+                    dim.width = width;
+                    dim.height = 290;
+                    break;
             }
         }
     );
     const _rowRenderer = (type, data) => {
         //You can return any view here, CellContainer has no special significance
-        switch (type) {
-            case ViewTypes.FULL:
-                return (
-                    <FeedComponent key={data['data']['post_id']} status={status} children={children} item={{ item: data }} navigation={navigation} />
-                );
-            default:
-                return null;
-        }
+        return (<FeedComponent key={data['data']['post_id']} status={status} children={children} item={{ item: data }} navigation={navigation} />)
     }
 
 
     let dataProvider = new DataProvider((r1, r2) => {
-        return r1.data.post_id != r2.data.post_id;
+        return r1.data.post_id !== r2.data.post_id;
     }).cloneWithRows(data)
     return (
         data.length ? <React.Fragment>
@@ -83,14 +116,23 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 //     keyExtractor={item => item['data']['post_id']+randomStr(20, '123456789')}
                 // /> 
                 <RecyclerListView
+                    scrollViewProps={{
+                        refreshControl: (
+                            <RefreshControl
+                                // style={{ zIndex: 1000 }}
+                                refreshing={refreshing}
+                                onRefresh={() => onRefresh(feed_type, false)}
+                            />
+                        )
+                    }}
                     onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                     layoutProvider={_layoutProvider}
-                    renderFooter={() => <View style={{height: profile ? 340 : 140}} />}
+                    renderFooter={() => <View style={{ height: profile ? 340 : 140 }} />}
                     dataProvider={dataProvider}
                     style={{ paddingTop: profile ? 340 : 140, flex: 1 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
-                        scrollY?scrollY.setValue(e.nativeEvent.contentOffset.y):null
+                        scrollY ? scrollY.setValue(e.nativeEvent.contentOffset.y) : null
                     }}
                 />
                 : <View>
@@ -104,7 +146,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                         <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Explore what other kids are learning and working on</Text>
                     </TouchableWithoutFeedback>
                 </View>}
-        </React.Fragment> : <ScrollView ><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: scrollY ? height / 10 : 100, flexDirection: 'column',  marginBottom: 80 }}>
+        </React.Fragment> : <ScrollView ><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: scrollY ? height / 10 : 100, flexDirection: 'column', marginBottom: 80 }}>
             <FastImage source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>No {feed_type} yet!</Text>
         </View></ScrollView>
