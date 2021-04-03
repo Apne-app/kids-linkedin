@@ -10,7 +10,7 @@ const CompButton = (props) => {
         close: require('../Icons/close.png'),
         back: require('../Icons/back.png'),
     };
-    return (<Button block dark style={{  backgroundColor: '#327FEB', borderRadius: 30, height: 50, width: width+400, alignSelf: 'center'}}>
+    return (<Button block dark style={{  backgroundColor: '#327FEB', borderRadius: 30, height: 50, width: width+400, alignSelf: 'center', marginTop: props.profile ? 400 : 0}}>
         <Text style={{ color: "#fff", fontFamily: 'NunitoSans-SemiBold', fontSize: 14 }}>{props.message}</Text>
     </Button>
     )
