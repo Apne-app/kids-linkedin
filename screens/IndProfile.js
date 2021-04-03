@@ -44,12 +44,13 @@ const IndProfile = ({ navigation, route }) => {
         { key: 'posts', title: 'Posts' },
         { key: 'classes', title: 'Classes' },
     ]);
-    const scrollY = new Animated.Value(0);
-    const diffClamp = Animated.diffClamp(scrollY, 0, 80);
-    const translateY = diffClamp.interpolate({
-        inputRange: [0, 200],
-        outputRange: [0, -200]
-    })
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const diffClamp = Animated.diffClamp(scrollY, 0, 290);
+    const y = diffClamp.interpolate({      
+        inputRange: [0, 290],
+        outputRange: [0, -290],      
+        extrapolateRight: 'clamp',    
+      });
     function titleCase(str) {
         var splitStr = str.toLowerCase().split(' ');
         for (var i = 0; i < splitStr.length; i++) {
@@ -275,7 +276,7 @@ const IndProfile = ({ navigation, route }) => {
     const Empty = () => {
         return (<View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
             <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
-                <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
+                <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45, marginTop: 340 }} />
             </View>
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{route.params.data.name + " hasn't posted anything yet. Check back later!"}</Text>
         </View>)
@@ -286,26 +287,28 @@ const IndProfile = ({ navigation, route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'mentions':
-                return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'posts':
-                return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'classes':
-                return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             default:
                 return null;
         }
     };
     const renderTabBar = (props) => {
+        const tabY = scrollY.interpolate({
+            inputRange: [0, 290],
+            outputRange: [290, 0],
+          });
         return (
             <Animated.View
                 style={{
-                    transform: [
-                        { translateY: translateY }
-                    ],
-                    zIndex: 5,
-                    position: 'absolute'
-                }}
-            >
+                transform: [{translateY: y}],
+                position: 'absolute',
+                marginTop: 290,
+                zIndex: 5
+            }}>
                 <TabBar
                     {...props}
                     activeColor={'#327FEB'}
@@ -328,16 +331,19 @@ const IndProfile = ({ navigation, route }) => {
     }
     return (
         <>
+        <ActionSheet
+            useNativeDriver={true}
+            ref={refProfileSheet}
+            styles={{ borderRadius: 0, margin: 10 }}
+            options={[<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
+            cancelButtonIndex={1}
+            onPress={(index) => { index == 0 ? reportProfile() : null; }}
+        />
+        <Animated.View style={[styles.header, 
+            {transform: [{translateY: y}]}]}>
             <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login', { type: 'indprofile_settings' })} />
-            <ActionSheet
-                useNativeDriver={true}
-                ref={refProfileSheet}
-                styles={{ borderRadius: 0, margin: 10 }}
-                options={[<Text style={{ fontFamily: 'NunitoSans-Bold', color: 'red' }}>Report</Text>, <Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>]}
-                cancelButtonIndex={1}
-                onPress={(index) => { index == 0 ? reportProfile() : null; }}
-            />
-            <View style={{ marginTop: 30, flexDirection: 'row' }}>
+            <View style={{zIndex: 1000, backgroundColor: '#f2f2f2', position: 'absolute', marginTop: 80, width: width}}>
+            <View style={{ marginTop: 30, flexDirection: 'row', height: 80,  zIndex: 1000 }}>
                 <Image
                     source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
                     style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
@@ -351,7 +357,7 @@ const IndProfile = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
-            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20,zIndex: 1000 }}>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 6 }}>
                     <View key={key} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.posts.length}</Text>
@@ -367,7 +373,8 @@ const IndProfile = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
-            {/* </Animated.View> */}
+            </View>
+            </Animated.View>
             {route.params.data.type === 'Teacher' ? <TabView
                 key={key}
                 style={{ flex: 4 }}
@@ -377,10 +384,30 @@ const IndProfile = ({ navigation, route }) => {
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
             />
-                : (loading ? <PostLoader /> : <FeedView scrollY={null} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
+                : (loading ? <PostLoader /> : <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
             }
         </>
     );
 };
+
+
+const styles = StyleSheet.create({
+    Next: {
+        alignSelf: 'center',
+        flexDirection: 'row',
+        padding: 12,
+        // margin: 5,
+        backgroundColor: '#327FEB',
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: "#fff",
+        width: 165,
+        flex: 1,
+        marginHorizontal: 20
+    },
+    header: {
+        zIndex: 10000
+    }
+})
 
 export default IndProfile;

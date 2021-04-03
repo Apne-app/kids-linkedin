@@ -497,7 +497,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
             />
-                : (loading ? <PostLoader /> : <FeedView scrollY={null} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
+                : (loading ? <PostLoader /> : <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
             }
             <ActionSheet
                 useNativeDriver={true}
