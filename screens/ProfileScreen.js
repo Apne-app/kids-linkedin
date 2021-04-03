@@ -1,3 +1,4 @@
+/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react';
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
@@ -59,16 +60,6 @@ const ProfileScreen = ({ navigation, route }) => {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
-    }
-    function titleCase(str) {
-        var splitStr = str.toLowerCase().split(' ');
-        for (var i = 0; i < splitStr.length; i++) {
-            // You do not need to check if i is larger than splitStr length, as your for does that for you
-            // Assign it back to the array
-            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-        }
-        // Directly return the joined string
-        return splitStr.join(' ');
     }
     const pickImage = (type) => {
         if (type === 'gallery') {
@@ -328,7 +319,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (children) {
-            axios.post('https://d6a537d093a2.ngrok.io/profile', {
+            axios.post('http://api.genio.app/mr_robot/profile', {
                 'profile_id': children[0]['id'],
                 'user_id': children ? children[0]['id'] : null
             }, {
@@ -336,16 +327,14 @@ const ProfileScreen = ({ navigation, route }) => {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                     'Content-Type': 'application/json'
                 }
-            }).then(async (response) => {
-                var place = data
-                place['posts'] = response.data.data
-                await setdata(place)
-                await setkey(String(parseInt(key) + 1))
+            }).then((response) => {
+                setdata({ ...data, posts: response['data']['data'] })
+                setkey(String(parseInt(key) + 1))
             }).catch((error) => {
                 console.log(error)
             })
             if (children[0]['data']['type'] == 'Teacher') {
-                axios.post('https://d6a537d093a2.ngrok.io/getmentions', {
+                axios.post('http://api.genio.app/mr_robot/getmentions', {
                     'mention_id': children[0]['id'],
                     'user_id': children ? children[0]['id'] : null
                 }, {
@@ -353,43 +342,36 @@ const ProfileScreen = ({ navigation, route }) => {
                         'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                         'Content-Type': 'application/json'
                     }
-                }).then(async (response) => {
-                    var place = data
-                    place['mentions'] = response.data.data
-                    await setdata(place)
-                    await setkey(String(parseInt(key) + 1))
-                }).catch((error) => {
-                    console.log(error)
-                })
-                axios.post('https://d6a537d093a2.ngrok.io/getclasses', {
-                    'poster_id': children[0]['id'],
-                    'user_id': children ? children[0]['id'] : null
-                }, {
-                    headers: {
-                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                        'Content-Type': 'application/json'
-                    }
-                }).then(async (response) => {
-                    var place = data
-                    place['classes'] = response.data.data
-                    await setdata(place)
-                    await setkey(String(parseInt(key) + 1))
+                }).then((response) => {
+                    console.log(response['data']['data'])
+                    setdata({ ...data, mentions: response['data']['data'] })
+                    setkey(String(parseInt(key) + 1))
                 }).catch((error) => {
                     console.log(error)
                 })
             }
-
-            axios.post('http://mr_robot.api.genio.app/follow_count', {
+            axios.post('http://mr_robot.api.genio.app/profile', {
                 'user_id': children[0]['id']
             }, {
                 headers: {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                     'Content-Type': 'application/json'
                 }
-            }).then(async (response) => {
-                await setfollow(response['data']['data'])
-                await setkey(String(parseInt(key) + 1))
-                setloading(false)
+            }).then((response) => {
+                setposts(response['data']['data'])
+                axios.post('http://mr_robot.api.genio.app/follow_count', {
+                    'user_id': children[0]['id']
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
+                }).then((response) => {
+                    setfollow(response['data']['data'])
+                    setloading(false)
+                }).catch((error) => {
+                    console.log(error)
+                })
             }).catch((error) => {
                 console.log(error)
             })
@@ -407,7 +389,7 @@ const ProfileScreen = ({ navigation, route }) => {
             case 'classes':
                 return (
                     <View style={{ marginTop: 0 }}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Class')}><CompButton message={'Click to add a class'} /></TouchableOpacity>
+                        <CompButton message={'Click to add a class'} />
                         <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </View>)
             default:
@@ -452,15 +434,15 @@ const ProfileScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
                     <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(children['0']['data']['name'])}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1)}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']}</Text>
                     </View>
                 </View>
             </View>
-            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 70, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 10 }}>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
                     <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data['posts'].length}</Text>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>

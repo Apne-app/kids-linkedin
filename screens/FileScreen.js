@@ -1,5 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
-/* eslint-disable */
 import {
     React, 
     Component, 
@@ -175,6 +173,20 @@ const FileScreen = (props) => {
                         setSynced(true)
                     }
                     catch (err) {
+                        var finalArr = [...amp];
+                        function compare( a, b ) {
+                            // console.log(createDate2(a.timestamp), createDate2(b.timestamp));
+                            if ( createDate2(a.timestamp) < createDate2(b.timestamp) ){
+                                return 1;
+                            }
+                            if ( createDate2(a.timestamp) > createDate2(b.timestamp) ){
+                                return -1;
+                            }
+                            return 0;
+                        }
+                        
+                        finalArr.sort(compare);
+                        setFiles([...finalArr]);
                         console.log(err);
                         setSynced(true)
                     }

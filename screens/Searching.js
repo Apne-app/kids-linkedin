@@ -13,6 +13,7 @@ import { Appbar } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import CompButton from '../Modules/CompButton';
+import ScreenHeader from '../Modules/ScreenHeader'
 import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image'
 var height = Dimensions.get('screen').height;
@@ -58,6 +59,17 @@ const Searching = ({ route, navigation }) => {
         { key: 'first', title: 'Teachers' },
         { key: 'second', title: 'Children' },
     ]);
+
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
 
     useFocusEffect(
         React.useCallback(() => {
@@ -143,7 +155,7 @@ const Searching = ({ route, navigation }) => {
                         style={{ width: 60, height: 60, borderRadius: 306, }}
                     />
                     <View style={{ marginLeft: 20, flexDirection: 'column' }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop: 9 }}>{item['data']['name'][0].toUpperCase() + item['data']['name'].substring(1)}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: 'bold', fontSize: 16, lineHeight: 36, marginTop: 9 }}>{titleCase(item['data']['name'])}</Text>
                         {/* <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'left', fontWeight: '400', color: "rgba(56, 56, 56, 0.6)", fontSize: 14, lineHeight: 24 }}>4 Followers  15 Following  </Text> */}
                     </View>
                     {/*<TouchableOpacity onPressIn={() => {followid(item.id); console.log(follows)}} block dark style={{ backgroundColor: '#91d7ff', height: 25, width: 80, alignSelf: 'center', marginBottom: 30, marginHorizontal: 20, position: 'absolute', bottom: -13, zIndex: 1000 }}>

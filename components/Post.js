@@ -16,6 +16,7 @@ import { enableScreens } from 'react-native-screens';
 import { Notifier, Easing } from 'react-native-notifier';
 import FileViewer from 'react-native-file-viewer';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import FastImage from 'react-native-fast-image'
 import { Chip } from 'react-native-paper';
 import { Snackbar } from 'react-native-paper';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -1021,7 +1022,7 @@ const Upload = ({ route, navigation }) => {
                       <View
                         key={item.id}
                         style={{ flex: 1, }}>
-                        <ImageBackground
+                        <FastImage
                           style={styles.image}
                           imageStyle={{ opacity: selecting && item.selected ? 0.5 : 1, borderRadius: 20 }}
                           source={{
@@ -1036,7 +1037,7 @@ const Upload = ({ route, navigation }) => {
                               :
                               <View />
                           }
-                        </ImageBackground>
+                        </FastImage>
                       </View>
                     </TouchableOpacity>
                     :

@@ -52,6 +52,7 @@
     "react-native-aws3": "0.0.9",
     "react-native-camera": "^2.5.0",
     "react-native-code-push": "^6.4.0",
+    "react-native-collapsible-tab-view": "^4.1.0",
     "react-native-confirmation-code-field": "^6.5.1",
     "react-native-countdown-component": "^2.7.1",
     "react-native-device-info": "^7.0.2",

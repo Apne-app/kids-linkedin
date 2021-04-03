@@ -98,6 +98,7 @@ const OTPScreen = ({ navigation, route }) => {
       
       axios(config)
       .then(function (response) {
+        route.params.otp = otp;
         setLoading(false);
       })
       .catch(function (error) {
@@ -237,11 +238,11 @@ const OTPScreen = ({ navigation, route }) => {
           backgroundColor: hasValue
             ? animationsScale[index].interpolate({
                 inputRange: [0, 1],
-                outputRange: [NOT_EMPTY_CELL_BG_COLOR, ACTIVE_CELL_BG_COLOR],
+                outputRange: [DEFAULT_CELL_BG_COLOR, DEFAULT_CELL_BG_COLOR],
               })
             : animationsColor[index].interpolate({
                 inputRange: [0, 1],
-                outputRange: [DEFAULT_CELL_BG_COLOR, ACTIVE_CELL_BG_COLOR],
+                outputRange: [DEFAULT_CELL_BG_COLOR, DEFAULT_CELL_BG_COLOR],
               }),
           borderRadius: animationsScale[index].interpolate({
             inputRange: [0, 1],
@@ -251,7 +252,7 @@ const OTPScreen = ({ navigation, route }) => {
             {
               scale: animationsScale[index].interpolate({
                 inputRange: [0, 1],
-                outputRange: [0.2, 1],
+                outputRange: [0.8, 1],
               }),
             },
           ],
@@ -272,7 +273,7 @@ const OTPScreen = ({ navigation, route }) => {
       };
 
     return (
-      <ScrollView ref={scrollcheck} keyboardShouldPersistTaps='handled' style={styles.container}>
+      <ScrollView stickyHeaderIndices={[0]} ref={scrollcheck} keyboardShouldPersistTaps='handled' style={styles.container}>
       <CompHeader screen={'OTP'}
       goback={() => {
         if (navigation.canGoBack()) {
@@ -284,7 +285,7 @@ const OTPScreen = ({ navigation, route }) => {
       }} />
       {loading ? <Spinner color='blue' style={styleLoader.loading} /> : null}
         <Content style={{backgroundColor: '#fff'}}>
-        <View style={{ opacity: logging ? 0.3 : 1, minHeight: height }}>
+        <View style={{ opacity: logging ? 0.3 : 1, minHeight: height-100 }}>
         <Image source={require('../assets/otp.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 10 }} />
         <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 16, paddingHorizontal: 20, textAlign: 'center' }}>We've sent an OTP to your phone{"\n"}<Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>{route.params.phone}{'\n'}</Text><TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>(</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB', textDecorationColor: '#327FEB', textDecorationLine: 'underline' }}>Change</Text><Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 18, color: '#327FEB' }}>)</Text></TouchableOpacity></Text>
         <KeyboardAvoidingView behavior={'padding'} >
@@ -296,7 +297,12 @@ const OTPScreen = ({ navigation, route }) => {
                     onChangeText={(text) => {
                       setValue(text); 
                       if(text.length == 4) {
-                        text == route.params.otp ? api() : alert('Invalid OTP');
+                        if(text == route.params.otp){
+                          api() 
+                        } else {
+                          alert('Invalid OTP');
+                          setValue('')
+                        }
                       }
                     }}
                     cellCount={CELL_COUNT}
@@ -305,6 +311,7 @@ const OTPScreen = ({ navigation, route }) => {
                     textContentType="oneTimeCode"
                     renderCell={renderCell}
                 />
+              </KeyboardAvoidingView>
                     <Button disabled={logging} block style={{ marginTop: 20, borderColor: active ? '#327FEB' : 'grey', backgroundColor: active ? '#327FEB' : 'grey', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={() => { sendOTP(); settime(45) }}>
                         <View style={{ flexDirection: 'row' }}><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18 }}>Send again (</Text><View style={{ marginTop: 0, marginHorizontal: -2 }}>
                             <CountDown
@@ -322,8 +329,7 @@ const OTPScreen = ({ navigation, route }) => {
                     <Button disabled={logging} block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} >
                         <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>Continue as a guest*</Text>
                     </Button>
-                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20, marginBottom: 10 }}>*You wont be able to use the social network</Text>
-        </KeyboardAvoidingView>
+                    <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20}}>*You wont be able to use the social network</Text>
                 </View>
         </Content>
       </ScrollView>
