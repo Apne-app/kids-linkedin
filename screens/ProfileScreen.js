@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react';
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
@@ -319,7 +318,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         if (children) {
-            axios.post('http://api.genio.app/mr_robot/profile', {
+            axios.post('http://mr_robot.api.genio.app/profile', {
                 'profile_id': children[0]['id'],
                 'user_id': children ? children[0]['id'] : null
             }, {
@@ -327,14 +326,16 @@ const ProfileScreen = ({ navigation, route }) => {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                     'Content-Type': 'application/json'
                 }
-            }).then((response) => {
-                setdata({ ...data, posts: response['data']['data'] })
-                setkey(String(parseInt(key) + 1))
+            }).then(async (response) => {
+                var place = data
+                place['posts'] = response['data']['data']
+                await setdata(place)
+                await setkey(String(parseInt(key) + 1))
             }).catch((error) => {
                 console.log(error)
             })
             if (children[0]['data']['type'] == 'Teacher') {
-                axios.post('http://api.genio.app/mr_robot/getmentions', {
+                axios.post('http://mr_robot.api.genio.app/getmentions', {
                     'mention_id': children[0]['id'],
                     'user_id': children ? children[0]['id'] : null
                 }, {
@@ -342,23 +343,28 @@ const ProfileScreen = ({ navigation, route }) => {
                         'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                         'Content-Type': 'application/json'
                     }
-                }).then((response) => {
-                    console.log(response['data']['data'])
-                    setdata({ ...data, mentions: response['data']['data'] })
-                    setkey(String(parseInt(key) + 1))
+                }).then(async (response) => {
+                    var place = data
+                    place['mentions'] = response['data']['data']
+                    await setdata(place)
+                    await setkey(String(parseInt(key) + 1))
                 }).catch((error) => {
                     console.log(error)
                 })
             }
-            axios.post('http://mr_robot.api.genio.app/profile', {
-                'user_id': children[0]['id']
+            axios.post('http://mr_robot.api.genio.app/getclasses', {
+                'poster_id': children[0]['id'],
+                'user_id': children ? children[0]['id'] : null
             }, {
                 headers: {
                     'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                     'Content-Type': 'application/json'
                 }
-            }).then((response) => {
-                setposts(response['data']['data'])
+            }).then(async (response) => {
+                var place = data
+                place['classes'] = response['data']['data']
+                await setdata(place)
+                await setkey(String(parseInt(key) + 1))
                 axios.post('http://mr_robot.api.genio.app/follow_count', {
                     'user_id': children[0]['id']
                 }, {
@@ -366,8 +372,9 @@ const ProfileScreen = ({ navigation, route }) => {
                         'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                         'Content-Type': 'application/json'
                     }
-                }).then((response) => {
-                    setfollow(response['data']['data'])
+                }).then(async (response) => {
+                    await setfollow(response['data']['data'])
+                    await setkey(String(parseInt(key) + 1))
                     setloading(false)
                 }).catch((error) => {
                     console.log(error)
@@ -388,7 +395,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'classes':
                 return (
-                    <View style={{ marginTop: 0 }}>
+                    <View>
                         <CompButton message={'Click to add a class'} />
                         <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </View>)
@@ -441,10 +448,10 @@ const ProfileScreen = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
-            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 100, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
-                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 20 }}>
-                    <View style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data['posts'].length}</Text>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 6 }}>
+                    <View key={key} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.posts.length}</Text>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', fontSize: 14, }}>Posts</Text>
                     </View>
                     <View style={{ flexDirection: 'column', alignSelf: 'center', marginLeft: 30, marginRight: 30 }}>

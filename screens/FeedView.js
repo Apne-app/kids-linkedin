@@ -86,7 +86,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                     layoutProvider={_layoutProvider}
                     dataProvider={dataProvider}
-                    style={{ paddingTop: profile ? 10 : 140 }}
+                    style={{ paddingTop: profile ? 70 : 140 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
                         scrollY?scrollY.setValue(e.nativeEvent.contentOffset.y):null
