@@ -160,8 +160,8 @@ const IndProfile = ({ navigation, route }) => {
             }
         }).then(async (response) => {
             await setfollow(response['data']['data'])
+            await setloading(false)
             await setkey(String(parseInt(key) + 1))
-            setloading(false)
         }).catch((error) => {
             console.log(error)
         })
