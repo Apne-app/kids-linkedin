@@ -376,6 +376,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         </Text>
                     </View> : null}
                 {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
+                {activity['mention_id'] ? <Text onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 10, marginVertical: 1, fontSize: 16, color: '#327FEB' }}>{'@' + activity['mention_name'].charAt(0).toUpperCase() + activity['mention_name'].slice(1)}</Text> : null}
                 {activity['images'] ?
                     <ImageView
                         key={'2'}
@@ -411,30 +412,22 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
                 <View style={{ marginTop: 13 }}>
                     {activity['videos'] ?
-                        <VideoPlayer
-                            videoProps={{
-                                source: { uri: activity['videos'] },
-                                rate: 1.0,
-                                volume: 1.0,
-                                isMuted: false,
-                                videoRef: v => videoRef = v,
-                                resizeMode: Video.RESIZE_MODE_CONTAIN,
-                                // shouldPlay
-                                // usePoster={props.activity.poster?true:false}
-                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                                playInBackground: false,
-                                playWhenInactive: false,
-                                width: width,
-                                height: 340,
-
-                            }}
-                            width={width}
-                            height={340}
-                            hideControlsTimerDuration={1000}
-                            showControlsOnLoad={true}
-                            switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                            sliderColor={'#327FEB'}
-                            inFullscreen={false}
+                        <Video
+                            source={{ uri: activity['videos'] }}
+                            rate={1.0}
+                            volume={1.0}
+                            isMuted={false}
+                            resizeMode="cover"
+                            // shouldPlay
+                            // usePoster={props.activity.poster?true:false}
+                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                            ref={videoRef}
+                            useNativeControls={true}
+                            playInBackground={false}
+                            playWhenInactive={false}
+                            onViewportEnter={() => console.log('Entered!')}
+                            onViewportLeave={() => console.log('Left!')}
+                            style={{ width: width, height: 340 }}
                         /> : null}
                     {activity['youtube'] ?
                         <YoutubePlayer

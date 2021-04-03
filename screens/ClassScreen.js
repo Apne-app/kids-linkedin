@@ -185,7 +185,7 @@ const ClassScreen = ({ route, navigation }) => {
         }
         if (uri) {
             uri = ''
-            axios.post('https://d6a537d093a2.ngrok.io/postclass', {
+            axios.post('http://mr_robot.api.genio.app/postclass', {
                 user_id: children[0]['id'],
                 acc_type: children[0]['data']['type'],
                 user_image: children[0]['data']['image'],
@@ -326,29 +326,22 @@ const ClassScreen = ({ route, navigation }) => {
                         />
                         :
                         mediatype == 'video' ?
-                            <VideoPlayer
-                                videoProps={{
-                                    source: { uri: form.media },
-                                    rate: 1.0,
-                                    volume: 1.0,
-                                    isMuted: false,
-                                    videoRef: v => videoRef = v,
-                                    resizeMode: Video.RESIZE_MODE_CONTAIN,
-                                    // shouldPlay
-                                    // usePoster={props.activity.poster?true:false}
-                                    // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                                    playInBackground: false,
-                                    playWhenInactive: false,
-                                    width: width,
-                                    height: 340,
-                                }}
-                                width={width}
-                                height={340}
-                                hideControlsTimerDuration={1000}
-                                showControlsOnLoad={true}
-                                // switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                                sliderColor={'#327FEB'}
-                                inFullscreen={false}
+                            <Video
+                                source={{ uri: form.media }}
+                                rate={1.0}
+                                volume={1.0}
+                                isMuted={false}
+                                resizeMode="cover"
+                                // shouldPlay
+                                // usePoster={props.activity.poster?true:false}
+                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                                ref={videoRef}
+                                useNativeControls={true}
+                                playInBackground={false}
+                                playWhenInactive={false}
+                                onViewportEnter={() => console.log('Entered!')}
+                                onViewportLeave={() => console.log('Left!')}
+                                style={{ width: width, height: 340 }}
                             />
                             :
                             null

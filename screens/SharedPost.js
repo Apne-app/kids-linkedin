@@ -70,7 +70,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         })
         var config = {
             method: 'post',
-            url: 'https://d6a537d093a2.ngrok.io/getpost',
+            url: 'http://mr_robot.api.genio.app/getpost',
             headers: {
                 'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
                 'Content-Type': 'application/json'
@@ -373,10 +373,10 @@ const SinglePostScreen = ({ navigation, route }) => {
         const [visible, setIsVisible] = React.useState(false);
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
-                {activity['class_time']?
+                {activity['class_time'] ?
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular'}}>
-                            Class on <Text style={{color:'#327FEb', fontFamily:'NunitoSans-Bold'}}>{activity['class_category']}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                            Class on <Text style={{ color: '#327FEb', fontFamily: 'NunitoSans-Bold' }}>{activity['class_category']}</Text>
                         </Text>
                     </View> : null}
                 {activity['caption'] === 'default123' ?
@@ -391,7 +391,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {activity['class_time'] ?
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                            Timings: {activity['class_date'].split('T')[0]+'@'+activity['class_time'].split('T')[1].split('.')[0].slice(0, 5) }
+                            Timings: {activity['class_date'].split('T')[0] + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
                         </Text>
                     </View> : null}
                 {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
@@ -430,30 +430,22 @@ const SinglePostScreen = ({ navigation, route }) => {
                     : null}
                 <View style={{ marginTop: 13 }}>
                     {activity['videos'] ?
-                        <VideoPlayer
-                            videoProps={{
-                                source: { uri: activity['videos'] },
-                                rate: 1.0,
-                                volume: 1.0,
-                                isMuted: false,
-                                videoRef: v => videoRef = v,
-                                resizeMode: Video.RESIZE_MODE_CONTAIN,
-                                // shouldPlay
-                                // usePoster={props.activity.poster?true:false}
-                                // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                                playInBackground: false,
-                                playWhenInactive: false,
-                                width: width,
-                                height: 340,
-
-                            }}
-                            width={width}
-                            height={340}
-                            hideControlsTimerDuration={1000}
-                            showControlsOnLoad={true}
-                            switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                            sliderColor={'#327FEB'}
-                            inFullscreen={false}
+                        <Video
+                            source={{ uri: activity['videos'] }}
+                            rate={1.0}
+                            volume={1.0}
+                            isMuted={false}
+                            resizeMode="cover"
+                            // shouldPlay
+                            // usePoster={props.activity.poster?true:false}
+                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                            ref={videoRef}
+                            useNativeControls={true}
+                            playInBackground={false}
+                            playWhenInactive={false}
+                            onViewportEnter={() => console.log('Entered!')}
+                            onViewportLeave={() => console.log('Left!')}
+                            style={{ width: width, height: 340 }}
                         /> : null}
                     {activity['youtube'] ?
                         <YoutubePlayer

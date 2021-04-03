@@ -147,13 +147,13 @@ const PostScreen = ({ navigation, route }) => {
   function titleCase(str) {
     var splitStr = str.toLowerCase().split(' ');
     for (var i = 0; i < splitStr.length; i++) {
-        // You do not need to check if i is larger than splitStr length, as your for does that for you
-        // Assign it back to the array
-        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+      // You do not need to check if i is larger than splitStr length, as your for does that for you
+      // Assign it back to the array
+      splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
     }
     // Directly return the joined string
-    return splitStr.join(' '); 
- }
+    return splitStr.join(' ');
+  }
 
   const PostUpload = async (tagged) => {
     setLoading(true);
@@ -220,7 +220,7 @@ const PostScreen = ({ navigation, route }) => {
     // // user.follow('user', '49id');
     // var user = client.feed('user', String(String(children['id']) + String("id")));
     var mention = route.params.data
-    axios.post('https://d6a537d093a2.ngrok.io/post', {
+    axios.post('http://mr_robot.api.genio.app/post', {
       user_id: children['id'],
       acc_type: children['data']['type'],
       user_image: children['data']['image'],
@@ -289,10 +289,10 @@ const PostScreen = ({ navigation, route }) => {
   return (
     <ScrollView keyboardShouldPersistTaps={'always'} style={{ backgroundColor: 'white', height: height, width: width }}>
       <CompHeader screen={'Post'} goback={goback} />
-      <View style={{ height: height * 0.20 }}>
+      <View style={{ height: height * 0.19 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 20 }}>
           <FastImage style={{ width: 40, height: 40, borderRadius: 10000 }} source={{ uri: children['data']['image'] }} />
-          <TextInput autoFocus={true} value={caption} onChangeText={text => setCaption(text)} numberOfLines={4} multiline={true} placeholder={'Write your caption..'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, textAlignVertical: 'top', width: width - 200, marginTop: -4 }} />
+          <TextInput autoFocus={true} value={caption} onChangeText={text => setCaption(text)} numberOfLines={4} multiline={true} placeholder={'Write your caption..'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, textAlignVertical: 'top', width: width - 200, marginTop: -4, height: 130 }} />
           <TouchableOpacity
             style={{ height: 36, display: loading ? 'none' : 'flex' }}
             onPress={() => {
@@ -307,15 +307,17 @@ const PostScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen:'VideoPreview' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row', borderWidth: 0.2}}>
-          {route.params.data ? <>
-              <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{titleCase(route.params.data.name)}</Text>
-              <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
-          </> :
-              <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
-                  <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', width: width / 2 }}>Tag Teacher</Text>
-                  <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right' }} /></View>}
+      <View style={{ backgroundColor: '#327FEB', height: 0.5, opacity: 0.8 }} />
+      <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen: 'CreatePost' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row', borderWidth: 0.2 }}>
+        {route.params.data ? <>
+          <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 19, color: 'black', marginLeft: 0, marginTop: 2 }}>{titleCase(route.params.data.name)}</Text>
+          <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 11, color: 'black', marginLeft: 4, marginTop: 11, color: '#327FEB' }}>{route.params.data.type}</Text>
+        </> :
+          <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
+            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', width: width / 2 }}>Tag Teacher</Text>
+            <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right', marginTop: 1 }} /></View>}
       </TouchableOpacity>
+      <View style={{ backgroundColor: '#327FEB', height: 0.5, opacity: 0.8 }} />
       {/* <Snackbar
         visible={showToast}
         style={{ marginBottom: height * 0.1 }}

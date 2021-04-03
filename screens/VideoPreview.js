@@ -1,7 +1,6 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react'
-import { Dimensions, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler, Alert, ScrollView } from 'react-native'
+import { Dimensions, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, BackHandler, Alert, ScrollView, PermissionsAndroid } from 'react-native'
 import CompHeader from '../Modules/CompHeader'
 import FastImage from 'react-native-fast-image';
 import { RNS3 } from 'react-native-aws3';
@@ -17,6 +16,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
 const VideoPreview = ({ navigation, route }) => {
+    console.log(route.params.video)
     var videoRef = useRef(null)
     var sheetRef = useRef(null)
     const [ShowToast, setShowToast] = useState(false)
@@ -28,11 +28,35 @@ const VideoPreview = ({ navigation, route }) => {
         for (var i = 0; i < splitStr.length; i++) {
             // You do not need to check if i is larger than splitStr length, as your for does that for you
             // Assign it back to the array
-            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
         }
         // Directly return the joined string
-        return splitStr.join(' '); 
-     }
+        return splitStr.join(' ');
+    }
+    const requrestpermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                {
+                    title: "Storage Permission",
+                    message:
+                        "We need permission to access storage",
+                    buttonNegative: "Cancel",
+                    buttonPositive: "OK"
+                }
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("You can use the storage");
+            } else {
+                console.log("storage permission denied");
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
+    useEffect(() => {
+        requrestpermission()
+    })
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -76,7 +100,7 @@ const VideoPreview = ({ navigation, route }) => {
             }
             name = "https://d2k1j93fju3qxb.cloudfront.net/" + children['id'] + "/videos/" + name
             var mention = route.params.data
-            axios.post('https://d6a537d093a2.ngrok.io/post', {
+            axios.post('http://mr_robot.api.genio.app/post', {
                 user_id: children['id'],
                 acc_type: children['data']['type'],
                 user_image: children['data']['image'],
@@ -139,7 +163,7 @@ const VideoPreview = ({ navigation, route }) => {
                 <View style={{ flex: 1, opacity: loading ? 0.5 : 1, marginTop: 40 }}>
                     <View style={{ flexDirection: 'row', margin: 10, justifyContent: 'space-evenly' }}>
                         <FastImage style={{ width: 40, height: 40, borderRadius: 10000 }} source={{ uri: children['data']['image'] }} />
-                        <TextInput autoFocus={true} value={caption} onChangeText={(value) => setcaption(value)} numberOfLines={4} multiline={true} placeholder={'Write your caption..'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, textAlignVertical: 'top', width: width - 200, marginTop: -4 }} />
+                        <TextInput autoFocus={true} value={caption} onChangeText={(value) => setcaption(value)} numberOfLines={4} multiline={true} placeholder={'Write your caption..'} style={{ fontFamily: 'NunitoSans-Regular', fontSize: 18, textAlignVertical: 'top', width: width - 200, marginTop: -4, height: 130 }} />
                         <TouchableOpacity
                             style={{ height: 36, display: loading ? 'none' : 'flex', marginRight: 20 }}
                             onPress={() => {
@@ -153,7 +177,7 @@ const VideoPreview = ({ navigation, route }) => {
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen:'VideoPreview' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row', borderWidth: 0.2}}>
+                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen: 'VideoPreview' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row', borderWidth: 0.2 }}>
                         {route.params.data ? <>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{titleCase(route.params.data.name)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
@@ -164,30 +188,23 @@ const VideoPreview = ({ navigation, route }) => {
                                 <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right' }} /></View>}
                     </TouchableOpacity>
                     <View style={{ backgroundColor: 'grey', height: 1, width: width }}></View>
-                    <VideoPlayer
-                        videoProps={{
-                            source: { uri: route.params.video },
-                            rate: 1.0,
-                            volume: 1.0,
-                            isMuted: false,
-                            videoRef: v => videoRef = v,
-                            resizeMode: Video.RESIZE_MODE_CONTAIN,
-                            // shouldPlay
-                            // usePoster={props.activity.poster?true:false}
-                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                            playInBackground: false,
-                            playWhenInactive: false,
-                            width: width,
-                            height: height * 0.36,
-
-                        }}
-                        width={width}
-                        height={340}
-                        hideControlsTimerDuration={1000}
-                        showControlsOnLoad={true}
-                        switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                        sliderColor={'#327FEB'}
-                        inFullscreen={false}
+                    <Video
+                        source={{ uri: route.params.video }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode="cover"
+                        // shouldPlay
+                        // usePoster={props.activity.poster?true:false}
+                        // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                        ref={videoRef}
+                        useNativeControls={true}
+                        onError={(error) => console.log(error)}
+                        playInBackground={false}
+                        playWhenInactive={false}
+                        onViewportEnter={() => console.log('Entered!')}
+                        onViewportLeave={() => console.log('Left!')}
+                        style={{ width: width, height: 340 }}
                     />
                 </View>
             </ScrollView>

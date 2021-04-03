@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Image, TouchableOpacity, FlatList } from 'react-native'
@@ -162,8 +161,8 @@ const TagScreen = ({ route, navigation }) => {
                         <Searchbar
                             theme={theme}
                             autoFocus={true}
-                            style={{ width: width - 100, marginTop: 10, height: 40 }}
-                            placeholder="Search Genio"
+                            style={{ width: width - 100, marginTop: 10, height: 46, marginLeft:10 }}
+                            placeholder="Search for teachers"
                             onChangeText={onChangeSearch}
                             value={searchQuery}
                         />
