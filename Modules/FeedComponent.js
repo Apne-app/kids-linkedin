@@ -333,7 +333,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                             uri: item['item']['data']['images'].split(", ")[0] + item['item']['data']['suff_feed_feed'],
                             priority: FastImage.priority.high
                         }}
-                        style={{ width: width, minHeight: 340, borderRadius: 0, backgroundColor: "#000" }}
+                        style={{ width: width, height: 340, borderRadius: 0, backgroundColor: "#000" }}
                         resizeMode={FastImage.resizeMode.contain}
                     /> : <View style={{ height: 340 }}><SliderBox
                         images={activity['images'].split(", ").filter(n => n)}
@@ -342,6 +342,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         paginationBoxVerticalPadding={20}
                         sliderBoxHeight={340}
                         disableOnPress={true}
+                        resizeMode={FastImage.resizeMode.contain}
                         ImageComponentStyle={{ borderRadius: 0, width: width, height: 340, backgroundColor: 'transparent' }}
                         circleLoop={false}
                     /></View> : <View></View>}
