@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
+import { Text, StyleSheet, RefreshControl, Dimensions, Animated, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
 import SpinnerButton from 'react-native-spinner-button';
@@ -51,6 +51,13 @@ const ProfileScreen = ({ navigation, route }) => {
         { key: 'posts', title: 'Posts' },
         { key: 'classes', title: 'Classes' },
     ]);
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const diffClamp = Animated.diffClamp(scrollY, 0, 290);
+    const y = diffClamp.interpolate({      
+        inputRange: [0, 290],
+        outputRange: [0, -290],      
+        extrapolateRight: 'clamp',    
+      });
     function makeid(length) {
         var result = '';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -390,29 +397,39 @@ const ProfileScreen = ({ navigation, route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'mentions':
-                return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'posts':
-                return <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'classes':
                 return (
                     <View>
                         <CompButton message={'Click to add a class'} />
-                        <FeedView profile={true} scrollY={null} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                        <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </View>)
             default:
                 return null;
         }
     };
     const renderTabBar = (props) => {
+        const tabY = scrollY.interpolate({
+            inputRange: [0, 290],
+            outputRange: [290, 0],
+          });
         return (
-
+            <Animated.View
+                style={{
+                transform: [{translateY: y}],
+                position: 'absolute',
+                marginTop: 290,
+                zIndex: 5
+            }}>
             <TabBar
                 {...props}
                 activeColor={'#327FEB'}
                 inactiveColor={'black'}
                 pressColor={'lightblue'}
                 indicatorStyle={{ backgroundColor: 'white' }}
-                style={{ backgroundColor: 'white' }}
+                style={{ backgroundColor: 'white'}}
                 tabStyle={{ width: width / 3 }}
                 scrollEnabled={true}
                 bounces={true}
@@ -423,11 +440,16 @@ const ProfileScreen = ({ navigation, route }) => {
                 )}
                 indicatorStyle={{ backgroundColor: '#327FEB', height: 5, borderTopRightRadius: 10, borderTopLeftRadius: 10 }}
             />
+            </Animated.View>
         )
     }
     const there = () => {
         return (<>
-            <View style={{ marginTop: 30, flexDirection: 'row' }}>
+            <Animated.View style={[styles.header, 
+                {transform: [{translateY: y}]}]}>
+            <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
+            <View style={{zIndex: 1000, backgroundColor: '#f2f2f2', position: 'absolute', marginTop: 80, width: width}}>
+            <View style={{ marginTop: 30, flexDirection: 'row', height: 80,  zIndex: 1000}}>
                 <TouchableOpacity onPress={() => refActionSheet.current.show()} style={{ flexDirection: 'row' }}>
                     <FastImage
                         source={{
@@ -448,7 +470,7 @@ const ProfileScreen = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
-            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20, }}>
+            <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20,  zIndex: 1000  }}>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', margin: 6 }}>
                     <View key={key} style={{ flexDirection: 'column', marginLeft: 30, marginLeft: 30, marginRight: 30 }}>
                         <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, textAlign: 'center' }}>{data.posts.length}</Text>
@@ -464,6 +486,8 @@ const ProfileScreen = ({ navigation, route }) => {
                     </View>
                 </View>
             </View>
+            </View>
+            </Animated.View> 
             {children[0]['data']['type'] === 'Teacher' ? <TabView
                 key={key}
                 style={{ flex: 4 }}
@@ -488,6 +512,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: '#f9f9f9', height: height, width: width }}>
+            <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
                 <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}>
                     <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
@@ -502,7 +527,6 @@ const ProfileScreen = ({ navigation, route }) => {
     }
     return (
         <>
-            <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
             {status == '3' ? there() : notthere()}
         </>
     );
@@ -522,6 +546,9 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 20
     },
+    header: {
+        zIndex: 10000
+    }
 })
 
 export default ProfileScreen;
