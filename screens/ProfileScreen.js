@@ -509,21 +509,21 @@ const ProfileScreen = ({ navigation, route }) => {
                 : null
                 }
                 {
-                    children[0]['data']['fb'] && children[0]['data']['fb'] != '' ?
+                    children[0]['data']['fb'] && children[0]['data']['fb'] != '' && !children[0]['data']['fb'].includes('default') ?
                     <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['fb']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='facebook' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    children[0]['data']['linkedin'] && children[0]['data']['linkedin'] != '' ?
+                    children[0]['data']['linkedin'] && children[0]['data']['linkedin'] != '' && !children[0]['data']['linkedin'].includes('default') ?
                     <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['linkedin']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='linkedin' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    children[0]['data']['website'] && children[0]['data']['website'] != '' ?
+                    children[0]['data']['website'] && children[0]['data']['website'] != '' && !children[0]['data']['fb'].includes('default') ?
                     <TouchableOpacity onPress={() => Linking.openURL(children[0]['data']['website']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='link' />
                     </TouchableOpacity>

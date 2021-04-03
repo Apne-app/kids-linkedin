@@ -386,28 +386,28 @@ const IndProfile = ({ navigation, route }) => {
                 : null
                 }
                 {
-                    route.params.data['fb'] && route.params.data['fb'] != '' ?
+                    route.params.data['fb'] && route.params.data['fb'] != '' && !route.params.data['fb'].includes('default') ?
                     <TouchableOpacity onPress={() => Linking.openURL(route.params.data['fb']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='facebook' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    route.params.data['linkedin'] && route.params.data['linkedin'] != '' ?
+                    route.params.data['linkedin'] && route.params.data['linkedin'] != '' && !route.params.data['linkedin'].includes('default') ?
                     <TouchableOpacity onPress={() => Linking.openURL(route.params.data['linkedin']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='linkedin' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    route.params.data['website'] && route.params.data['website'] != '' ?
+                    route.params.data['website'] && route.params.data['website'] != '' && && !route.params.data['website'].includes('default') ?
                     <TouchableOpacity onPress={() => Linking.openURL(route.params.data['website']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='link' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    profile['email'] && profile['email'] != '' ?
+                    route.params.data['email'] && route.params.data['email'] != '' ?
                     <TouchableOpacity onPress={() => Linking.openURL("mailto:"+profile['email']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='mail' />
                     </TouchableOpacity>
