@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     },
     //  image: {
     //   flex: 1,
-    //   resizeMode: "cover",
+    //   resizeMode: "contain",
     //   opacity: 0.4,
     //   justifyContent: "center",
 

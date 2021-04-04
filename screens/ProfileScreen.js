@@ -415,7 +415,7 @@ const ProfileScreen = ({ navigation, route }) => {
             case 'classes':
                 return (
                     <ScrollView>
-                        <CompButton message={'Click to add a class'} profile={true} />
+                        <TouchableOpacity onPress={()=>navigation.navigate('Class')}><CompButton message={'Click to add a class'} profile={true} /></TouchableOpacity>
                         <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </ScrollView>)
             default:

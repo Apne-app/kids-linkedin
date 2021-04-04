@@ -274,6 +274,16 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const setparentkey = () => {
         setkey(String(parseInt(key) + 1))
     }
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
     return (
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
@@ -325,7 +335,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     </Text>
                 </View> : null}
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
-            {activity['mention_id'] ? <Text onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{'@' + activity['mention_name'].charAt(0).toUpperCase() + activity['mention_name'].slice(1)}</Text> : null}
+            {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage
@@ -359,7 +369,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     rate={1.0}
                     volume={1.0}
                     isMuted={false}
-                    resizeMode="cover"
+                    resizeMode="contain"
                     // shouldPlay
                     // usePoster={props.activity.poster?true:false}
                     // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
@@ -369,7 +379,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     playWhenInactive={false}
                     onViewportEnter={() => console.log('Entered!')}
                     onViewportLeave={() => console.log('Left!')}
-                    style={{ width: width, height: 340 }}
+                    style={{ width: width, height: 340, backgroundColor:'black' }}
                 />
                 // </InViewPort>
                 : null

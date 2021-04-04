@@ -28,7 +28,6 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
         INSPIRE: 4,
         QUIZ: 5
     };
-    console.log('hello')
     const _layoutProvider = new LayoutProvider(
         index => {
             if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0) {

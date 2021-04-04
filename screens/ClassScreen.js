@@ -333,7 +333,7 @@ const ClassScreen = ({ route, navigation }) => {
                                 rate={1.0}
                                 volume={1.0}
                                 isMuted={false}
-                                resizeMode="cover"
+                                resizeMode="contain"
                                 // shouldPlay
                                 // usePoster={props.activity.poster?true:false}
                                 // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}

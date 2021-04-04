@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component } from 'react'; 
 import { Text, StyleSheet, Dimensions, View, ImageBackground, Image } from 'react-native'

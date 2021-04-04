@@ -98,14 +98,13 @@ const FeedScreen = ({ navigation, route }) => {
             var headers = JSON.parse(await AsyncStorage.getItem('loginheaders'));
             var route = status === '3' ? headers['feed_headers_login'] : headers['feed_headers_non_login']
             var refresh = status === '3' ? headers['feed_login'] : headers['feed_non_login']
-            console.log(refresh)
             var refreshi = {}
             refresh.map((item => {
                 refreshi[item] = false
             }))
             setrefreshing(refreshi)
             status === '3' ? route[2]['title'] = route[2]['title'].replace('deafult', String(currentyear - parseInt(children[0]['data']['year']))) : null
-            status === '3' ? children[0]['type'] != 'Kid' ? route.splice(2, 1) : null : null
+            status === '3' ? children[0]['data']['type'] != 'Kid' ? route.splice(2, 1) : null : null
             var timestamp = await AsyncStorage.getItem('timestamp')
             timestamp = timestamp ? parseInt(timestamp) : 0;
             var mintimestamp = Math.round(new Date().getTime() / 1000)
