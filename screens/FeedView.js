@@ -143,7 +143,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     }}
                     onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                     layoutProvider={_layoutProvider}
-                    renderFooter={() => <>{more[feed_type] ? <Text style={{ fontFamily: 'NunitoSans-Bold', textAlign: 'center', marginBottom:40 }}>That's it for now, come back later for more!</Text> : null}<View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View></>}
+                    renderFooter={() => more ? <><Text style={{ fontFamily: 'NunitoSans-Bold', textAlign: 'center', marginBottom: 40, display: more[feed_type] ? 'flex' : 'none' }}>That's it for now, come back later for more!</Text><View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View></> : <View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View>}
                     dataProvider={dataProvider}
                     style={{ paddingTop: teacherprofile && !addclass ? 400 : profile && !addclass ? 300 : addclass ? 10 : 140, flex: 1 }}
                     rowRenderer={_rowRenderer}

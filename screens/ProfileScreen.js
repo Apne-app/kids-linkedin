@@ -409,14 +409,14 @@ const ProfileScreen = ({ navigation, route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'mentions':
-                return <FeedView profile={true} teacherprofile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView more={''} profile={true} teacherprofile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'posts':
-                return <FeedView profile={true} teacherprofile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView more={''} profile={true} teacherprofile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'classes':
                 return (
                     <ScrollView>
                         <TouchableOpacity onPress={()=>navigation.navigate('Class')}><CompButton message={'Click to add a class'} profile={true} /></TouchableOpacity>
-                        <FeedView profile={true} teacherprofile={true} addclass={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                        <FeedView more={''} profile={true} teacherprofile={true} addclass={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </ScrollView>)
             default:
                 return null;
@@ -551,7 +551,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
             />
-                : (loading ? <PostLoader /> : <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
+                : (loading ? <PostLoader /> : <FeedView more={''} profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data['posts']} onRefresh={onRefresh} refreshing={refreshing['posts']} feed_type={'posts'} />)
             }
             <ActionSheet
                 useNativeDriver={true}
