@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Dimensions, TouchableOpacity, View, ImageBackground, Image, BackHandler, TextInput, RefreshControl } from 'react-native'
@@ -17,13 +16,11 @@ var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 const NotificationScreen = ({ route, navigation }) => {
   const children = route.params.children
-  const notifications = route.params.notifications
-  const keys = notifications ? Object.keys(notifications).reverse() : []
-  const [extra, setextra] = useState([])
+  const [notifications, setnotifications] = useState({})
   const status = route.params.status
-  const [refreshing, setrefreshing] = useState(false)
-  const [place, setplace] = useState('1')
-  const { Update } = React.useContext(AuthContext);
+  const [refreshing, setrefreshing] = useState(true)
+  const [keys, setkeys] = useState(['hello'])
+  const [key, seykey] = useState('1')
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -70,23 +67,12 @@ const NotificationScreen = ({ route, navigation }) => {
           //   "email": pro.email,
           // })
         })
-        var noti = notifications ? notifications : {}
-        var arr = []
-        var data1 = Object.keys(noti).reverse()
-        var data2 = Object.keys(data.data).reverse()
-        for (var i = 0; i < data2.length; i++) {
-          if (!data1.includes(data2[i])) {
-            arr.push(data2[i])
-          }
-          else {
-            break;
-          }
-        }
-        setextra(arr)
-        AsyncStorage.removeItem('newnoti')
-        Update({ notifications: data.data })
+        var ketys = Object.keys(data.data).reverse()
         AsyncStorage.setItem('notifications', JSON.stringify(data.data))
-        setplace(String(Math.random()))
+        setnotifications(data.data)
+        setkeys(ketys)
+        setrefreshing(false)
+        // setkey(String(Math.random()))
       }
       else {
         // console.log('helo')
@@ -115,11 +101,8 @@ const NotificationScreen = ({ route, navigation }) => {
         break;
       }
     }
-    setextra(arr)
-    Update({ notifications: data.data })
-    AsyncStorage.removeItem('newnoti')
     AsyncStorage.setItem('notifications', JSON.stringify(data.data))
-    setplace(String(Math.random()))
+    // setplace(String(Math.random()))
     setrefreshing(false)
   }
   const data = () => {
@@ -131,7 +114,7 @@ const NotificationScreen = ({ route, navigation }) => {
         notifications[item]['name'] == 'admin' ?
           <TouchableOpacity key={item}>
             <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft: 10 }}>
-              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 0, marginTop: 16, marginRight: 5 }} />}
+              {/* {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 0, marginTop: 16, marginRight: 5 }} />} */}
               <Image style={{ width: 40, height: 40, borderRadius: 1000, }} source={{ uri: notifications[item]['image'] }} />
               <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight: 40 }}>{notifications[item]['type']}</Text>
             </View>
@@ -139,7 +122,7 @@ const NotificationScreen = ({ route, navigation }) => {
           </TouchableOpacity> :
           <TouchableOpacity onPress={() => { notifications[item]['actid'] ? navigation.navigate('SharedPost', { 'id': notifications[item]['actid'] }) : null }} key={item}>
             <View style={{ flexDirection: 'row', marginVertical: 7, paddingLeft: 10, }}>
-              {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 2, marginTop: 16, marginRight: 10 }} />}
+              {/* {extra.includes(item) && <View style={{ borderRadius: 10000, backgroundColor: '#327FEB', width: 6, height: 6, marginLeft: 2, marginTop: 16, marginRight: 10 }} />} */}
               <Image style={{ width: 40, height: 40, borderRadius: 1000 }} source={{ uri: notifications[item]['image'] }} />
               <Text style={{ color: 'black', fontFamily: 'NunitoSans-SemiBold', fontSize: 14, margin: 10, paddingRight: 40 }}>{name + ' ' + notifications[item]['type'] + ' your post'}</Text>
             </View>
@@ -161,7 +144,7 @@ const NotificationScreen = ({ route, navigation }) => {
               <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Bold', fontSize: 24, marginTop: 20 }}>Notifications Empty</Text>
               <Text style={{ textAlign: 'center', fontFamily: 'NunitoSans-Regular', fontSize: 16, marginTop: 20 }}>There are no notifications in this account, discover and take a look at this later.</Text>
             </View>
-            : data()}
+            : refreshing ? null : data()}
         </ScrollView>
       </>
     );

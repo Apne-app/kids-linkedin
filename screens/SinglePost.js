@@ -66,6 +66,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     };
 
     const _keyboardDidHide = () => {
+        setautofocus(false)
     };
 
     var scrollref = React.useRef();
@@ -73,6 +74,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     const [comment, setcomment] = useState('')
     const [loading, setloading] = useState(activity['comments_count'])
     const [place, setplace] = useState('1')
+    const [autofocus, setautofocus] = useState(route.params.type == 'comment')
     const status = route.params.status
     const children = route.params.children
     var d = new Date();
@@ -179,10 +181,10 @@ const SinglePostScreen = ({ navigation, route }) => {
         const Footer = (id, data) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -12 }}>
-                    <TouchableWithoutFeedback onPressIn={() => { addorunlike() }}>
+                    <TouchableWithoutFeedback onPress={() => { addorunlike() }}>
                         <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: -1 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
                     </TouchableWithoutFeedback>
-                    <Icon name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
+                    <Icon onPress={() => { setautofocus(true); setkey(String(parseInt(key) + 1)) }} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
                     <Icon onPress={() => onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id'])} name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
                     <TouchableOpacity style={{ width: 50, marginLeft: '58%', alignItems: 'center' }}
                         onPress={async () => {
@@ -397,7 +399,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                             priority: FastImage.priority.high
                         }}
                         resizeMode={FastImage.resizeMode.contain}
-                        style={{ width: width, height: 340, marginTop: 20, backgroundColor: "#000"  }}
+                        style={{ width: width, height: 340, marginTop: 20, backgroundColor: "#000" }}
                     /> : <View style={{ height: 340 }}><SliderBox
                         images={activity['images'].split(", ").filter(n => n)}
                         dotColor="#FFEE58"
@@ -458,7 +460,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         options.push(<Text style={{ fontFamily: 'NunitoSans-Bold' }}>Cancel</Text>)
         activity['images'] ? activity['images'].split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         return (
-            <View style={{ marginTop: 20, marginBottom: 100 }} ref={scrollref}>
+            <View style={{ marginTop: 20, marginBottom: 100 }}>
                 <View style={{ flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <FastImage
@@ -547,7 +549,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         onSubmitEditing={() => addcomment()}
                         placeholder="Add a comment..."
                         style={styles.textInput}
-                        autoFocus={route.params.type == 'comment'}
+                        autoFocus={autofocus}
                         enablesReturnKeyAutomatically={true}
                     />
                     {comment ? <Icon onPress={() => addcomment()} type="MaterialIcons" name="send" style={{ color: '#327FEB' }} /> : null}

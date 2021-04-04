@@ -29,6 +29,7 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import * as Animatable from 'react-native-animatable';
 import FeedComponent from '../Modules/FeedComponent';
 import PostLoader from '../Modules/PostLoader';
+import { setCustomProperties } from 'appcenter';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 
@@ -67,11 +68,13 @@ const FeedScreen = ({ navigation, route }) => {
     const [index, setIndex] = useState(0);
     const [postid, setpostid] = useState('')
     const [data, setdata] = useState({})
+    const [number, setnumber] = useState({})
     var status = route.params.status
     var children = route.params.children
     const [newnoti, setnewnoti] = useState(false);
     const refActionSheet = useRef(null);
     const [refreshing, setrefreshing] = useState({})
+    const [more, setmore] = useState({})
     const [min_time, setmin_time] = useState({})
     const showActionSheet = () => {
         refActionSheet.current.show()
@@ -99,10 +102,14 @@ const FeedScreen = ({ navigation, route }) => {
             var route = status === '3' ? headers['feed_headers_login'] : headers['feed_headers_non_login']
             var refresh = status === '3' ? headers['feed_login'] : headers['feed_non_login']
             var refreshi = {}
+            var numberi = {}
             refresh.map((item => {
                 refreshi[item] = false
+                numberi[item] = 0
             }))
+            setnumber(numberi)
             setrefreshing(refreshi)
+            setmore(refreshi)
             status === '3' ? route[2]['title'] = route[2]['title'].replace('deafult', String(currentyear - parseInt(children[0]['data']['year']))) : null
             status === '3' ? children[0]['data']['type'] != 'Kid' ? route.splice(2, 1) : null : null
             var timestamp = await AsyncStorage.getItem('timestamp')
@@ -138,6 +145,9 @@ const FeedScreen = ({ navigation, route }) => {
                         place = min_time
                         place[item] = min_following
                         setmin_time(place)
+                        place = number
+                        place[item] = response.data.data.length
+                        setnumber(place)
                     }).catch((response) => {
                         console.log(Object.keys(response))
                     })
@@ -149,49 +159,58 @@ const FeedScreen = ({ navigation, route }) => {
         fetchdata()
     }, [])
     const onRefresh = async (feed_type, load_more) => {
-        await setrefreshing({ ...refreshing, [feed_type]: true });
-        var user_id = status == '3' ? children[0]['id'] : '123qwe'
-        var year1 = status === '3' ? parseInt(children[0]['data']['year']) : null
-        var timestamp = await AsyncStorage.getItem('timestamp')
-        timestamp = timestamp ? parseInt(timestamp) : 0;
-        console.log(min_time[feed_type])
-        axios.post('http://mr_robot.api.genio.app/feed', {
-            'user_id': user_id,
-            'feed_type': feed_type,
-            'year': year1,
-            'timestamp': timestamp,
-            'min_timestamp': min_time[feed_type],
-            'randomize': true,
-        }, {
-            headers: {
-                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                'Content-Type': 'application/json'
-            }
-        }).then(async (response) => {
-            var place = data
-            load_more ? place[feed_type] = place[feed_type].concat(response.data.data) : place[feed_type] = response.data.data
-            setdata(place)
-            var min_following = min_time[feed_type]
-            response.data.data.map((item) => {
-                if (min_following > item['data']['timestamp']) {
-                    min_following = item['data']['timestamp']
+        if (!more[feed_type]) {
+            await setrefreshing({ ...refreshing, [feed_type]: true });
+            var user_id = status == '3' ? children[0]['id'] : '123qwe'
+            var year1 = status === '3' ? parseInt(children[0]['data']['year']) : null
+            var timestamp = await AsyncStorage.getItem('timestamp')
+            timestamp = timestamp ? parseInt(timestamp) : 0;
+            axios.post('http://mr_robot.api.genio.app/feed', {
+                'user_id': user_id,
+                'feed_type': feed_type,
+                'year': year1,
+                'timestamp': timestamp,
+                'min_timestamp': min_time[feed_type],
+                'randomize': true,
+            }, {
+                headers: {
+                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                    'Content-Type': 'application/json'
                 }
+            }).then(async (response) => {
+                var place = data
+                load_more ? place[feed_type] = place[feed_type].concat(response.data.data) : place[feed_type] = response.data.data
+                setdata(place)
+                var min_following = min_time[feed_type]
+                response.data.data.map((item) => {
+                    if (min_following > item['data']['timestamp']) {
+                        min_following = item['data']['timestamp']
+                    }
+                })
+                place = min_time
+                place[feed_type] = min_following
+                setmin_time(place)
+                place = number
+                place[feed_type] = load_more ? place[feed_type] + response.data.data.length : response.data.data
+                setnumber(place)
+                if (place[feed_type] > 200 || response.data.data<20) {
+                    place = more
+                    more[feed_type] = true
+                    setmore(place)
+                }
+                setrefreshing({ ...refreshing, [feed_type]: false });
+                if (!load_more) {
+                    AsyncStorage.setItem('timestamp', String(Math.round(new Date().getTime() / 1000)))
+                }
+            }).catch((err) => {
+                console.log(err)
+                setrefreshing({ ...refreshing, [feed_type]: false });
             })
-            place = min_time
-            place[feed_type] = min_following
-            setmin_time(place)
-            setrefreshing({ ...refreshing, [feed_type]: false });
-            if (!load_more) {
-                AsyncStorage.setItem('timestamp', String(Math.round(new Date().getTime() / 1000)))
-            }
-        }).catch((err) => {
-            console.log(err)
-            setrefreshing({ ...refreshing, [feed_type]: false });
-        })
+        }
     }
     const renderScene = ({ route }) => {
         if (data[route.key]) {
-            return <FeedView min_time={min_time} scrollY={scrollY} translateY={translateY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+            return <FeedView min_time={min_time} scrollY={scrollY} translateY={translateY} status={status} navigation={navigation} children={children} data={data[route.key]} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} more={more} />
         }
         else {
             if (route.key === 'following') {

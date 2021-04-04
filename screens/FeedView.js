@@ -9,7 +9,7 @@ import CompButton from '../Modules/CompButton'
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY, profile, teacherprofile=false, addclass=false }) => {
+const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY, profile, teacherprofile = false, addclass = false, more }) => {
     const scroll = useRef(new Animated.Value(0)).current;
     // function randomStr(len, arr) {
     //     var ans = '';
@@ -26,13 +26,14 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
         MENTION: 2,
         NO_MEDIA: 3,
         INSPIRE: 4,
-        QUIZ: 5
+        QUIZ: 5,
+        CLASS: 6
     };
     const _layoutProvider = new LayoutProvider(
         index => {
             if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0) {
-                if (data[index]['data']['mention_id']) {
-                    return ViewTypes.MENTION;
+                if (data[index]['data']['category'] === 'class') {
+                    return ViewTypes.CLASS;
                 }
                 else if (data[index]['data']['category'] === 'inspire') {
                     return ViewTypes.INSPIRE;
@@ -42,6 +43,9 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 }
                 else if (data[index]['data']['tags']) {
                     return ViewTypes.TAG;
+                }
+                else if (data[index]['data']['mention_id']) {
+                    return ViewTypes.MENTION;
                 }
                 else {
                     return ViewTypes.IMAGE_OR_VIDEO;
@@ -81,6 +85,10 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     dim.width = width;
                     dim.height = 560;
                     break;
+                case ViewTypes.CLASS:
+                    dim.width = width;
+                    dim.height = 620;
+                    break;
                 default:
                     dim.width = width;
                     dim.height = 560;
@@ -97,6 +105,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     let dataProvider = new DataProvider((r1, r2) => {
         return r1.data.post_id !== r2.data.post_id;
     }).cloneWithRows(data)
+    console.log(more[feed_type])
     return (
         data.length ? <React.Fragment>
             {status === '3' || feed_type != 'following' ?
@@ -126,7 +135,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     scrollViewProps={{
                         refreshControl: (
                             <RefreshControl
-                                // style={{ zIndex: 1000 }}
+                                style={{ zIndex: 1000 }}
                                 refreshing={refreshing}
                                 onRefresh={() => onRefresh(feed_type, false)}
                             />
@@ -134,9 +143,9 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     }}
                     onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                     layoutProvider={_layoutProvider}
-                    renderFooter={() => <View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }} />}
+                    renderFooter={() => <>{more[feed_type] ? <Text style={{ fontFamily: 'NunitoSans-Bold', textAlign: 'center', marginBottom:40 }}>That's it for now, come back later for more!</Text> : null}<View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View></>}
                     dataProvider={dataProvider}
-                    style={{ paddingTop: teacherprofile && !addclass ? 400 : profile && !addclass ? 300 : addclass ? 10 :  140, flex: 1 }}
+                    style={{ paddingTop: teacherprofile && !addclass ? 400 : profile && !addclass ? 300 : addclass ? 10 : 140, flex: 1 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
                         scrollY ? scrollY.setValue(e.nativeEvent.contentOffset.y) : null
@@ -153,7 +162,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                         <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Explore what other kids are learning and working on</Text>
                     </TouchableWithoutFeedback>
                 </View>}
-        </React.Fragment> : <ScrollView ><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center',  flexDirection: 'column', marginBottom: 80, marginTop: profile ? 420 : 100, }}>
+        </React.Fragment> : <ScrollView ><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', flexDirection: 'column', marginBottom: 80, marginTop: profile ? 420 : 100, }}>
             <FastImage source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>No {feed_type} yet!</Text>
         </View></ScrollView>
