@@ -45,10 +45,10 @@ const IndProfile = ({ navigation, route }) => {
         { key: 'classes', title: 'Classes' },
     ]);
     const scrollY = useRef(new Animated.Value(0)).current;
-    const diffClamp = Animated.diffClamp(scrollY, 0, 290);
+    const diffClamp = Animated.diffClamp(scrollY, 0, 350);
     const y = diffClamp.interpolate({      
-        inputRange: [0, 290],
-        outputRange: [0, -290],      
+        inputRange: [0, 350],
+        outputRange: [0, -350],      
         extrapolateRight: 'clamp',    
       });
     function titleCase(str) {
@@ -279,7 +279,7 @@ const IndProfile = ({ navigation, route }) => {
     const Empty = () => {
         return (<View style={{ backgroundColor: "#f9f9f9", height: height - 200, width: width }}>
             <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
-                <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45, marginTop: 340 }} />
+                <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 350 }} />
             </View>
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{route.params.data.name + " hasn't posted anything yet. Check back later!"}</Text>
         </View>)
@@ -290,26 +290,26 @@ const IndProfile = ({ navigation, route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'mentions':
-                return <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} teacherprofile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'posts':
-                return <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} teacherprofile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'classes':
-                return <FeedView profile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} teacherprofile={true} scrollY={scrollY} status={status} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             default:
                 return null;
         }
     };
     const renderTabBar = (props) => {
         const tabY = scrollY.interpolate({
-            inputRange: [0, 290],
-            outputRange: [290, 0],
+            inputRange: [0, 350],
+            outputRange: [350, 0],
           });
         return (
             <Animated.View
                 style={{
                 transform: [{translateY: y}],
                 position: 'absolute',
-                marginTop: 290,
+                marginTop: 345,
                 zIndex: 5
             }}>
                 <TabBar

@@ -409,14 +409,14 @@ const ProfileScreen = ({ navigation, route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'mentions':
-                return <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} teacherprofile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.mentions} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'posts':
-                return <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                return <FeedView profile={true} teacherprofile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.posts} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
             case 'classes':
                 return (
                     <ScrollView>
                         <TouchableOpacity onPress={()=>navigation.navigate('Class')}><CompButton message={'Click to add a class'} profile={true} /></TouchableOpacity>
-                        <FeedView profile={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
+                        <FeedView profile={true} teacherprofile={true} addclass={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </ScrollView>)
             default:
                 return null;
@@ -566,7 +566,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const notthere = () => {
         return (
             <View style={{ backgroundColor: '#f9f9f9', height: height, width: width }}>
-                <ScreenHeader screen={'Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
+                <ScreenHeader screen={'Create Profile'} icon={'settings'} fun={() => navigation.navigate('Settings')} />
                 <TouchableOpacity onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}><CompButton message={'Signup/Login to create profile'} /></TouchableOpacity>
                 <TouchableWithoutFeedback onPress={() => navigation.navigate('Login', { screen: 'Profile', type: 'profile_banner' })}>
                     <View style={{ backgroundColor: '#327FEB', height: 300, width: 300, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>

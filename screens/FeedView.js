@@ -9,7 +9,7 @@ import CompButton from '../Modules/CompButton'
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY, profile }) => {
+const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY, profile, teacherprofile=false, addclass=false }) => {
     const scroll = useRef(new Animated.Value(0)).current;
     // function randomStr(len, arr) {
     //     var ans = '';
@@ -134,9 +134,9 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     }}
                     onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
                     layoutProvider={_layoutProvider}
-                    renderFooter={() => <View style={{ height: profile ? 340 : 140 }} />}
+                    renderFooter={() => <View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }} />}
                     dataProvider={dataProvider}
-                    style={{ paddingTop: profile ? 400 : 140, flex: 1 }}
+                    style={{ paddingTop: teacherprofile && !addclass ? 400 : profile && !addclass ? 300 : addclass ? 10 :  140, flex: 1 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
                         scrollY ? scrollY.setValue(e.nativeEvent.contentOffset.y) : null
@@ -153,7 +153,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                         <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>Explore what other kids are learning and working on</Text>
                     </TouchableWithoutFeedback>
                 </View>}
-        </React.Fragment> : <ScrollView ><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: scrollY ? height / 10 : 100, flexDirection: 'column', marginBottom: 80, marginTop: 310 }}>
+        </React.Fragment> : <ScrollView ><View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center',  flexDirection: 'column', marginBottom: 80, marginTop: profile ? 420 : 100, }}>
             <FastImage source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 45 }} />
             <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>No {feed_type} yet!</Text>
         </View></ScrollView>

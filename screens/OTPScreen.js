@@ -209,7 +209,7 @@ const OTPScreen = ({ navigation, route }) => {
     
       const otpHandler = (message: string) => {
         try{
-          // setLoading(true);
+          setLoading(true);
           const otp = /(\d{4})/g.exec(message)[1];
           setValue(otp);
           RNOtpVerify.removeListener();
@@ -326,7 +326,7 @@ const OTPScreen = ({ navigation, route }) => {
                                 timeLabels={{ s: '' }}
                             /></View><Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>s)</Text></View>
                     </Button>
-                    <Button disabled={logging} block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(Object.keys(route).includes('params') ? route.params.screen : 'Home') }} >
+                    <Button block style={{ marginTop: 20, borderColor: '#327FEB', backgroundColor: 'white', borderWidth: 1, borderRadius: 25, width: width - 40, alignSelf: 'center', height: 60, opacity: logging ? 0.8 : 1 }} onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate('Home') }} >
                         <Text style={{ color: "#327FEB", fontFamily: 'NunitoSans-Bold', fontSize: 18, }}>Continue as a guest*</Text>
                     </Button>
                     <Text style={{ color: "black", fontFamily: 'NunitoSans-SemiBold', fontSize: 10, textAlign: 'center', marginTop: 20}}>*You wont be able to use the social network</Text>
