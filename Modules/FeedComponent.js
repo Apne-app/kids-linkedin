@@ -40,7 +40,16 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const showActionSheet = () => {
         refActionSheet.current.show()
     }
-
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
     const deletepost = (id1) => {
         Alert.alert("Alert", "Are you sure you want to delete the post? The action cannot be reversed", [
             {
@@ -284,6 +293,10 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         // Directly return the joined string
         return splitStr.join(' ');
     }
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
     return (
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
@@ -299,7 +312,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     </TouchableWithoutFeedback>
                     <TouchableWithoutFeedback onPress={() => { children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{titleCase(activity['user_name'])}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
                         </View>
                     </TouchableWithoutFeedback>
@@ -331,7 +344,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
                 <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
                     <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                        Timings: {activity['class_date'].split('T')[0] + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                        Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
                     </Text>
                 </View> : null}
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
@@ -379,7 +392,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     playWhenInactive={false}
                     onViewportEnter={() => console.log('Entered!')}
                     onViewportLeave={() => console.log('Left!')}
-                    style={{ width: width, height: 340, backgroundColor:'black' }}
+                    style={{ width: width, height: 340, backgroundColor: 'black' }}
                 />
                 // </InViewPort>
                 : null

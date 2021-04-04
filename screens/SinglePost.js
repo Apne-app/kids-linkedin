@@ -24,7 +24,6 @@ import axios from 'axios';
 import KeyboardStickyView from 'rn-keyboard-sticky-view';
 import VideoPlayer from '../Modules/Video';
 import { Video } from 'expo-av';
-import ReadMore from 'react-native-read-more-text';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -354,6 +353,10 @@ const SinglePostScreen = ({ navigation, route }) => {
 
         }
         const [visible, setIsVisible] = React.useState(false);
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
                 {activity['class_time'] ?
@@ -365,16 +368,14 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {activity['caption'] === 'default123' ?
                     <View style={{ margin: 5 }}></View> :
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
-                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See More</Text>) }} numberOfLines={3}>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
-                                {activity['caption'] === 'default123' ? '' : activity['caption']}
-                            </Text>
-                        </ReadMore>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                            {activity['caption'] === 'default123' ? '' : activity['caption']}
+                        </Text>
                     </View>}
-                {activity['class_time'] ?
+                {class_date ?
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                            Timings: {activity['class_date'].split('T')[0] + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear())  + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
                         </Text>
                     </View> : null}
                 {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}

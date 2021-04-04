@@ -80,6 +80,59 @@ const FeedScreen = ({ navigation, route }) => {
         refActionSheet.current.show()
     }
     useEffect(() => {
+        const check = async () => {
+            var child = children
+            if (child != null) {
+                axios({
+                    method: 'get',
+                    url: 'https://api.genio.app/magnolia/' + String(child[0]['id']),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(async (data) => {
+                    var noti = await AsyncStorage.getItem('notifications');
+                    var arr = []
+                    if (noti) {
+                        noti  = JSON.parse(noti)
+                        var data1 = Object.keys(noti).reverse()
+                        var data2 = Object.keys(data.data).reverse()
+                        for (var i = 0; i < data2.length; i++) {
+                            if (!data1.includes(data2[i])) {
+                                arr.push(data2[i])
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        if (arr.length) {
+                            AsyncStorage.setItem('notifications', JSON.stringify(data.data));
+                            // console.log("sadasd", data.data);
+                            // Update({ notifications: data.data, newnoti: arr })
+                            if (data1.length < data2.length) {
+                                setnewnoti(true)
+                            }
+                        }
+                        else {
+                            AsyncStorage.setItem('notifications', JSON.stringify(data.data));
+                            // Update({ notifications: data.data })
+                        }
+                    }
+                    else {
+                        noti = {}
+                        // Update({ notifications: data.data, newnoti: arr })
+                        AsyncStorage.setItem('notifications', JSON.stringify(data.data));
+                        if (Object.keys(noti).length < Object.keys(data.data).length) {
+                            setnewnoti(true)
+                        }
+                    }
+                })
+            }
+            else {
+            }
+        }
+        check()
+    }, [])
+    useEffect(() => {
         const data = async () => {
             var newpost = await AsyncStorage.getItem('newpost')
             var postid = await AsyncStorage.getItem('postid')
@@ -193,7 +246,7 @@ const FeedScreen = ({ navigation, route }) => {
                 place = number
                 place[feed_type] = load_more ? place[feed_type] + response.data.data.length : response.data.data
                 setnumber(place)
-                if (place[feed_type] > 200 || response.data.data<20) {
+                if (place[feed_type] > 200 || response.data.data < 20) {
                     place = more
                     more[feed_type] = true
                     setmore(place)

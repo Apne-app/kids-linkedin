@@ -105,7 +105,6 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     let dataProvider = new DataProvider((r1, r2) => {
         return r1.data.post_id !== r2.data.post_id;
     }).cloneWithRows(data)
-    console.log(more[feed_type])
     return (
         data.length ? <React.Fragment>
             {status === '3' || feed_type != 'following' ?

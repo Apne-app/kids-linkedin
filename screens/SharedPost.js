@@ -25,7 +25,6 @@ import { Video } from 'expo-av'
 import KeyboardStickyView from 'rn-keyboard-sticky-view';
 import PostLoader from '../Modules/PostLoader';
 import VideoPlayer from '../Modules/Video'
-import ReadMore from 'react-native-read-more-text';
 var height = Dimensions.get('screen').height;
 var width = Dimensions.get('screen').width;
 function urlify(text) {
@@ -85,6 +84,16 @@ const SinglePostScreen = ({ navigation, route }) => {
             console.log(response)
         })
     }, [])
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
     useEffect(() => {
         axios.post('http://mr_robot.api.genio.app/getcomments', {
             post_id: route.params.id
@@ -371,6 +380,10 @@ const SinglePostScreen = ({ navigation, route }) => {
 
         }
         const [visible, setIsVisible] = React.useState(false);
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
                 {activity['class_time'] ?
@@ -382,19 +395,17 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {activity['caption'] === 'default123' ?
                     <View style={{ margin: 5 }}></View> :
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
-                        <ReadMore renderRevealedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See Less</Text>) }} renderTruncatedFooter={(handlePress) => { return (<Text onPress={handlePress} style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>See More</Text>) }} numberOfLines={3}>
-                            <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
-                                {activity['caption'] === 'default123' ? '' : activity['caption']}
-                            </Text>
-                        </ReadMore>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                            {activity['caption'] === 'default123' ? '' : activity['caption']}
+                        </Text>
                     </View>}
-                {activity['class_time'] ?
+                {class_date ?
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                            Timings: {activity['class_date'].split('T')[0] + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                            Timings: {String(class_date.getDate())+' '+monthNames[class_date.getMonth()]+' '+String(class_date.getFullYear())+ '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
                         </Text>
                     </View> : null}
-                {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
+                {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 5, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['mention_id'] ? <Text onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 10, marginVertical: 1, fontSize: 16, color: '#327FEB' }}>{'@' + activity['mention_name'].charAt(0).toUpperCase() + activity['mention_name'].slice(1)}</Text> : null}
                 {activity['images'] ?
                     <ImageView
@@ -461,6 +472,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {activity['tags'] === 'Genio' || activity['tags'] === 'Other' || activity['tags'] === '' ? null : <View style={{/* backgroundColor: '#327FEB', borderRadius: 0, width: 90, padding: 9,*/ marginTop: 5, marginLeft: 17 }}><Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327feb', fontSize: 15, alignSelf: 'flex-start' }}>#{activity['tags']}</Text></View>}
             </View>))
         var images = []
+
         activity['images'] ? activity['images'].split(', ').map((item) => item != '' ? images.push({ uri: item }) : null) : null
         return (
             <View style={{ marginTop: 20, marginBottom: 100 }} ref={scrollref}>
@@ -474,7 +486,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                             style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                         />
                         <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
+                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{titleCase(activity['user_name'])}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
                         </View>
                         <ActionSheet

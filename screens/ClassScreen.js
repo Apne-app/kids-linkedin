@@ -304,10 +304,11 @@ const ClassScreen = ({ route, navigation }) => {
                     // onChangeText={text => setText(text)}
                     />
                 </TouchableOpacity>
+                {console.log(form.date)}
                 {show && (
                     <DateTimePicker
                         testID="dateTimePicker"
-                        value={mode == 'date' ? form.date : form.time}
+                        value={new Date()}
                         mode={mode}
                         display="default"
                         onChange={onChange}
@@ -325,6 +326,7 @@ const ClassScreen = ({ route, navigation }) => {
                     label="Class Link"
                     mode='outlined'
                     theme={theme}
+                    keyboardType='url'
                     style={{ marginVertical: 10 }}
                     value={form.link}
                     onChangeText={text => setform({ ...form, 'link': text })}
