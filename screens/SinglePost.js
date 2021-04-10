@@ -116,60 +116,65 @@ const SinglePostScreen = ({ navigation, route }) => {
         data()
     }, [])
     const addorunlike = () => {
-        var data = activity
-        if (data['likes_user_id'] == children[0]['id']) {
-            data['likes_user_id'] = null
-            data['likes_count'] = data['likes_count'] - 1
-            setactivity(data)
-            setkey(String(parseInt(key) + 1))
-            route.params.setparentkey()
-            axios.post('http://mr_robot.api.genio.app/like', {
-                post_id: data['post_id'],
-                user_id: children[0]['id'],
-                user_name: children[0]['data']['name'],
-                user_image: children[0]['data']['image'],
-                response: 'unlike',
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then((response) => {
+        if (status === '3') {
+            var data = activity
+            if (data['likes_user_id'] == children[0]['id']) {
+                data['likes_user_id'] = null
+                data['likes_count'] = data['likes_count'] - 1
+                setactivity(data)
+                setkey(String(parseInt(key) + 1))
+                route.params.setparentkey()
+                axios.post('http://mr_robot.api.genio.app/like', {
+                    post_id: data['post_id'],
+                    user_id: children[0]['id'],
+                    user_name: children[0]['data']['name'],
+                    user_image: children[0]['data']['image'],
+                    response: 'unlike',
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
+                }).then((response) => {
 
-            }).catch((error) => {
+                }).catch((error) => {
 
-            })
+                })
+            }
+            else {
+                data['likes_user_id'] = children[0]['id']
+                data['likes_count'] = data['likes_count'] + 1
+                setactivity(data)
+                setkey(String(parseInt(key) + 1))
+                route.params.setparentkey()
+                axios.post('http://mr_robot.api.genio.app/like', {
+                    post_id: data['post_id'],
+                    user_id: children[0]['id'],
+                    user_name: children[0]['data']['name'],
+                    user_image: children[0]['data']['image'],
+                    response: 'like',
+                }, {
+                    headers: {
+                        'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                        'Content-Type': 'application/json'
+                    }
+                }).then((response) => {
+                    analytics.track('Like', {
+                        userID: children["0"]["id"],
+                        deviceID: getUniqueId(),
+                        by: children["0"]["id"],
+                        byname: children["0"]['data']["name"],
+                        byimage: children["0"]['data']["image"],
+                        to: activity['user_id'],
+                        actid: activity['post_id']
+                    })
+                }).catch((error) => {
+
+                })
+            }
         }
         else {
-            data['likes_user_id'] = children[0]['id']
-            data['likes_count'] = data['likes_count'] + 1
-            setactivity(data)
-            setkey(String(parseInt(key) + 1))
-            route.params.setparentkey()
-            axios.post('http://mr_robot.api.genio.app/like', {
-                post_id: data['post_id'],
-                user_id: children[0]['id'],
-                user_name: children[0]['data']['name'],
-                user_image: children[0]['data']['image'],
-                response: 'like',
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then((response) => {
-                analytics.track('Like', {
-                    userID: children["0"]["id"],
-                    deviceID: getUniqueId(),
-                    by: children["0"]["id"],
-                    byname: children["0"]['data']["name"],
-                    byimage: children["0"]['data']["image"],
-                    to: activity['user_id'],
-                    actid: activity['post_id']
-                })
-            }).catch((error) => {
-
-            })
+            navigation.navigate('Login', { 'screen': 'Feed', 'type': 'feed_like' })
         }
     }
     const CustomActivity = ({ props }) => {
@@ -177,13 +182,18 @@ const SinglePostScreen = ({ navigation, route }) => {
         const showActionSheet = () => {
             refActionSheet.current.show()
         }
+        const oncommentclick = () => {
+            if(status!='3'){
+                navigation.navigate('Login', { screen: 'Feed', type: 'feed_comment' })
+            }
+        }
         const Footer = (id, data) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -12 }}>
                     <TouchableWithoutFeedback onPress={() => { addorunlike() }}>
                         <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: -1 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
                     </TouchableWithoutFeedback>
-                    <Icon onPress={() => { setautofocus(true); setkey(String(parseInt(key) + 1)) }} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
+                    <Icon onPress={() => { setautofocus(true); setkey(String(parseInt(key) + 1)); oncommentclick() }} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
                     <Icon onPress={() => onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id'])} name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
                     <TouchableOpacity style={{ width: 50, marginLeft: '58%', alignItems: 'center' }}
                         onPress={async () => {
@@ -354,9 +364,9 @@ const SinglePostScreen = ({ navigation, route }) => {
         }
         const [visible, setIsVisible] = React.useState(false);
         const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-    var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
+            "July", "August", "September", "October", "November", "December"
+        ];
+        var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
         const Content = React.memo(() => (
             <View key={'content'} style={{ paddingVertical: 20 }}>
                 {activity['class_time'] ?
@@ -375,7 +385,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                 {class_date ?
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear())  + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
                         </Text>
                     </View> : null}
                 {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}

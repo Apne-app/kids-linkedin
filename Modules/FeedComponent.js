@@ -301,7 +301,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={() => { children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                    <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <FastImage
                             source={{
                                 uri: item['item']['data']['user_image'],
@@ -310,7 +310,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                             style={{ width: 42, height: 42, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                         />
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback onPress={() => { children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                    <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                             <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{titleCase(activity['user_name'])}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'left' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
@@ -348,7 +348,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     </Text>
                 </View> : null}
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
-            {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.navigate('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
+            {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.push('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage

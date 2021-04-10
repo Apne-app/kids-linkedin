@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, Animated, View, ImageBackground, BackHandler, Image, TouchableOpacity, FlatList } from 'react-native'
@@ -105,7 +104,6 @@ const Searching = ({ route, navigation }) => {
     }, [])
     const [doing, setdoing] = useState(false)
     const onChangeSearch = query => {
-        // console.log(query)
         setdoing(true)
         if (query != '') {
             axios.get('https://api.genio.app/sherlock/keyword/' + query.toLowerCase() + `/0/?token=${token}`)
@@ -119,8 +117,8 @@ const Searching = ({ route, navigation }) => {
                     setresultkid(kids)
                     setresultteacher(teachers)
                     setRoutes([
-                        { key: 'first', title: 'Teachers ('+teachers.length+')' },
-                        { key: 'second', title: 'Children ('+kids.length+')' },
+                        { key: 'first', title: 'Teachers (' + teachers.length + ')' },
+                        { key: 'second', title: 'Children (' + kids.length + ')' },
                     ])
                     // console.log(data[0])
                     setdoing(false)
@@ -136,12 +134,12 @@ const Searching = ({ route, navigation }) => {
         setSearchQuery(query)
     };
 
-    
+
     const renderItem = ({ item }) => {
         return (
             <View key={item.id} style={{ alignSelf: 'center', margin: 1, flexDirection: 'row' }}>
                 <TouchableWithoutFeedback style={{ width: width * 0.85, height: 100, flexDirection: 'row', borderRadius: 20, alignSelf: 'center' }} onPress={async () => {
-                    children[0]['id']===item.id?navigation.navigate('Profile'):navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
+                    children[0]['id'] === item.id ? navigation.navigate('Profile') : navigation.navigate('IndProf', { 'data': item.data, 'id': item.id });
                     analytics.track('SearchedKidOpened', {
                         userID: children ? children["0"]["id"] : null,
                         deviceID: getUniqueId()
@@ -172,14 +170,14 @@ const Searching = ({ route, navigation }) => {
         // console.log(route)
         switch (route.key) {
             case 'first':
-            return <TeacherSearch style={{flex: 1}} result={resultteacher} renderItem={renderItem} />;
+                return <TeacherSearch style={{ flex: 1 }} result={resultteacher} renderItem={renderItem} />;
             case 'second':
-            return <ChildSearch style={{flex: 1}}  result={resultkid} renderItem={renderItem} />;
+                return <ChildSearch style={{ flex: 1 }} result={resultkid} renderItem={renderItem} />;
             default:
-            return null;
+                return null;
         }
     };
-    
+
 
     const renderTabBar = (props) => {
         return (
@@ -190,7 +188,7 @@ const Searching = ({ route, navigation }) => {
                     inactiveColor={'black'}
                     pressColor={'lightblue'}
                     indicatorStyle={{ backgroundColor: 'white' }}
-                    style={{ backgroundColor: 'white'}}
+                    style={{ backgroundColor: 'white' }}
                     tabStyle={{ width: width / 2 }}
                     scrollEnabled={true}
                     bounces={true}
@@ -205,55 +203,55 @@ const Searching = ({ route, navigation }) => {
         )
     }
 
-    const ChildSearch = ({result, renderItem}) => {
+    const ChildSearch = ({ result, renderItem }) => {
         return (
-            <View style={{flex: 1}}>
-            {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
-            {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<FlatList
-                data={result}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.gsToken}
-                numColumns={1}
-                style={{ alignSelf: 'center', marginTop: 10, flex: 1 }}
-            />)}
+            <View style={{ flex: 1 }}>
+                {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
+                {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<FlatList
+                    data={result}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.gsToken}
+                    numColumns={1}
+                    style={{ alignSelf: 'center', marginTop: 10, flex: 1 }}
+                />)}
             </View>
         )
     }
 
-    const TeacherSearch = ({result, renderItem}) => {
+    const TeacherSearch = ({ result, renderItem }) => {
         return (
-            <View style={{flex: 1}}>
-            {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
-            {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<FlatList
-                data={result}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.gsToken}
-                numColumns={1}
-                style={{ alignSelf: 'center', marginTop: 10, flex: 1 }}
-            />)}
+            <View style={{ flex: 1 }}>
+                {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
+                {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<FlatList
+                    data={result}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.gsToken}
+                    numColumns={1}
+                    style={{ alignSelf: 'center', marginTop: 10, flex: 1 }}
+                />)}
             </View>
         )
     }
 
     return (
         <>
-            <Appbar.Header noShadow style={{backgroundColor: '#327feb', height: 80}}>
-                    {/* <Input
+            <Appbar.Header noShadow style={{ backgroundColor: '#327feb', height: 80 }}>
+                {/* <Input
                         style={{ backgroundColor: 'lightgrey', borderRadius: 100, height: 35 }}
                         autoFocus={true}
                         onChangeText={onChangeSearch}
 
                         value={searchQuery}
                         placeholder='Search' /> */}
-                    <Searchbar
-                        theme={theme}
-                        autoFocus={true}
-                        style={{ width: width - 100, marginTop: 10, height: 40 }}
-                        placeholder="Search Genio"
-                        onChangeText={onChangeSearch}
-                        value={searchQuery}
-                    />
-                    <Text onPress={() => navigation.navigate('Search')} style={{ fontFamily: 'NunitoSans-SemiBold', color: '#fff', marginLeft: 20, marginTop: 28, height: 40  }}>Cancel</Text>
+                <Searchbar
+                    theme={theme}
+                    autoFocus={true}
+                    style={{ width: width - 100, marginTop: 10, height: 46, marginLeft: 10 }}
+                    placeholder="Search Genio"
+                    onChangeText={onChangeSearch}
+                    value={searchQuery}
+                />
+                <Text onPress={() => navigation.navigate('Search')} style={{ fontFamily: 'NunitoSans-SemiBold', color: '#fff', marginLeft: 20, marginTop: 28, height: 40 }}>Cancel</Text>
             </Appbar.Header>
             <TabView
                 navigationState={{ index, routes }}
@@ -261,7 +259,6 @@ const Searching = ({ route, navigation }) => {
                 onIndexChange={setIndex}
                 scrollEnabled={true}
                 renderTabBar={renderTabBar}
-                // style={{marginTop: -30}}
             />
         </>
     );

@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StatusBar, Image, TouchableOpacity } from 'react-native';
@@ -57,6 +56,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
 import codePush from "react-native-code-push";
 import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
+import UpdateScreen from './screens/UpdateScreen'
 import firebase from '@react-native-firebase/app';
 import OneSignal from 'react-native-onesignal';
 import { PersistGate } from 'redux-persist/es/integration/react'
@@ -413,6 +413,7 @@ const App = (props) => {
         <NavigationContainer ref={containerRef}>
           <Stack.Navigator initialRouteName={!status ? 'IntroSlider' : status === '2' ? 'Child' : 'Home'}>
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Child" component={ChildScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="Update" component={UpdateScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="GalleryScreen" component={GalleryScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoScreen" component={VideoScreen} />
             <Stack.Screen initialParams={data} options={({ route, navigation }) => sidewaysConfig(route, navigation)} name="IndProf" component={IndProfile} />
