@@ -49,11 +49,11 @@ const IndProfile = ({ navigation, route }) => {
     ]);
     const scrollY = useRef(new Animated.Value(0)).current;
     const diffClamp = Animated.diffClamp(scrollY, 0, 350);
-    const y = diffClamp.interpolate({      
+    const y = diffClamp.interpolate({
         inputRange: [0, 350],
-        outputRange: [0, -350],      
-        extrapolateRight: 'clamp',    
-      });
+        outputRange: [0, -350],
+        extrapolateRight: 'clamp',
+    });
     function titleCase(str) {
         var splitStr = str.toLowerCase().split(' ');
         for (var i = 0; i < splitStr.length; i++) {
@@ -161,7 +161,7 @@ const IndProfile = ({ navigation, route }) => {
                 await setfollow(response['data']['data'])
                 await setkey(String(parseInt(key) + 1))
                 await setloading(false)
-    
+
             }).catch((error) => {
                 console.log(error)
             })
@@ -338,15 +338,15 @@ const IndProfile = ({ navigation, route }) => {
         const tabY = scrollY.interpolate({
             inputRange: [0, 350],
             outputRange: [350, 0],
-          });
+        });
         return (
             <Animated.View
                 style={{
-                transform: [{translateY: y}],
-                position: 'absolute',
-                marginTop: 345,
-                zIndex: 5
-            }}>
+                    transform: [{ translateY: y }],
+                    position: 'absolute',
+                    marginTop: 345,
+                    zIndex: 5
+                }}>
                 <TabBar
                     {...props}
                     activeColor={'#327FEB'}

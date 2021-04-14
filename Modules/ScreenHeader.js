@@ -17,7 +17,7 @@ const CompHeader = (props) => {
             {props.left && <TouchableOpacity onPress={() => props.goback()}>
                 <Image style={{ height: 30, width: 30, backgroundColor: "transparent", marginTop: 8 }} source={(images.back)} />
             </TouchableOpacity>}
-            <Text style={{ fontFamily: props.screen == 'Genio' ? 'FingerPaint-Regular' : 'NunitoSans-Bold', fontSize: props.screen == 'Genio' ? 40 : 30, marginLeft: 10, color: props.screen == 'Genio' ? 'white' : 'white', width: 200 }}>{props.screen}</Text>
+            <Text style={{ fontFamily: props.screen == 'Genio' ? 'FingerPaint-Regular' : 'NunitoSans-Bold', fontSize: props.screen == 'Genio' ? 40 : 28, marginLeft: 10, color: props.screen == 'Genio' ? 'white' : 'white', width: 200 }}>{props.screen}</Text>
         </View>
         <Body>
         </Body>

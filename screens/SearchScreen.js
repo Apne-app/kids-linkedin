@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 import React, { Component, useState, useEffect } from 'react';
 import { Text, StyleSheet, Dimensions, View, ImageBackground, BackHandler, Alert, Image, FlatList, Keyboard, ScrollView } from 'react-native'
@@ -121,7 +120,7 @@ const SearchScreen = ({ route, navigation }) => {
   const there = () => {
     return (
       <ScrollView style={{ marginHorizontal: 10 }} key={place}>
-           <View style={{ flexDirection: 'row', marginTop: 20 }}>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
           <Text style={{ color: "#000", textAlign: 'left', fontSize: 22, marginLeft: 15, fontFamily: 'NunitoSans-Bold' }}>Genio's Influencers</Text>
         </View>
         <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
