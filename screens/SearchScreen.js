@@ -66,6 +66,7 @@ const SearchScreen = ({ route, navigation }) => {
         data: data
       };
       var response = await axios(config)
+      console.log(response.data.token)
       var response1 = await axios.get('https://api.genio.app/sherlock/recently/0' + `/?token=${response.data.token}`)
       // Update({ 'joined': response1.data })
       setjoined(response1.data)

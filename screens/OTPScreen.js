@@ -183,6 +183,8 @@ const OTPScreen = ({ navigation, route }) => {
                   console.log(e)
                 }
               }
+              console.log(response.data.status);
+              setLoading(false)
               if((response.data.status && response.data.status != 'inactive') || ! response.data.status) {
                 storeProfile()
               } else {

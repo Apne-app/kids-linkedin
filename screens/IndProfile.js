@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Text, StyleSheet, RefreshControl, Dimensions, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio, SafeAreaView, Animated } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Chip } from 'react-native-paper';
 import SpinnerButton from 'react-native-spinner-button';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Thumbnail } from 'react-native-thumbnail-video';
@@ -36,6 +37,8 @@ const IndProfile = ({ navigation, route }) => {
     const [key, setkey] = React.useState('1');
     const [data, setdata] = useState({ mentions: [], classes: [], posts: [] })
     const [classes, setclasses] = useState([])
+    const [profileData, setProfileData] = useState(route.params.data)
+    const [following, setFollowing] = useState(false);
     const [index, setIndex] = useState(0);
     const [follow, setfollow] = useState({ 'followers': 0, 'following': 0 })
     const [refreshing, setrefreshing] = useState({ 'mentions': false, 'posts': false, 'classes': false })
@@ -74,6 +77,41 @@ const IndProfile = ({ navigation, route }) => {
                 BackHandler.removeEventListener("hardwareBackPress", onBackPress);
 
         }, []));
+
+    useEffect(() => {
+        const getProfile = async () => {
+            let profile = await AsyncStorage.getItem('children')
+            profile = JSON.parse(profile)
+            var data = JSON.stringify({
+                "user_id": route.params.id,
+                "curr_id": profile["0"]["id"]
+              });
+              
+              var config = {
+                method: 'post',
+                url: 'https://api.genio.app/sherlock/getprofile',
+                headers: { 
+                  'Content-Type': 'application/json'
+                },
+                data : data
+              };
+              
+              axios(config)
+              .then(function (response) {
+                //   let data = JSON.parse(response)
+                  console.log(response.data['follows'])
+                setProfileData(response.data['data'])
+                setFollowing(response.data['follows'])
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+              
+        }
+        if(!route.params.data['phone']) {
+            getProfile()
+        }
+    }, [])
 
     useEffect(() => {
         const analyse = async () => {
@@ -177,7 +215,6 @@ const IndProfile = ({ navigation, route }) => {
         var y = await AsyncStorage.getItem('children');
         var q = await AsyncStorage.getItem('profile');
         q = JSON.parse(q)
-        console.log(q)
         analytics.track('Post Reported', {
             userID: y ? JSON.parse(y)["0"]["id"] : null,
             deviceID: getUniqueId()
@@ -216,7 +253,6 @@ const IndProfile = ({ navigation, route }) => {
             });
 
     }
-    console.log(data['posts'].length)
 
     const reportProfile = async () => {
 
@@ -263,7 +299,6 @@ const IndProfile = ({ navigation, route }) => {
                     console.log('success')
                 }
                 else {
-                    console.log(response.data)
                 }
             })
             .catch(function (error) {
@@ -356,7 +391,66 @@ const IndProfile = ({ navigation, route }) => {
                         <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(route['params']['data']['name'])}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null}</Text>
+                        <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type == 'Kid' ? String(year - parseInt(route.params.data.year)) + ' years old' : route.params.data.type : null} {children[0]['data']['type'] == 'Teacher' ? "( " + titleCase(String(children[0]['data']['category'])) + " )" : ""}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity 
+                            onPress = {async () => {
+                                let profile = await AsyncStorage.getItem('children')
+                                profile = JSON.parse(profile)
+                                if(!following) {
+                                    var data = JSON.stringify({
+                                        "user_id": route.params.id,
+                                        "curr_id": profile["0"]["id"]
+                                      });
+                                      
+                                      var config = {
+                                        method: 'post',
+                                        url: 'https://api.genio.app/barry/follow',
+                                        headers: { 
+                                          'Content-Type': 'application/json'
+                                        },
+                                        data : data
+                                      };
+                                      
+                                      axios(config)
+                                      .then(function (response) {
+                                        // console.log(JSON.stringify(response.data));
+                                      })
+                                      .catch(function (error) {
+                                        console.log(error);
+                                      });
+                                }
+                                else {
+                                    var data = JSON.stringify({
+                                        "user_id": route.params.id,
+                                        "curr_id": profile["0"]["id"]
+                                      });
+                                      
+                                      var config = {
+                                        method: 'post',
+                                        url: 'https://api.genio.app/barry/unfollow',
+                                        headers: { 
+                                          'Content-Type': 'application/json'
+                                        },
+                                        data : data
+                                      };
+                                      
+                                      axios(config)
+                                      .then(function (response) {
+                                        // console.log(JSON.stringify(response.data));
+                                      })
+                                      .catch(function (error) {
+                                        console.log(error);
+                                      });
+                                }
+                                setFollowing(!following)
+                            }}
+                        >
+                        <Chip style={{backgroundColor: following ? '#327feb' : "#fff", marginLeft: 10, padding: 1, borderWidth: following ? 0 : 1, borderColor: '#327feb'}} textStyle={{color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold'}}>
+                            { following ? 'Following' : 'Follow'}
+                        </Chip>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -380,35 +474,35 @@ const IndProfile = ({ navigation, route }) => {
                 route.params.data['type'] === 'Teacher' ?      
             <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10,marginBottom: 10,  zIndex: 1000, flexDirection: 'row'  }}>
                 {
-                    route.params.data['phone'] && route.params.data['phone'] != '' ?
+                    profileData['phone'] && profileData['phone'] != '' ?
                 <TouchableOpacity onPress={() => Linking.openURL("tel://"+profile['phone']) }>
                     <Icon type="Feather" style={{marginHorizontal: 10}} name='phone' />
                 </TouchableOpacity>
                 : null
                 }
                 {
-                    route.params.data['fb'] && route.params.data['fb'] != '' && !route.params.data['fb'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(route.params.data['fb']) }>
+                    profileData['fb'] && profileData['fb'] != '' && !profileData['fb'].includes('default') ?
+                    <TouchableOpacity onPress={() => Linking.openURL(profileData['fb']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='facebook' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    route.params.data['linkedin'] && route.params.data['linkedin'] != '' && !route.params.data['linkedin'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(route.params.data['linkedin']) }>
+                    profileData['linkedin'] && profileData['linkedin'] != '' && !profileData['linkedin'].includes('default') ?
+                    <TouchableOpacity onPress={() => Linking.openURL(profileData['linkedin']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='linkedin' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    route.params.data['website'] && route.params.data['website'] != '' && !route.params.data['website'].includes('default') ?
-                    <TouchableOpacity onPress={() => Linking.openURL(route.params.data['website']) }>
+                    profileData['website'] && profileData['website'] != '' && !profileData['website'].includes('default') ?
+                    <TouchableOpacity onPress={() => Linking.openURL(profileData['website']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='link' />
                     </TouchableOpacity>
                     : null
                 }
                 {
-                    route.params.data['email'] && route.params.data['email'] != '' ?
+                    profileData['email'] && profileData['email'] != '' ?
                     <TouchableOpacity onPress={() => Linking.openURL("mailto:"+profile['email']) }>
                         <Icon type="Feather" style={{marginHorizontal: 10}} name='mail' />
                     </TouchableOpacity>

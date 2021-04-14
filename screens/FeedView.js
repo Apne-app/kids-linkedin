@@ -134,13 +134,13 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     scrollViewProps={{
                         refreshControl: (
                             <RefreshControl
-                                style={{ zIndex: 1000 }}
+                                style={{ zIndex: 1000, marginTop: 400 }}
                                 refreshing={refreshing}
                                 onRefresh={() => onRefresh(feed_type, false)}
                             />
                         )
                     }}
-                    onEndReached={() => { onRefresh(feed_type, true); console.log('end reached') }}
+                    onEndReached={() => { onRefresh(feed_type, true); /*console.log('end reached')*/ }}
                     layoutProvider={_layoutProvider}
                     renderFooter={() => more ? <><Text style={{ fontFamily: 'NunitoSans-Bold', textAlign: 'center', marginBottom: 40, display: more[feed_type] ? 'flex' : 'none' }}>That's it for now, come back later for more!</Text><View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View></> : <View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View>}
                     dataProvider={dataProvider}
