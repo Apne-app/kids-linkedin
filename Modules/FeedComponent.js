@@ -296,6 +296,13 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
+    const videoload = async () => {
+        const status = await videoRef.getStatusAsync()
+        if (!status.isLoaded) {
+            var source = { uri: activity['videos'] }
+            videoRef.loadAsync(source, initialStatus = {}, downloadFirst = false)
+        }
+    }
     var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
     return (
         <View key={key} style={{ marginVertical: 9 }}>
@@ -376,25 +383,33 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(activity['caption'])[0] }) } }} text={activity['caption']} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                     : null) : null}
             {activity['videos'] ?
-                // <InViewPort onChange={(value) => value ? null : videoRef.pauseAsync()}>
-                <Video
-                    source={{ uri: activity['videos'] }}
-                    rate={1.0}
-                    volume={1.0}
-                    isMuted={false}
-                    resizeMode="contain"
-                    // shouldPlay
-                    // usePoster={props.activity.poster?true:false}
-                    // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                    ref={videoRef}
-                    useNativeControls={true}
-                    playInBackground={false}
-                    playWhenInactive={false}
-                    onViewportEnter={() => console.log('Entered!')}
-                    onViewportLeave={() => console.log('Left!')}
-                    style={{ width: width, height: 340, backgroundColor: 'black' }}
-                />
-                // </InViewPort>
+                <InViewPort onChange={(value) => value ? videoload() : videoRef.unloadAsync()}>
+                    <VideoPlayer
+                        videoProps={{
+                            source: { uri: activity['videos'] },
+                            rate: 1.0,
+                            volume: 1.0,
+                            isMuted: false,
+                            videoRef: v => videoRef = v,
+                            resizeMode: Video.RESIZE_MODE_CONTAIN,
+                            // shouldPlay
+                            // usePoster={props.activity.poster?true:false}
+                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                            playInBackground: false,
+                            playWhenInactive: false,
+                            width: width,
+                            height: 340,
+
+                        }}
+                        width={width}
+                        height={340}
+                        hideControlsTimerDuration={1000}
+                        showControlsOnLoad={true}
+                        switchToLandscape={() => videoRef.presentFullscreenPlayer()}
+                        sliderColor={'#327FEB'}
+                        inFullscreen={false}
+                    />
+                </InViewPort>
                 : null
             }
             {

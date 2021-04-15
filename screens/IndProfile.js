@@ -38,6 +38,7 @@ const IndProfile = ({ navigation, route }) => {
     const [data, setdata] = useState({ mentions: [], classes: [], posts: [] })
     const [classes, setclasses] = useState([])
     const [profileData, setProfileData] = useState(route.params.data)
+    console.log(route.params.data)
     const [following, setFollowing] = useState(false);
     const [index, setIndex] = useState(0);
     const [follow, setfollow] = useState({ 'followers': 0, 'following': 0 })
@@ -447,9 +448,9 @@ const IndProfile = ({ navigation, route }) => {
                                 setFollowing(!following)
                             }}
                         >
-                        <Chip style={{backgroundColor: following ? '#327feb' : "#fff", marginLeft: 10, padding: 1, borderWidth: following ? 0 : 1, borderColor: '#327feb'}} textStyle={{color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold'}}>
+                        {/* <Chip style={{backgroundColor: following ? '#327feb' : "#fff", marginLeft: 10, padding: 1, borderWidth: following ? 0 : 1, borderColor: '#327feb'}} textStyle={{color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold'}}>
                             { following ? 'Following' : 'Follow'}
-                        </Chip>
+                        </Chip> */}
                         </TouchableOpacity>
                     </View>
                 </View>
