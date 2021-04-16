@@ -29,12 +29,12 @@ import PostLoader from '../Modules/PostLoader'
 import FeedView from './FeedView'
 const height = Dimensions.get('screen').height;
 const width = Dimensions.get('screen').width;
-const IndProfile = ({ navigation, route }) => {
+const TeacherProfile = ({ navigation, route }) => {
     const [loading, setloading] = React.useState(true);
     var children = route.params.children
     const status = route.params.status
     const [key, setkey] = React.useState('1');
-    const [profile, setprofile] = React.useState({ phone: '', website: '', fb: '', linkedin: '', email: '' });
+    const [profile, setprofile] = React.useState({ phone: '', website: '', fb: '', linkedin: '', email: '', name: 'loading...', type: 'loading...' });
     const [data, setdata] = useState({ mentions: [], classes: [], posts: [] })
     const [classes, setclasses] = useState([])
     const [index, setIndex] = useState(0);
@@ -100,35 +100,33 @@ const IndProfile = ({ navigation, route }) => {
         analyse();
     }, [])
     useEffect(() => {
-        if (route.params.data.type === 'Teacher') {
-            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-            var config = {
-                method: 'post',
-                url: 'https://api.genio.app/dark-knight/getToken',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: data
-            };
+        var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+        var config = {
+            method: 'post',
+            url: 'https://api.genio.app/dark-knight/getToken',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
 
-            axios(config)
-                .then(function (response) {
-                    const url = 'https://api.genio.app/matrix/teacherprofile/'
-                    let data = JSON.stringify({ 'id': route.params.id })
-                    axios({
-                        method: 'post',
-                        url: url + `?token=${response.data.token}`,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: data
-                    }).then(async (response2) => {
-                        setprofile(response2.data.data)
-                    }).catch(async (error) => {
-                        console.log(error)
-                    })
+        axios(config)
+            .then(function (response) {
+                const url = 'https://api.genio.app/matrix/teacherprofile/'
+                let data = JSON.stringify({ 'id': route.params.id })
+                axios({
+                    method: 'post',
+                    url: url + `?token=${response.data.token}`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+                }).then(async (response2) => {
+                    setprofile(response2.data.data)
+                }).catch(async (error) => {
+                    console.log(error)
                 })
-        }
+            })
     }, [])
     useEffect(() => {
         axios.post('http://mr_robot.api.genio.app/profile', {
@@ -162,40 +160,38 @@ const IndProfile = ({ navigation, route }) => {
         }).catch((error) => {
             console.log(error)
         })
-        if (route.params.data.type == 'Teacher') {
-            axios.post('http://mr_robot.api.genio.app/getmentions', {
-                'mention_id': route.params.id,
-                'user_id': children ? children[0]['id'] : null
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then(async (response) => {
-                var place = data
-                place['mentions'] = response['data']['data']
-                await setdata(place)
-                await setkey(String(parseInt(key) + 1))
-            }).catch((error) => {
-                console.log(error)
-            })
-            axios.post('http://mr_robot.api.genio.app/getclasses', {
-                'poster_id': route.params.id,
-                'user_id': children ? children[0]['id'] : null
-            }, {
-                headers: {
-                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
-                    'Content-Type': 'application/json'
-                }
-            }).then(async (response) => {
-                var place = data
-                place['classes'] = response['data']['data']
-                await setdata(place)
-                await setkey(String(parseInt(key) + 1))
-            }).catch((error) => {
-                console.log(error)
-            })
-        }
+        axios.post('http://mr_robot.api.genio.app/getmentions', {
+            'mention_id': route.params.id,
+            'user_id': children ? children[0]['id'] : null
+        }, {
+            headers: {
+                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                'Content-Type': 'application/json'
+            }
+        }).then(async (response) => {
+            var place = data
+            place['mentions'] = response['data']['data']
+            await setdata(place)
+            await setkey(String(parseInt(key) + 1))
+        }).catch((error) => {
+            console.log(error)
+        })
+        axios.post('http://mr_robot.api.genio.app/getclasses', {
+            'poster_id': route.params.id,
+            'user_id': children ? children[0]['id'] : null
+        }, {
+            headers: {
+                'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                'Content-Type': 'application/json'
+            }
+        }).then(async (response) => {
+            var place = data
+            place['classes'] = response['data']['data']
+            await setdata(place)
+            await setkey(String(parseInt(key) + 1))
+        }).catch((error) => {
+            console.log(error)
+        })
 
     }, [])
     const refProfileSheet = useRef(null);
@@ -272,7 +268,7 @@ const IndProfile = ({ navigation, route }) => {
             "created_by_name": q ? q['email'] : 'nonloggedin',
             "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
             "reported_id": route['params']['id'],
-            "reported_name": route['params']['data']['name'],
+            "reported_name": profile.name,
             "reported_time": datetime,
         }
 
@@ -313,7 +309,7 @@ const IndProfile = ({ navigation, route }) => {
             <View style={{ backgroundColor: '#327FEB', height: 250, width: 250, borderRadius: 10, alignSelf: 'center', marginTop: height / 10, flexDirection: 'column' }}>
                 <Image source={require('../assets/noposts.gif')} style={{ height: 200, width: 200, alignSelf: 'center', marginTop: 350 }} />
             </View>
-            <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{route.params.data.name + " hasn't posted anything yet. Check back later!"}</Text>
+            <Text style={{ alignSelf: 'center', textAlign: 'center', color: 'black', fontFamily: 'NunitoSans-Bold', paddingHorizontal: 50, marginTop: 40, fontSize: 17 }}>{profile.name + " hasn't posted anything yet. Check back later!"}</Text>
         </View>)
     }
     const onRefresh = () => {
@@ -323,7 +319,7 @@ const IndProfile = ({ navigation, route }) => {
         try {
             const result = await Share.share({
                 message:
-                    "Check out this fantastic profile on Genio!: https://genio.app/profile/" + route.params.id,
+                    "Check out this fantastic " + profile.type + "'s profile on Genio!: https://genio.app/profile/" + route.params.id,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -399,15 +395,15 @@ const IndProfile = ({ navigation, route }) => {
                 <View style={{ zIndex: 1000, backgroundColor: '#f2f2f2', position: 'absolute', marginTop: 80, width: width }}>
                     <View style={{ marginTop: 30, flexDirection: 'row', height: 80, zIndex: 1000 }}>
                         <Image
-                            source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
+                            source={{ uri: profile['image'] }}
                             style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
                         />
                         <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
                             <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(route['params']['data']['name'])}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(profile['name'])}</Text>
                             </View>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type : null}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{profile.type}</Text>
                             </View>
                         </View>
                     </View>
@@ -428,7 +424,7 @@ const IndProfile = ({ navigation, route }) => {
                         </View>
                     </View>
                     {
-                        route.params.data['type'] === 'Teacher' ?
+                        profile['type'] === 'Teacher' ?
                             <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10, marginBottom: 10, zIndex: 1000, flexDirection: 'row' }}>
                                 {
                                     profile['phone'] != '' ?
@@ -466,17 +462,15 @@ const IndProfile = ({ navigation, route }) => {
                                         : null
                                 }
                                 {
-                                <TouchableOpacity onPress={() => shareProfile()}>
-                                    <Icon type="MaterialIcons" style={{ marginHorizontal: 10 }} name='share' />
-                                </TouchableOpacity>
-                            }
-                            </View>
-                            :
-                            null
+                                    <TouchableOpacity onPress={() => shareProfile()}>
+                                        <Icon type="MaterialIcons" style={{ marginHorizontal: 10 }} name='share' />
+                                    </TouchableOpacity>
+                                }
+                            </View> : null
                     }
                 </View>
             </Animated.View>
-            {route.params.data.type === 'Teacher' ? <TabView
+            {profile.type === 'Teacher' ? <TabView
                 key={key}
                 style={{ flex: 4 }}
                 navigationState={{ index, routes }}
@@ -511,4 +505,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default IndProfile;
+export default TeacherProfile;

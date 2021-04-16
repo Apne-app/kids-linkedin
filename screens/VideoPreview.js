@@ -188,30 +188,20 @@ const VideoPreview = ({ navigation, route }) => {
                                 <Icon name="chevron-right" type="Feather" style={{ width: width / 2, textAlign: 'right' }} /></View>}
                     </TouchableOpacity>
                     <View style={{ backgroundColor: 'grey', height: 1, width: width }}></View>
-                    <VideoPlayer
-                        videoProps={{
-                            source: { uri: route.params.video },
-                            rate: 1.0,
-                            volume: 1.0,
-                            isMuted: false,
-                            videoRef: v => videoRef = v,
-                            resizeMode: Video.RESIZE_MODE_CONTAIN,
-                            // shouldPlay
-                            // usePoster={props.activity.poster?true:false}
-                            // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                            playInBackground: false,
-                            playWhenInactive: false,
-                            width: width,
-                            height: 340,
-
-                        }}
-                        width={width}
-                        height={340}
-                        hideControlsTimerDuration={1000}
-                        showControlsOnLoad={true}
-                        switchToLandscape={() => videoRef.presentFullscreenPlayer()}
-                        sliderColor={'#327FEB'}
-                        inFullscreen={false}
+                    <Video
+                        source={{ uri: route.params.video }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode="contain"
+                        // shouldPlay
+                        // usePoster={props.activity.poster?true:false}
+                        // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
+                        ref={videoRef}
+                        useNativeControls={true}
+                        playInBackground={false}
+                        playWhenInactive={false}
+                        style={{ width: width, height: 340, backgroundColor: 'black' }}
                     />
                 </View>
             </ScrollView>

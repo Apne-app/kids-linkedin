@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react';
-import { Text, StyleSheet, RefreshControl, Dimensions, Animated, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio } from 'react-native'
+import { Text, StyleSheet, RefreshControl, Dimensions, Animated, Linking, BackHandler, Alert, View, ImageBackground, Image, FlatList, PixelRatio, Share } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Right, Left } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
 import SpinnerButton from 'react-native-spinner-button';
@@ -406,6 +406,25 @@ const ProfileScreen = ({ navigation, route }) => {
     const onRefresh = () => {
 
     }
+    const shareProfile = async () => {
+        try {
+            const result = await Share.share({
+                message:
+                    "Check out my profile on Genio!: https://genio.app/profile/" + children['0']['id'],
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'mentions':
@@ -415,7 +434,7 @@ const ProfileScreen = ({ navigation, route }) => {
             case 'classes':
                 return (
                     <ScrollView>
-                        <TouchableOpacity onPress={()=>navigation.navigate('Class')}><CompButton message={'Click to add a class'} profile={true} /></TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Class')}><CompButton message={'Click to add a class'} profile={true} /></TouchableOpacity>
                         <FeedView more={''} profile={true} teacherprofile={true} addclass={true} scrollY={scrollY} status={status} fromProfile={true} navigation={navigation} children={children} data={data.classes} onRefresh={onRefresh} refreshing={refreshing[route.key]} feed_type={route.key} />
                     </ScrollView>)
             default:
@@ -476,6 +495,7 @@ const ProfileScreen = ({ navigation, route }) => {
                         <View style={{ flexDirection: 'column', marginLeft: 30, marginTop: 2, flexWrap: 'wrap' }}>
                             <View style={{ flexDirection: 'row', height: 33, marginBottom: 4 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(children['0']['data']['name'])}</Text>
+                                <TouchableOpacity onPress={() => shareProfile()}><Icon type="MaterialIcons" name="share" style={{ marginLeft: 6, fontSize: 20, color: '#327FEB', marginTop: 6 }} /></TouchableOpacity>
                             </View>
                             <View style={{ flexDirection: 'row', }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{children[0]['data']['type']} {children[0]['data']['type'] == 'Teacher' ? "( " + titleCase(String(children[0]['data']['category'])) + " )" : ""}</Text>
@@ -535,6 +555,11 @@ const ProfileScreen = ({ navigation, route }) => {
                                             <Icon type="Feather" style={{ marginHorizontal: 10 }} name='mail' />
                                         </TouchableOpacity>
                                         : null
+                                }
+                                {
+                                    <TouchableOpacity onPress={() => shareProfile()}>
+                                        <Icon type="MaterialIcons" style={{ marginHorizontal: 10 }} name='share' />
+                                    </TouchableOpacity>
                                 }
                             </View>
                             :
