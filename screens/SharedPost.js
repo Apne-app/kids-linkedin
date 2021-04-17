@@ -458,16 +458,14 @@ const SinglePostScreen = ({ navigation, route }) => {
                             volume={1.0}
                             isMuted={false}
                             resizeMode="contain"
-                            // shouldPlay
+                            shouldPlay
                             // usePoster={props.activity.poster?true:false}
                             // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
                             ref={videoRef}
                             useNativeControls={true}
                             playInBackground={false}
                             playWhenInactive={false}
-                            onViewportEnter={() => console.log('Entered!')}
-                            onViewportLeave={() => console.log('Left!')}
-                            style={{ width: width, height: 340 }}
+                            style={{ width: width, height: 340, backgroundColor: 'black' }}
                         /> : null}
                     {activity['youtube'] ?
                         <YoutubePlayer
@@ -488,17 +486,21 @@ const SinglePostScreen = ({ navigation, route }) => {
             <View style={{ marginTop: 20, marginBottom: 100 }} ref={scrollref}>
                 <View style={{ flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <FastImage
-                            source={{
-                                uri: activity['user_image'],
-                                priority: FastImage.priority.high
-                            }}
-                            style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
-                        />
-                        <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
-                            <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{titleCase(activity['user_name'])}</Text>
-                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
-                        </View>
+                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                            <FastImage
+                                source={{
+                                    uri: activity['user_image'],
+                                    priority: FastImage.priority.high
+                                }}
+                                style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
+                            />
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                            <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
+                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                         <ActionSheet
                             useNativeDriver={true}
                             ref={refActionSheet}

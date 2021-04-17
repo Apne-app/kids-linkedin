@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, TouchableOpacity, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, TouchableOpacity, BackHandler, Alert, Image, Share, Linking, ScrollView, TouchableHighlight, ImageStore, StatusBar, RefreshControl, ActivityIndicator } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Button, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -50,6 +50,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         // Directly return the joined string
         return splitStr.join(' ');
     }
+    const [videostatus, setvideostatus] = useState('unReady')
     const deletepost = (id1) => {
         Alert.alert("Alert", "Are you sure you want to delete the post? The action cannot be reversed", [
             {
@@ -296,6 +297,33 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
+    const videoload = async () => {
+        var source = { uri: activity['videos'] }
+        // videoRef.loadAsync(source, initialStatus = { shouldPlay: true }, downloadFirst = false)
+        videoRef.playAsync()
+        setvideostatus('Ready')
+    }
+    const videounload = () => {
+        // videoRef.stopAsync();
+        // videoRef.unloadAsync();
+        videoRef.pauseAsync()
+        setvideostatus('unReady')
+    }
+    const updatePlaybackCallback = (data) => {
+        if (videostatus != 'unReady') {
+            if (data.isLoaded) {
+                setvideostatus('Ready')
+                // if (data.)
+            }
+            else {
+                setvideostatus('Loading')
+            }
+            if (data.didJustFinish) {
+                videoRef.replayAsync()
+                setvideostatus('unReady')
+            }
+        }
+    }
     var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
     return (
         <View key={key} style={{ marginVertical: 9 }}>
@@ -376,25 +404,41 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(activity['caption'])[0] }) } }} text={activity['caption']} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
                     : null) : null}
             {activity['videos'] ?
-                // <InViewPort onChange={(value) => value ? null : videoRef.pauseAsync()}>
-                <Video
-                    source={{ uri: activity['videos'] }}
-                    rate={1.0}
-                    volume={1.0}
-                    isMuted={false}
-                    resizeMode="contain"
-                    // shouldPlay
-                    // usePoster={props.activity.poster?true:false}
-                    // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
-                    ref={videoRef}
-                    useNativeControls={true}
-                    playInBackground={false}
-                    playWhenInactive={false}
-                    onViewportEnter={() => console.log('Entered!')}
-                    onViewportLeave={() => console.log('Left!')}
-                    style={{ width: width, height: 340, backgroundColor: 'black' }}
-                />
-                // </InViewPort>
+                // videounload()
+                <InViewPort onChange={(value) => value ? videoload() : videounload()}>
+                    <Video
+                        source={{ uri: activity['videos'] }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        ref={(v) => videoRef = v}
+                        resizeMode={Video.RESIZE_MODE_CONTAIN}
+                        // shouldPlay
+                        // usePoster={props.activity.poster ? true : false}
+                        // posterSource={{ uri: 'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg' }}
+                        playInBackground={false}
+                        playWhenInactive={false}
+                        shouldPlay={true}
+                        width={width}
+                        height={340}
+                        style={{ width: width, height: 340, backgroundColor: 'black', color: '#327FEB' }}
+                        useNativeControls={(videostatus == 'Ready')}
+                        hideControlsTimerDuration={1000}
+                        showControlsOnLoad={true}
+                        switchToLandscape={() => videoRef.presentFullscreenPlayer()}
+                        sliderColor={'#327FEB'}
+                        inFullscreen={false}
+
+                        onPlaybackStatusUpdate={updatePlaybackCallback}
+                    />
+                    {videostatus != 'Ready' ? <View style={{ backgroundColor: 'black', height: 340, width: width, position: 'absolute' }} /> : null}
+                    <View style={{ position: 'absolute' }}>
+                        {videostatus === 'Loading' ? <ActivityIndicator size={25} style={{ margin: 10 }} color={'#327FEB'} /> : null}
+                        {videostatus === 'unReady' ? <TouchableOpacity onPress={() => videoload()} style={{ backgroundColor: '#327FEB', height: 80, width: 80, margin: 130, borderRadius: 10, marginLeft: 170 }}>
+                            <Icon fontSize={25} style={{ width: 26, height: 26, color: 'white', margin: 26 }} color={'white'} type="Feather" name="play" />
+                        </TouchableOpacity> : null}
+                    </View>
+                </InViewPort>
                 : null
             }
             {

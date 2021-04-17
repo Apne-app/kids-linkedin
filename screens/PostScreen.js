@@ -335,7 +335,7 @@ const PostScreen = ({ navigation, route }) => {
 
       {
         route.params.video ?
-          <VideoPlayer
+          <VideoPlayerPlayer
             seekColor={'#327FEB'}
             toggleResizeModeOnFullscreen={false}
             tapAnywhereToPause={true}

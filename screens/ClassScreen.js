@@ -356,7 +356,7 @@ const ClassScreen = ({ route, navigation }) => {
                         />
                         :
                         mediatype == 'video' ?
-                            <Video
+                            <VideoPlayer
                                 source={{ uri: form.media }}
                                 rate={1.0}
                                 volume={1.0}

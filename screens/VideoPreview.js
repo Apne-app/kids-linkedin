@@ -177,7 +177,7 @@ const VideoPreview = ({ navigation, route }) => {
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen: 'VideoPreview' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row'}}>
+                    <TouchableOpacity onPress={() => navigation.navigate('TagScreen', { screen: 'VideoPreview' })} style={{ paddingHorizontal: 22, paddingVertical: 6, marginBottom: 10, flexDirection: 'row' }}>
                         {route.params.data ? <>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 20, color: 'black', marginLeft: 0, marginTop: 2 }}>{titleCase(route.params.data.name)}</Text>
                             <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: 'black', marginLeft: 4, marginTop: 10, color: '#327FEB' }}>{route.params.data.type}</Text>
@@ -199,12 +199,9 @@ const VideoPreview = ({ navigation, route }) => {
                         // posterSource={{uri:'https://pyxis.nymag.com/v1/imgs/e8b/db7/07d07cab5bc2da528611ffb59652bada42-05-interstellar-3.2x.rhorizontal.w700.jpg'}}
                         ref={videoRef}
                         useNativeControls={true}
-                        onError={(error) => console.log(error)}
                         playInBackground={false}
                         playWhenInactive={false}
-                        onViewportEnter={() => console.log('Entered!')}
-                        onViewportLeave={() => console.log('Left!')}
-                        style={{ width: width, height: 340 }}
+                        style={{ width: width, height: 340, backgroundColor: 'black' }}
                     />
                 </View>
             </ScrollView>

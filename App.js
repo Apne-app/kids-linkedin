@@ -67,6 +67,7 @@ const BottomNav = createBottomTabNavigator();
 const DrawNav = createDrawerNavigator();
 import RectMoE from 'react-native-moengage'
 import LikesList from './screens/LikesList';
+import TeacherProfile from './screens/TeacherProfile';
 
 console.ignoredYellowBox = ['Warning: Failed propType: SceneView'];
 
@@ -240,12 +241,13 @@ const App = (props) => {
           })
 
         }
-        if (link.url.includes('quiz')) {
-          containerRef.current?.navigate('Post')
-        }
-        if (link.url.includes('news')) {
-          containerRef.current?.navigate('Post')
-        }
+        if (link.url.includes('teacher')) {
+          var id = link.url
+          id = id.replace('https://link.genio.app/teacher?id=', '')
+          containerRef.current?.navigate('TeacherProfile', {
+            id: id,
+          })
+        };
       })
       .catch(() => {
         // console.log('do nothing')
@@ -271,12 +273,13 @@ const App = (props) => {
       containerRef.current?.navigate('SharedPost', {
         id: id,
       })
-      if (link.url.includes('quiz')) {
-        containerRef.current?.navigate('Home', { goTo: 'quiz' })
-      }
-      if (link.url.includes('news')) {
-        containerRef.current?.navigate('Home', { 'goTo': 'news' })
-      }
+    };
+    if (link.url.includes('teacher')) {
+      var id = link.url
+      id = id.replace('https://link.genio.app/teacher?id=', '')
+      containerRef.current?.navigate('TeacherProfile', {
+        id: id,
+      })
     };
   }
   StatusBar.setBackgroundColor('#1A71EB')
@@ -444,7 +447,8 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="VideoFull" component={VideoFullScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="SharedPost" component={SharedPost} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="LikesList" component={LikesList} />
-            <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 400 } }, close: { animation: 'timing', config: { duration: 400 } } }  }} name="TagScreen" component={TagScreen} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="TeacherProfile" component={TeacherProfile} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 400 } }, close: { animation: 'timing', config: { duration: 400 } } } }} name="TagScreen" component={TagScreen} />
           </Stack.Navigator>
           <NotifierRoot ref={notifierRef} />
         </NavigationContainer>
