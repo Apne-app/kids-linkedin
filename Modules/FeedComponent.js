@@ -36,6 +36,9 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const refActionSheet = useRef(null);
     var videoRef = useRef(null);
     const [activity, setactivity] = useState(item['item']['data'])
+    useEffect(() => {
+        activity['images'].includes(', ') ? null : setactivity({ ...activity, 'images': activity['images'].concat(", ") })
+    })
     const [key, setkey] = useState('0')
     const showActionSheet = () => {
         refActionSheet.current.show()
@@ -329,7 +332,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                    <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <FastImage
                             source={{
                                 uri: item['item']['data']['user_image'],

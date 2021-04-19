@@ -6,6 +6,7 @@ import { SafeAreaView, FlatList, View, Text, Dimensions, Animated, TouchableOpac
 import FeedComponent from '../Modules/FeedComponent'
 import PostLoader from '../Modules/PostLoader'
 import CompButton from '../Modules/CompButton'
+import { useScrollToTop } from '@react-navigation/native';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -19,6 +20,9 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     //     }
     //     return ans;
     // }
+    const ref = React.useRef(null);
+
+    useScrollToTop(ref);
 
     const ViewTypes = {
         IMAGE_OR_VIDEO: 0,
@@ -140,6 +144,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                             />
                         )
                     }}
+                    ref={ref}
                     onEndReached={() => { onRefresh(feed_type, true); /*console.log('end reached')*/ }}
                     layoutProvider={_layoutProvider}
                     renderFooter={() => more ? <><Text style={{ fontFamily: 'NunitoSans-Bold', textAlign: 'center', marginBottom: 40, display: more[feed_type] ? 'flex' : 'none' }}>That's it for now, come back later for more!</Text><View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View></> : <View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View>}

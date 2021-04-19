@@ -61,7 +61,9 @@ const SinglePostScreen = ({ navigation, route }) => {
     }, []);
 
     const _keyboardDidShow = () => {
-        scrollref.scrollToEnd({ animated: true })
+        if(scrollref) {
+            scrollref.scrollToEnd({ animated: true })
+        }
     };
     function titleCase(str) {
         var splitStr = str.toLowerCase().split(' ');

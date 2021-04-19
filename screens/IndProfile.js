@@ -20,6 +20,7 @@ import CompButton from '../Modules/CompButton'
 import LikeButton from '../components/LikeButton'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Chip } from 'react-native-paper';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -38,6 +39,7 @@ const IndProfile = ({ navigation, route }) => {
     const [data, setdata] = useState({ mentions: [], classes: [], posts: [] })
     const [classes, setclasses] = useState([])
     const [index, setIndex] = useState(0);
+    const [following, setFollowing] = useState(false);
     const [follow, setfollow] = useState({ 'followers': 0, 'following': 0 })
     const [refreshing, setrefreshing] = useState({ 'mentions': false, 'posts': false, 'classes': false })
     const [routes, setRoutes] = React.useState([
@@ -77,6 +79,46 @@ const IndProfile = ({ navigation, route }) => {
         }, []));
 
     useEffect(() => {
+        
+        const getProfile = async () => {
+            let pro = await AsyncStorage.getItem('children')
+            pro = JSON.parse(pro)
+            console.log(children)
+            if(!pro) {
+                return;
+            }
+            var data = JSON.stringify({
+                "user_id": route.params.id,
+                "curr_id": pro["0"]["id"]
+                });
+                // console.log(data)
+
+                var config = {
+                method: 'post',
+                url: 'https://api.genio.app/sherlock/getprofile',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                data : data
+                };
+
+                axios(config)
+                .then(function (response) {
+                //   let data = JSON.parse(response)
+                    console.log(response.data)
+                setprofile(response.data['data'])
+                setFollowing(response.data['follows'])
+                })
+                .catch(function (error) {
+                console.log(error);
+                });
+
+        }
+        getProfile()
+        
+    }, [])
+
+    useEffect(() => {
         const analyse = async () => {
             var x = route.params.children;
             if (x) {
@@ -99,37 +141,37 @@ const IndProfile = ({ navigation, route }) => {
         }
         analyse();
     }, [])
-    useEffect(() => {
-        if (route.params.data.type === 'Teacher') {
-            var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-            var config = {
-                method: 'post',
-                url: 'https://api.genio.app/dark-knight/getToken',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: data
-            };
+    // useEffect(() => {
+    //     if (route.params.data.type === 'Teacher') {
+    //         var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+    //         var config = {
+    //             method: 'post',
+    //             url: 'https://api.genio.app/dark-knight/getToken',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             data: data
+    //         };
 
-            axios(config)
-                .then(function (response) {
-                    const url = 'https://api.genio.app/matrix/teacherprofile/'
-                    let data = JSON.stringify({ 'id': route.params.id })
-                    axios({
-                        method: 'post',
-                        url: url + `?token=${response.data.token}`,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        data: data
-                    }).then(async (response2) => {
-                        setprofile(response2.data.data)
-                    }).catch(async (error) => {
-                        console.log(error)
-                    })
-                })
-        }
-    }, [])
+    //         axios(config)
+    //             .then(function (response) {
+    //                 const url = 'https://api.genio.app/matrix/teacherprofile/'
+    //                 let data = JSON.stringify({ 'id': route.params.id })
+    //                 axios({
+    //                     method: 'post',
+    //                     url: url + `?token=${response.data.token}`,
+    //                     headers: {
+    //                         'Content-Type': 'application/json'
+    //                     },
+    //                     data: data
+    //                 }).then(async (response2) => {
+    //                     setprofile(response2.data.data)
+    //                 }).catch(async (error) => {
+    //                     console.log(error)
+    //                 })
+    //             })
+    //     }
+    // }, [])
     useEffect(() => {
         axios.post('http://mr_robot.api.genio.app/profile', {
             'profile_id': route.params.id,
@@ -249,6 +291,58 @@ const IndProfile = ({ navigation, route }) => {
 
     }
     console.log(data['posts'].length)
+
+    const followButtonHandle = async () => {
+        let profile = await AsyncStorage.getItem('children')
+        profile = JSON.parse(profile)
+        if(!following) {
+            var data = JSON.stringify({
+                "user_id": route.params.id,
+                "curr_id": profile["0"]["id"]
+            });
+            
+            var config = {
+                method: 'post',
+                url: 'https://api.genio.app/barry/follow',
+                headers: { 
+                'Content-Type': 'application/json'
+                },
+                data : data
+            };
+            
+            axios(config)
+            .then(function (response) {
+                // console.log(JSON.stringify(response.data));
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+        else {
+            var data = JSON.stringify({
+                "user_id": route.params.id,
+                "curr_id": profile["0"]["id"]
+            });
+            
+            var config = {
+                method: 'post',
+                url: 'https://api.genio.app/barry/unfollow',
+                headers: { 
+                'Content-Type': 'application/json'
+                },
+                data : data
+            };
+            
+            axios(config)
+            .then(function (response) {
+                // console.log(JSON.stringify(response.data));
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+        setFollowing(!following)
+    }
 
     const reportProfile = async () => {
 
@@ -410,6 +504,17 @@ const IndProfile = ({ navigation, route }) => {
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type : null} {route.params.data['type'] == 'Teacher' && route.params.data.category && route.params.data.category != 'others' ? "( " + titleCase(String(route.params.data['category'].join().replace(",", ", ").length > 26 ? route.params.data['category'].join().replace(",", ", ").substring(0, 26) + "..." : route.params.data['category'].join().replace(",", ", "))) + " )" : ""}</Text>
                             </View>
+                            {children ? <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity 
+                                    onPress = {async () => {
+                                        followButtonHandle();
+                                    }}
+                                >
+                                <Chip style={{backgroundColor: following ? '#327feb' : "#fff", marginLeft: 10, padding: 1, borderWidth: following ? 0 : 1, borderColor: '#327feb'}} textStyle={{color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold'}}>
+                                    { following ? 'Following' : 'Follow'}
+                                </Chip>
+                                </TouchableOpacity>
+                            </View> : null}
                         </View>
                     </View>
                     <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20, zIndex: 1000 }}>
