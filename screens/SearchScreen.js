@@ -133,7 +133,7 @@ const SearchScreen = ({ route, navigation }) => {
                   userID: x ? JSON.parse(x)["0"]["id"] : null,
                   deviceID: getUniqueId()
                 });
-                children[0]['id'] === item['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { 'id': item['user_id'], 'data': { 'name': item['user_name'], 'image': item['user_image'], 'year': item['user_year'] } })
+                children[0]['id'] === item['user_id'] ? navigation.navigate('Profile') : navigation.navigate('IndProf', { 'id': item['user_id'], 'data': { 'name': item['user_name'], 'image': item['user_image'], 'year': item['user_year'], 'type':item['acc_type'] } })
               }
               }
               >

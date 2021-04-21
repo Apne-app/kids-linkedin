@@ -21,6 +21,7 @@ import analytics from '@segment/analytics-react-native';
 import FeedComponent from '../Modules/FeedComponent'
 import FastImage from 'react-native-fast-image'
 import axios from 'axios';
+import SwipeActionList from 'react-native-swipe-action-list';
 import KeyboardStickyView from 'rn-keyboard-sticky-view';
 import VideoPlayer from '../Modules/Video';
 import { Video } from 'expo-av';
@@ -61,7 +62,7 @@ const SinglePostScreen = ({ navigation, route }) => {
     }, []);
 
     const _keyboardDidShow = () => {
-        if(scrollref) {
+        if (scrollref) {
             scrollref.scrollToEnd({ animated: true })
         }
     };
@@ -198,6 +199,27 @@ const SinglePostScreen = ({ navigation, route }) => {
                 navigation.navigate('Login', { screen: 'Feed', type: 'feed_comment' })
             }
         }
+        const CommentView = ({ item }) => {
+            return (<View key={item['id']} style={{ flexDirection: 'row', padding: 10 }}>
+                <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                    {item['data']['comment']}
+                </Text>
+            </View>)
+        }
+        const deleteComment = (item) => {
+            console.log(item)
+        }
+        const DeleteView = () => {
+            <View style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: 'red',
+            }}>
+                <Text style={{ fontFamily: 'NunitoSans-Regular', color:'black' }}>Delete</Text>
+            </View>
+        }
         const Footer = (id, data) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -12 }}>
@@ -230,16 +252,17 @@ const SinglePostScreen = ({ navigation, route }) => {
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
 
                 {loading ? <Image source={require('../assets/loading.gif')} style={{ width: 40, height: 40, marginLeft: 10 }} />
-                    : comments.map((item) => {
-                        return (
-                            <View key={item['id']} style={{ flexDirection: 'row', padding: 10 }}>
-                                <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
-                                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
-                                    {item['data']['comment']}
-                                </Text>
-                            </View>
-                        )
-                    })}
+                    :
+                    <SwipeActionList
+                        keyExtractor={(item) => item.id}
+                        data={comments}
+                        renderItem={CommentView}
+                        renderLeftHiddenItem={DeleteView}
+                        renderRightHiddenItem={DeleteView}
+                        onSwipeLeft={deleteComment}
+                        onSwipeRight={deleteComment}
+                    />
+                }
             </View>)
         }
         const deletepost = () => {
@@ -483,7 +506,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             <View style={{ marginTop: 20, marginBottom: 100 }}>
                 <View style={{ flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableWithoutFeedback  onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                             <FastImage
                                 source={{
                                     uri: activity['user_image'],
@@ -492,7 +515,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                         </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback  onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                             <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>

@@ -35,7 +35,7 @@ const IndProfile = ({ navigation, route }) => {
     var children = route.params.children
     const status = route.params.status
     const [key, setkey] = React.useState('1');
-    const [profile, setprofile] = React.useState({ phone: '', website: '', fb: '', linkedin: '', email: '' });
+    const [profile, setprofile] = React.useState({ phone: '', website: '', fb: '', linkedin: '', email: '', category: '' });
     const [data, setdata] = useState({ mentions: [], classes: [], posts: [] })
     const [classes, setclasses] = useState([])
     const [index, setIndex] = useState(0);
@@ -79,43 +79,43 @@ const IndProfile = ({ navigation, route }) => {
         }, []));
 
     useEffect(() => {
-        
+
         const getProfile = async () => {
             let pro = await AsyncStorage.getItem('children')
             pro = JSON.parse(pro)
             console.log(children)
-            if(!pro) {
+            if (!pro) {
                 return;
             }
             var data = JSON.stringify({
                 "user_id": route.params.id,
                 "curr_id": pro["0"]["id"]
-                });
-                // console.log(data)
+            });
+            // console.log(data)
 
-                var config = {
+            var config = {
                 method: 'post',
                 url: 'https://api.genio.app/sherlock/getprofile',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json'
                 },
-                data : data
-                };
+                data: data
+            };
 
-                axios(config)
+            axios(config)
                 .then(function (response) {
-                //   let data = JSON.parse(response)
+                    //   let data = JSON.parse(response)
                     console.log(response.data)
-                setprofile(response.data['data'])
-                setFollowing(response.data['follows'])
+                    setprofile(response.data['data'])
+                    setFollowing(response.data['follows'])
                 })
                 .catch(function (error) {
-                console.log(error);
+                    console.log(error);
                 });
 
         }
         getProfile()
-        
+
     }, [])
 
     useEffect(() => {
@@ -295,51 +295,51 @@ const IndProfile = ({ navigation, route }) => {
     const followButtonHandle = async () => {
         let profile = await AsyncStorage.getItem('children')
         profile = JSON.parse(profile)
-        if(!following) {
+        if (!following) {
             var data = JSON.stringify({
                 "user_id": route.params.id,
                 "curr_id": profile["0"]["id"]
             });
-            
+
             var config = {
                 method: 'post',
                 url: 'https://api.genio.app/barry/follow',
-                headers: { 
-                'Content-Type': 'application/json'
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                data : data
+                data: data
             };
-            
+
             axios(config)
-            .then(function (response) {
-                // console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                .then(function (response) {
+                    // console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
         else {
             var data = JSON.stringify({
                 "user_id": route.params.id,
                 "curr_id": profile["0"]["id"]
             });
-            
+
             var config = {
                 method: 'post',
                 url: 'https://api.genio.app/barry/unfollow',
-                headers: { 
-                'Content-Type': 'application/json'
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                data : data
+                data: data
             };
-            
+
             axios(config)
-            .then(function (response) {
-                // console.log(JSON.stringify(response.data));
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                .then(function (response) {
+                    // console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
         setFollowing(!following)
     }
@@ -415,7 +415,7 @@ const IndProfile = ({ navigation, route }) => {
     }
     const shareProfile = async () => {
         try {
-            var cat = route.params.data['type'] == 'Teacher' && route.params.data.category && route.params.data.category != 'others' ?  titleCase(String(route.params.data['category'][0])) : "";
+            var cat = route.params.data['type'] == 'Teacher' && route.params.data.category && route.params.data.category != 'others' ? titleCase(String(route.params.data['category'][0])) : "";
             const result = await Share.share({
                 message:
                     `Check out ${titleCase(route['params']['data']['name'])}'s fantastic ${cat} profile on Genio!: https://genio.app/profile/` + route.params.id,
@@ -445,6 +445,23 @@ const IndProfile = ({ navigation, route }) => {
                 return null;
         }
     };
+    const Tags = () => {
+        if (profile.category) {
+            return (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: -5, marginLeft: 15, marginBottom:10 }}>
+                    {profile.category.map((item) => {
+                        return (
+                            <View style={{ backgroundColor: 'white', borderRadius: 5, paddingHorizontal: 8, marginHorizontal: 5, marginTop:5 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>{titleCase(item)}</Text>
+                            </View>
+                        )
+                    })}
+                </View>
+            )
+        } else {
+            return <View />
+        }
+    }
     const renderTabBar = (props) => {
         const tabY = scrollY.interpolate({
             inputRange: [0, 350],
@@ -493,28 +510,40 @@ const IndProfile = ({ navigation, route }) => {
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <View style={{ zIndex: 1000, backgroundColor: '#f2f2f2', position: 'absolute', marginTop: 80, width: width }}>
                     <View style={{ marginTop: 30, flexDirection: 'row', height: 80, zIndex: 1000 }}>
-                        <Image
-                            source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
-                            style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
-                        />
-                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
-                            <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(route['params']['data']['name'])}</Text>
+                        <View style={{ flexDirection: 'column' }}>
+                            <Image
+                                source={{ uri: route['params']['data']['image'] ? route['params']['data']['image'] : route['params']['data']['profileImage'] }}
+                                style={{ width: 70, height: 70, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
+                            />
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: '#327FEB', textAlign: 'center', color: 'white', paddingHorizontal: 10, alignSelf: 'center', marginLeft: 30, borderRadius: 5, marginTop: -8, height: 27, paddingTop: 2 }}>{route.params.data['type']}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 0, }}>
+                            <View style={{}}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20, width: width - 100 }}>{titleCase(route['params']['data']['name'])}</Text>
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type : null} {route.params.data['type'] == 'Teacher' && route.params.data.category && route.params.data.category != 'others' ? "( " + titleCase(String(route.params.data['category'].join().replace(",", ", ").length > 26 ? route.params.data['category'].join().replace(",", ", ").substring(0, 26) + "..." : route.params.data['category'].join().replace(",", ", "))) + " )" : ""}</Text>
-                            </View>
+                            {/* <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{route.params.data ? route.params.data.type : null} {route.params.data['type'] == 'Teacher' && route.params.data.category && route.params.data.category != 'others' ? "( " + titleCase(String(route.params.data['category'].join().replace(",", ", ").length > 26 ? route.params.data['category'].join().replace(",", ", ").substring(0, 26) + "..." : route.params.data['category'].join().replace(",", ", "))) + " )" : ""}</Text> */}
                             {children ? <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity 
-                                    onPress = {async () => {
+                                <TouchableOpacity
+                                    onPress={async () => {
                                         followButtonHandle();
                                     }}
                                 >
-                                <Chip style={{backgroundColor: following ? '#327feb' : "#fff", marginLeft: 10, padding: 1, borderWidth: following ? 0 : 1, borderColor: '#327feb'}} textStyle={{color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold'}}>
-                                    { following ? 'Following' : 'Follow'}
-                                </Chip>
+                                    <Chip style={{ backgroundColor: following ? '#327feb' : "#fff", borderWidth: following ? 0 : 1, borderColor: '#327feb', height: 31, borderRadius: 5, marginTop: 8 }} textStyle={{ color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold', alignSelf: 'center', marginTop: 0 }}>
+                                        {following ? 'Following' : 'Follow'}
+                                    </Chip>
                                 </TouchableOpacity>
                             </View> : null}
+                            {/* {children ? <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity
+                                    onPress={async () => {
+                                        followButtonHandle();
+                                    }}
+                                >
+                                    <Chip style={{ backgroundColor: following ? '#327feb' : "#fff", marginLeft: 10, padding: 1, borderWidth: following ? 0 : 1, borderColor: '#327feb' }} textStyle={{ color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold' }}>
+                                        {following ? 'Following' : 'Follow'}
+                                    </Chip>
+                                </TouchableOpacity>
+                            </View> : null} */}
                         </View>
                     </View>
                     <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20, zIndex: 1000 }}>
@@ -535,7 +564,7 @@ const IndProfile = ({ navigation, route }) => {
                     </View>
                     {
                         route.params.data['type'] === 'Teacher' ?
-                            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10, marginBottom: 10, zIndex: 1000, flexDirection: 'row' }}>
+                            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 0, marginBottom: 4, zIndex: 1000, flexDirection: 'row' }}>
                                 {
                                     profile['phone'] != '' ?
                                         <TouchableOpacity onPress={() => Linking.openURL("tel://" + "+" + profile['phone'])}>
@@ -572,19 +601,20 @@ const IndProfile = ({ navigation, route }) => {
                                         : null
                                 }
                                 {
-                                <TouchableOpacity onPress={() => shareProfile()}>
-                                    <Icon type="MaterialIcons" style={{ marginHorizontal: 10 }} name='share' />
-                                </TouchableOpacity>
-                            }
+                                    <TouchableOpacity onPress={() => shareProfile()}>
+                                        <Icon type="MaterialIcons" style={{ marginHorizontal: 10 }} name='share' />
+                                    </TouchableOpacity>
+                                }
                             </View>
                             :
                             null
                     }
+                    {route.params.data['type'] == 'Teacher' ? <Tags /> : null}
                 </View>
             </Animated.View>
             {route.params.data.type === 'Teacher' ? <TabView
                 key={key}
-                style={{ flex: 4 }}
+                style={{ flex: 4, marginTop:38 }}
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
