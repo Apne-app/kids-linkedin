@@ -7855,6 +7855,11 @@ react-native-fast-image@^8.3.4:
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.3.4.tgz#79edca177e30311b19d59ff335625bcbe22650d7"
   integrity sha512-LpzAdjUphihUpVEBn5fEv5AILe55rHav0YiZroPZ1rumKDhAl4u2cG01ku2Pb7l8sayjTsNu7FuURAlXUUDsow==
 
+react-native-fbsdk-next@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-fbsdk-next/-/react-native-fbsdk-next-4.0.0.tgz#b88f207d76c67db39cffda6e9b7c716cb6f92877"
+  integrity sha512-ql5Pbbxpp1kN2IK2AsYVoh2BJ7cMc4fT6oU7U04GLufikYuiul/rcwe4SXuEJzdzsce8idZ9oYcmPt1yHyZm1g==
+
 react-native-file-viewer@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/react-native-file-viewer/-/react-native-file-viewer-2.1.4.tgz#987b2902f0f0ac87b42f3ac3d3037c8ae98f17a6"
@@ -8129,6 +8134,19 @@ react-native-svg@^12.1.0:
   dependencies:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
+
+react-native-swipe-action-list@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-swipe-action-list/-/react-native-swipe-action-list-0.0.6.tgz#b8cdbdeadf58a891157a0b096244b856d82d87a7"
+  integrity sha512-fo/pIR0jrz9mO6wXSaSzm4tmLwnx0xOzfg7nVMWO4zTjqzDsw205URw0Mcnz3h0G2b4iEKlUs5FE6rc/x2PinA==
+  dependencies:
+    prop-types "^15.7.2"
+    react-native-swipe-list-view "2.5.0"
+
+react-native-swipe-list-view@2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-swipe-list-view/-/react-native-swipe-list-view-2.5.0.tgz#4740f595aa3253ccd2c8e44131f83bc957f57ddb"
+  integrity sha512-HTsVaxA3an6myShlLroTyDZo/AOrZ6HJr+EwCaGRE2YuGdM/cFHoYfsuslOEEig5GenTw8DILUB8kqYWQ5lJtA==
 
 react-native-tab-view@^3.0.0:
   version "3.0.0"
