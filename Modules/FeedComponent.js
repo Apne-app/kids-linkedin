@@ -37,7 +37,9 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     var videoRef = useRef(null);
     const [activity, setactivity] = useState(item['item']['data'])
     useEffect(() => {
-        activity['images'].includes(', ') ? null : setactivity({ ...activity, 'images': activity['images'].concat(", ") })
+        if(activity['images']) {
+            activity['images'].includes(', ') ? null : setactivity({ ...activity, 'images': activity['images'].concat(", ") })
+        }
     })
     const [key, setkey] = useState('0')
     const showActionSheet = () => {
