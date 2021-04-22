@@ -1,11 +1,12 @@
 /* eslint-disable */
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard, TextInput, Button } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, Dimensions, View, ImageBackground, FlatList, BackHandler, TouchableOpacity, Alert, Image, Share, Linking, TouchableHighlight, ImageStore, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard, TextInput, Button, Animated } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Label, H1, H2, H3, Icon, Body, Title, Toast, Right, Left, Fab, Textarea } from 'native-base';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import ActionSheet from 'react-native-actionsheet'
 import ImageView from 'react-native-image-viewing';
+import { RectButton, Swipeable } from 'react-native-gesture-handler';
 import { useFocusEffect } from "@react-navigation/native";
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { SliderBox } from "react-native-image-slider-box";
@@ -36,7 +37,26 @@ function urlify(text) {
 const SinglePostScreen = ({ navigation, route }) => {
     var videoRef = React.createRef();
     const [activity, setactivity] = useState(route.params.activity)
+    var scrollref = React.useRef(null);
     const [key, setkey] = useState('0')
+    const _keyboardDidShow = () => {
+        if (scrollref.current) {
+            scrollref.scrollToEnd({ animated: true })
+        }
+    };
+    function titleCase(str) {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
+    const _keyboardDidHide = () => {
+        setautofocus(false)
+    };
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -61,26 +81,7 @@ const SinglePostScreen = ({ navigation, route }) => {
         };
     }, []);
 
-    const _keyboardDidShow = () => {
-        if (scrollref) {
-            scrollref.scrollToEnd({ animated: true })
-        }
-    };
-    function titleCase(str) {
-        var splitStr = str.toLowerCase().split(' ');
-        for (var i = 0; i < splitStr.length; i++) {
-            // You do not need to check if i is larger than splitStr length, as your for does that for you
-            // Assign it back to the array
-            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-        }
-        // Directly return the joined string
-        return splitStr.join(' ');
-    }
-    const _keyboardDidHide = () => {
-        setautofocus(false)
-    };
 
-    var scrollref = React.useRef();
     const [comments, setcomments] = useState([])
     const [comment, setcomment] = useState('')
     const [loading, setloading] = useState(activity['comments_count'])
@@ -121,12 +122,114 @@ const SinglePostScreen = ({ navigation, route }) => {
             }).then((response) => {
                 setcomments(response['data']['data'])
                 setloading(false)
+                setkey(String(parseInt(key) + 1))
             }).catch((error) => {
                 console.log(error)
             })
         }
         data()
     }, [])
+    var swipeableRow = useRef(null)
+    const renderLeftActions = (progress, dragX) => {
+        const trans = dragX.interpolate({
+            inputRange: [0, 50, 100, 101],
+            outputRange: [-20, 0, 0, 1],
+        });
+        return (
+            <RectButton style={styles.leftAction} onPress={this.close}>
+                <Animated.Text
+                    style={[
+                        styles.actionText
+                    ]}
+                >
+                    Archive
+                </Animated.Text>
+            </RectButton>
+        );
+    };
+    const deleteComment = (item) => {
+        Alert.alert("Alert", "Are you sure you want to delete the comment? The action cannot be reversed", [
+            {
+                text: "Cancel",
+                onPress: () => null,
+                style: "cancel"
+            },
+            {
+                text: "YES", onPress: () => {
+                    axios.post('http://mr_robot.api.genio.app/deletecomment', {
+                        comment_id: item,
+                        post_id: activity['post_id']
+                    }, {
+                        headers: {
+                            'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                            'Content-Type': 'application/json'
+                        }
+                    }).then((response) => {
+                        if (response.data) {
+                            axios.post('http://mr_robot.api.genio.app/getcomments', {
+                                post_id: activity['post_id']
+                            }, {
+                                headers: {
+                                    'Authorization': 'Basic OWNkMmM2OGYtZWVhZi00OGE1LWFmYzEtOTk5OWJjZmZjOTExOjc0MzdkZGVlLWVmMWItNDVjMS05MGNkLTg5NDMzMzUwMDZiMg==',
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then((response) => {
+                                setcomments(response['data']['data'])
+                                var dat = data
+                                dat['comments_count'] = dat['comments_count'] - 1
+                                setactivity(dat)
+                                setkey(String(parseInt(key) + 1))
+                                alert('Successfully deleted your comment!')
+                                route.params.setparentkey()
+                            }).catch((error) => {
+                                console.log(error)
+                            })
+
+                        }
+                        else {
+                            alert(
+                                "There was an error deleting your comment, please try again later."
+                            )
+                        }
+                    }).catch(() => {
+                        alert(
+                            "There was an error deleting your comment, please try again later."
+                        )
+                    })
+                }
+            }
+        ]);
+    }
+    const renderRightAction = (text, color, x, progress, comment_id) => {
+        const trans = progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [x, 0],
+        });
+        const close = () => {
+            swipeableRow.close();
+        };
+        const pressHandler = (comment_id) => {
+            deleteComment(comment_id)
+            close();
+        };
+        return (
+            <Animated.View style={{ flex: 1, transform: [{ translateX: 0 }] }}>
+                <RectButton
+                    style={{ backgroundColor: color, paddingVertical: 10 }}
+                    onPress={() => pressHandler(comment_id)}>
+                    <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'white', textAlign: 'center' }}>{text}</Text>
+                </RectButton>
+            </Animated.View>
+        );
+    };
+    const RenderRightActions = ({ progress, comment_id }) => (
+        <View style={{ width: 60, flexDirection: 'row' }}>
+            {renderRightAction('Delete', '#dd2c00', 64, progress, comment_id)}
+        </View>
+    );
+    const updateRef = ref => {
+        swipeableRow = ref;
+    };
     const addorunlike = () => {
         if (status === '3') {
             var data = activity
@@ -200,35 +303,56 @@ const SinglePostScreen = ({ navigation, route }) => {
             }
         }
         const CommentView = ({ item }) => {
-            return (<View key={item['id']} style={{ flexDirection: 'row', padding: 10 }}>
-                <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
-                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
-                    {item['data']['comment']}
-                </Text>
-            </View>)
-        }
-        const deleteComment = (item) => {
-            console.log(item)
-        }
-        const DeleteView = () => {
-            <View style={{
-                flex: 1,
-                flexDirection: 'row',
-                alignItems: 'center',
-                backgroundColor: 'red',
-            }}>
-                <Text style={{ fontFamily: 'NunitoSans-Regular', color:'black' }}>Delete</Text>
-            </View>
+            if (status == '3') {
+                if (children['0']['id'] === item['data']['comments_user_id']) {
+                    return (
+                        <Swipeable
+                            ref={updateRef}
+                            friction={2}
+                            onSwipeableLeftWillOpen={false}
+                            leftThreshold={30}
+                            rightThreshold={40}
+                            renderRightActions={(progress) => <RenderRightActions progress={progress} comment_id={item['data']['comments_id']} />}>
+                            <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width }}>
+                                <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                                    {item['data']['comment']}
+                                </Text>
+                            </View>
+                        </Swipeable>
+                    )
+                }
+                else {
+                    return (
+                        <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width }}>
+                            <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                            <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                                {item['data']['comment']}
+                            </Text>
+                        </View>
+                    )
+                }
+            }
+            else {
+                return (
+                    <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width }}>
+                        <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                        <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                            {item['data']['comment']}
+                        </Text>
+                    </View>
+                )
+            }
         }
         const Footer = (id, data) => {
             return (<View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -12 }}>
-                    {/* <TouchableWithoutFeedback onPress={() => { addorunlike() }}>
+                    {route.params.type != 'comment' && <TouchableWithoutFeedback onPress={() => { addorunlike() }}>
                         <FastImage style={{ width: 32, height: 32, marginLeft: 10, marginRight: 0, marginTop: -1 }} source={activity['likes_user_id'] ? require('../Icons/star.png') : require('../Icons/star-outline.png')} />
-                    </TouchableWithoutFeedback> */}
+                    </TouchableWithoutFeedback>}
                     <Icon onPress={() => { setautofocus(true); setkey(String(parseInt(key) + 1)); oncommentclick() }} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
                     <Icon onPress={() => onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id'])} name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
-                    <TouchableOpacity style={{ width: 50, marginLeft: '68%', alignItems: 'center' }}
+                    <TouchableOpacity style={{ width: 50, marginLeft: route.params.type != 'comment'?'61%':'68%', alignItems: 'center' }}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('WhatsappShare', {
@@ -253,14 +377,10 @@ const SinglePostScreen = ({ navigation, route }) => {
 
                 {loading ? <Image source={require('../assets/loading.gif')} style={{ width: 40, height: 40, marginLeft: 10 }} />
                     :
-                    <SwipeActionList
-                        keyExtractor={(item) => item.id}
+                    <FlatList
+                        keyExtractor={(item) => String(item.data.comments_id)}
                         data={comments}
                         renderItem={CommentView}
-                        renderLeftHiddenItem={DeleteView}
-                        renderRightHiddenItem={DeleteView}
-                        onSwipeLeft={deleteComment}
-                        onSwipeRight={deleteComment}
                     />
                 }
             </View>)
@@ -542,11 +662,6 @@ const SinglePostScreen = ({ navigation, route }) => {
             var data = activity
             var comm = comment
             setcomment('')
-            data['comments_count'] = data['comments_count'] + 1
-            setactivity(data)
-            setcomments([...comments, { 'data': { 'comments_user_image': children[0]['data']['image'], comment: comm }, 'id': key }])
-            setkey(String(parseInt(key) + 1))
-            route.params.setparentkey()
             axios.post('http://mr_robot.api.genio.app/comment', {
                 post_id: data['post_id'],
                 user_id: children[0]['id'],
@@ -559,7 +674,11 @@ const SinglePostScreen = ({ navigation, route }) => {
                     'Content-Type': 'application/json'
                 }
             }).then((response) => {
-                console.log(response)
+                data['comments_count'] = data['comments_count'] + 1
+                setactivity(data)
+                setcomments([...comments, { 'data': { 'comments_user_image': children[0]['data']['image'], comment: comm, comments_id: response.data, comments_user_id: children['0']['id'] }, 'id': key }])
+                setkey(String(parseInt(key) + 1))
+                route.params.setparentkey()
                 analytics.track('Comment', {
                     userID: children[0]['id'],
                     deviceID: getUniqueId(),

@@ -35,7 +35,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     };
     const _layoutProvider = new LayoutProvider(
         index => {
-            if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0) {
+            if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['link'].length > 4 : 0) {
                 if (data[index]['data']['category'] === 'class') {
                     return ViewTypes.CLASS;
                 }
@@ -61,10 +61,6 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
         },
         (type, dim) => {
             switch (type) {
-                case ViewTypes.IMAGE_OR_VIDEO:
-                    dim.width = width;
-                    dim.height = 530;
-                    break;
                 case ViewTypes.IMAGE_OR_VIDEO:
                     dim.width = width;
                     dim.height = 560;

@@ -37,7 +37,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     var videoRef = useRef(null);
     const [activity, setactivity] = useState(item['item']['data'])
     useEffect(() => {
-        activity['images']?activity['images'].includes(', ') ? null : setactivity({ ...activity, 'images': activity['images'].concat(", ") }):null
+        activity['images'] ? activity['images'].includes(', ') ? null : setactivity({ ...activity, 'images': activity['images'].concat(", ") }) : null
     })
     const [key, setkey] = useState('0')
     const showActionSheet = () => {
@@ -359,25 +359,27 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 </View>
                 {/* <View style={{ width: '80%', height: 1, backgroundColor: 'rgba(169, 169, 169, 0.2)', alignSelf: 'center', marginTop: 20 }}></View>*/}
             </View>
-            {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
-                <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
-                    <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
-                        Class on <Text style={{ color: '#327FEb', fontFamily: 'NunitoSans-Bold' }}>{activity['class_category']}</Text>
-                    </Text>
-                </View> : null}
-            {activity['caption'] === 'default123' ?
-                <View style={{ margin: 5 }}></View> :
-                <View style={{ paddingHorizontal: 10, marginLeft: 13, marginVertical: 15 }}>
-                    <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
-                        {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...') : activity['caption']}
-                    </Text>
-                </View>}
-            {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
-                <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
-                    <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                        Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
-                    </Text>
-                </View> : null}
+            <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
+                {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                            Class on <Text style={{ color: '#327FEb', fontFamily: 'NunitoSans-Bold' }}>{activity['class_category']}</Text>
+                        </Text>
+                    </View> : null}
+                {activity['caption'] === 'default123' ?
+                    <View style={{ margin: 5 }}></View> :
+                    <View style={{ paddingHorizontal: 10, marginLeft: 13, marginVertical: 15 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
+                            {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...') : activity['caption']}
+                        </Text>
+                    </View>}
+                {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
+                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
+                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                        </Text>
+                    </View> : null}
+            </TouchableWithoutFeedback>
             {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
             {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.push('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>

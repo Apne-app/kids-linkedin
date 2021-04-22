@@ -451,8 +451,8 @@ const IndProfile = ({ navigation, route }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: -5, marginLeft: 15, marginBottom:10 }}>
                     {profile.category.map((item) => {
                         return (
-                            <View style={{ backgroundColor: 'white', borderRadius: 5, paddingHorizontal: 8, marginHorizontal: 5, marginTop:5 }}>
-                                <Text style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB' }}>{titleCase(item)}</Text>
+                            <View style={{ backgroundColor: 'white', borderRadius: 5, paddingHorizontal: 8, marginHorizontal: 5, marginTop:5, borderColor:'#327FEB', borderWidth:0.5 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB', textAlignVertical:'center' }}>{titleCase(item)}</Text>
                             </View>
                         )
                     })}
