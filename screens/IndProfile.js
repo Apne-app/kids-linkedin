@@ -48,10 +48,10 @@ const IndProfile = ({ navigation, route }) => {
         { key: 'classes', title: 'Classes' },
     ]);
     const scrollY = useRef(new Animated.Value(0)).current;
-    const diffClamp = Animated.diffClamp(scrollY, 0, 350);
+    const diffClamp = Animated.diffClamp(scrollY, 0, 3650);
     const y = diffClamp.interpolate({
-        inputRange: [0, 350],
-        outputRange: [0, -350],
+        inputRange: [0, 365],
+        outputRange: [0, -365],
         extrapolateRight: 'clamp',
     });
     function titleCase(str) {
@@ -472,7 +472,7 @@ const IndProfile = ({ navigation, route }) => {
                 style={{
                     transform: [{ translateY: y }],
                     position: 'absolute',
-                    marginTop: 345,
+                    marginTop: 360,
                     zIndex: 5
                 }}>
                 <TabBar
@@ -614,7 +614,7 @@ const IndProfile = ({ navigation, route }) => {
             </Animated.View>
             {route.params.data.type === 'Teacher' ? <TabView
                 key={key}
-                style={{ flex: 4, marginTop:38 }}
+                style={{ flex: 4}}
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
