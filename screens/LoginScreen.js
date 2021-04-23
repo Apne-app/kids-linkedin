@@ -368,8 +368,10 @@ const LoginScreen = ({ route, navigation }) => {
                     backgroundColor: '#327FEB',
                     height: 50
                   }}
+                  size={10}
+                  animateWidth={125}
                   isLoading={Loading}
-                  spinnerType='BarIndicator'
+                  spinnerType='DotIndicator'
                   onPress={() => {
                     if(active == 'email') {
                       everified ? api() : setvisible(true)

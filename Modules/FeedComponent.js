@@ -370,7 +370,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     <View style={{ margin: 5 }}></View> :
                     <View style={{ paddingHorizontal: 10, marginLeft: 13, marginVertical: 15 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
-                            {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...') : activity['caption']}
+                            {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...').replace('/\r?\n|\r/g', '') : activity['caption']}
                         </Text>
                     </View>}
                 {activity['class_time'] && activity['class_time'] && activity['class_date'] ?

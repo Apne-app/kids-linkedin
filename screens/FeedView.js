@@ -31,16 +31,24 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
         NO_MEDIA: 3,
         INSPIRE: 4,
         QUIZ: 5,
-        CLASS: 6
+        CLASS_NO_IMAGE: 6,
+        YOUTUBE: 7,
+        CLASS_IMAGE: 8,
     };
     const _layoutProvider = new LayoutProvider(
         index => {
-            if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['link'].length > 4 : 0) {
-                if (data[index]['data']['category'] === 'class') {
-                    return ViewTypes.CLASS;
+            if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['link'].length > 4 : 0 || data[index]['data']['youtube'] ? data[index]['data']['youtube'].length > 4 : 0) {
+                if (data[index]['data']['category'] === 'class' && data[index]['data']['images'].length < 4) {
+                    return ViewTypes.CLASS_NO_IMAGE;
+                }
+                else if (data[index]['data']['category'] === 'class') {
+                    return ViewTypes.CLASS_IMAGE;
                 }
                 else if (data[index]['data']['category'] === 'inspire') {
                     return ViewTypes.INSPIRE;
+                }
+                else if (data[index]['data']['youtube'] != '') {
+                    return ViewTypes.YOUTUBE;
                 }
                 else if (data[index]['data']['category'] === 'quiz') {
                     return ViewTypes.QUIZ;
@@ -64,6 +72,14 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                 case ViewTypes.IMAGE_OR_VIDEO:
                     dim.width = width;
                     dim.height = 560;
+                    break;
+                case ViewTypes.CLASS_IMAGE:
+                    dim.width = width;
+                    dim.height = 700;
+                    break;
+                case ViewTypes.YOUTUBE:
+                    dim.width = width;
+                    dim.height = 450;
                     break;
                 case ViewTypes.INSPIRE:
                     dim.width = width;

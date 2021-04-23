@@ -20,6 +20,7 @@ import {
     height, width
 } from '../Modules/CommonImports.js';
 import AuthContext from '../Context/Data';
+import ButtonSpinner from 'react-native-button-spinner';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { TextInput } from 'react-native';
 const ChildScreen = ({ route, navigation }) => {
@@ -129,7 +130,7 @@ const ChildScreen = ({ route, navigation }) => {
             }
             else {
                 setactive(false)
-                setLoading(true) 
+                setLoading(true)
                 Keyboard.dismiss()
                 var pro = await AsyncStorage.getItem('profile');
                 pro = JSON.parse(pro);
@@ -148,8 +149,8 @@ const ChildScreen = ({ route, navigation }) => {
                 axios(config)
                     .then(function (response) {
                         const url = route.params.fromOtp ? 'https://api.genio.app/matrix/childphone/' : 'https://api.genio.app/matrix/child/';
-                        let data = ''; 
-                        if(route.params.fromOtp) {
+                        let data = '';
+                        if (route.params.fromOtp) {
                             data = JSON.stringify({
                                 "name": name.toLowerCase(),
                                 "year": year,
@@ -157,7 +158,7 @@ const ChildScreen = ({ route, navigation }) => {
                                 "grade": "none",
                                 "phone": pro.phone,
                                 "acctype": "Kid"
-                            }) 
+                            })
                         } else {
 
                             data = JSON.stringify({
@@ -178,12 +179,12 @@ const ChildScreen = ({ route, navigation }) => {
                             data: data
                         })
                             .then(async (response2) => {
-                                    console.log("Child added:", response2.data)
+                                console.log("Child added:", response2.data)
                                 if (response2.data.split(', ').length == 2) {
                                     await AsyncStorage.setItem('status', '3')
                                     const url2 = route.params.fromOtp ? 'https://api.genio.app/matrix/getchildphone/' : 'https://api.genio.app/matrix/getchild/';
-                                    let data2 = ''; 
-                                    if(route.params.fromOtp) {
+                                    let data2 = '';
+                                    if (route.params.fromOtp) {
                                         data2 = JSON.stringify({
                                             "phone": pro.phone,
                                         })
@@ -277,44 +278,39 @@ const ChildScreen = ({ route, navigation }) => {
                             <Text style={{ color: "red", fontFamily: 'NunitoSans-Bold', fontSize: 12, marginTop: 4, display: active ? 'flex' : 'none', marginLeft: 20 }}>{text}</Text>
                         </View>
                         <View style={{ alignSelf: 'center', display: current ? 'flex' : 'none', flexDirection: 'row', marginTop: 20 }}>
-                            <SpinnerButton
-                                buttonStyle={{
+                            <ButtonSpinner
+                                style={{
                                     borderRadius: 28.5,
-                                    width: 130,
                                     alignSelf: 'center',
                                     backgroundColor: '#327FEB',
                                     height: 36,
                                     marginRight: 20,
                                 }}
-                                isLoading={Loading}
-                                spinnerType='BarIndicator'
+                                disabled={Loading}
                                 onPress={() => {
                                     setcurrent(current - 1);
                                     setactive(false)
                                 }}
-                                indicatorCount={5 }
                             >
                                 <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Back</Text>
                                 {/* <Text style={styles.buttonText}>Next</Text> */}
-                            </SpinnerButton>
-                            <SpinnerButton
-                                buttonStyle={{
+                            </ButtonSpinner>
+                            <ButtonSpinner
+                                style={{
                                     borderRadius: 28.5,
                                     width: 130,
                                     alignSelf: 'center',
                                     backgroundColor: '#327FEB',
                                     height: 36
                                 }}
-                                isLoading={Loading}
-                                spinnerType='BarIndicator'
+                                disabled={Loading}
                                 onPress={() => {
                                     api()
                                 }}
-                                indicatorCount={5}
                             >
                                 <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
                                 {/* <Text style={styles.buttonText}>Next</Text> */}
-                            </SpinnerButton>
+                            </ButtonSpinner>
                         </View>
                     </View>
                 </KeyboardAvoidingView>
