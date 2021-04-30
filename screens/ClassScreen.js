@@ -161,13 +161,20 @@ const ClassScreen = ({ route, navigation }) => {
             // console.log("hh: ", hh, " mm: ", mm);
         }
         var istTime = (new Date(currentDate.getTime())).customFormat("#DD#/#MM#/#YYYY# #hh#:#mm#:#ss#")
-        console.log("aaa: ", istTime)
         istTime = istTime.replace("/",'-')
         istTime = istTime.replace("/",'-')
         istTime = istTime.replace(" ", "T")
         istTime += 'Z'
+        console.log("aaa: ", istTime)
+        var hh;
+        if(mode == 'time') {
+            hh = istTime.split('T')[1].split(':')[0]
+            if(hh[0] == '0') {
+                hh = hh[1];
+            }
+        }
         setShow(Platform.OS === 'ios');
-        mode == 'date' ? setform({ ...form, 'date': istTime }) : setform({ ...form, 'time': istTime.split('T')[1].split('Z')[0].split(':')[0] + ":" + istTime.split('T')[1].split('Z')[0].split(':')[1] + " " + timeType })
+        mode == 'date' ? setform({ ...form, 'date': istTime }) : setform({ ...form, 'time': hh + ":" + istTime.split('T')[1].split('Z')[0].split(':')[1] + " " + timeType })
     };
     function randomStr(len, arr) {
         var ans = '';

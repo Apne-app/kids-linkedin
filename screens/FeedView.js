@@ -75,7 +75,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     break;
                 case ViewTypes.CLASS_IMAGE:
                     dim.width = width;
-                    dim.height = 700;
+                    dim.height = 630;
                     break;
                 case ViewTypes.YOUTUBE:
                     dim.width = width;

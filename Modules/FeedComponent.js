@@ -36,6 +36,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     const refActionSheet = useRef(null);
     var videoRef = useRef(null);
     const [activity, setactivity] = useState(item['item']['data'])
+    const [seemore, setseemore] = useState(false)
     useEffect(() => {
         activity['images'] ? activity['images'].includes(', ') ? null : setactivity({ ...activity, 'images': activity['images'].concat(", ") }) : null
     })
@@ -94,7 +95,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
     }
     const report = async () => {
         if (children) {
-            console.log(activity['user_id'] == children['0']['id'])
+            // console.log(activity['user_id'] == children['0']['id'])
             if (activity['user_id'] == children['0']['id']) {
                 deletepost()
             }
@@ -134,7 +135,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         if (response.data == "success") {
                             alert('Succesfully reported post');
                         }
-                        console.log(response.data)
+                        // console.log(response.data)
                     })
                     .catch(function (error) {
                         alert(error);
@@ -177,7 +178,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     if (response.data == "success") {
                         alert('Succesfully reported post');
                     }
-                    console.log(response.data)
+                    // console.log(response.data)
                 })
                 .catch(function (error) {
                     alert(error);
@@ -328,12 +329,18 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             }
         }
     }
+    const onTextLayout = (e) => {
+        if (e.nativeEvent.lines.length > 2) {
+            setseemore(true)
+        }
+    };
     var class_date = activity['class_date'] ? new Date(activity['class_date'].split('T')[0].split("-").reverse().join("-")) : ''
+    // console.log(activity['acc_type'])
     return (
         <View key={key} style={{ marginVertical: 9 }}>
             <View style={{ flexDirection: 'column' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                    <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                         <FastImage
                             source={{
                                 uri: item['item']['data']['user_image'],
@@ -362,27 +369,34 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
             </View>
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
                 {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
-                    <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
+                    <View style={{ marginRight: 8, marginLeft: 13, marginTop: 5 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
                             Class on <Text style={{ color: '#327FEb', fontFamily: 'NunitoSans-Bold' }}>{activity['class_category']}</Text>
                         </Text>
                     </View> : null}
                 {activity['caption'] === 'default123' ?
                     <View style={{ margin: 5 }}></View> :
-                    <View style={{ paddingHorizontal: 10, marginLeft: 13, marginVertical: 15 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular' }}>
-                            {activity['caption'] === 'default123' ? '' : activity['caption'].length > 100 ? (activity['caption'].slice(0, 100) + '...').replace('/\r?\n|\r/g', '') : activity['caption']}
+                    <View style={{ paddingRight: 10, marginLeft: 13, marginVertical: 10 }}>
+                        <Text onTextLayout={onTextLayout} numberOfLines={2} style={{ fontFamily: 'NunitoSans-Regular' }}>
+                            {activity['caption'] === 'default123' ? '' : activity['caption']}
                         </Text>
+                        {!seemore ?
+                            null :
+                            <View style={{ paddingRight: 10, }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
+                                    See More
+                                </Text>
+                            </View>}
                     </View>}
                 {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
-                        <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + '@' + activity['class_time'].includes('T') ? activity['class_time'].split('T')[1].split('.')[0].slice(0, 5) : activity['class_time']}
+                        <Text style={{ fontFamily: 'NunitoSans-Regular', color: 'black' }}>
+                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + ' @ ' + (!activity['class_time'].includes('am') && !activity['class_time'].includes('pm') ? activity['class_time'].split('T')[1].split('.')[0].slice(0, 5) : activity['class_time'])}
                         </Text>
                     </View> : null}
             </TouchableWithoutFeedback>
-            {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
-            {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.push('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
+            {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
+            {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 10, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.push('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
             <TouchableWithoutFeedback onPress={() => navigation.navigate('SinglePost', { setparentkey: setparentkey, image: status === '3' ? children['0']['data']['image'] : '', activity: activity })}>
                 <View style={{ alignSelf: 'center' }}>
                     {activity['images'] ? activity['images'].split(", ").length - 1 == 1 ? <FastImage
@@ -405,10 +419,10 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                     /></View> : <View></View>}
                 </View>
             </TouchableWithoutFeedback>
-            {activity['caption'] ?
+            {/* {activity['caption'] ?
                 (activity['caption'].includes('http') ?
                     <LinkPreview touchableWithoutFeedbackProps={{ onPress: () => { navigation.navigate('Browser', { 'url': urlify(activity['caption'])[0] }) } }} text={activity['caption']} containerStyle={{ backgroundColor: '#efefef', borderRadius: 0, marginTop: 10, width: width, alignSelf: 'center' }} renderTitle={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 12 }}>{text}</Text>} renderDescription={(text) => <Text style={{ fontFamily: 'NunitoSans-Regular', fontSize: 11 }}>{text.length > 100 ? text.slice(0, 100) + '...' : text}</Text>} renderText={(text) => <Text style={{ fontFamily: 'NunitoSans-Bold', marginBottom: -40 }}>{''}</Text>} />
-                    : null) : null}
+                    : null) : null} */}
             {activity['videos'] ?
                 // videounload()
                 <InViewPort onChange={(value) => value ? videoload() : videounload()}>
@@ -434,7 +448,6 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                         switchToLandscape={() => videoRef.presentFullscreenPlayer()}
                         sliderColor={'#327FEB'}
                         inFullscreen={false}
-
                         onPlaybackStatusUpdate={updatePlaybackCallback}
                     />
                     {videostatus != 'Ready' ? <View style={{ backgroundColor: 'black', height: 340, width: width, position: 'absolute' }} /> : null}

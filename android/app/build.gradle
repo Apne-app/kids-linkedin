@@ -145,8 +145,8 @@ android {
         targetSdkVersion 29
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
-        versionCode 19
-        versionName '1.1.0'
+        versionCode 20
+        versionName '1.1.2'
         vectorDrawables.useSupportLibrary = true
     }
     splits {
@@ -223,6 +223,7 @@ dependencies {
     }
     implementation 'com.clevertap.android:clevertap-android-sdk:3.7.2'
     implementation 'com.google.android.gms:play-services-base:16.0.1'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.22'
     implementation 'com.google.firebase:firebase-messaging:17.3.3'
     implementation 'com.google.android.exoplayer:exoplayer:2.8.4' //Optional for Audio/Video
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.8.4' //Optional for Audio/Video
