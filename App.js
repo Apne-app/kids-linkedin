@@ -20,6 +20,7 @@ import IntroSlider from './screens/IntroSlider'
 import { TransitionPresets } from '@react-navigation/stack';
 import ClassScreen from './screens/ClassScreen'
 import PostScreen from './screens/PostScreen'
+import { LogBox } from 'react-native';
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import ImagePreview from './screens/ImagePreview'
@@ -70,6 +71,7 @@ import LikesList from './screens/LikesList';
 import TeacherProfile from './screens/TeacherProfile';
 
 console.ignoredYellowBox = ['Warning: Failed propType: SceneView'];
+LogBox.ignoreAllLogs()
 
 const App = (props) => {
   const notifierRef = useRef(null)

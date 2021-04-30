@@ -161,7 +161,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     layoutProvider={_layoutProvider}
                     renderFooter={() => more ? <><Text style={{ fontFamily: 'NunitoSans-Bold', textAlign: 'center', marginBottom: 40, display: more[feed_type] ? 'flex' : 'none' }}>That's it for now, come back later for more!</Text><View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View></> : <View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View>}
                     dataProvider={dataProvider}
-                    style={{ paddingTop: teacherprofile && !addclass ? 400 : profile && !addclass ? 300 : addclass ? 10 : 140, flex: 1 }}
+                    style={{ paddingTop: teacherprofile && !addclass ? 420 : profile && !addclass ? 300 : addclass ? 10 : 140, flex: 1 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
                         scrollY ? scrollY.setValue(e.nativeEvent.contentOffset.y) : null

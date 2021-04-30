@@ -141,15 +141,33 @@ const ClassScreen = ({ route, navigation }) => {
 
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || form.date;
-        // console.log(currentDate)
+        console.log("saadsad ", currentDate)
+        var timeType = 'am';
+        if(mode == 'time')
+        {
+            var time = JSON.stringify(currentDate).split('T')[1].split(':');
+            var hh = parseInt(time[0])
+            var mm = parseInt(time[1])
+            var ss = parseInt(time[2]);
+            mm += 30
+            var carry = Math.floor(mm / 60)
+            mm = mm % 60
+            // console.log( "1 hh: ", hh, " mm: ", mm, " carry: ", carry);
+            hh += 5 + carry;
+            hh = hh % 24
+            if(hh >= 12) {
+                timeType = 'pm';
+            }
+            // console.log("hh: ", hh, " mm: ", mm);
+        }
         var istTime = (new Date(currentDate.getTime())).customFormat("#DD#/#MM#/#YYYY# #hh#:#mm#:#ss#")
+        console.log("aaa: ", istTime)
         istTime = istTime.replace("/",'-')
         istTime = istTime.replace("/",'-')
         istTime = istTime.replace(" ", "T")
         istTime += 'Z'
-        // console.log(istTime)
         setShow(Platform.OS === 'ios');
-        mode == 'date' ? setform({ ...form, 'date': istTime }) : setform({ ...form, 'time': istTime })
+        mode == 'date' ? setform({ ...form, 'date': istTime }) : setform({ ...form, 'time': istTime.split('T')[1].split('Z')[0].split(':')[0] + ":" + istTime.split('T')[1].split('Z')[0].split(':')[1] + " " + timeType })
     };
     function randomStr(len, arr) {
         var ans = '';
@@ -260,6 +278,9 @@ const ClassScreen = ({ route, navigation }) => {
             alert('There was an error posting the class, please try again alter')
         }
     }
+
+    const months = ['Jan', 'Feb', "Mar", "April", 'May', 'June', 'July', "Aug", 'Sep', 'Oct', 'Nov', 'Dec']
+
     return (
         <View>
             <CompHeader screen={'Class'}
@@ -289,7 +310,7 @@ const ClassScreen = ({ route, navigation }) => {
                         theme={theme}
                         style={{ marginVertical: 10 }}
                         disabled
-                        value={JSON.stringify(form.date).split('T')[0].replace('"', '')}
+                        value={JSON.stringify(form.date).split('T')[0].replace('"', '').split('-')[0].length == 4 ? JSON.stringify(form.date).split('T')[0].replace('"', '').split('-')[2] + " " + months[parseInt(JSON.stringify(form.date).split('T')[0].replace('"', '').split('-')[1])-1] + " " + JSON.stringify(form.date).split('T')[0].replace('"', '').split('-')[0] : JSON.stringify(form.date).split('T')[0].replace('"', '').split('-')[0] + " " + months[parseInt(JSON.stringify(form.date).split('T')[0].replace('"', '').split('-')[1])-1] + " " + JSON.stringify(form.date).split('T')[0].replace('"', '').split('-')[2]}
                     // onChangeText={text => setText(text)}
                     />
                 </TouchableOpacity>
@@ -300,16 +321,16 @@ const ClassScreen = ({ route, navigation }) => {
                         theme={theme}
                         style={{ marginVertical: 10 }}
                         disabled
-                        value={JSON.stringify(form.time).split('T')[1].split('.')[0].slice(0, 5)}
+                        value={form.time}
                     // onChangeText={text => setText(text)}
                     />
                 </TouchableOpacity>
-                {console.log(form.date)}
                 {show && (
                     <DateTimePicker
                         testID="dateTimePicker"
                         value={new Date()}
                         mode={mode}
+                        is24Hour={false}
                         display="default"
                         onChange={onChange}
                     />

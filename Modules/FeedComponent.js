@@ -377,7 +377,7 @@ const FeedComponent = ({ props, status, children, navigation, item }) => {
                 {activity['class_time'] && activity['class_time'] && activity['class_date'] ?
                     <View style={{ marginRight: 8, marginLeft: 14, marginBottom: 10 }}>
                         <Text style={{ fontFamily: 'NunitoSans-Regular', color: '#327FEB' }}>
-                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + '@' + activity['class_time'].split('T')[1].split('.')[0].slice(0, 5)}
+                            Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + '@' + activity['class_time'].includes('T') ? activity['class_time'].split('T')[1].split('.')[0].slice(0, 5) : activity['class_time']}
                         </Text>
                     </View> : null}
             </TouchableWithoutFeedback>
