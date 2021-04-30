@@ -410,7 +410,9 @@ const App = (props) => {
     return <View style={{ backgroundColor: '#327feb' }} />
   }
   else {
-    SplashScreen.hide()
+    setTimeout(() => {
+      SplashScreen.hide()
+    }, 3000);
     return (
       <AuthContext.Provider value={authContext}>
         <NavigationContainer ref={containerRef}>

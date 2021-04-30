@@ -306,26 +306,31 @@ const SinglePostScreen = ({ navigation, route }) => {
             if (status == '3') {
                 if (children['0']['id'] === item['data']['comments_user_id']) {
                     return (
-                        <Swipeable
-                            ref={updateRef}
-                            friction={2}
-                            onSwipeableLeftWillOpen={false}
-                            leftThreshold={30}
-                            rightThreshold={40}
-                            renderRightActions={(progress) => <RenderRightActions progress={progress} comment_id={item['data']['comments_id']} />}>
-                            <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width }}>
+                        // <Swipeable
+                        //     ref={updateRef}
+                        //     friction={2}
+                        //     onSwipeableLeftWillOpen={false}
+                        //     leftThreshold={30}
+                        //     rightThreshold={40}
+                        //     renderRightActions={(progress) => <RenderRightActions progress={progress} comment_id={item['data']['comments_id']} />}>
+                        <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width - 10 }}>
+                            <TouchableOpacity onPress={() => navigation.navigate('TeacherProfile', { 'id': item['data']['comments_user_id'] })}>
                                 <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
-                                <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
-                                    {item['data']['comment']}
-                                </Text>
-                            </View>
-                        </Swipeable>
+                            </TouchableOpacity>
+                            <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
+                                {item['data']['comment']}
+                            </Text>
+                            <Icon onPress={()=>deleteComment(item['data']['comments_id'])} style={{ fontSize: 20, color: 'red' }} name="trash" type="Feather" />
+                        </View>
+                        // </Swipeable>
                     )
                 }
                 else {
                     return (
-                        <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width }}>
-                            <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                        <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width - 10 }}>
+                            <TouchableOpacity onPress={() => navigation.navigate('TeacherProfile', { 'id': item['data']['comments_user_id'] })}>
+                                <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                            </TouchableOpacity>
                             <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
                                 {item['data']['comment']}
                             </Text>
@@ -335,8 +340,10 @@ const SinglePostScreen = ({ navigation, route }) => {
             }
             else {
                 return (
-                    <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width }}>
-                        <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                    <View key={String(item.data.comments_id)} style={{ flexDirection: 'row', padding: 10, width: width - 10 }}>
+                        <TouchableOpacity onPress={() => navigation.navigate('TeacherProfile', { 'id': item['data']['comments_user_id'] })}>
+                            <FastImage source={{ uri: item['data']['comments_user_image'] }} style={{ width: 25, height: 25, borderRadius: 10000 }} />
+                        </TouchableOpacity>
                         <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
                             {item['data']['comment']}
                         </Text>
@@ -352,7 +359,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                     </TouchableWithoutFeedback>}
                     <Icon onPress={() => { setautofocus(true); setkey(String(parseInt(key) + 1)); oncommentclick() }} name="message-circle" type="Feather" style={{ fontSize: 28, marginLeft: 10, marginRight: 5 }} />
                     <Icon onPress={() => onShare('Hey! Check out this post by ' + activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1) + ' on the new Genio app: https://genio.app/post/' + activity['post_id'])} name="share-outline" type='MaterialCommunityIcons' style={{ fontSize: 28, marginLeft: 8, marginRight: -10, marginTop: -3 }} />
-                    <TouchableOpacity style={{ width: 50, marginLeft: route.params.type != 'comment'?'61%':'68%', alignItems: 'center' }}
+                    <TouchableOpacity style={{ width: 50, marginLeft: route.params.type != 'comment' ? '61%' : '68%', alignItems: 'center' }}
                         onPress={async () => {
                             var x = await AsyncStorage.getItem('children');
                             analytics.track('WhatsappShare', {
@@ -374,7 +381,6 @@ const SinglePostScreen = ({ navigation, route }) => {
                     <Text style={{ fontFamily: 'NunitoSans-SemiBold', marginLeft: 7, fontSize: 14, marginBottom: 2 }}>{activity['comments_count']} comments</Text>
                 </View>
                 <View style={{ height: 1, width: width, backgroundColor: 'grey', opacity: 0.1, marginTop: 8, marginBottom: 5 }} />
-
                 {loading ? <Image source={require('../assets/loading.gif')} style={{ width: 40, height: 40, marginLeft: 10 }} />
                     :
                     <FlatList
@@ -543,7 +549,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                         </Text>
                     </View> : null}
                 {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
-                {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 10, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.push('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
+                {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 5, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.push('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
                 {activity['images'] ?
                     <ImageView
                         key={'2'}
@@ -626,7 +632,7 @@ const SinglePostScreen = ({ navigation, route }) => {
             <View style={{ marginTop: 20, marginBottom: 100 }}>
                 <View style={{ flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                             <FastImage
                                 source={{
                                     uri: activity['user_image'],
@@ -635,7 +641,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                                 style={{ width: 60, height: 60, borderRadius: 10000, marginLeft: 20, marginRight: 15 }}
                             />
                         </TouchableWithoutFeedback>
-                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['user_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
+                        <TouchableWithoutFeedback onPress={() => { children ? (children[0]['id'] === activity['user_id'] ? navigation.navigate('Profile') : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') })) : navigation.push('IndProf', { data: { 'image': activity['user_image'], 'name': activity['user_name'], 'year': activity['user_year'], 'type': activity['acc_type'] }, 'id': activity['user_id'].replace('id', '') }) }}>
                             <View style={{ flexDirection: 'column', marginLeft: 5, width: width - 150 }}>
                                 <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 16, color: '#383838' }}>{activity['user_name'].charAt(0).toUpperCase() + activity['user_name'].slice(1)}</Text>
                                 <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: 'white', color: '#327FEB' }}>{activity['acc_type'] == 'Kid' ? String(year - parseInt(activity['user_year'])) + ' years old (Managed by parents)' : activity['acc_type']}</Text>

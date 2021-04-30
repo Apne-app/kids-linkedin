@@ -20,6 +20,7 @@ import CompButton from '../Modules/CompButton'
 import LikeButton from '../components/LikeButton'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Chip } from 'react-native-paper';
 import { ActionSheetCustom as ActionSheet } from 'react-native-actionsheet'
 import { SliderBox } from "react-native-image-slider-box";
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -34,10 +35,11 @@ const TeacherProfile = ({ navigation, route }) => {
     var children = route.params.children
     const status = route.params.status
     const [key, setkey] = React.useState('1');
-    const [profile, setprofile] = React.useState({ phone: '', website: '', fb: '', linkedin: '', email: '', name: 'loading...', type: 'loading...' });
+    const [profile, setprofile] = React.useState({ phone: '', website: '', fb: '', linkedin: '', email: '', category: '', name: '' });
     const [data, setdata] = useState({ mentions: [], classes: [], posts: [] })
     const [classes, setclasses] = useState([])
     const [index, setIndex] = useState(0);
+    const [following, setFollowing] = useState(false);
     const [follow, setfollow] = useState({ 'followers': 0, 'following': 0 })
     const [refreshing, setrefreshing] = useState({ 'mentions': false, 'posts': false, 'classes': false })
     const [routes, setRoutes] = React.useState([
@@ -46,10 +48,10 @@ const TeacherProfile = ({ navigation, route }) => {
         { key: 'classes', title: 'Classes' },
     ]);
     const scrollY = useRef(new Animated.Value(0)).current;
-    const diffClamp = Animated.diffClamp(scrollY, 0, 350);
+    const diffClamp = Animated.diffClamp(scrollY, 0, 3650);
     const y = diffClamp.interpolate({
-        inputRange: [0, 350],
-        outputRange: [0, -350],
+        inputRange: [0, 365],
+        outputRange: [0, -365],
         extrapolateRight: 'clamp',
     });
     function titleCase(str) {
@@ -77,6 +79,74 @@ const TeacherProfile = ({ navigation, route }) => {
         }, []));
 
     useEffect(() => {
+
+        const getProfile = async () => {
+            let pro = await AsyncStorage.getItem('children')
+            pro = JSON.parse(pro)
+            console.log(children)
+            if (!pro) {
+                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+                var config = {
+                    method: 'post',
+                    url: 'https://api.genio.app/dark-knight/getToken',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+                };
+
+                axios(config)
+                    .then(function (response) {
+                        const url = 'https://api.genio.app/matrix/teacherprofile/'
+                        let data = JSON.stringify({ 'id': route.params.id })
+                        axios({
+                            method: 'post',
+                            url: url + `?token=${response.data.token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: data
+                        }).then(async (response2) => {
+                            setprofile(response2.data.data)
+                        }).catch(async (error) => {
+                            console.log(error)
+                        })
+                    })
+            }
+            else {
+                var data = JSON.stringify({
+                    "user_id": route.params.id,
+                    "curr_id": pro["0"]["id"]
+                });
+                // console.log(data)
+
+                var config = {
+                    method: 'post',
+                    url: 'https://api.genio.app/sherlock/getprofile',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+                };
+
+                axios(config)
+                    .then(function (response) {
+                        //   let data = JSON.parse(response)
+                        console.log(response.data)
+                        setprofile(response.data['data'])
+                        setFollowing(response.data['follows'])
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+
+        }
+        getProfile()
+
+    }, [])
+
+    useEffect(() => {
         const analyse = async () => {
             var x = route.params.children;
             if (x) {
@@ -99,35 +169,37 @@ const TeacherProfile = ({ navigation, route }) => {
         }
         analyse();
     }, [])
-    useEffect(() => {
-        var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-        var config = {
-            method: 'post',
-            url: 'https://api.genio.app/dark-knight/getToken',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: data
-        };
+    // useEffect(() => {
+    //     if (profile.type === 'Teacher') {
+    //         var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+    //         var config = {
+    //             method: 'post',
+    //             url: 'https://api.genio.app/dark-knight/getToken',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             data: data
+    //         };
 
-        axios(config)
-            .then(function (response) {
-                const url = 'https://api.genio.app/matrix/teacherprofile/'
-                let data = JSON.stringify({ 'id': route.params.id })
-                axios({
-                    method: 'post',
-                    url: url + `?token=${response.data.token}`,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    data: data
-                }).then(async (response2) => {
-                    setprofile(response2.data.data)
-                }).catch(async (error) => {
-                    console.log(error)
-                })
-            })
-    }, [])
+    //         axios(config)
+    //             .then(function (response) {
+    //                 const url = 'https://api.genio.app/matrix/teacherprofile/'
+    //                 let data = JSON.stringify({ 'id': route.params.id })
+    //                 axios({
+    //                     method: 'post',
+    //                     url: url + `?token=${response.data.token}`,
+    //                     headers: {
+    //                         'Content-Type': 'application/json'
+    //                     },
+    //                     data: data
+    //                 }).then(async (response2) => {
+    //                     setprofile(response2.data.data)
+    //                 }).catch(async (error) => {
+    //                     console.log(error)
+    //                 })
+    //             })
+    //     }
+    // }, [])
     useEffect(() => {
         axios.post('http://mr_robot.api.genio.app/profile', {
             'profile_id': route.params.id,
@@ -192,7 +264,6 @@ const TeacherProfile = ({ navigation, route }) => {
         }).catch((error) => {
             console.log(error)
         })
-
     }, [])
     const refProfileSheet = useRef(null);
     const showProfileSheet = () => {
@@ -244,7 +315,58 @@ const TeacherProfile = ({ navigation, route }) => {
             });
 
     }
-    console.log(data['posts'].length)
+
+    const followButtonHandle = async () => {
+        let profile = await AsyncStorage.getItem('children')
+        profile = JSON.parse(profile)
+        if (!following) {
+            var data = JSON.stringify({
+                "user_id": route.params.id,
+                "curr_id": profile["0"]["id"]
+            });
+
+            var config = {
+                method: 'post',
+                url: 'https://api.genio.app/barry/follow',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+
+            axios(config)
+                .then(function (response) {
+                    // console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        else {
+            var data = JSON.stringify({
+                "user_id": route.params.id,
+                "curr_id": profile["0"]["id"]
+            });
+
+            var config = {
+                method: 'post',
+                url: 'https://api.genio.app/barry/unfollow',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+
+            axios(config)
+                .then(function (response) {
+                    // console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        setFollowing(!following)
+    }
 
     const reportProfile = async () => {
 
@@ -268,7 +390,7 @@ const TeacherProfile = ({ navigation, route }) => {
             "created_by_name": q ? q['email'] : 'nonloggedin',
             "created_by_child": children ? children["0"]["id"] : 'nonloggedin',
             "reported_id": route['params']['id'],
-            "reported_name": profile.name,
+            "reported_name": profile['name'],
             "reported_time": datetime,
         }
 
@@ -317,9 +439,10 @@ const TeacherProfile = ({ navigation, route }) => {
     }
     const shareProfile = async () => {
         try {
+            var cat = profile['type'] == 'Teacher' && profile.category && profile.category != 'others' ? titleCase(String(profile['category'][0])) : "";
             const result = await Share.share({
                 message:
-                    "Check out this fantastic " + profile.type + "'s profile on Genio!: https://genio.app/profile/" + route.params.id,
+                    `Check out ${titleCase(profile['name'])}'s fantastic ${cat} profile on Genio!: https://genio.app/profile/` + route.params.id,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -346,6 +469,23 @@ const TeacherProfile = ({ navigation, route }) => {
                 return null;
         }
     };
+    const Tags = () => {
+        if (profile.category) {
+            return (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: -5, marginLeft: 15, marginBottom: 10 }}>
+                    {profile.category.map((item) => {
+                        return (
+                            <View style={{ backgroundColor: 'white', borderRadius: 5, paddingHorizontal: 8, marginHorizontal: 5, marginTop: 5, borderColor: '#327FEB', borderWidth: 0.5 }}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', color: '#327FEB', textAlignVertical: 'center' }}>{titleCase(item)}</Text>
+                            </View>
+                        )
+                    })}
+                </View>
+            )
+        } else {
+            return <View />
+        }
+    }
     const renderTabBar = (props) => {
         const tabY = scrollY.interpolate({
             inputRange: [0, 350],
@@ -356,7 +496,7 @@ const TeacherProfile = ({ navigation, route }) => {
                 style={{
                     transform: [{ translateY: y }],
                     position: 'absolute',
-                    marginTop: 345,
+                    marginTop: 360,
                     zIndex: 5
                 }}>
                 <TabBar
@@ -394,17 +534,40 @@ const TeacherProfile = ({ navigation, route }) => {
                 <ScreenHeader goback={() => navigation.pop()} left={true} screen={'Profile'} icon={'more-vertical'} fun={() => status == '3' ? showProfileSheet() : navigation.navigate('Login', { type: 'indprofile_settings' })} />
                 <View style={{ zIndex: 1000, backgroundColor: '#f2f2f2', position: 'absolute', marginTop: 80, width: width }}>
                     <View style={{ marginTop: 30, flexDirection: 'row', height: 80, zIndex: 1000 }}>
-                        <Image
-                            source={{ uri: profile['image'] }}
-                            style={{ width: 80, height: 80, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
-                        />
-                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 10, flexWrap: 'wrap' }}>
-                            <View style={{ flexDirection: 'row', }}>
-                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20 }}>{titleCase(profile['name'])}</Text>
+                        <View style={{ flexDirection: 'column' }}>
+                            <Image
+                                source={{ uri: profile['image'] ? profile['image'] : profile['profileImage'] }}
+                                style={{ width: 70, height: 70, borderRadius: 306, marginLeft: 30, backgroundColor: 'lightgrey' }}
+                            />
+                            <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, backgroundColor: '#327FEB', textAlign: 'center', color: 'white', paddingHorizontal: 10, alignSelf: 'center', marginLeft: 30, borderRadius: 5, marginTop: -8, height: 27, paddingTop: 2 }}>{profile['type']}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'column', marginLeft: 20, marginTop: 0, }}>
+                            <View style={{}}>
+                                <Text style={{ fontFamily: 'NunitoSans-Bold', fontSize: 20, width: width - 100 }}>{titleCase(profile['name'])}</Text>
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{profile.type}</Text>
-                            </View>
+                            {/* <Text style={{ fontFamily: 'NunitoSans-SemiBold', fontSize: 13, color: '#327FEB', textAlign: 'center', }}>{profile ? profile.type : null} {profile['type'] == 'Teacher' && profile.category && profile.category != 'others' ? "( " + titleCase(String(profile['category'].join().replace(",", ", ").length > 26 ? profile['category'].join().replace(",", ", ").substring(0, 26) + "..." : profile['category'].join().replace(",", ", "))) + " )" : ""}</Text> */}
+                            {children ? <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity
+                                    onPress={async () => {
+                                        followButtonHandle();
+                                    }}
+                                >
+                                    <Chip style={{ backgroundColor: following ? '#327feb' : "#fff", borderWidth: following ? 0 : 1, borderColor: '#327feb', height: 31, borderRadius: 5, marginTop: 8 }} textStyle={{ color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold', alignSelf: 'center', marginTop: 0 }}>
+                                        {following ? 'Following' : 'Follow'}
+                                    </Chip>
+                                </TouchableOpacity>
+                            </View> : null}
+                            {/* {children ? <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity
+                                    onPress={async () => {
+                                        followButtonHandle();
+                                    }}
+                                >
+                                    <Chip style={{ backgroundColor: following ? '#327feb' : "#fff", marginLeft: 10, padding: 1, borderWidth: following ? 0 : 1, borderColor: '#327feb' }} textStyle={{ color: following ? '#fff' : '#327feb', fontFamily: 'NunitoSans-SemiBold' }}>
+                                        {following ? 'Following' : 'Follow'}
+                                    </Chip>
+                                </TouchableOpacity>
+                            </View> : null} */}
                         </View>
                     </View>
                     <View style={{ backgroundColor: 'white', width: width - 40, alignSelf: 'center', height: 60, borderRadius: 10, marginTop: 20, marginBottom: 20, zIndex: 1000 }}>
@@ -425,10 +588,10 @@ const TeacherProfile = ({ navigation, route }) => {
                     </View>
                     {
                         profile['type'] === 'Teacher' ?
-                            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 10, marginBottom: 10, zIndex: 1000, flexDirection: 'row' }}>
+                            <View style={{ width: width - 40, alignSelf: 'center', height: 40, borderRadius: 10, marginTop: 0, marginBottom: 4, zIndex: 1000, flexDirection: 'row' }}>
                                 {
                                     profile['phone'] != '' ?
-                                        <TouchableOpacity onPress={() => Linking.openURL("tel://" + profile['phone'])}>
+                                        <TouchableOpacity onPress={() => Linking.openURL("tel://" + "+" + profile['phone'])}>
                                             <Icon type="Feather" style={{ marginHorizontal: 10 }} name='phone' />
                                         </TouchableOpacity>
                                         : null
@@ -466,8 +629,11 @@ const TeacherProfile = ({ navigation, route }) => {
                                         <Icon type="MaterialIcons" style={{ marginHorizontal: 10 }} name='share' />
                                     </TouchableOpacity>
                                 }
-                            </View> : null
+                            </View>
+                            :
+                            null
                     }
+                    {profile['type'] == 'Teacher' ? <Tags /> : null}
                 </View>
             </Animated.View>
             {profile.type === 'Teacher' ? <TabView
