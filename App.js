@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StatusBar, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StatusBar, Image, TouchableOpacity, Linking } from 'react-native';
 import { Container, Header, Content, Icon } from 'native-base';
 import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import AuthContext from './Context/Data';
@@ -20,6 +20,7 @@ import IntroSlider from './screens/IntroSlider'
 import { TransitionPresets } from '@react-navigation/stack';
 import ClassScreen from './screens/ClassScreen'
 import PostScreen from './screens/PostScreen'
+import ReferralScreen from './screens/ReferralScreen'
 import { LogBox } from 'react-native';
 import ServiceScreen from './screens/ServiceScreen'
 import ProfileScreen from './screens/ProfileScreen'
@@ -55,6 +56,7 @@ import KidsAge from './screens/KidsAge';
 import SplashScreen from 'react-native-splash-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import analytics from '@segment/analytics-react-native'
+import { getUniqueId, getManufacturer } from 'react-native-device-info';
 import codePush from "react-native-code-push";
 import { NotifierRoot, Easing, Notifier } from 'react-native-notifier';
 import UpdateScreen from './screens/UpdateScreen'
@@ -83,6 +85,7 @@ const App = (props) => {
   const [camerastatus, setCameraStatus] = useState(null);
   const [notifications, setnotifications] = useState({})
   const [newnoti, setnewnoti] = useState([])
+  const containerRef = React.useRef();
   var data = { children: children, status: status, profile: profile, joined: joined, notifications: notifications, newnoti: newnoti, camerastatus: camerastatus }
   const onReceived = (notification) => {
     console.log("Notification received: ", notification);
@@ -94,7 +97,37 @@ const App = (props) => {
     console.log('isActive: ', openResult.notification.isAppInFocus);
     console.log('openResult: ', openResult);
   }
-
+  const getdeeplink = async (url) => {
+    var link = url
+    console.log(link.url)
+    var pro = await AsyncStorage.getItem('profile')
+    if (pro) {
+      pro = JSON.parse(pro)
+      if (link.url.includes(pro.uuid)) {
+        containerRef.current?.navigate('Verified')
+        setinit('Verified')
+      }
+    }
+    if (link.url.includes('verify')) {
+      containerRef.current?.navigate('Unverified')
+    }
+    if (link.url.includes('post')) {
+      var id = link.url
+      id = id.replace('https://link.genio.app/post?id=', '')
+      id = id.replace('https://genio.app/post/', '')
+      containerRef.current?.navigate('SharedPost', {
+        id: id,
+      })
+    };
+    if (link.url.includes('teacher') || link.url.includes('profile')) {
+      var id = link.url
+      id = id.replace('https://link.genio.app/teacher?id=', '')
+      id = id.replace('https://genio.app/profile/', '')
+      containerRef.current?.navigate('TeacherProfile', {
+        id: id,
+      })
+    };
+  }
   const onIds = (device) => {
     // console.log('Device info: ', device);
   }
@@ -108,6 +141,7 @@ const App = (props) => {
     OneSignal.addEventListener('received', onReceived);
     OneSignal.addEventListener('opened', onOpened);
     OneSignal.addEventListener('ids', onIds);
+    Linking.addEventListener('url', getdeeplink);
     []
   })
   useEffect(() => {
@@ -115,12 +149,12 @@ const App = (props) => {
       OneSignal.removeEventListener('received', onReceived);
       OneSignal.removeEventListener('opened', onOpened);
       OneSignal.removeEventListener('ids', onIds);
+      Linking.removeEventListener('url', getdeeplink);
     }
     return (
       hello
     )
   })
-  const containerRef = React.useRef();
 
 
   function Bottom(props) {
@@ -224,6 +258,45 @@ const App = (props) => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
+        if (link.url.includes('referral')) {
+          var ref_id = link.url.replace('https://genio.app?referral=', '')
+          var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+          var config = {
+            method: 'post',
+            url: 'https://api.genio.app/dark-knight/getToken',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            data: data
+          };
+          var token = ''
+          axios(config)
+            .then(function (response) {
+              const url = 'https://api.genio.app/get-out/referral';
+              let data = '';
+              data = JSON.stringify({
+                "ref_id": ref_id,
+                "dev_id": getUniqueId(),
+                "user_id": '',
+              })
+              token = response.data.token
+              axios({
+                method: 'post',
+                url: url + `?token=${token}`,
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                data: data
+              }).then(async (response) => {
+              }).catch((error) => {
+                console.log(error)
+              })
+
+            }).catch((error) => {
+              console.log(error)
+
+            })
+        }
         var pro = await AsyncStorage.getItem('profile')
         if (pro) {
           pro = JSON.parse(pro)
@@ -256,8 +329,84 @@ const App = (props) => {
       }
       )
   }, []);
+
+  useEffect(() => {
+    const deeplink = async () => {
+      var url = await Linking.getInitialURL()
+      var link = url
+      var pro = await AsyncStorage.getItem('profile')
+      if (pro) {
+        pro = JSON.parse(pro)
+        if (link.url.includes(pro.uuid)) {
+          containerRef.current?.navigate('Verified')
+          setinit('Verified')
+        }
+      }
+      if (link.url.includes('verify')) {
+        containerRef.current?.navigate('Unverified')
+      }
+      if (link.url.includes('post')) {
+        var id = link.url
+        id = id.replace('https://link.genio.app/post?id=', '')
+        id = id.replace('https://genio.app/post/', '')
+        containerRef.current?.navigate('SharedPost', {
+          id: id,
+        })
+      };
+      if (link.url.includes('teacher') || link.url.includes('profile')) {
+        var id = link.url
+        id = id.replace('https://link.genio.app/teacher?id=', '')
+        id = id.replace('https://genio.app/profile/', '')
+        containerRef.current?.navigate('TeacherProfile', {
+          id: id,
+        })
+      };
+    }
+    deeplink()
+
+  }, []);
   // setInitialNavigationState(await getInitialState());
   const handleDynamicLink = async (link) => {
+    if (link.url.includes('referral')) {
+      var ref_id = link.url.replace('https://genio.app?referral=', '')
+      AsyncStorage.setItem('referral', ref_id)
+      var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+      var config = {
+        method: 'post',
+        url: 'https://api.genio.app/dark-knight/getToken',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: data
+      };
+      var token = ''
+      axios(config)
+        .then(function (response) {
+          const url = 'https://api.genio.app/get-out/referral';
+          let data = '';
+          data = JSON.stringify({
+            "ref_id": ref_id,
+            "dev_id": getUniqueId(),
+            "user_id": '',
+          })
+          token = response.data.token
+          axios({
+            method: 'post',
+            url: url + `?token=${token}`,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            data: data
+          }).then(async (response) => {
+          }).catch((error) => {
+            console.log(error)
+          })
+
+        }).catch((error) => {
+          console.log(error)
+
+        })
+    }
     var pro = await AsyncStorage.getItem('profile')
     if (pro) {
       pro = JSON.parse(pro)
@@ -452,6 +601,7 @@ const App = (props) => {
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="SharedPost" component={SharedPost} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="LikesList" component={LikesList} />
             <Stack.Screen initialParams={data} options={{ headerShown: false }} name="TeacherProfile" component={TeacherProfile} />
+            <Stack.Screen initialParams={data} options={{ headerShown: false }} name="ReferralScreen" component={ReferralScreen} />
             <Stack.Screen initialParams={data} options={{ headerShown: false, gestureDirection: 'vertical', transitionSpec: { open: { animation: 'timing', config: { duration: 400 } }, close: { animation: 'timing', config: { duration: 400 } } } }} name="TagScreen" component={TagScreen} />
           </Stack.Navigator>
           <NotifierRoot ref={notifierRef} />

@@ -123,7 +123,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
                         axios(config)
                             .then(async (response) => {
-                                var pro = route.params.profile
+                                var pro = JSON.parse(await AsyncStorage.getItem('profile'))
                                 var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
                                 var config = {
                                     method: 'post',
@@ -133,7 +133,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                     },
                                     data: data
                                 };
-
+                                console.log(pro)
                                 axios(config)
                                     .then(function (response) {
                                         // console.log(JSON.stringify(response.data.token));
@@ -148,6 +148,7 @@ const ProfileScreen = ({ navigation, route }) => {
                                             })
                                         })
                                             .then(async (response) => {
+                                                console.log(response.data)
                                                 var resp = response.data
                                                 resp[0]['data']['image'] = 'https://d5c8j8afeo6fv.cloudfront.net/' + name
                                                 await AsyncStorage.setItem('children', JSON.stringify(resp))

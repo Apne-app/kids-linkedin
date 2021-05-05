@@ -9,6 +9,8 @@ buildscript {
 
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 import com.android.build.OutputFile
 
@@ -145,8 +147,8 @@ android {
         targetSdkVersion 29
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
-        versionCode 20
-        versionName '1.1.2'
+        versionCode 22
+        versionName '1.1.3'
         vectorDrawables.useSupportLibrary = true
     }
     splits {
@@ -241,7 +243,6 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
-    apply plugin: 'com.google.gms.google-services'
     if (enableHermes) {
         def hermesPath = '../../node_modules/hermes-engine/android/'
         debugImplementation files(hermesPath + 'hermes-debug.aar')

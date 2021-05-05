@@ -93,7 +93,7 @@ const FeedScreen = ({ navigation, route }) => {
                     var noti = await AsyncStorage.getItem('notifications');
                     var arr = []
                     if (noti) {
-                        noti  = JSON.parse(noti)
+                        noti = JSON.parse(noti)
                         var data1 = Object.keys(noti).reverse()
                         var data2 = Object.keys(data.data).reverse()
                         for (var i = 0; i < data2.length; i++) {
@@ -187,6 +187,7 @@ const FeedScreen = ({ navigation, route }) => {
                     }).then(async (response) => {
                         var place = data
                         place[item] = response.data.data
+                        place[item].unshift({ 'type': 'header', data: { 'post_id': '123efg' } })
                         await setdata(place)
                         await setkey(String(parseInt(key) + 1))
                         var min_following = mintimestamp
@@ -202,7 +203,7 @@ const FeedScreen = ({ navigation, route }) => {
                         place[item] = response.data.data.length
                         setnumber(place)
                     }).catch((response) => {
-                        console.log(Object.keys(response))
+                        console.log(response)
                     })
                 }
             })
@@ -233,6 +234,7 @@ const FeedScreen = ({ navigation, route }) => {
             }).then(async (response) => {
                 var place = data
                 load_more ? place[feed_type] = place[feed_type].concat(response.data.data) : place[feed_type] = response.data.data
+                load_more ? null : place[feed_type].unshift({ 'type': 'header', data: { 'post_id': '123efg' } })
                 setdata(place)
                 var min_following = min_time[feed_type]
                 response.data.data.map((item) => {

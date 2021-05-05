@@ -203,6 +203,46 @@ const ChildScreen = ({ route, navigation }) => {
                                     })
                                     console.log("Added Child: ", response1.data);
                                     await AsyncStorage.setItem('children', JSON.stringify(response1.data))
+                                    var referral = await AsyncStorage.getItem('referral')
+                                    if (referral) {
+                                        console.log(referral)
+                                        var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+                                        var config = {
+                                            method: 'post',
+                                            url: 'https://api.genio.app/dark-knight/getToken',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            data: data
+                                        };
+                                        var token = ''
+                                        axios(config)
+                                            .then(function (datatoken) {
+                                                const url = 'https://api.genio.app/get-out/referral';
+                                                let data = '';
+                                                data = JSON.stringify({
+                                                    "ref_id": referral,
+                                                    "dev_id": getUniqueId(),
+                                                    "user_id": response1.data['0']['id'],
+                                                })
+                                                token = datatoken.data.token
+                                                axios({
+                                                    method: 'post',
+                                                    url: url + `?token=${token}`,
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    data: data
+                                                }).then(async () => {
+                                                }).catch((error) => {
+                                                    console.log(error)
+                                                })
+
+                                            }).catch((error) => {
+                                                console.log(error)
+
+                                            })
+                                    }
                                     Update({ children: response1.data, status: '3', profile: pro, notifications: {} })
                                     navigation.navigate('ChildSuccess')
                                 }
@@ -253,12 +293,12 @@ const ChildScreen = ({ route, navigation }) => {
         }
         else if (current == 1) {
             return (
-                <TextInput value={name} onChangeText={(text) => { setname(text); setactive(false) }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
+                <TextInput value={name} onChangeText={(text) => { setname(text); setactive(false) }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 5 }}></TextInput>
             )
         }
         else if (current == 2) {
             return (
-                <TextInput keyboardType='numeric' value={year} onChangeText={(text) => { setyear(text); setactive(false) }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 1 }}></TextInput>
+                <TextInput keyboardType='numeric' value={year} onChangeText={(text) => { setyear(text); setactive(false) }} style={{ display: 'flex', width: width - 40, borderRadius: 28.5, backgroundColor: 'white', fontSize: 16, paddingLeft: 20, shadowColor: '', fontFamily: 'NunitoSans-Regular', alignSelf: 'center', height: 55, elevation: 5 }}></TextInput>
             )
         }
     }
@@ -278,46 +318,49 @@ const ChildScreen = ({ route, navigation }) => {
                             <Text style={{ color: "red", fontFamily: 'NunitoSans-Bold', fontSize: 12, marginTop: 4, display: active ? 'flex' : 'none', marginLeft: 20 }}>{text}</Text>
                         </View>
                         <View style={{ alignSelf: 'center', display: current ? 'flex' : 'none', flexDirection: 'row', marginTop: 20 }}>
-                            <ButtonSpinner
-                                style={{
-                                    borderRadius: 28.5,
-                                    alignSelf: 'center',
-                                    backgroundColor: '#327FEB',
-                                    height: 36,
-                                    marginRight: 20,
-                                }}
-                                disabled={Loading}
-                                onPress={() => {
-                                    setcurrent(current - 1);
-                                    setactive(false)
-                                }}
-                            >
-                                <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Back</Text>
-                                {/* <Text style={styles.buttonText}>Next</Text> */}
-                            </ButtonSpinner>
-                            <ButtonSpinner
-                                style={{
-                                    borderRadius: 28.5,
-                                    width: 130,
-                                    alignSelf: 'center',
-                                    backgroundColor: '#327FEB',
-                                    height: 36
-                                }}
-                                disabled={Loading}
-                                onPress={() => {
-                                    api()
-                                }}
-                            >
-                                <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
-                                {/* <Text style={styles.buttonText}>Next</Text> */}
-                            </ButtonSpinner>
+                            {!Loading &&
+                                <><ButtonSpinner
+                                    style={{
+                                        borderRadius: 28.5,
+                                        alignSelf: 'center',
+                                        backgroundColor: '#327FEB',
+                                        height: 36,
+                                        marginRight: 20,
+                                    }}
+                                    disabled={Loading}
+                                    onPress={() => {
+                                        setcurrent(current - 1);
+                                        setactive(false)
+                                    }}
+                                >
+                                    <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Back</Text>
+                                    {/* <Text style={styles.buttonText}>Next</Text> */}
+                                </ButtonSpinner>
+                                    <ButtonSpinner
+                                        style={{
+                                            borderRadius: 28.5,
+                                            width: 130,
+                                            alignSelf: 'center',
+                                            backgroundColor: '#327FEB',
+                                            height: 36
+                                        }}
+                                        disabled={Loading}
+                                        onPress={() => {
+                                            api()
+                                        }}
+                                    >
+                                        <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 18, marginTop: 0 }}>Next</Text>
+                                        {/* <Text style={styles.buttonText}>Next</Text> */}
+                                    </ButtonSpinner>
+                                </>
+                            }
                         </View>
                     </View>
                 </KeyboardAvoidingView>
             </ScrollView>
-            <TouchableOpacity onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(route.params ? route.params.screen : 'Home') }} block dark style={{ marginBottom: 20 }}>
+            {!Loading ? <TouchableOpacity onPress={async () => { await AsyncStorage.setItem('status', '1'), navigation.navigate(route.params ? route.params.screen : 'Home') }} block dark style={{ marginBottom: 20 }}>
                 <Text style={{ color: "#000", fontFamily: 'NunitoSans-SemiBold', fontSize: 18, marginTop: 10, alignSelf: 'center', textDecorationLine: 'underline' }}>Continue as guest</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> : <Image source={require('../assets/loading.gif')} style={{ width: 200, height: 200, alignSelf: 'center' }} />}
         </View>
     );
 }
@@ -343,7 +386,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#efefef',
+        backgroundColor: 'white',
     },
     buttonText: {
         fontSize: 20,

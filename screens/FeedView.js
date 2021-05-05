@@ -2,7 +2,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import FastImage from 'react-native-fast-image';
-import { SafeAreaView, FlatList, View, Text, Dimensions, Animated, TouchableOpacity, useWindowDimensions, RefreshControl, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native'
+import { SafeAreaView, FlatList, View, Text, Dimensions, Animated, useWindowDimensions, RefreshControl, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 import FeedComponent from '../Modules/FeedComponent'
 import PostLoader from '../Modules/PostLoader'
 import CompButton from '../Modules/CompButton'
@@ -21,7 +22,13 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     //     return ans;
     // }
     const ref = React.useRef(null);
-
+    const Header = () => {
+        return (
+            <TouchableOpacity onPress={() => status != '3' ? navigation.navigate('Login', { screen: 'Feed', type: 'feed_banner' }) : navigation.navigate('ReferralScreen')}>
+                <CompButton message={status != '3' ? 'Signup/Login to explore what other kids are learning' : 'Invite users to join the Genio community!'} />
+            </TouchableOpacity>
+        )
+    }
     useScrollToTop(ref);
 
     const ViewTypes = {
@@ -34,9 +41,13 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
         CLASS_NO_IMAGE: 6,
         YOUTUBE: 7,
         CLASS_IMAGE: 8,
+        HEADER: 9,
     };
     const _layoutProvider = new LayoutProvider(
         index => {
+            if (data[index]['type'] == 'header') {
+                return ViewTypes.HEADER;
+            }
             if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['link'].length > 4 : 0 || data[index]['data']['youtube'] ? data[index]['data']['youtube'].length > 4 : 0) {
                 if (data[index]['data']['category'] === 'class' && data[index]['data']['images'].length < 4) {
                     return ViewTypes.CLASS_NO_IMAGE;
@@ -81,6 +92,10 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     dim.width = width;
                     dim.height = 450;
                     break;
+                case ViewTypes.HEADER:
+                    dim.width = width;
+                    dim.height = 50;
+                    break;
                 case ViewTypes.INSPIRE:
                     dim.width = width;
                     dim.height = 600;
@@ -114,7 +129,16 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     );
     const _rowRenderer = (type, data) => {
         //You can return any view here, CellContainer has no special significance
-        return (<FeedComponent key={data['data']['post_id']} status={status} children={children} item={{ item: data }} navigation={navigation} />)
+        if (data['type'] != 'header') {
+            return (
+                <FeedComponent key={data['data']['post_id']} status={status} children={children} item={{ item: data }} navigation={navigation} />
+            )
+        }
+        else {
+            return (
+                <Header />
+            )
+        }
     }
 
 

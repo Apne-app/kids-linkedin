@@ -188,7 +188,7 @@ const Settings = ({ navigation, route }) => {
         var pro = await AsyncStorage.getItem('profile')
         pro = JSON.parse(pro)
         child = JSON.parse(child)[0]
-        var data = JSON.stringify({ "user_id": child.id, "change": "name", "name": newname.toLowerCase(), "image":'' });
+        var data = JSON.stringify({ "user_id": child.id, "change": "name", "name": newname.toLowerCase(), "image": '' });
         var data1 = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
         var token = '';
         var config1 = {
@@ -261,8 +261,8 @@ const Settings = ({ navigation, route }) => {
                     <View >
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold" }}>Kid's Name</Text>
                         <TextInput editable={status === '3' ? true : false} keyboardType={'name-phone-pad'} value={status === '3' ? newname == 'default123' ? children['0']['data']['name'][0].toUpperCase() + children['0']['data']['name'].substring(1) : newname : 'Login to edit Kid\'s Name'} onChangeText={(text) => { setnewname(text); setchange(false) }} editable={status === '3' ? true : false} placeholder={status === '3' ? '' : 'Please Login to edit Kid\'s Name'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
-                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, display: newname === 'default123' || change ? 'none' : 'flex' }} onPress={() => !loading?save():null} >
-                            {!loading?<Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text>:<Image style={{width:40, height:40}} source={require('../assets/log_loader.gif')} />}
+                        <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: 'white', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, display: newname === 'default123' || change ? 'none' : 'flex' }} onPress={() => !loading ? save() : null} >
+                            {!loading ? <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Save'}</Text> : <Image style={{ width: 40, height: 40 }} source={require('../assets/log_loader.gif')} />}
                         </Button>
                         <Text style={{ fontSize: 16, fontFamily: "NunitoSans-SemiBold", marginTop: 35 }}>Kid's Year of Birth</Text>
                         <TextInput editable={false} placeholder={status === '3' ? String(children['0']['data']['year']) : 'Login to edit Kid\'s Year of birth'} placeholderTextColor={status === '3' ? 'grey' : 'lightgrey'} style={{ height: 55, backgroundColor: 'white', borderRadius: 27.5, marginTop: 15, color: 'black', fontFamily: 'NunitoSans-Regular', paddingHorizontal: 20 }} />
@@ -271,7 +271,10 @@ const Settings = ({ navigation, route }) => {
                         <Right style={{ marginRight: 40 }}><Switch value={isSwitchOn} onValueChange={onToggleSwitch} color={'#327FEB'} /></Right>
                     </View>*/}
                     </View>
-                    <View style={{ flexDirection: 'column', marginTop: '40%' }}>
+                    <View style={{ flexDirection: 'column', marginTop: '31%' }}>
+                        {status === '3' && <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={() => navigation.navigate('ReferralScreen')} >
+                            <Text style={{ color: "white", fontFamily: 'NunitoSans-Bold', fontSize: 17 }}>{'Invite Users'}</Text>
+                        </Button>}
                         <Button block rounded iconLeft style={{ marginTop: 20, flex: 1, borderColor: '#327FEB', backgroundColor: '#327FEB', borderWidth: 1, borderRadius: 25, height: 57, }} onPress={async () => {
                             sheetRef.current.snapTo(0);
                             var x = await AsyncStorage.getItem('children');
