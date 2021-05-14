@@ -320,7 +320,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                             <Text style={{ fontSize: 13, color: 'black', paddingLeft: 10, fontFamily: 'NunitoSans-Regular' }}>
                                 {item['data']['comment']}
                             </Text>
-                            <Icon onPress={()=>deleteComment(item['data']['comments_id'])} style={{ fontSize: 20, color: 'red' }} name="trash" type="Feather" />
+                            <Icon onPress={() => deleteComment(item['data']['comments_id'])} style={{ fontSize: 20, color: 'red' }} name="trash" type="Feather" />
                         </View>
                         // </Swipeable>
                     )
@@ -548,7 +548,7 @@ const SinglePostScreen = ({ navigation, route }) => {
                             Timings: {String(class_date.getDate()) + ' ' + monthNames[class_date.getMonth()] + ' ' + String(class_date.getFullYear()) + ' @ ' + (!activity['class_time'].includes('am') && !activity['class_time'].includes('pm') ? activity['class_time'].split('T')[1].split('.')[0].slice(0, 5) : activity['class_time'])}
                         </Text>
                     </View> : null}
-                {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 14, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
+                {activity['link'] ? <Text onPress={() => { navigation.navigate('Browser', { 'url': activity['link'] }) }} style={{ fontFamily: 'NunitoSans-SemiBold', paddingHorizontal: 10, marginLeft: 5, marginTop: 0, marginBottom: 10, color: '#327FEB' }}>{'Click here to follow the link'}</Text> : null}
                 {activity['mention_id'] ? <View style={{ flexDirection: 'row' }}><Text style={{ fontFamily: 'NunitoSans-SemiBold', paddingLeft: 10, marginLeft: 5, marginVertical: 4, fontSize: 16, color: 'black' }}>Teacher: </Text><Text onPress={() => navigation.push('IndProf', { data: { 'image': activity['mention_image'], 'name': activity['mention_name'], 'year': activity['mention_year'], 'type': activity['mention_type'] }, 'id': activity['mention_id'].replace('id', '') })} style={{ fontFamily: 'NunitoSans-Bold', paddingHorizontal: 5, marginVertical: 4, fontSize: 16, color: '#327FEB' }}>{titleCase(activity['mention_name'])}</Text></View> : null}
                 {activity['images'] ?
                     <ImageView

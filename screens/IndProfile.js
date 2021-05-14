@@ -476,7 +476,7 @@ const IndProfile = ({ navigation, route }) => {
     const Tags = () => {
         if (profile.category) {
             return (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: -5, marginLeft: 15, marginBottom: 10 }}>
+                <ScrollView horizontal={true} style={{ marginTop: -5, marginLeft: 15, marginBottom: 10 }} showsHorizontalScrollIndicator={false} >
                     {profile.category.map((item) => {
                         return (
                             <View style={{ backgroundColor: 'white', borderRadius: 5, paddingHorizontal: 8, marginHorizontal: 5, borderColor: '#327FEB', borderWidth: 0.5 }}>
@@ -484,7 +484,7 @@ const IndProfile = ({ navigation, route }) => {
                             </View>
                         )
                     })}
-                </View>
+                </ScrollView>
             )
         } else {
             return <View />

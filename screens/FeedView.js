@@ -9,6 +9,7 @@ import PostLoader from '../Modules/PostLoader'
 import CompButton from '../Modules/CompButton'
 import { useScrollToTop } from '@react-navigation/native';
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
+import TagScreen from './TagScreen';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type, status, scrollY, profile, teacherprofile = false, addclass = false, more }) => {
@@ -32,94 +33,130 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
     useScrollToTop(ref);
 
     const ViewTypes = {
-        IMAGE_OR_VIDEO: 0,
-        TAG: 1,
-        MENTION: 2,
-        NO_MEDIA: 3,
-        INSPIRE: 4,
-        QUIZ: 5,
-        CLASS_NO_IMAGE: 6,
-        YOUTUBE: 7,
-        CLASS_IMAGE: 8,
-        HEADER: 9,
+        // IMAGE_OR_VIDEO: 0,
+        // TAG: 1,
+        // MENTION: 2,
+        // NO_MEDIA: 3,
+        // INSPIRE: 4,
+        // QUIZ: 5,
+        // CLASS_NO_IMAGE: 6,
+        // YOUTUBE: 7,
+        // CLASS_IMAGE: 8,
+        HEADER: 0,
+        NO_HEADER: 1,
     };
     const _layoutProvider = new LayoutProvider(
         index => {
             if (data[index]['type'] == 'header') {
-                return ViewTypes.HEADER;
+                return [ViewTypes.HEADER, 0];
             }
-            if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['link'].length > 4 : 0 || data[index]['data']['youtube'] ? data[index]['data']['youtube'].length > 4 : 0) {
-                if (data[index]['data']['category'] === 'class' && data[index]['data']['images'].length < 4) {
-                    return ViewTypes.CLASS_NO_IMAGE;
-                }
-                else if (data[index]['data']['category'] === 'class') {
-                    return ViewTypes.CLASS_IMAGE;
-                }
-                else if (data[index]['data']['category'] === 'inspire') {
-                    return ViewTypes.INSPIRE;
-                }
-                else if (data[index]['data']['youtube'] != '') {
-                    return ViewTypes.YOUTUBE;
-                }
-                else if (data[index]['data']['category'] === 'quiz') {
-                    return ViewTypes.QUIZ;
-                }
-                else if (data[index]['data']['tags']) {
-                    return ViewTypes.TAG;
-                }
-                else if (data[index]['data']['mention_id']) {
-                    return ViewTypes.MENTION;
-                }
-                else {
-                    return ViewTypes.IMAGE_OR_VIDEO;
-                }
+            // if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0 || data[index]['data']['videos'] ? data[index]['data']['link'].length > 4 : 0 || data[index]['data']['youtube'] ? data[index]['data']['youtube'].length > 4 : 0) {
+            //     if (data[index]['data']['category'] === 'class' && data[index]['data']['images'].length < 4) {
+            //         return ViewTypes.CLASS_NO_IMAGE;
+            //     }
+            //     else if (data[index]['data']['category'] === 'class') {
+            //         return ViewTypes.CLASS_IMAGE;
+            //     }
+            //     else if (data[index]['data']['category'] === 'inspire') {
+            //         return ViewTypes.INSPIRE;
+            //     }
+            //     else if (data[index]['data']['youtube'] != '') {
+            //         return ViewTypes.YOUTUBE;
+            //     }
+            //     else if (data[index]['data']['category'] === 'quiz') {
+            //         return ViewTypes.QUIZ;
+            //     }
+            //     else if (data[index]['data']['tags']) {
+            //         return ViewTypes.TAG;
+            //     }
+            //     else if (data[index]['data']['mention_id']) {
+            //         return ViewTypes.MENTION;
+            //     }
+            //     else {
+            //         return ViewTypes.IMAGE_OR_VIDEO;
+            //     }
+            // }
+            // else {
+            //     return ViewTypes.NO_MEDIA;
+            // }
+            var dimension = 0
+            if (data[index]['data']['images'] ? data[index]['data']['images'].length > 4 : 0) {
+                dimension = dimension + 340
             }
-            else {
-                return ViewTypes.NO_MEDIA;
+            if (data[index]['data']['videos'] ? data[index]['data']['videos'].length > 4 : 0) {
+                dimension = dimension + 340
             }
+            if (data[index]['data']['youtube'] ? data[index]['data']['youtube'].length > 4 : 0) {
+                dimension = dimension + 340
+            }
+            if (data[index]['data']['caption']) {
+                dimension = dimension + 110
+            }
+            if (data[index]['data']['caption'].length>200) {
+                dimension = dimension + 50
+            }
+            if (data[index]['data']['tags'] ? data[index]['data']['tags'] != 'Genio' && data[index]['data']['tags'] != 'Other' : 0) {
+                dimension = dimension + 70
+            }
+            if (data[index]['data']['link']) {
+                dimension = dimension + 80
+            }
+            if (data[index]['data']['mention_id']) {
+                dimension = dimension + 40
+            }
+            if (data[index]['data']['category'] == 'class') {
+                dimension = dimension + 50
+            }
+            dimension = dimension + 60
+            return [ViewTypes.NO_HEADER, dimension]
+
         },
         (type, dim) => {
-            switch (type) {
-                case ViewTypes.IMAGE_OR_VIDEO:
-                    dim.width = width;
-                    dim.height = 560;
-                    break;
-                case ViewTypes.CLASS_IMAGE:
-                    dim.width = width;
-                    dim.height = 630;
-                    break;
-                case ViewTypes.YOUTUBE:
-                    dim.width = width;
-                    dim.height = 450;
-                    break;
+            switch (type[0]) {
+                // case ViewTypes.IMAGE_OR_VIDEO:
+                //     dim.width = width;
+                //     dim.height = 560;
+                //     break;
+                // case ViewTypes.CLASS_IMAGE:
+                //     dim.width = width;
+                //     dim.height = 630;
+                //     break;
+                // case ViewTypes.YOUTUBE:
+                //     dim.width = width;
+                //     dim.height = 450;
+                //     break;
                 case ViewTypes.HEADER:
                     dim.width = width;
                     dim.height = 50;
                     break;
-                case ViewTypes.INSPIRE:
+                case ViewTypes.NO_HEADER:
                     dim.width = width;
-                    dim.height = 600;
+                    dim.height = type[1];
                     break;
-                case ViewTypes.QUIZ:
-                    dim.width = width;
-                    dim.height = 570;
-                    break;
-                case ViewTypes.MENTION:
-                    dim.width = width;
-                    dim.height = 560;
-                    break;
-                case ViewTypes.NO_MEDIA:
-                    dim.width = width;
-                    dim.height = 290;
-                    break;
-                case ViewTypes.TAG:
-                    dim.width = width;
-                    dim.height = 560;
-                    break;
-                case ViewTypes.CLASS:
-                    dim.width = width;
-                    dim.height = 620;
-                    break;
+                // case ViewTypes.INSPIRE:
+                //     dim.width = width;
+                //     dim.height = 600;
+                //     break;
+                // case ViewTypes.QUIZ:
+                //     dim.width = width;
+                //     dim.height = 570;
+                //     break;
+                // case ViewTypes.MENTION:
+                //     dim.width = width;
+                //     dim.height = 560;
+                //     break;
+                // case ViewTypes.NO_MEDIA:
+                //     dim.width = width;
+                //     dim.height = 290;
+                //     break;
+                // case ViewTypes.TAG:
+                //     dim.width = width;
+                //     dim.height = 560;
+                //     break;
+                // case ViewTypes.CLASS:
+                //     dim.width = width;
+                //     dim.height = 620;
+                //     break;
                 default:
                     dim.width = width;
                     dim.height = 560;
@@ -185,7 +222,7 @@ const FeedView = ({ data, navigation, children, onRefresh, refreshing, feed_type
                     layoutProvider={_layoutProvider}
                     renderFooter={() => more ? <><Text style={{ fontFamily: 'NunitoSans-Bold', textAlign: 'center', marginBottom: 40, display: more[feed_type] ? 'flex' : 'none' }}>That's it for now, come back later for more!</Text><View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View></> : <View style={{ height: teacherprofile ? 500 : profile ? 270 : 140 }}></View>}
                     dataProvider={dataProvider}
-                    style={{ paddingTop: teacherprofile && !addclass ? 420 : profile && !addclass ? 300 : addclass ? 10 : 140, flex: 1 }}
+                    style={{ paddingTop: teacherprofile && !addclass ? 450 : profile && !addclass ? 300 : addclass ? 10 : 140, flex: 1 }}
                     rowRenderer={_rowRenderer}
                     onScroll={(e) => {
                         scrollY ? scrollY.setValue(e.nativeEvent.contentOffset.y) : null
