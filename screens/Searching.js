@@ -105,7 +105,7 @@ const Searching = ({ route, navigation }) => {
     const [doing, setdoing] = useState(false)
     const onChangeSearch = query => {
         setdoing(true)
-        if (query != '') {
+        if (query != '' && query.length > 2) {
             axios.get('https://api.genio.app/sherlock/keyword/' + query.toLowerCase() + `/0/?token=${token}`)
                 .then(async (response) => {
                     // setresult([])
@@ -207,6 +207,7 @@ const Searching = ({ route, navigation }) => {
         return (
             <View style={{ flex: 1 }}>
                 {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
+                {searchQuery.length < 3 ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', marginTop: 5 }}>{status == '3' ? 'Type 3 or more characters to start searching!' : null}</Text>: null}
                 {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<FlatList
                     data={result}
                     renderItem={renderItem}
@@ -222,6 +223,7 @@ const Searching = ({ route, navigation }) => {
         return (
             <View style={{ flex: 1 }}>
                 {status == '3' ? null : <CompButton message={'Signup/Login to find other kids'} />}
+                {searchQuery.length < 3 ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center', marginTop: 5 }}>{status == '3' ? 'Type 3 or more characters to start searching!' : null}</Text>: null}
                 {searchQuery != '' && !doing && !(result).length ? <Text style={{ fontFamily: 'NunitoSans-Regular', textAlign: 'center' }}>{status == '3' ? 'Oops! No one was found with that name' : null}</Text> : (<FlatList
                     data={result}
                     renderItem={renderItem}
