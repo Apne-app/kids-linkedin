@@ -8060,11 +8060,6 @@ react-native-progress@^3.2.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-push-notification@^7.3.1:
-  version "7.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-7.3.1.tgz#1495feacd25169b998446dcf7b448a197ae5dca0"
-  integrity sha512-5kSKPvDU23uZRmzgKTsGhbwGNvB2tidu1VnInBHP53ZD0VEPSBl5fbpuTfHH98ED+Gp1SCcT2/e6bJWkIspKvg==
-
 react-native-ratings@^7.2.0:
   version "7.6.0"
   resolved "https://registry.yarnpkg.com/react-native-ratings/-/react-native-ratings-7.6.0.tgz#db5aedddf1ff5f87d618a62e0ec6da1ba2cba8d1"

@@ -20,8 +20,9 @@ import {
     ScrollView, TouchableOpacity,
     height, width,
 } from '../Modules/CommonImports.js';
+import { SECRET_KEY, ACCESS_KEY, JWT_USER, JWT_PASS } from '@env'
 import { StackActions } from '@react-navigation/native';
-const ChildSuccess = ({ navigation }) => {
+const ChildSuccess = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
@@ -44,11 +45,65 @@ const ChildSuccess = ({ navigation }) => {
 
         }, []));
 
-    setTimeout(() => {
-        navigation.dispatch(
-            StackActions.replace('Home')
-        );
-    }, 2000);
+    useEffect(() => {
+        const data = async () => {
+            var referral = await AsyncStorage.getItem('referral')
+            if (referral) {
+                console.log(referral)
+                var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
+                var config = {
+                    method: 'post',
+                    url: 'https://api.genio.app/dark-knight/getToken',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: data
+                };
+                var token = ''
+                axios(config)
+                    .then(function (datatoken) {
+                        const url = 'https://api.genio.app/get-out/referral';
+                        let data = '';
+                        data = JSON.stringify({
+                            "ref_id": referral,
+                            "dev_id": getUniqueId(),
+                            "user_id": route.params.id,
+                        })
+                        token = datatoken.data.token
+                        axios({
+                            method: 'post',
+                            url: url + `?token=${token}`,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: data
+                        }).then(async () => {
+                            navigation.dispatch(
+                                StackActions.replace('Home')
+                            );
+                        }).catch((error) => {
+                            navigation.dispatch(
+                                StackActions.replace('Home')
+                            );
+                            console.log(error)
+                        })
+
+                    }).catch((error) => {
+                        console.log(error)
+                        navigation.dispatch(
+                            StackActions.replace('Home')
+                        );
+
+                    })
+            } else {
+                navigation.dispatch(
+                    StackActions.replace('Home')
+                );
+            }
+        }
+        data()
+    })
+
     return (
         <View style={{ backgroundColor: 'white', height: height, width: width }}>
             <Image source={require('../assets/verified.gif')} style={{ height: 300, width: 300, alignSelf: 'center', marginTop: 60 }} />

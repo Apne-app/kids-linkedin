@@ -203,48 +203,8 @@ const ChildScreen = ({ route, navigation }) => {
                                     })
                                     console.log("Added Child: ", response1.data);
                                     await AsyncStorage.setItem('children', JSON.stringify(response1.data))
-                                    var referral = await AsyncStorage.getItem('referral')
-                                    if (referral) {
-                                        console.log(referral)
-                                        var data = JSON.stringify({ "username": JWT_USER, "password": JWT_PASS });
-                                        var config = {
-                                            method: 'post',
-                                            url: 'https://api.genio.app/dark-knight/getToken',
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            },
-                                            data: data
-                                        };
-                                        var token = ''
-                                        axios(config)
-                                            .then(function (datatoken) {
-                                                const url = 'https://api.genio.app/get-out/referral';
-                                                let data = '';
-                                                data = JSON.stringify({
-                                                    "ref_id": referral,
-                                                    "dev_id": getUniqueId(),
-                                                    "user_id": response1.data['0']['id'],
-                                                })
-                                                token = datatoken.data.token
-                                                axios({
-                                                    method: 'post',
-                                                    url: url + `?token=${token}`,
-                                                    headers: {
-                                                        'Content-Type': 'application/json'
-                                                    },
-                                                    data: data
-                                                }).then(async () => {
-                                                }).catch((error) => {
-                                                    console.log(error)
-                                                })
-
-                                            }).catch((error) => {
-                                                console.log(error)
-
-                                            })
-                                    }
                                     Update({ children: response1.data, status: '3', profile: pro, notifications: {} })
-                                    navigation.navigate('ChildSuccess')
+                                    navigation.navigate('ChildSuccess', { id: response1.data['0']['id'] })
                                 }
                                 else {
                                     alert('There was some error, please try again later')

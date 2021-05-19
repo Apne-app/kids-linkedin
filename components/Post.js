@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { RNS3 } from 'react-native-aws3';
 import CameraRoll from "@react-native-community/cameraroll";
 import Share from 'react-native-share';
-import PushNotification from "react-native-push-notification";
 import { Animated, Linking, ScrollView, TouchableWithoutFeedback, Text, Keyboard, StyleSheet, Dimensions, Alert, View, BackHandler, ImageBackground, Image, TouchableOpacity, Modal, FlatList, PermissionsAndroid, Platform } from 'react-native'
 import { Container, Header, Content, Form, Item, Input, Tabs, Picker, Tab, Fab, TabHeading, Label, H1, H2, H3, Icon, Footer, FooterTab, Button, Spinner, Thumbnail, List, ListItem, Separator, Left, Body, Right, Title } from 'native-base';
 import { TextInput, configureFonts, DefaultTheme, Provider as PaperProvider, Searchbar } from 'react-native-paper';

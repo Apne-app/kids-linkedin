@@ -149,6 +149,16 @@ const OTPScreen = ({ navigation, route }) => {
                   })
 
                   var pro = response.data;
+                  console.log({
+                    method: 'post',
+                    url: 'https://api.genio.app/matrix/getchildphone/' + `?token=${token}`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        "phone": response.data.phone,
+                    })
+                })
                   axios({
                       method: 'post',
                       url: 'https://api.genio.app/matrix/getchildphone/' + `?token=${token}`,
